@@ -14,7 +14,11 @@ browser.runtime.onInstalled.addListener(() => {
       console.error(`Error setting color: ${error}`);
     });
 });
-
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "openFullscreenTab") {
+    browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
+  }
+});
 // Listening for a specific message
 browser.runtime.onMessage.addListener((request) => {
   if (request.message === "clicked_browser_action") {

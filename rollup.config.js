@@ -22,11 +22,12 @@ function serve() {
     },
   };
 }
-export default [
-  {
-    input: "src/main.ts",
+
+function buildConfig(inputFileName, outputFileName) { 
+  return{
+    input: `src/${inputFileName}.ts`,
     output: {
-      file: "public/build/bundle.js",
+      file: `public/build/${outputFileName}.js`,
       format: "iife",
       name: "app",
     },
@@ -45,7 +46,7 @@ export default [
         }),
       }),
       postcss({
-        extract: true,
+        extract: `${outputFileName}.css`,
         minimize: true,
         sourceMap: !production,
         config: {
@@ -56,7 +57,11 @@ export default [
       commonjs(),
       !production && serve(),
     ],
-  },
+  }
+}
+export default [
+  buildConfig("popup", "popup"),
+  buildConfig("dashboard", "dashboard"),
   {
     input: "src/scripts/background.ts",
     output: {

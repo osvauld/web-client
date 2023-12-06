@@ -28,6 +28,12 @@
   onMount(async () => {
     await fetchColor();
   });
+
+  const openFullscreenTab = async () => {
+    // Send a message to the background script
+    console.log("Opening fullscreen tab");
+    await browser.runtime.sendMessage({ action: "openFullscreenTab" });
+  };
 </script>
 
 <main>
@@ -35,7 +41,10 @@
   <button class="bg-green-700" on:click={callBackgroundFunction}>
     Call Background Function
   </button>
-  <button class="rounded bg-blue-500 px-4 py-2 text-base text-white">
-    meh
+  <button
+    class="rounded bg-blue-500 px-4 py-2 text-base text-white"
+    on:click={openFullscreenTab}
+  >
+    Open Fullscreen Tab
   </button>
 </main>
