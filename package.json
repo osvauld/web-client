@@ -11,7 +11,8 @@
     "build-background": "browserify public/background.js -p [ lavamoat-browserify --writeAutoPolicy   --policy lavamoat/browserify/background-policy.json] -o public/background.js",
     "check": "svelte-check",
     "build": "npm run build:rollup && npm run build-bundle && npm run build-background",
-    "lint": "eslint --ext .svelte,.ts src/"
+    "lint": "eslint --ext .svelte,.ts src/",
+    "prepare": "npx allow-scripts"
   },
   "keywords": [],
   "author": "",
@@ -48,7 +49,7 @@
   "lavamoat": {
     "allowScripts": {
       "@lavamoat/preinstall-always-fail": false,
-      "svelte-preprocess": true
+      "svelte-preprocess": false
     }
   }
 }

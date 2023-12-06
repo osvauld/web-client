@@ -16,7 +16,7 @@ browser.runtime.onInstalled.addListener(() => {
 });
 
 // Listening for a specific message
-browser.runtime.onMessage.addListener((request, sender) => {
+browser.runtime.onMessage.addListener((request) => {
   if (request.message === "clicked_browser_action") {
     console.log("Browser action clicked!");
 
