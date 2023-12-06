@@ -1,0 +1,3 @@
+public/build/*
+public/background.js
+node_modules
