@@ -1,10 +1,9 @@
-
 import { exec } from "child_process";
 import svelte from "rollup-plugin-svelte";
-import commonjs from '@rollup/plugin-commonjs';
+import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
-import preprocess from 'svelte-preprocess';
+import preprocess from "svelte-preprocess";
 import postcss from "rollup-plugin-postcss";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
@@ -14,7 +13,7 @@ function serve() {
   return {
     writeBundle() {
       // Open Brave browser with the specified URL
-      exec("brave-browser http://reload.extensions", (err) => {
+      exec("open -a 'Brave Browser' http://reload.extensions", (err) => {
         if (err) {
           console.error("Failed to open Brave:", err);
         }
@@ -23,8 +22,8 @@ function serve() {
   };
 }
 
-function buildConfig(inputFileName, outputFileName) { 
-  return{
+function buildConfig(inputFileName, outputFileName) {
+  return {
     input: `src/${inputFileName}.ts`,
     output: {
       file: `public/build/${outputFileName}.js`,
@@ -57,7 +56,7 @@ function buildConfig(inputFileName, outputFileName) {
       commonjs(),
       !production && serve(),
     ],
-  }
+  };
 }
 export default [
   buildConfig("popup", "popup"),
