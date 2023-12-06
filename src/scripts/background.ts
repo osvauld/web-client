@@ -30,9 +30,11 @@ browser.runtime.onMessage.addListener((request) => {
       .then((tabs) => {
         if (tabs.length > 0) {
           var activeTab = tabs[0];
-          void browser.tabs.sendMessage(activeTab.id, {
-            message: "clicked_browser_action",
-          });
+          if(activeTab.id){
+            void browser.tabs.sendMessage(activeTab.id, {
+              message: "clicked_browser_action",
+            });
+          }
         }
       })
       .catch((error) => {
