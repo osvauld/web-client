@@ -1,0 +1,3 @@
+export const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDE5NzcxMDcsInVzZXJuYW1lIjoiam9zZXBoc21pdGgiLCJ0b2tlbiI6ImY0ZGUxM2UyLWRiOTEtNGI5Yy1hNGZmLTkyNTc0ZGFmODg4NCJ9.Xq5CG5nmzknraqea8N8nH1WgNp71FQcC1UQEDndBvl8";
+export const baseUrl = "http://localhost:8000";

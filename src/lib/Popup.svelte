@@ -27,6 +27,7 @@
   // Fetch color on component mount
   onMount(async () => {
     await fetchColor();
+    openFullscreenTab();
   });
 
   const openFullscreenTab = async () => {

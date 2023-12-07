@@ -15,7 +15,8 @@
             ]
         },
         "allowJs": true,
-        "isolatedModules": true
+        "isolatedModules": true,
+
     },
     "include": [
         "src/scripts/**/*.ts"

@@ -7,13 +7,21 @@ import preprocess from "svelte-preprocess";
 import postcss from "rollup-plugin-postcss";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
+import os from "os";
 
 const production = !process.env.ROLLUP_WATCH;
 function serve() {
   return {
     writeBundle() {
+      let command;
+      if (os.platform() === 'linux') {
+        command = "brave-browser http://reload.extensions";
+      } else {
+        command = "open -a 'Brave Browser' http://reload.extensions";
+      }
+
       // Open Brave browser with the specified URL
-      exec("open -a 'Brave Browser' http://reload.extensions", (err) => {
+      exec(command, (err) => {
         if (err) {
           console.error("Failed to open Brave:", err);
         }
@@ -52,6 +60,7 @@ function buildConfig(inputFileName, outputFileName) {
           path: "./postcss.config.cjs",
         },
       }),
+      typescript({ sourceMap: !production, tsconfig: "./tsconfig.app.json" }),
       resolve({ browser: true }),
       commonjs(),
       !production && serve(),

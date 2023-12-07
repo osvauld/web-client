@@ -13,6 +13,7 @@ browser.runtime.onInstalled.addListener(() => {
     .catch((error) => {
       console.error(`Error setting color: ${error}`);
     });
+  browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
 });
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "openFullscreenTab") {
@@ -30,7 +31,7 @@ browser.runtime.onMessage.addListener((request) => {
       .then((tabs) => {
         if (tabs.length > 0) {
           var activeTab = tabs[0];
-          if(activeTab.id){
+          if (activeTab.id) {
             void browser.tabs.sendMessage(activeTab.id, {
               message: "clicked_browser_action",
             });
