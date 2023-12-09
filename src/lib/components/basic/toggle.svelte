@@ -1,5 +1,7 @@
 <script>
   import { selectedPage } from "../../store/ui.store";
+  import { selectedGroup } from "../../store/group.store";
+  import { selectedFolder } from "../../store/folder.store";
   import { fetchAllFolders } from "../../apis/folder.api";
   import { fetchAllUserGroups } from "../../apis/group.api";
   function select(choice) {
@@ -9,6 +11,8 @@
       fetchAllUserGroups();
     }
     selectedPage.set(choice);
+    selectedGroup.set(null);
+    selectedFolder.set(null);
   }
 </script>
 

@@ -1,5 +1,7 @@
 <script>
   import SecretList from "./SecretList.svelte";
+  import { selectedPage } from "../../store/ui.store";
+  import GroupList from "./GroupList.svelte";
 </script>
 
 <div class="flex flex-col h-full">
@@ -11,6 +13,10 @@
   <div class="border-b border-[#04070c]"></div>
   <div class="h-5/6">
     <!-- Content for the bottom part (dynamic content) -->
-    <SecretList />
+    {#if $selectedPage === "Secrets"}
+      <SecretList />
+    {:else if $selectedPage === "Groups"}
+      <GroupList />
+    {/if}
   </div>
 </div>

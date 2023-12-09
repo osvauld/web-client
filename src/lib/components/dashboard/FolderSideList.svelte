@@ -1,8 +1,10 @@
 <script>
   import { folderStore, selectedFolder } from "../../store/folder.store";
+  import { selectedSecret } from "../../store/secret.store";
   import { fetchSecretsByFolder } from "../../apis/secrets.api";
   const selectFolder = (folder) => {
     selectedFolder.set(folder);
+    selectedSecret.set(null);
     fetchSecretsByFolder(folder.id);
   };
 </script>

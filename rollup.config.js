@@ -9,6 +9,8 @@ import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import os from "os";
 
+
+
 const production = !process.env.ROLLUP_WATCH;
 function serve() {
   return {
@@ -65,6 +67,9 @@ function buildConfig(inputFileName, outputFileName) {
       commonjs(),
       !production && serve(),
     ],
+    watch: {
+      clearScreen: false,
+    },
   };
 }
 export default [

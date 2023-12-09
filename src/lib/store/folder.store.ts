@@ -1,9 +1,5 @@
 import { writable } from "svelte/store";
-type Folder = {
-  id: string;
-  name: string;
-  description: string;
-};
+import { Folder } from "../dtos/folder.dto";
 export let folderStore = writable<Folder[]>([]);
 
 export let selectedFolder = writable<Folder | null>(null);

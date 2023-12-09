@@ -1,6 +1,12 @@
 <script lang="ts">
   import { secretsStore, selectedSecret } from "../../store/secret.store";
+  import SecretDetails from "./SecretDetails.svelte";
   import CopyIcon from "../basic/copyIcon.svelte";
+  let showDrawer = false;
+  const selectSecret = (secret) => {
+    selectedSecret.set(secret);
+    showDrawer = true;
+  };
 </script>
 
 <div class="flex overflow-x-auto">
@@ -10,6 +16,7 @@
       <div class="mb-6 mr-2 flex-none">
         <div
           class="container mx-auto p-4 relative card card-hover rounded-lg group h-auto !bg-[#3A4468]"
+          on:click={() => selectSecret(secret)}
         >
           <p class="mb-4">{secret.name}</p>
           <!-- Scrollable area for field names and values, starting after the first two fields -->
@@ -39,3 +46,7 @@
     {/each}
   </div>
 </div>
+
+{#if $selectedSecret}
+  <SecretDetails />
+{/if}

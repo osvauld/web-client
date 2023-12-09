@@ -1,10 +1,7 @@
 import { writable } from "svelte/store";
-
-type Group = {
-  id: string;
-  name: string;
-};
+import { Group } from "../dtos/group.dto";
 
 export let groupStore = writable<Group[]>([]);
+export let groupList = writable<Group[]>([]);
 
 export let selectedGroup = writable<Group | null>(null);
