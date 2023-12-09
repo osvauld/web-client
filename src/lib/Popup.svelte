@@ -1,8 +1,7 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
-  import { onMount } from "svelte";
+  // import browser from "webextension-polyfill";
+  // import { onMount } from "svelte";
   import Welcome from "./components/popup/Welcome.svelte";
-  import Home from "./components/popup/Home.svelte";
   import Logo from "./components/basic/logo.svelte";
   import { isLoggedIn } from "../lib/store/ui.store";
 
@@ -31,15 +30,16 @@
   // };
 
   // Fetch color on component mount
-  onMount(async () => {
-    openFullscreenTab();
-  });
+  // onMount(async () => {
+  //   await fetchColor();
+  //  // openFullscreenTab();
+  // });
 
-  const openFullscreenTab = async () => {
-    // Send a message to the background script
-    console.log("Opening fullscreen tab");
-    await browser.runtime.sendMessage({ action: "openFullscreenTab" });
-  };
+  // const openFullscreenTab = async () => {
+  //   // Send a message to the background script
+  //   console.log("Opening fullscreen tab");
+  //   await browser.runtime.sendMessage({ action: "openFullscreenTab" });
+  // };
 </script>
 
 <main>
@@ -54,9 +54,13 @@
     Open Fullscreen Tab
   </button> -->
 
-  <div class="w-[380px] h-[520px] bg-[#262C44] overflow-hidden">
+  <div
+    class="w-[380px] h-[520px] flex flex-col justify-start items-center bg-[#262C44]"
+  >
     {#if $isLoggedIn}
-      <Home />
+      <div>
+        <p class="text-white font-bold text-3xl">Credentials</p>
+      </div>
     {:else}
       <div>
         <div class="h-[200px] w-full flex justify-center items-center pl-7">
