@@ -1,7 +1,6 @@
 import { writable } from "svelte/store";
 
 export let selectedPage = writable("Credentials");
-export let showAddCredentialDrawer = writable(false);
 export let isLoggedIn = writable(false);
 export let list = writable([
   { username: "tony", password: "test@123" },
@@ -28,3 +27,4 @@ export let list = writable([
 ]);
 export let selectedCredential = writable(undefined);
 export let credOpen = writable(false);
+export let showAddCredentialDrawer = writable(false);
