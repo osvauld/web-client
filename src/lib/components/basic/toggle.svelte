@@ -5,7 +5,7 @@
   import { fetchAllFolders } from "../../apis/folder.api";
   import { fetchAllUserGroups } from "../../apis/group.api";
   function select(choice) {
-    if (choice === "Secrets") {
+    if (choice === "Credentials") {
       fetchAllFolders();
     } else {
       fetchAllUserGroups();
@@ -20,7 +20,7 @@
   <div
     class="inline-flex justify-center space-x-1 bg-[#182034] p-2 rounded-full"
   >
-    {#each ["Secrets", "Groups"] as item}
+    {#each ["Credentials", "Groups"] as item}
       <button
         class="px-4 py-2 rounded-full focus:outline-none {$selectedPage === item
           ? 'bg-[#262c44]'

@@ -1,5 +1,5 @@
 <script>
-  import SecretList from "./SecretList.svelte";
+  import CredentialList from "./credentialList.svelte";
   import { selectedPage } from "../../store/ui.store";
   import GroupList from "./GroupList.svelte";
 </script>
@@ -13,8 +13,8 @@
   <div class="border-b border-[#04070c]"></div>
   <div class="h-5/6">
     <!-- Content for the bottom part (dynamic content) -->
-    {#if $selectedPage === "Secrets"}
-      <SecretList />
+    {#if $selectedPage === "Credentials"}
+      <CredentialList />
     {:else if $selectedPage === "Groups"}
       <GroupList />
     {/if}

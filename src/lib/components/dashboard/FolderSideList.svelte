@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
   import { folderStore, selectedFolder } from "../../store/folder.store";
-  import { selectedSecret } from "../../store/secret.store";
-  import { fetchSecretsByFolder } from "../../apis/secrets.api";
+  import { selectedCredential } from "../../store/credential.store";
+  import { fetchCredentailsByFolder } from "../../apis/credentials.api";
   const selectFolder = (folder) => {
     selectedFolder.set(folder);
-    selectedSecret.set(null);
-    fetchSecretsByFolder(folder.id);
+    selectedCredential.set(null);
+    fetchCredentailsByFolder(folder.id);
   };
 </script>
 

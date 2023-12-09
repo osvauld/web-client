@@ -1,3 +1,3 @@
 import { writable } from "svelte/store";
 
-export let selectedPage = writable("Secrets");
+export let selectedPage = writable("Credentials");

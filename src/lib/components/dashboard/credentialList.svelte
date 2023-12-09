@@ -1,10 +1,14 @@
 <script lang="ts">
-  import { secretsStore, selectedSecret } from "../../store/secret.store";
-  import SecretDetails from "./SecretDetails.svelte";
+  import {
+    credentialStore,
+    selectedCredential,
+  } from "../../store/credential.store";
+  import CredentialDetails from "./credentailDetails.svelte";
+
   import CopyIcon from "../basic/copyIcon.svelte";
   let showDrawer = false;
-  const selectSecret = (secret) => {
-    selectedSecret.set(secret);
+  const selectCredential = (credential) => {
+    selectedCredential.set(credential);
     showDrawer = true;
   };
 </script>
@@ -12,16 +16,16 @@
 <div class="flex overflow-x-auto">
   <!-- Left Side: List of Cards -->
   <div class="flex flex-wrap p-6 w-full">
-    {#each $secretsStore as secret}
+    {#each $credentialStore as credential}
       <div class="mb-6 mr-2 flex-none">
         <div
           class="container mx-auto p-4 relative card card-hover rounded-lg group h-auto !bg-[#3A4468]"
-          on:click={() => selectSecret(secret)}
+          on:click={() => selectCredential(credential)}
         >
-          <p class="mb-4">{secret.name}</p>
+          <p class="mb-4">{credential.name}</p>
           <!-- Scrollable area for field names and values, starting after the first two fields -->
           <div class="overflow-y-auto max-h-[260px] min-h-[260px]">
-            {#each secret?.unencryptedData as field, index}
+            {#each credential?.unencryptedData as field, index}
               <div class="mb-4">
                 <label class="label block mb-2">{field.fieldName}</label>
                 <div class="relative">
@@ -40,13 +44,13 @@
             {/each}
           </div>
           <!-- Static description at the bottom -->
-          <p class="mb-4">{secret.description}</p>
+          <p class="mb-4">{credential.description}</p>
         </div>
       </div>
     {/each}
   </div>
 </div>
 
-{#if $selectedSecret}
-  <SecretDetails />
+{#if $selectedCredential}
+  <CredentialDetails />
 {/if}
