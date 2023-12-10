@@ -5,7 +5,7 @@
   
     const passphrase = writable('');
   
-    const hardcodedPassword = "wonderwomen"; 
+    const hardcodedPassword = "test"; 
 
     let showPassword = false;
     let errorMessage = false;
@@ -17,7 +17,6 @@
       const enteredPassphrase = $passphrase;
       if (enteredPassphrase === hardcodedPassword) {
         isLoggedIn.set(true);
-        console.log('isLoggedIn set to true');
       } else {
         errorMessage = true;
       }
