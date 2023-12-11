@@ -55,7 +55,7 @@
     Open Fullscreen Tab
   </button> -->
 
-  <div class="w-[380px] h-[520px] bg-[#262C44]">
+  <div class="w-[380px] h-[520px] bg-[#262C44] overflow-hidden">
     {#if $isLoggedIn}
       <Home />
     {:else}
