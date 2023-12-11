@@ -5,7 +5,7 @@ export const fetchCredentailsByFolder = async (folderId: string) => {
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
-  const response = await fetch(`${baseUrl}/folder/${folderId}/credentail`, {
+  const response = await fetch(`${baseUrl}/folder/${folderId}/credential`, {
     headers,
   }).then((response) => response.json());
 

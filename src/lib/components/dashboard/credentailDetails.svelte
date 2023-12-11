@@ -1,12 +1,10 @@
 <script>
-  import { onMount } from "svelte";
-  import {
-    credentialStore,
-    selectedCredential,
-  } from "../../store/credential.store";
+  import { onDestroy, onMount } from "svelte";
+  import { selectedCredential } from "../../store/credential.store";
   import { fetchCredentialById } from "../../apis/credentials.api";
   import CopyIcon from "../basic/copyIcon.svelte";
-  import { get } from "svelte/store";
+  let isLoading = true;
+  // TODO: render selected credential when is loading true
   export function close() {
     selectedCredential.set(null);
   }
@@ -19,15 +17,28 @@
     }
   }
   let users = [];
-  onMount(async () => {
+  let credentialDetailsJSON = {};
+  const updateCredentailDetails = async () => {
+    isLoading = true;
     const credentialDetails = await fetchCredentialById($selectedCredential.id);
-    selectedCredential.set({
+    credentialDetailsJSON = {
       ...credentialDetails.data.credential,
       encryptedData: credentialDetails.data.encryptedData,
       unencryptedData: credentialDetails.data.unencryptedData,
-    });
-
+    };
     users = credentialDetails.data.users;
+    isLoading = false;
+  };
+  const unsubscribe = selectedCredential.subscribe(async (value) => {
+    if (value === null) return;
+    await updateCredentailDetails();
+  });
+
+  onMount(async () => {
+    await updateCredentailDetails();
+  });
+  onDestroy(() => {
+    unsubscribe();
   });
 </script>
 
@@ -35,30 +46,30 @@
   <div
     class=" w-64 h-full shadow-xl transition-transform transform translate-x-0"
   >
-    <!-- Content for your overlay -->
-
     <button class="p-2" on:click={close}>Close</button>
     <div
       class="container mx-auto p-4 card rounded-lg h-auto w-full bg-[#2E3654]"
     >
-      <p class="mb-4">{$selectedCredential?.name}</p>
-      {#each $selectedCredential?.unencryptedData as field, index}
-        <div class="relative mb-4">
-          <label class="label block mb-2">{field.fieldName}</label>
-          <input
-            class="input pr-10 w-full items-center bg-[#2E3654]"
-            value={field.fieldValue}
-          />
-          <button
-            class="right-2 absolute top-[calc(50%+10px)]"
-            on:click={copyToClipboard(field.fieldValue)}
-          >
-            <CopyIcon />
-          </button>
-        </div>
-      {/each}
-      {#if $selectedCredential?.encryptedData}
-        {#each $selectedCredential.encryptedData as field, index}
+      {#if !isLoading}
+        <p class="mb-4">{credentialDetailsJSON?.name}</p>
+        {#if credentialDetailsJSON?.encryptedData}
+          <div class="relative mb-4">
+            <label class="label block mb-2">Password</label>
+            <input
+              class="input pr-10 w-full items-center bg-[#2E3654]"
+              value={credentialDetailsJSON?.encryptedData[0].fieldValue}
+            />
+            <button
+              class="right-2 absolute top-[calc(50%+10px)]"
+              on:click={copyToClipboard(
+                credentialDetailsJSON?.encryptedData[0].fieldValue
+              )}
+            >
+              <CopyIcon />
+            </button>
+          </div>
+        {/if}
+        {#each credentialDetailsJSON?.unencryptedData as field, index}
           <div class="relative mb-4">
             <label class="label block mb-2">{field.fieldName}</label>
             <input
@@ -73,16 +84,33 @@
             </button>
           </div>
         {/each}
+        {#if credentialDetailsJSON?.encryptedData}
+          {#each credentialDetailsJSON.encryptedData as field, index}
+            <div class="relative mb-4">
+              <label class="label block mb-2">{field.fieldName}</label>
+              <input
+                class="input pr-10 w-full items-center bg-[#2E3654]"
+                value={field.fieldValue}
+              />
+              <button
+                class="right-2 absolute top-[calc(50%+10px)]"
+                on:click={copyToClipboard(field.fieldValue)}
+              >
+                <CopyIcon />
+              </button>
+            </div>
+          {/each}
+        {/if}
+        <p class="mb-4">{credentialDetailsJSON.description}</p>
+        <div><h2>Access List</h2></div>
+        {#each users as user}
+          <div
+            class="border rounded-md border-transparent hover:border-blue-900 py-2"
+          >
+            {user.name}
+          </div>
+        {/each}
       {/if}
-      <p class="mb-4">{$selectedCredential.description}</p>
-      <div><h2>Access List</h2></div>
-      {#each users as user}
-        <div
-          class="border rounded-md border-transparent hover:border-blue-900 py-2"
-        >
-          {user.name}
-        </div>
-      {/each}
     </div>
   </div>
 </div>

@@ -1,7 +1,7 @@
 import { baseUrl, token } from "./temp";
 import { folderStore } from "../store/folder.store";
 
-const fetchAllFolders = async () => {
+export const fetchAllFolders = async () => {
   const options = {
     method: "GET",
     headers: {
@@ -9,7 +9,6 @@ const fetchAllFolders = async () => {
       "Content-Type": "application/json",
     },
   };
-  //   console.log("test");
   const response = await fetch(`${baseUrl}/folders/`, options).then(
     (response) => response.json()
   );
@@ -18,5 +17,17 @@ const fetchAllFolders = async () => {
     folderStore.set(response.data);
   }
 };
+export const fetchFolderUsers = async (folderId: string) => {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
 
-export { fetchAllFolders };
+  const response = await fetch(`${baseUrl}/folder/${folderId}/users`, {
+    headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+};

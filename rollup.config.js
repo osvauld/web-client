@@ -40,7 +40,11 @@ function buildConfig(inputFileName, outputFileName) {
       file: `public/build/${outputFileName}.js`,
       format: "iife",
       name: "app",
+      globals: {
+        "node:crypto": "crypto"
+      },
     },
+    external:["node:crypto"],  
     plugins: [
       svelte({
         compilerOptions: {
