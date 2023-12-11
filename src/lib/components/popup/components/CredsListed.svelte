@@ -1,17 +1,37 @@
 <script>
+  import Key from "../../../components/basic/key.svelte";
+  import RightArrow from "../../../components/basic/rightArrow.svelte";
+  import { list } from "../../../store/ui.store";
+  import { selectedCredential } from "../../../store/ui.store";
+  import { credOpen } from "../../../store/ui.store";
   let url = "https://devs.osvuald.com";
-  let list = [
-    { username: "tony", password: "test@123" },
-    { username: "steve", password: "captain@america" },
-    { username: "natasha", password: "blackwidow@123" },
-    { username: "bruce", password: "hulk123" },
-  ];
+
+  function credentialClicked(index) {
+    selectedCredential.set(index);
+    credOpen.set(true);
+  }
 </script>
 
-<div class="text-white flex justify-center">
+<div class="text-white flex justify-center items-center flex-col">
   <input
-    class="flex justify-center items-center w-[80%] bg-[#2E3552] border rounded-md border-[#4C598B4D] py-1 my-2 text-sm focus:border-[#4C598B4D] focus:ring-0"
+    class="flex justify-center items-center w-[80%] bg-[#2B324D] border rounded-md border-[#4C598B4D] py-1 my-2 text-sm focus:border-[#4C598B4D] focus:ring-0"
     value={url}
   />
   <!-- List urls -->
+  <div class="w-[80%] pt-8 max-h-[420px] overflow-y-scroll">
+    {#if $list.length > 0}
+      {#each $list as item, index (item.username)}
+        <div
+          class="w-full h-[50px] border rounded-md border-[#4C598B4D] flex justify-between items-center px-5 my-1 cursor-pointer active:bg-[#353E60] active:scale-[0.98]"
+          on:click={() => credentialClicked(index)}
+        >
+          <Key />
+          <span>{item.username}</span>
+          <RightArrow />
+        </div>
+      {/each}
+    {:else}
+      <div class="flex justify-center items-center">No Credentials Found</div>
+    {/if}
+  </div>
 </div>
