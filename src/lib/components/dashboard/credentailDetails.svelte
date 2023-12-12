@@ -2,6 +2,8 @@
   import { onDestroy, onMount } from "svelte";
   import { selectedCredential } from "../../store/credential.store";
   import { fetchCredentialById } from "../../apis/credentials.api";
+  import { pvtKey } from "../../apis/temp";
+  import { decryptCredentialFields } from "../../utils/crypto";
   import CopyIcon from "../basic/copyIcon.svelte";
   let isLoading = true;
   // TODO: render selected credential when is loading true
@@ -34,6 +36,21 @@
     await updateCredentailDetails();
   });
 
+  const decryptCredential = async () => {
+    const encryptedData = [...credentialDetailsJSON.encryptedData];
+    console.log("BEFORE", encryptedData);
+    const decryptedFields = await decryptCredentialFields(
+      encryptedData,
+      pvtKey
+    );
+    console.log("AFTER", decryptedFields);
+    credentialDetailsJSON = {
+      ...credentialDetailsJSON,
+      encryptedData: decryptedFields,
+    };
+    console.log(credentialDetailsJSON);
+  };
+
   onMount(async () => {
     await updateCredentailDetails();
   });
@@ -52,23 +69,6 @@
     >
       {#if !isLoading}
         <p class="mb-4">{credentialDetailsJSON?.name}</p>
-        {#if credentialDetailsJSON?.encryptedData}
-          <div class="relative mb-4">
-            <label class="label block mb-2">Password</label>
-            <input
-              class="input pr-10 w-full items-center bg-[#2E3654]"
-              value={credentialDetailsJSON?.encryptedData[0].fieldValue}
-            />
-            <button
-              class="right-2 absolute top-[calc(50%+10px)]"
-              on:click={copyToClipboard(
-                credentialDetailsJSON?.encryptedData[0].fieldValue
-              )}
-            >
-              <CopyIcon />
-            </button>
-          </div>
-        {/if}
         {#each credentialDetailsJSON?.unencryptedData as field, index}
           <div class="relative mb-4">
             <label class="label block mb-2">{field.fieldName}</label>
@@ -112,5 +112,6 @@
         {/each}
       {/if}
     </div>
+    <button on:click={decryptCredential}>DECRYPT</button>
   </div>
 </div>
