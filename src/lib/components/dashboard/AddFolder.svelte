@@ -1,0 +1,37 @@
+<script>
+  let name = "";
+  let description = "";
+  import { createFolder, fetchAllFolders } from "../../apis/folder.api";
+  import { showAddFolderDrawer } from "../../store/ui.store";
+
+  const addFolderFunc = async () => {
+    const payload = {
+      name: name,
+      description: description,
+    };
+    await createFolder(payload);
+    await fetchAllFolders();
+    showAddFolderDrawer.set(false);
+  };
+</script>
+
+<div class="flex flex-col p-6 rounded shadow-lg">
+  <label for="name" class="mb-2 font-bold text-lg">Name:</label>
+  <input
+    id="name"
+    type="text"
+    bind:value={name}
+    class="mb-4 p-2 border rounded bg-[#2E3654]"
+  />
+
+  <label for="description" class="mb-2 font-bold text-lg">Description:</label>
+  <textarea
+    id="description"
+    bind:value={description}
+    class="p-2 border rounded bg-[#2E3654]"
+  ></textarea>
+
+  <button class="bg-blue-900 rounded-full p-2" on:click={addFolderFunc}
+    >Submit</button
+  >
+</div>

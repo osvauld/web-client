@@ -31,3 +31,21 @@ export const fetchFolderUsers = async (folderId: string) => {
   }
   return response.json();
 };
+
+export const createFolder = async (payload: any) => {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/folder/`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+};
