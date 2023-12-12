@@ -10,7 +10,6 @@
 
   import CopyIcon from "../basic/copyIcon.svelte";
   let showDrawer = false;
-  let showModal = false;
   const openModal = () => {
     showAddCredentialDrawer.set(true);
   };

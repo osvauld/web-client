@@ -65,9 +65,9 @@
   let folderUsers = [];
   onMount(async () => {
     credentialFields = [
-      { fieldName: "Username", fieldValue: "asdf", sensitive: false },
-      { fieldName: "Password", fieldValue: "sadf", sensitive: true },
-      { fieldName: "URL", fieldValue: "asdf", sensitive: false },
+      { fieldName: "Username", fieldValue: "", sensitive: false },
+      { fieldName: "Password", fieldValue: "", sensitive: true },
+      { fieldName: "URL", fieldValue: "", sensitive: false },
     ];
     const responseJson = await fetchFolderUsers($selectedFolder.id);
     folderUsers = responseJson.data;
