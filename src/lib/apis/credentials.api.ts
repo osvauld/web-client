@@ -23,3 +23,17 @@ export const fetchCredentialById = async (credentialId: string) => {
     headers,
   }).then((response) => response.json());
 };
+
+export const addCredential = async (payload: any) => {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/credential/`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  }).then((response) => response.json());
+
+  return response;
+};

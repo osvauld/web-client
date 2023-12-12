@@ -27,3 +27,4 @@ export let list = writable([
 ]);
 export let selectedCredential = writable(undefined);
 export let credOpen = writable(false);
+export let showAddCredentialDrawer = writable(false);

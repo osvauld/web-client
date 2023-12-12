@@ -3,6 +3,7 @@
     credentialStore,
     selectedCredential,
   } from "../../store/credential.store";
+  import { showAddCredentialDrawer } from "../../store/ui.store";
   import { selectedFolder } from "../../store/folder.store";
   import CredentialDetails from "./credentailDetails.svelte";
   import AddCredential from "./AddCredential.svelte";
@@ -11,11 +12,11 @@
   let showDrawer = false;
   let showModal = false;
   const openModal = () => {
-    showModal = true;
+    showAddCredentialDrawer.set(true);
   };
 
   const closeModal = () => {
-    showModal = false;
+    showAddCredentialDrawer.set(false);
   };
   const selectCredential = (credential) => {
     selectedCredential.set(credential);
@@ -29,7 +30,7 @@
   >
 {/if}
 
-{#if showModal}
+{#if $showAddCredentialDrawer}
   <div
     class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
     on:click={closeModal}
