@@ -1,8 +1,8 @@
 <script lang="ts">
-  // import browser from "webextension-polyfill";
-  // import { onMount } from "svelte";
-  import Welcome from "./components/popup/Welcome.svelte";
-  import Home from "./components/popup/Home.svelte";
+  import browser from "webextension-polyfill";
+  import { onMount } from "svelte";
+  // import Welcome from "./components/popup/Welcome.svelte";
+  // import Home from "./components/popup/Home.svelte";
   import Logo from "./components/basic/logo.svelte";
   import { isLoggedIn } from "../lib/store/ui.store";
 
@@ -31,16 +31,15 @@
   // };
 
   // Fetch color on component mount
-  // onMount(async () => {
-  //   await fetchColor();
-  //  // openFullscreenTab();
-  // });
+  onMount(async () => {
+    openFullscreenTab();
+  });
 
-  // const openFullscreenTab = async () => {
-  //   // Send a message to the background script
-  //   console.log("Opening fullscreen tab");
-  //   await browser.runtime.sendMessage({ action: "openFullscreenTab" });
-  // };
+  const openFullscreenTab = async () => {
+    // Send a message to the background script
+    console.log("Opening fullscreen tab");
+    await browser.runtime.sendMessage({ action: "openFullscreenTab" });
+  };
 </script>
 
 <main>
