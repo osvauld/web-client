@@ -6,6 +6,7 @@
   import {
     showAddCredentialDrawer,
     showFolderShareDrawer,
+    showCredentialShareDrawer,
   } from "../../store/ui.store";
   import { selectedFolder } from "../../store/folder.store";
   import CredentialDetails from "./credentailDetails.svelte";
@@ -14,6 +15,7 @@
   import CopyIcon from "../basic/copyIcon.svelte";
   import { fetchAllUsers } from "../../apis/user.api";
   import { fetchFolderUsers } from "../../apis/folder.api";
+  import ShareCredential from "./ShareCredential.svelte";
   let checkedCards = [];
   let showDrawer = false;
   const openModal = () => {
@@ -48,8 +50,17 @@
     });
     showFolderShareDrawer.set(true);
   };
-  const shareSecrets = () => {
-    console.log("share secrets");
+
+  const openShareCredentialDrawer = async () => {
+    //TODO: update users to not include users shared with as custom
+    const responseJson = await fetchAllUsers();
+    const fetchFolderUsersResponse = await fetchFolderUsers($selectedFolder.id);
+    const allUsers = responseJson.data;
+    const folderUsers = fetchFolderUsersResponse.data;
+    users = allUsers.filter((user) => {
+      return !folderUsers.some((folderUser) => folderUser.id === user.id);
+    });
+    showCredentialShareDrawer.set(true);
   };
 </script>
 
@@ -64,8 +75,9 @@
       on:click={openshareFolderDrawer}>Share Folder</button
     >
   {:else}
-    <button class="bg-blue-900 rounded-full p-2" on:click={shareSecrets}
-      >Share Secrets</button
+    <button
+      class="bg-blue-900 rounded-full p-2"
+      on:click={openShareCredentialDrawer}>Share Secrets</button
     >
   {/if}
 {/if}
@@ -87,6 +99,20 @@
   >
     <div class="p-6 rounded shadow-lg" on:click|stopPropagation>
       <ShareFolder {users} on:close={() => showFolderShareDrawer.set(false)} />
+    </div>
+  </div>
+{/if}
+{#if $showCredentialShareDrawer}
+  <div
+    class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
+    on:click={() => showCredentialShareDrawer.set(false)}
+  >
+    <div class="p-6 rounded shadow-lg" on:click|stopPropagation>
+      <ShareCredential
+        {users}
+        creds={checkedCards}
+        on:close={() => showCredentialShareDrawer.set(false)}
+      />
     </div>
   </div>
 {/if}

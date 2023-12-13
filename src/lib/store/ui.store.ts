@@ -32,3 +32,4 @@ export let showAddCredentialDrawer = writable(false);
 export let showAddFolderDrawer = writable(false);
 export let showAddGroupDrawer = writable(false);
 export let showFolderShareDrawer = writable(false);
+export let showCredentialShareDrawer = writable(false);

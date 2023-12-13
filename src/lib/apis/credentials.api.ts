@@ -73,3 +73,21 @@ export const shareCredential = async (shareCredential: object) => {
 
   return response.json();
 };
+
+export const fetchEncryptedFieldsByIds = async (credentialIds: string[]) => {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/credentials/encrypted/`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ credentialIds }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+};
