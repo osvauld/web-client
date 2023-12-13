@@ -3,12 +3,20 @@
     credentialStore,
     selectedCredential,
   } from "../../store/credential.store";
-  import { showAddCredentialDrawer } from "../../store/ui.store";
+  import {
+    showAddCredentialDrawer,
+    showFolderShareDrawer,
+    showCredentialShareDrawer,
+  } from "../../store/ui.store";
   import { selectedFolder } from "../../store/folder.store";
   import CredentialDetails from "./credentailDetails.svelte";
   import AddCredential from "./AddCredential.svelte";
-
+  import ShareFolder from "./ShareFolder.svelte";
   import CopyIcon from "../basic/copyIcon.svelte";
+  import { fetchAllUsers } from "../../apis/user.api";
+  import { fetchFolderUsers } from "../../apis/folder.api";
+  import ShareCredential from "./ShareCredential.svelte";
+  let checkedCards = [];
   let showDrawer = false;
   const openModal = () => {
     showAddCredentialDrawer.set(true);
@@ -21,12 +29,57 @@
     selectedCredential.set(credential);
     showDrawer = true;
   };
+  function handleCheck(e, card) {
+    if (e.target.checked) {
+      checkedCards = [...checkedCards, card];
+    } else {
+      checkedCards = checkedCards.filter((c) => c.id !== card.id);
+    }
+  }
+  function isChecked(credential) {
+    return checkedCards.includes(credential);
+  }
+  let users = [];
+  const openshareFolderDrawer = async () => {
+    const responseJson = await fetchAllUsers();
+    const fetchFolderUsersResponse = await fetchFolderUsers($selectedFolder.id);
+    const allUsers = responseJson.data;
+    const folderUsers = fetchFolderUsersResponse.data;
+    users = allUsers.filter((user) => {
+      return !folderUsers.some((folderUser) => folderUser.id === user.id);
+    });
+    showFolderShareDrawer.set(true);
+  };
+
+  const openShareCredentialDrawer = async () => {
+    //TODO: update users to not include users shared with as custom
+    const responseJson = await fetchAllUsers();
+    const fetchFolderUsersResponse = await fetchFolderUsers($selectedFolder.id);
+    const allUsers = responseJson.data;
+    const folderUsers = fetchFolderUsersResponse.data;
+    users = allUsers.filter((user) => {
+      return !folderUsers.some((folderUser) => folderUser.id === user.id);
+    });
+    showCredentialShareDrawer.set(true);
+  };
 </script>
 
 {#if $selectedFolder}
   <button class="bg-blue-900 rounded-full p-2" on:click={openModal}
     >Create Credential</button
   >
+  {#if checkedCards.length === 0}
+    <!-- TODO: update to share credentials in the same api -->
+    <button
+      class="bg-blue-900 rounded-full p-2"
+      on:click={openshareFolderDrawer}>Share Folder</button
+    >
+  {:else}
+    <button
+      class="bg-blue-900 rounded-full p-2"
+      on:click={openShareCredentialDrawer}>Share Secrets</button
+    >
+  {/if}
 {/if}
 
 {#if $showAddCredentialDrawer}
@@ -39,6 +92,30 @@
     </div>
   </div>
 {/if}
+{#if $showFolderShareDrawer}
+  <div
+    class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
+    on:click={() => showFolderShareDrawer.set(false)}
+  >
+    <div class="p-6 rounded shadow-lg" on:click|stopPropagation>
+      <ShareFolder {users} on:close={() => showFolderShareDrawer.set(false)} />
+    </div>
+  </div>
+{/if}
+{#if $showCredentialShareDrawer}
+  <div
+    class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
+    on:click={() => showCredentialShareDrawer.set(false)}
+  >
+    <div class="p-6 rounded shadow-lg" on:click|stopPropagation>
+      <ShareCredential
+        {users}
+        creds={checkedCards}
+        on:close={() => showCredentialShareDrawer.set(false)}
+      />
+    </div>
+  </div>
+{/if}
 <div class="flex overflow-x-auto">
   <!-- Left Side: List of Cards -->
   <div class="flex flex-wrap p-6 w-full">
@@ -48,6 +125,11 @@
           class="container mx-auto p-4 relative card card-hover rounded-lg group h-auto !bg-[#3A4468]"
           on:click={() => selectCredential(credential)}
         >
+          <input
+            type="checkbox"
+            checked={isChecked(credential)}
+            on:change={(e) => handleCheck(e, credential)}
+          />
           <p class="mb-4">{credential.name}</p>
           <!-- Scrollable area for field names and values, starting after the first two fields -->
           <div class="overflow-y-auto max-h-[260px] min-h-[260px]">
@@ -77,6 +159,6 @@
   </div>
 </div>
 
-{#if $selectedCredential}
+{#if $selectedCredential && checkedCards.length < 2}
   <CredentialDetails />
 {/if}
