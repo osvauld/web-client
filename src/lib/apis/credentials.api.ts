@@ -37,3 +37,19 @@ export const addCredential = async (payload: any) => {
 
   return response;
 };
+export const fetchEncryptedCredentialsFields = async (folderId: string) => {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("User-Agent", "Insomnia/2023.5.7");
+
+  const response = await fetch(`${baseUrl}/credentials/encrypted/${folderId}`, {
+    method: "GET",
+    headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+};
