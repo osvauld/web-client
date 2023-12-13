@@ -1,9 +1,17 @@
 <script>
   import { showFolderShareDrawer } from "../../store/ui.store";
-  import { fetchEncryptedCredentialsFields } from "../../apis/credentials.api";
+  import {
+    fetchEncryptedCredentialsFields,
+    shareCredential,
+  } from "../../apis/credentials.api";
+  import { shareFolder } from "../../apis/folder.api";
   import { selectedFolder } from "../../store/folder.store";
   import { pvtKey } from "../../apis/temp";
-  import { decryptCredentialFields } from "../../utils/crypto";
+  import {
+    decryptCredentialFields,
+    importPublicKey,
+    encryptWithPublicKey,
+  } from "../../utils/crypto";
   const close = () => {
     console.log("close");
     showFolderShareDrawer.set(false);
@@ -18,21 +26,47 @@
       selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
     }
   }
-  const shareFolder = async () => {
+  const shareFolderHandler = async () => {
+    // TODO: update to share credentials in the same api
     console.log("share folder button");
     const responseJson = await fetchEncryptedCredentialsFields(
       $selectedFolder.id
     );
     const creds = responseJson.data;
     const unencryptedData = [];
-    for (const cred of creds) {
+    const payload = [];
+    const shareFolderPayload = {
+      folderId: $selectedFolder.id,
+      users: [],
+    };
+    for (const user of selectedUsers) {
+      shareFolderPayload.users.push({ userId: user.id, accessType: "read" });
+    }
+    await shareFolder(shareFolderPayload);
+    for (const [index, cred] of creds.entries()) {
       const decrypted = await decryptCredentialFields(
         cred.encryptedFields,
         pvtKey
       );
+      payload[index] = { credentialId: cred.id, users: [] };
       unencryptedData.push({ fields: decrypted, id: cred.id });
+      for (const user of selectedUsers) {
+        const publicKey = await importPublicKey(user.publicKey);
+        const fields = [];
+        for (const field of decrypted) {
+          const encryptedFieldValue = await encryptWithPublicKey(
+            field.fieldValue,
+            publicKey
+          );
+          fields.push({
+            fieldName: field.fieldName,
+            fieldValue: encryptedFieldValue,
+          });
+        }
+        payload[index].users.push({ userId: user.id, fields: fields });
+      }
     }
-    console.log(unencryptedData);
+    await shareCredential({ credentialList: payload });
   };
 </script>
 
@@ -52,7 +86,7 @@
 
     <!-- Button Always Visible at the End -->
     <div class="p-4">
-      <button class="w-full p-4 bg-blue-900" on:click={shareFolder}
+      <button class="w-full p-4 bg-blue-900" on:click={shareFolderHandler}
         >Share</button
       >
     </div>

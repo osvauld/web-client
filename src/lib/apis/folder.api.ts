@@ -49,3 +49,22 @@ export const createFolder = async (payload: any) => {
 
   return response.json();
 };
+
+export const shareFolder = async (payload: any) => {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+  headers.append("User-Agent", "Insomnia/2023.5.7");
+
+  const response = await fetch(`${baseUrl}/folder`, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+};
