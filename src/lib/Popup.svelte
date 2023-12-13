@@ -6,7 +6,7 @@
   import Logo from "./components/basic/logo.svelte";
   import { isLoggedIn } from "../lib/store/ui.store";
   console.log("is logged in status", $isLoggedIn);
-  let devType = "daash";
+  let devType = "popup";
 
   onMount(async () => {
     if (devType != "popup") openFullscreenTab();
