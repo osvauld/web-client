@@ -4,6 +4,8 @@
   import { list } from "../../../store/ui.store";
   import { selectedCredential } from "../../../store/ui.store";
   import { credOpen } from "../../../store/ui.store";
+  import browser from "webextension-polyfill";
+  import { onMount } from "svelte";
   let url = "https://devs.osvuald.com";
 
   // Need the code to fetch the Url from the background script and display it here.
@@ -14,6 +16,17 @@
     selectedCredential.set(index);
     credOpen.set(true);
   }
+
+  onMount(async () => {
+    console.log("on mount");
+    browser.runtime
+      .sendMessage({ eventName: "decrypt", data: "sdfd" })
+      .then((response) => {
+        // Handle the response here
+        console.log(response);
+      })
+      .catch((error) => console.error(error));
+  });
 </script>
 
 <div class="text-white flex justify-center items-center flex-col">

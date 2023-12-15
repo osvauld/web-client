@@ -6,12 +6,7 @@
   } from "../../apis/credentials.api";
   import { shareFolder } from "../../apis/folder.api";
   import { selectedFolder } from "../../store/folder.store";
-  import { pvtKey } from "../../apis/temp";
-  import {
-    decryptCredentialFields,
-    importPublicKey,
-    encryptWithPublicKey,
-  } from "../../utils/crypto";
+  import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
   const close = () => {
     console.log("close");
     showFolderShareDrawer.set(false);
@@ -44,16 +39,16 @@
     }
     await shareFolder(shareFolderPayload);
     for (const [index, cred] of creds.entries()) {
-      const decrypted = await decryptCredentialFields(
-        cred.encryptedFields,
-        pvtKey
-      );
+      const response = await browser.runtime.sendMessage({
+        eventName: "decrypt",
+        data: cred.encryptedFields,
+      });
       payload[index] = { credentialId: cred.id, users: [] };
-      unencryptedData.push({ fields: decrypted, id: cred.id });
+      unencryptedData.push({ fields: response.data, id: cred.id });
       for (const user of selectedUsers) {
         const publicKey = await importPublicKey(user.publicKey);
         const fields = [];
-        for (const field of decrypted) {
+        for (const field of response.data) {
           const encryptedFieldValue = await encryptWithPublicKey(
             field.fieldValue,
             publicKey

@@ -13,7 +13,7 @@
   });
 
   const openFullscreenTab = async () => {
-    // Send a message to the background script
+    // Send a message to the background sdaash
     console.log("Opening fullscreen tab");
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
   };

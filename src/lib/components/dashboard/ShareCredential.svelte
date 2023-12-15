@@ -4,12 +4,8 @@
     shareCredential,
     fetchEncryptedFieldsByIds,
   } from "../../apis/credentials.api";
-  import { pvtKey } from "../../apis/temp";
-  import {
-    decryptCredentialFields,
-    importPublicKey,
-    encryptWithPublicKey,
-  } from "../../utils/crypto";
+  import browser from "webextension-polyfill";
+  import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
   const close = () => {
     console.log("close");
     showCredentialShareDrawer.set(false);
@@ -35,12 +31,12 @@
     const payload = [];
 
     for (const [index, cred] of creds.entries()) {
-      const decrypted = await decryptCredentialFields(
-        cred.encryptedFields,
-        pvtKey
-      );
+      const response = await browser.runtime.sendMessage({
+        eventName: "decrypt",
+        data: cred.encryptedFields,
+      });
       payload[index] = { credentialId: cred.id, users: [] };
-      unencryptedData.push({ fields: decrypted, id: cred.id });
+      unencryptedData.push({ fields: response.data, id: cred.id });
       for (const user of selectedUsers) {
         const publicKey = await importPublicKey(user.publicKey);
         const fields = [];

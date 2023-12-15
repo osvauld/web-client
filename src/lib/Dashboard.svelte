@@ -8,9 +8,7 @@
   });
 </script>
 
-<main
-  class="bg-gradient-to-b from-[#262732] to-[#182034] w-screen h-screen text-white"
->
+<main class="bg-[#121212] w-screen h-screen text-white">
   <div class="flex h-full">
     <div class="w-1/6 overflow-auto">
       <LeftContainer />
