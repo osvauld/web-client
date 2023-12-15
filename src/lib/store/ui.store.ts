@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 
 export let selectedPage = writable("Credentials");
-export let isLoggedIn = writable(false);
+export let isLoggedIn = writable(true);
 export let list = writable([
   { username: "tony", password: "test@123" },
   { username: "steve", password: "captain@america" },

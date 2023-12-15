@@ -61,6 +61,7 @@ function performSomeAction(): void {
 }
 
 browser.runtime.onMessage.addListener((request, sender) => {
+  console.log("receieved message");
   if (request.eventName === "decrypt") {
     // Decrypt the data here
     // const decryptedData = decrypt(request.data);
