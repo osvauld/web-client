@@ -1,3 +1,4 @@
 public/build/*
 public/background.js
 node_modules
+public/content.js
