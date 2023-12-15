@@ -4,6 +4,7 @@
     shareCredential,
     fetchEncryptedFieldsByIds,
   } from "../../apis/credentials.api";
+  import browser from "webextension-polyfill";
   import { pvtKey } from "../../apis/temp";
   import {
     decryptCredentialFields,
@@ -39,6 +40,13 @@
         cred.encryptedFields,
         pvtKey
       );
+      browser.runtime
+        .sendMessage({ eventName: "decrypt", data: cred.encryptedFields })
+        .then((response) => {
+          // Handle the response here
+          console.log(response);
+        })
+        .catch((error) => console.error(error));
       payload[index] = { credentialId: cred.id, users: [] };
       unencryptedData.push({ fields: decrypted, id: cred.id });
       for (const user of selectedUsers) {

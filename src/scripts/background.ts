@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-
+import { token, pvtKey } from "../lib/apis/temp";
 // Listening for an installed event
 browser.runtime.onInstalled.addListener(() => {
   console.log("Extension installed successfully!");
@@ -14,6 +14,8 @@ browser.runtime.onInstalled.addListener(() => {
       console.error(`Error setting color: ${error}`);
     });
   browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
+  browser.storage.local.set({ token: token });
+  browser.storage.local.set({ privateKey: pvtKey });
 });
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "openFullscreenTab") {
@@ -57,3 +59,11 @@ browser.runtime.onMessage.addListener((request) => {
 function performSomeAction(): void {
   console.log("Performed some action");
 }
+
+browser.runtime.onMessage.addListener((request, sender) => {
+  if (request.eventName === "decrypt") {
+    // Decrypt the data here
+    // const decryptedData = decrypt(request.data);
+    return Promise.resolve({ data: "decryptedData" });
+  }
+});
