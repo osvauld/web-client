@@ -15,25 +15,28 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-
 //Below function redirects message from popup to active tab content script
 
-browser.runtime.onMessage.addListener(
-  async function(request, sender, sendResponse) {
-    if (request.action === "fillingSignal") {
-      try {
-        const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-        if (tabs.length === 0) {
-            throw new Error('No active tabs found');
-        }
-        await browser.tabs.sendMessage(tabs[0].id, request);
-      } catch (error) {
-        console.error('Error:', error.message);
+browser.runtime.onMessage.addListener(async function (
+  request,
+  sender,
+  sendResponse
+) {
+  if (request.action === "fillingSignal") {
+    try {
+      const tabs = await browser.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      if (tabs.length === 0) {
+        throw new Error("No active tabs found");
       }
+      await browser.tabs.sendMessage(tabs[0].id, request);
+    } catch (error) {
+      console.error("Error:", error.message);
     }
   }
-);
-
+});
 
 // Listening for a specific message
 browser.runtime.onMessage.addListener((request) => {
