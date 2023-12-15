@@ -11,7 +11,7 @@
   </div>
 
   <div class="border-b border-[#04070c]"></div>
-  <div class="h-5/6">
+  <div class="h-5/6 D bg-[#141414]">
     <!-- Content for the bottom part (dynamic content) -->
     {#if $selectedPage === "Credentials"}
       <CredentialList />

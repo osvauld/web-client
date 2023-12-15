@@ -17,9 +17,7 @@
 </script>
 
 <div class="flex justify-center">
-  <div
-    class="inline-flex justify-center space-x-1 bg-[#182034] p-2 rounded-full"
-  >
+  <div class="inline-flex justify-center space-x-1 bg-[#182034] rounded-full">
     {#each ["Credentials", "Groups"] as item}
       <button
         class="px-4 py-2 rounded-full focus:outline-none {$selectedPage === item

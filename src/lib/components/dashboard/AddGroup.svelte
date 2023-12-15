@@ -22,7 +22,7 @@
     class="mb-4 p-2 border rounded bg-[#2E3654]"
   />
 
-  <button class="bg-blue-900 rounded-full p-2" on:click={addGroupFunc}
+  <button class="bg-[#4E46DC] rounded-full p-2" on:click={addGroupFunc}
     >Submit</button
   >
 </div>

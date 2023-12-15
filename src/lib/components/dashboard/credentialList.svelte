@@ -65,23 +65,33 @@
 </script>
 
 {#if $selectedFolder}
-  <button class="bg-blue-900 rounded-full p-2" on:click={openModal}
-    >Create Credential</button
-  >
-  {#if checkedCards.length === 0}
-    <!-- TODO: update to share credentials in the same api -->
-    <button
-      class="bg-blue-900 rounded-full p-2"
-      on:click={openshareFolderDrawer}>Share Folder</button
-    >
-  {:else}
-    <button
-      class="bg-blue-900 rounded-full p-2"
-      on:click={openShareCredentialDrawer}>Share Secrets</button
-    >
-  {/if}
-{/if}
+  <div class="flex items-center p-4">
+    <h1 class="text-4xl p-4 italic">{$selectedFolder.name}</h1>
+    <div class="rounded-full flex items-center">
+      <input
+        type="search"
+        placeholder="Search"
+        class="bg-transparent ml-4 mr-4 pl-8 py-1 rounded-full w-full focus:outline-none"
+      />
+    </div>
 
+    <button class="bg-[#4E46DC] rounded-md p-2 pl-2 mr-2" on:click={openModal}
+      >Create Credential</button
+    >
+    {#if checkedCards.length === 0}
+      <!-- TODO: update to share credentials in the same api -->
+      <button
+        class="bg-[#4E46DC] rounded-md p-2 pl-2 pr-2"
+        on:click={openshareFolderDrawer}>Share Folder</button
+      >
+    {:else}
+      <button
+        class="bg-[#4E46DC] rounded-md p-2 pl-2"
+        on:click={openShareCredentialDrawer}>Share Secrets</button
+      >
+    {/if}
+  </div>
+{/if}
 {#if $showAddCredentialDrawer}
   <div
     class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
@@ -122,7 +132,7 @@
     {#each $credentialStore as credential}
       <div class="mb-6 mr-2 flex-none">
         <div
-          class="container mx-auto p-4 relative card card-hover rounded-lg group h-auto bg-[#1C1C1C]"
+          class="container mx-auto p-4 relative card card-hover rounded-lg group h-auto bg-[#1D1D1D]"
           on:click={() => selectCredential(credential)}
         >
           <input

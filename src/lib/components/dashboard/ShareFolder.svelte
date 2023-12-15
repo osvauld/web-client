@@ -81,7 +81,7 @@
 
     <!-- Button Always Visible at the End -->
     <div class="p-4">
-      <button class="w-full p-4 bg-blue-900" on:click={shareFolderHandler}
+      <button class="w-full p-4 bg-[#4E46DC]" on:click={shareFolderHandler}
         >Share</button
       >
     </div>
