@@ -6,14 +6,14 @@
   import Logo from "./components/basic/logo.svelte";
   import { isLoggedIn } from "../lib/store/ui.store";
   console.log("is logged in status", $isLoggedIn);
-  let devType = "popup";
+  let devType = "daash";
 
   onMount(async () => {
     if (devType != "popup") openFullscreenTab();
   });
 
   const openFullscreenTab = async () => {
-    // Send a message to the background script
+    // Send a message to the background sdaash
     console.log("Opening fullscreen tab");
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
   };

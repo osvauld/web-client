@@ -1,21 +1,13 @@
 import browser from "webextension-polyfill";
 import { token, pvtKey } from "../lib/apis/temp";
+import { decryptCredentialFields } from "../lib/utils/crypto";
 // Listening for an installed event
-browser.runtime.onInstalled.addListener(() => {
+browser.runtime.onInstalled.addListener(async () => {
   console.log("Extension installed successfully!");
 
-  // Handling the promise with .then and .catch
-  browser.storage.local
-    .set({ color: "#3aa757" })
-    .then(() => {
-      console.log("The color is green.");
-    })
-    .catch((error) => {
-      console.error(`Error setting color: ${error}`);
-    });
   browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
-  browser.storage.local.set({ token: token });
-  browser.storage.local.set({ privateKey: pvtKey });
+  await browser.storage.local.set({ token: token });
+  await browser.storage.local.set({ privateKey: pvtKey });
 });
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "openFullscreenTab") {
@@ -60,11 +52,14 @@ function performSomeAction(): void {
   console.log("Performed some action");
 }
 
-browser.runtime.onMessage.addListener((request, sender) => {
+browser.runtime.onMessage.addListener(async (request, sender) => {
   console.log("receieved message");
+  const privateKeyObj = await browser.storage.local.get("privateKey");
+  const privateKey = privateKeyObj.privateKey;
   if (request.eventName === "decrypt") {
+    const decrypted = await decryptCredentialFields(request.data, privateKey);
     // Decrypt the data here
     // const decryptedData = decrypt(request.data);
-    return Promise.resolve({ data: "decryptedData" });
+    return Promise.resolve({ data: decrypted });
   }
 });

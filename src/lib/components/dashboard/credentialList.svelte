@@ -122,7 +122,7 @@
     {#each $credentialStore as credential}
       <div class="mb-6 mr-2 flex-none">
         <div
-          class="container mx-auto p-4 relative card card-hover rounded-lg group h-auto !bg-[#3A4468]"
+          class="container mx-auto p-4 relative card card-hover rounded-lg group h-auto bg-[#1C1C1C]"
           on:click={() => selectCredential(credential)}
         >
           <input
@@ -138,7 +138,7 @@
                 <label class="label block mb-2">{field.fieldName}</label>
                 <div class="relative">
                   <input
-                    class="input pr-10 w-full rounded-2xl items-center !bg-[#3A4468]"
+                    class="input pr-10 w-full rounded-2xl items-center bg-[#1C1C1C]"
                     type="text"
                     value={field.fieldValue}
                   />

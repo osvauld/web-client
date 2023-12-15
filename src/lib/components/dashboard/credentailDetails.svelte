@@ -2,8 +2,7 @@
   import { onDestroy, onMount } from "svelte";
   import { selectedCredential } from "../../store/credential.store";
   import { fetchCredentialById } from "../../apis/credentials.api";
-  import { pvtKey } from "../../apis/temp";
-  import { decryptCredentialFields } from "../../utils/crypto";
+  import browser from "webextension-polyfill";
   import CopyIcon from "../basic/copyIcon.svelte";
   let isLoading = true;
   // TODO: render selected credential when is loading true
@@ -38,15 +37,14 @@
 
   const decryptCredential = async () => {
     const encryptedData = [...credentialDetailsJSON.encryptedData];
-    console.log("BEFORE", encryptedData);
-    const decryptedFields = await decryptCredentialFields(
-      encryptedData,
-      pvtKey
-    );
-    console.log("AFTER", decryptedFields);
+    const response = await browser.runtime.sendMessage({
+      eventName: "decrypt",
+      data: encryptedData,
+    });
+
     credentialDetailsJSON = {
       ...credentialDetailsJSON,
-      encryptedData: decryptedFields,
+      encryptedData: response.data,
     };
     console.log(credentialDetailsJSON);
   };
