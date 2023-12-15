@@ -6,6 +6,10 @@
   import { credOpen } from "../../../store/ui.store";
   let url = "https://devs.osvuald.com";
 
+  // Need the code to fetch the Url from the background script and display it here.
+
+
+
   function credentialClicked(index) {
     selectedCredential.set(index);
     credOpen.set(true);
