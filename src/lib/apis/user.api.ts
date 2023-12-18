@@ -1,6 +1,7 @@
 import { baseUrl, token } from "./temp";
+import { User } from "../dtos/user.dto";
 
-export const fetchAllUsers = async () => {
+export const fetchAllUsers = async (): Promise<User[]> => {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${token}`);
 
@@ -13,5 +14,7 @@ export const fetchAllUsers = async () => {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  return response.json();
+  const responseJson = await response.json();
+  const users: User[] = responseJson.data;
+  return users;
 };

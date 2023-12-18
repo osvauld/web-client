@@ -10,8 +10,6 @@
 
   // Need the code to fetch the Url from the background script and display it here.
 
-
-
   function credentialClicked(index) {
     selectedCredential.set(index);
     credOpen.set(true);
@@ -38,14 +36,14 @@
   <div class="w-[80%] pt-8 max-h-[420px] overflow-y-scroll">
     {#if $list.length > 0}
       {#each $list as item, index (item.username)}
-        <div
+        <button
           class="w-full h-[50px] border rounded-md border-[#4C598B4D] flex justify-between items-center px-5 my-1 cursor-pointer active:bg-[#353E60] active:scale-[0.98]"
           on:click={() => credentialClicked(index)}
         >
           <Key />
           <span>{item.username}</span>
           <RightArrow />
-        </div>
+        </button>
       {/each}
     {:else}
       <div class="flex justify-center items-center">No Credentials Found</div>

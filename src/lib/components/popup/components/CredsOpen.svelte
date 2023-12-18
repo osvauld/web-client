@@ -16,11 +16,16 @@
     }, 2000);
   }
 
-  const fillCredentials =  async () => {
-    console.log('Fiiling signal received');
-    await browser.runtime.sendMessage({ action: "fillingSignal", body:[$list[$selectedCredential]?.username, $list[$selectedCredential]?.password] });
-  }
-
+  const fillCredentials = async () => {
+    console.log("Fiiling signal received");
+    await browser.runtime.sendMessage({
+      action: "fillingSignal",
+      body: [
+        $list[$selectedCredential]?.username,
+        $list[$selectedCredential]?.password,
+      ],
+    });
+  };
 </script>
 
 <div
@@ -29,14 +34,16 @@
   <div class="flex justify-end items-center w-3/4">
     {$list[$selectedCredential]?.username}
     {#if !copiedUsername}
-      <span
+      <button
         class="mx-4 cursor-pointer transition ease-in-out duration-500 transform hover:scale-110"
         on:click={() => {
           copyOperation($list[$selectedCredential]?.username, false);
         }}
+        type="button"
+        aria-label="Copy username"
       >
-        <Copy /></span
-      >
+        <Copy />
+      </button>
     {:else}
       <span class="mx-4">
         <Tick />
@@ -46,22 +53,25 @@
   <div class="flex justify-end items-center w-3/4">
     {$list[$selectedCredential]?.password}
     {#if !copiedPassword}
-      <span
+      <button
         class="mx-4 cursor-pointer transition ease-in-out duration-500 transform hover:scale-110"
         on:click={() => {
           copyOperation($list[$selectedCredential]?.password, true);
         }}
       >
-        <Copy /></span
+        <Copy /></button
       >
     {:else}
       <span class="mx-4">
         <Tick />
       </span>
     {/if}
-  </div >
+  </div>
 
   <div class="flex mt-20 justify-center items-center w-3/4 h-[100px]">
-    <button class="bg-[#4E46DC] py-3 px-12 rounded-3xl cursor-pointer active:scale-95" on:click={fillCredentials}>Fill</button>
+    <button
+      class="bg-[#4E46DC] py-3 px-12 rounded-3xl cursor-pointer active:scale-95"
+      on:click={fillCredentials}>Fill</button
+    >
   </div>
 </div>

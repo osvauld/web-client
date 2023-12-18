@@ -6,8 +6,15 @@
   import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
   import { addCredential } from "../../apis/credentials.api";
   import { fetchCredentailsByFolder } from "../../apis/credentials.api";
+  import { User } from "../../dtos/user.dto";
+  import {
+    AddCredentialFieldPayload,
+    AddCredentialPayload,
+    CredentialFields,
+    encryptedFieldPayload,
+  } from "../../dtos/credential.dto";
 
-  let credentialFields = [];
+  let credentialFields: AddCredentialFieldPayload[] = [];
   let description = "";
   let name = "";
   const addField = () => {
@@ -15,13 +22,14 @@
     credentialFields = [...credentialFields, newField];
   };
 
-  const removeField = (index) => {
+  const removeField = (index: number) => {
     credentialFields.splice(index, 1);
     credentialFields = [...credentialFields];
   };
   const saveCredential = async () => {
-    const unencryptedFields = [];
-    const toEncryptFields = [];
+    if ($selectedFolder === null) throw new Error("folder not selected");
+    const unencryptedFields: CredentialFields[] = [];
+    const toEncryptFields: CredentialFields[] = [];
     for (const field of credentialFields) {
       if (!field.sensitive) {
         unencryptedFields.push(field);
@@ -31,8 +39,15 @@
     }
 
     let encryptedFields = [];
+    let addCredentialPaylod: AddCredentialPayload = {
+      name: name,
+      description: description,
+      folderId: $selectedFolder.id,
+      unencryptedFields: unencryptedFields,
+      encryptedFields: [],
+    };
     for (const user of folderUsers) {
-      let userPayload = {
+      let userPayload: encryptedFieldPayload = {
         userId: user.id,
         fields: [],
       };
@@ -58,19 +73,20 @@
       encryptedFields: encryptedFields,
     };
     await addCredential(payload);
+    if ($selectedFolder === null) throw new Error("folder not selected");
     fetchCredentailsByFolder($selectedFolder.id);
     showAddCredentialDrawer.set(false);
   };
 
-  let folderUsers = [];
+  let folderUsers: User[] = [];
   onMount(async () => {
     credentialFields = [
       { fieldName: "Username", fieldValue: "", sensitive: false },
       { fieldName: "Password", fieldValue: "", sensitive: true },
       { fieldName: "URL", fieldValue: "", sensitive: false },
     ];
-    const responseJson = await fetchFolderUsers($selectedFolder.id);
-    folderUsers = responseJson.data;
+    if ($selectedFolder === null) throw new Error("folder not selected");
+    folderUsers = await fetchFolderUsers($selectedFolder.id);
   });
 </script>
 

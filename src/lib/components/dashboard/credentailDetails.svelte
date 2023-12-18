@@ -38,9 +38,10 @@
   const decryptCredential = async () => {
     const encryptedData = [...credentialDetailsJSON.encryptedData];
     const response = await browser.runtime.sendMessage({
-      eventName: "decrypt",
+      action: "decrypt",
       data: encryptedData,
     });
+    console.log(response, "DECRYPT");
 
     credentialDetailsJSON = {
       ...credentialDetailsJSON,
@@ -69,7 +70,9 @@
         <p class="mb-4">{credentialDetailsJSON?.name}</p>
         {#each credentialDetailsJSON?.unencryptedData as field, index}
           <div class="relative mb-4">
-            <label class="label block mb-2">{field.fieldName}</label>
+            <label class="label block mb-2" for={`input-${index}`}
+              >{field.fieldName}</label
+            >
             <input
               class="input pr-10 w-full items-center bg-[#141414]"
               value={field.fieldValue}
@@ -85,7 +88,9 @@
         {#if credentialDetailsJSON?.encryptedData}
           {#each credentialDetailsJSON.encryptedData as field, index}
             <div class="relative mb-4">
-              <label class="label block mb-2">{field.fieldName}</label>
+              <label class="label block mb-2" for={`input-${index}`}
+                >{field.fieldName}</label
+              >
               <input
                 class="input pr-10 w-full items-center bg-[#141414]"
                 value={field.fieldValue}
@@ -115,6 +120,10 @@
         {/each}
       {/if}
     </div>
-    <button on:click={decryptCredential}>DECRYPT</button>
+    <button
+      on:click={decryptCredential}
+      class="bg-macchiato-sapphire rounded-lg p-2 justify-center"
+      >DECRYPT</button
+    >
   </div>
 </div>

@@ -17,12 +17,14 @@
 </script>
 
 <div class="flex justify-center">
-  <div class="inline-flex justify-center space-x-1 bg-[#182034] rounded-full">
+  <div
+    class="inline-flex justify-center space-x-1 bg-macchiato-surface1 rounded-full"
+  >
     {#each ["Credentials", "Groups"] as item}
       <button
         class="px-4 py-2 rounded-full focus:outline-none {$selectedPage === item
-          ? 'bg-[#262c44]'
-          : 'bg-[#182034]'}"
+          ? 'bg-macchiato-blue'
+          : ''}"
         on:click={() => select(item)}
       >
         {item}
