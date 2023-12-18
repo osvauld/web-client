@@ -22,7 +22,7 @@
     <div class="w-px bg-macchiato-maroon" style="flex-grow: 0;"></div>
 
     <!-- Right container -->
-    <div class="w-5/6 overflow-auto">
+    <div class="w-5/6 overflow-auto scrollbar-thin">
       <RightContainer />
     </div>
   </div>
