@@ -2,7 +2,6 @@
   import CredentialList from "./credentialList.svelte";
   import { selectedPage } from "../../store/ui.store";
   import GroupList from "./GroupList.svelte";
-  import { theme } from "../../apis/temp";
 </script>
 
 <div class="flex flex-col h-full">

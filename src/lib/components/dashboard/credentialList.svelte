@@ -137,10 +137,10 @@
     <div class="flex flex-wrap p-6 w-full">
       {#each $credentialStore as credential}
         <div
-          class="mb-6 mr-2 flex-none hover:border hover:border-macchiato-green scrollbar-thin"
+          class="mb-6 mr-2 flex-none hover:border hover:border-macchiato-green"
         >
           <button
-            class="container mx-auto p-4 relative card card-hover rounded-lg group h-auto bg-macchiato-surface0"
+            class="container mx-auto p-4 relative rounded-lg group bg-macchiato-surface0"
             on:click={() => selectCredential(credential)}
             on:keydown={(e) => {
               if (e.key === "Enter") {
@@ -153,13 +153,16 @@
               checked={isChecked(credential)}
               on:change={(e) => handleCheck(e, credential)}
             />
-            <p class="mb-4">{credential.name}</p>
+            <p class="mb-4 text-left">{credential.name}</p>
             <!-- Scrollable area for field names and values, starting after the first two fields -->
-            <div class="overflow-y-auto max-h-[260px] min-h-[260px]">
+            <div
+              class="overflow-y-auto max-h-[260px] min-h-[260px] scrollbar-thin"
+            >
               {#each credential?.unencryptedData as field, index}
                 <div class="mb-4">
-                  <label class="label block mb-2" for={`input-${index}`}
-                    >{field.fieldName}</label
+                  <label
+                    class="label block mb-2 text-left"
+                    for={`input-${index}`}>{field.fieldName}</label
                   >
                   <div class="relative">
                     <input

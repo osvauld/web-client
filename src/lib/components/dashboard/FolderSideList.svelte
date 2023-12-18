@@ -21,9 +21,9 @@
   };
 </script>
 
-<div>
+<div class="p-2">
   <button
-    class="bg-macchiato-red rounded-full p-2 pl-8 pr-8"
+    class="bg-macchiato-red rounded-full p-2 pl-8 pr-8 mb-4"
     on:click={openModal}
     >Add Folder
   </button>
@@ -42,7 +42,7 @@
       <li
         class={` ${
           $selectedFolder === folder
-            ? "bg-macchiato-rosewater border border-macchiato-flamingo "
+            ? "bg-macchiato-overlay1 border border-macchiato-flamingo "
             : "hover:border hover:border-macchiato-teal "
         } rounded-md`}
       >

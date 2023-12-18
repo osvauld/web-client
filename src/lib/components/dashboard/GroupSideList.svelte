@@ -16,8 +16,9 @@
 </script>
 
 <div>
-  <button class=" bg-[#1E1B28] rounded-full p-2 pl-8 pr-8" on:click={openModal}
-    >Add Group</button
+  <button
+    class=" bg-macchiato-maroon rounded-full p-2 pl-8 pr-8"
+    on:click={openModal}>Add Group</button
   >
   {#if $showAddGroupDrawer}
     <button
