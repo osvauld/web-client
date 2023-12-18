@@ -20,14 +20,13 @@
     >Add Group</button
   >
   {#if $showAddGroupDrawer}
-    <div
-      class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
-      on:click={closeModal}
+    <button
+      class="p-6 rounded shadow-lg"
+      on:click|stopPropagation
+      on:keydown|stopPropagation
     >
-      <div class="p-6 rounded shadow-lg" on:click|stopPropagation>
-        <AddGroup on:close={closeModal} />
-      </div>
-    </div>
+      <AddGroup on:close={closeModal} />
+    </button>
   {/if}
   <ul>
     {#each $groupStore as group}

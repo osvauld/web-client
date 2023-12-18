@@ -1,5 +1,6 @@
 import { groupStore } from "../store/group.store";
 import { baseUrl, token } from "./temp";
+import { User } from "../dtos/user.dto";
 
 export const fetchAllUserGroups = () => {
   fetch(`${baseUrl}/groups`, {
@@ -13,12 +14,13 @@ export const fetchAllUserGroups = () => {
     });
 };
 
-export const fetchGroupUsers = (id: string) => {
-  return fetch(`${baseUrl}/group/${id}`, {
+export const fetchGroupUsers = async (id: string): Promise<User[]> => {
+  const response = await fetch(`${baseUrl}/group/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   }).then((response) => response.json());
+  return response.data;
 };
 
 export const createGroup = async (payload: any) => {

@@ -1,5 +1,6 @@
 import { baseUrl, token } from "./temp";
 import { folderStore } from "../store/folder.store";
+import { User } from "../dtos/user.dto";
 
 export const fetchAllFolders = async () => {
   const options = {
@@ -17,19 +18,16 @@ export const fetchAllFolders = async () => {
     folderStore.set(response.data);
   }
 };
-export const fetchFolderUsers = async (folderId: string) => {
+export const fetchFolderUsers = async (folderId: string): Promise<User[]> => {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
   const response = await fetch(`${baseUrl}/folder/${folderId}/users`, {
     headers,
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  return response.json();
+  }).then((response) => response.json());
+  const users: User[] = response.data;
+  return users;
 };
 
 export const createFolder = async (payload: any) => {

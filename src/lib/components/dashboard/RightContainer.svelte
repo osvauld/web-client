@@ -2,6 +2,7 @@
   import CredentialList from "./credentialList.svelte";
   import { selectedPage } from "../../store/ui.store";
   import GroupList from "./GroupList.svelte";
+  import { theme } from "../../apis/temp";
 </script>
 
 <div class="flex flex-col h-full">
@@ -11,7 +12,7 @@
   </div>
 
   <div class="border-b border-[#04070c]"></div>
-  <div class="h-5/6 D bg-[#141414]">
+  <div class={"h-5/6 D bg-macchiato-background"}>
     <!-- Content for the bottom part (dynamic content) -->
     {#if $selectedPage === "Credentials"}
       <CredentialList />

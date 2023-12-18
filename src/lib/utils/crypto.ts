@@ -1,13 +1,15 @@
 // Function to convert a binary string to an ArrayBuffer
-function str2ab(str) {
+import { CredentialFields } from "../dtos/credential.dto";
+
+const str2ab = (str: string) => {
   const buffer = new Uint8Array(str.length);
   for (let i = 0; i < str.length; i++) {
     buffer[i] = str.charCodeAt(i);
   }
   return buffer;
-}
+};
 
-export const importPublicKey = (key) => {
+export const importPublicKey = (key: string): Promise<CryptoKey> => {
   // Decode the base64-encoded PEM string
   let pem = atob(key);
 
@@ -42,7 +44,7 @@ export const importPublicKey = (key) => {
   );
 };
 
-function base64ToArrayBuffer(base64) {
+function base64ToArrayBuffer(base64: string) {
   const binaryString = atob(base64);
   const len = binaryString.length;
   const bytes = new Uint8Array(len);
@@ -52,7 +54,10 @@ function base64ToArrayBuffer(base64) {
   return bytes.buffer;
 }
 
-export const encryptWithPublicKey = async (data, publicKey) => {
+export const encryptWithPublicKey = async (
+  data: string,
+  publicKey: CryptoKey
+) => {
   const encodedData = new TextEncoder().encode(data);
   const encryptedData = await window.crypto.subtle.encrypt(
     {
@@ -64,14 +69,14 @@ export const encryptWithPublicKey = async (data, publicKey) => {
   return window.btoa(String.fromCharCode(...new Uint8Array(encryptedData)));
 };
 
-export const importPrivateKey = async (key) => {
+export const importPrivateKey = async (key: string): Promise<CryptoKey> => {
   let pem = atob(key);
   // Remove the "BEGIN PRIVATE KEY" and "END PRIVATE KEY" parts
   pem = pem.replace("-----BEGIN PRIVATE KEY-----", "");
   pem = pem.replace("-----END PRIVATE KEY-----", "");
   pem = pem.replace(/\s+|\n\r|\n|\r$/gm, ""); // remove newlines
   // Decode the base64 string
-  const binaryDer = str2ab(window.atob(pem));
+  const binaryDer = str2ab(atob(pem));
 
   // Import the binary formatted private key using the Web Crypto API
   return window.crypto.subtle.importKey(
@@ -86,19 +91,26 @@ export const importPrivateKey = async (key) => {
   );
 };
 
-export const decryptCredentialFields = async (encryptedFields, privateKey) => {
+export const decryptCredentialFields = async (
+  encryptedFields: CredentialFields[],
+  privateKey: string
+): Promise<CredentialFields[]> => {
   const pvtKey = await importPrivateKey(privateKey).catch((error) => {
     console.log("ERRRR", error);
   });
-  const decryptedFields = [];
+  const decryptedFields: CredentialFields[] = [];
   for (const field of encryptedFields) {
+    if (pvtKey === undefined) throw new Error("Private key is undefined");
     const decryptedData = await decryptWithPrivateKey(pvtKey, field.fieldValue);
     decryptedFields.push({ ...field, fieldValue: decryptedData });
   }
-  return decryptedFields;
+  return Promise.resolve(decryptedFields);
 };
 
-const decryptWithPrivateKey = async (privateKey, encryptedData) => {
+const decryptWithPrivateKey = async (
+  privateKey: CryptoKey,
+  encryptedData: string
+): Promise<string> => {
   // Convert the base64 encoded encrypted data to an ArrayBuffer
   const encryptedArrayBuffer = base64ToArrayBuffer(encryptedData);
 

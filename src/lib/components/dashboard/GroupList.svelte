@@ -2,14 +2,16 @@
   import { fetchGroupUsers } from "../../apis/group.api";
   import { onMount, onDestroy } from "svelte";
   import { selectedGroup } from "../../store/group.store";
-  let groupUsers = [];
-  let unsubscribe;
+  import { User } from "../../dtos/user.dto";
+  import { Unsubscriber } from "svelte/store";
+  let groupUsers: User[] = [];
+  let unsubscribe: Unsubscriber;
 
   onMount(() => {
     unsubscribe = selectedGroup.subscribe((value) => {
       if (value) {
-        fetchGroupUsers(value.id).then((res) => {
-          groupUsers = res.data;
+        fetchGroupUsers(value.id).then((users) => {
+          groupUsers = users;
         });
       }
     });

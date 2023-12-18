@@ -2,11 +2,28 @@ export type Credential = {
   id: string;
   description: string;
   name: string;
-  unencryptedData: credentialFields[];
-  encryptedData?: credentialFields[];
+  unencryptedData: CredentialFields[];
+  encryptedData?: CredentialFields[];
 };
 
-type credentialFields = {
+export type CredentialFields = {
   fieldName: string;
   fieldValue: string;
+};
+
+export type AddCredentialFieldPayload = CredentialFields & {
+  sensitive: boolean;
+};
+
+export type AddCredentialPayload = {
+  name: string;
+  description: string;
+  folderId: string;
+  unencryptedFields: CredentialFields[];
+  encryptedFields: encryptedFieldPayload[];
+};
+
+export type encryptedFieldPayload = {
+  userId: string;
+  fields: CredentialFields[];
 };
