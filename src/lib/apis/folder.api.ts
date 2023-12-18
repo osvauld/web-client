@@ -26,10 +26,6 @@ export const fetchFolderUsers = async (folderId: string): Promise<User[]> => {
   const response = await fetch(`${baseUrl}/folder/${folderId}/users`, {
     headers,
   }).then((response) => response.json());
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
   const users: User[] = response.data;
   return users;
 };

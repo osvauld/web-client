@@ -38,10 +38,9 @@
   const decryptCredential = async () => {
     const encryptedData = [...credentialDetailsJSON.encryptedData];
     const response = await browser.runtime.sendMessage({
-      action: "decrypt",
+      eventName: "decrypt",
       data: encryptedData,
     });
-    console.log(response, "DECRYPT");
 
     credentialDetailsJSON = {
       ...credentialDetailsJSON,
@@ -58,14 +57,12 @@
   });
 </script>
 
-<div class="fixed bg-[#141414] top-0 right-0 z-50 flex justify-end rounded-xl">
+<div class="fixed bg-gray-600 top-0 right-0 z-50 flex justify-end rounded-xl">
   <div
-    class=" w-64 h-full shadow-xl transition-transform transform translate-x-0"
+    class=" w-64 h-full shadow-xl transition-transform transform translate-x-0 bg-macchiato-surface1"
   >
     <button class="p-2" on:click={close}>Close</button>
-    <div
-      class="container mx-auto p-4 card rounded-lg h-auto w-full bg-[#141414]"
-    >
+    <div class="container mx-auto p-4 card rounded-lg h-auto w-full">
       {#if !isLoading}
         <p class="mb-4">{credentialDetailsJSON?.name}</p>
         {#each credentialDetailsJSON?.unencryptedData as field, index}
@@ -74,7 +71,7 @@
               >{field.fieldName}</label
             >
             <input
-              class="input pr-10 w-full items-center bg-[#141414]"
+              class="input pr-10 w-full items-center bg-macchiato-surface2"
               value={field.fieldValue}
             />
             <button
@@ -92,7 +89,7 @@
                 >{field.fieldName}</label
               >
               <input
-                class="input pr-10 w-full items-center bg-[#141414]"
+                class="input pr-10 w-full items-center bg-macchiato-surface2"
                 value={field.fieldValue}
               />
               <button
@@ -104,26 +101,22 @@
             </div>
           {/each}
         {/if}
-        <div class="relative mb-4">
-          <p class="label block mb-2">Description</p>
-          <div class="input pr-10 w-full items-center bg-[#141414]">
-            {credentialDetailsJSON.description}
-          </div>
-        </div>
+        <p class="mb-4">{credentialDetailsJSON.description}</p>
         <div><h2>Access List</h2></div>
         {#each users as user}
           <div
-            class="border rounded-md border-transparent hover:border-blue-900 py-2"
+            class="border rounded-md border-transparent hover:border-macchiato-sky p-2"
           >
             {user.name}
           </div>
         {/each}
       {/if}
     </div>
-    <button
-      on:click={decryptCredential}
-      class="bg-macchiato-sapphire rounded-lg p-2 justify-center"
-      >DECRYPT</button
-    >
+    <div class="flex justify-center">
+      <button
+        on:click={decryptCredential}
+        class="p-2 bg-macchiato-red rounded-md">DECRYPT</button
+      >
+    </div>
   </div>
 </div>

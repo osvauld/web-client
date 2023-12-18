@@ -7,6 +7,7 @@
   import { shareFolder } from "../../apis/folder.api";
   import { selectedFolder } from "../../store/folder.store";
   import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
+  import browser from "webextension-polyfill";
   const close = () => {
     console.log("close");
     showFolderShareDrawer.set(false);
@@ -65,14 +66,18 @@
   };
 </script>
 
-<div class="fixed bg-gray-600 top-0 right-0 z-50 flex justify-end rounded-xl">
+<div
+  class="fixed top-0 right-0 z-50 flex justify-end rounded-xl bg-macchiato-surface1"
+>
   <div class="flex flex-col w-72 h-screen">
     <button class="p-2" on:click={close}>Close</button>
 
     <!-- Scrollable Container for Users -->
-    <div class="flex-grow overflow-y-auto max-h-[85vh] bg-[#2E3654]">
+    <div class="flex-grow overflow-y-auto max-h-[85vh]">
       {#each users as user}
-        <div class="p-4 rounded-xl border hover:border-[#4C598B]">
+        <div
+          class="p-4 rounded-xl border border-transparent hover:border-macchiato-mauve"
+        >
           <input type="checkbox" on:change={(e) => handleCheck(e, user)} />
           {user.name}
         </div>
