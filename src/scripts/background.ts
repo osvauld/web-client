@@ -9,8 +9,7 @@ browser.runtime.onInstalled.addListener(async () => {
   await browser.storage.local.set({ token: token });
   await browser.storage.local.set({ privateKey: pvtKey });
 });
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => {});
-// Listening for a specific message
+
 
 browser.runtime.onMessage.addListener(async (request, sender) => {
   console.log("receieved message");
@@ -24,7 +23,7 @@ browser.runtime.onMessage.addListener(async (request, sender) => {
   }
   if (request.action === "fillingSignal") {
     try {
-      const tabs = await browser.tabs.query({
+      const tabs: any[] = await browser.tabs.query({
         active: true,
         currentWindow: true,
       });
