@@ -96,7 +96,7 @@ export default [
     },
   },
   {
-    input: "src/content.ts",
+    input: "src/scripts/content.ts",
     output: {
       format: "iife",
       name: "background",

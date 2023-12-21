@@ -1,6 +1,5 @@
 import browser from "webextension-polyfill";
 
-
 const list = [
   { username: "steve@marvel.com", password: "captain@america" },
   { username: "natashaaa@marvel.com", password: "blackwidow@123" },
@@ -24,18 +23,18 @@ const list = [
   { username: "nick@marvel.com", password: "fury123" },
 ];
 
-let count= 0;
+let count = 0;
 
-function fillData(arg1: string, arg2:string) {
+const fillData = (arg1: string, arg2: string) => {
   let usernameElem: Element | null = document.evaluate(
     "(//form//input[   @type='email' or contains(@name, 'username')   or contains(@id, 'email')   or contains(@id, 'username')   or contains(@placeholder, 'Email')   or contains(@placeholder, 'Username')   or contains(ancestor::label, 'Email')   or contains(ancestor::label, 'Username')   or contains(@class, 'email')   or contains(@class, 'username')   or @aria-label='Email'   or @aria-label='Username'   or @aria-labelledby='Email'   or @aria-labelledby='Username' ] | //input[@type='text'])[1]",
     document,
     null,
     XPathResult.FIRST_ORDERED_NODE_TYPE,
     null
-  ).singleNodeValue as Element | null ; 
+  ).singleNodeValue as Element | null;
 
-  if(usernameElem instanceof HTMLInputElement){
+  if (usernameElem instanceof HTMLInputElement) {
     usernameElem.value = arg1;
   }
 
@@ -45,13 +44,12 @@ function fillData(arg1: string, arg2:string) {
     null,
     XPathResult.FIRST_ORDERED_NODE_TYPE,
     null
-  ).singleNodeValue as Element | null ; 
+  ).singleNodeValue as Element | null;
 
-  if(passwordElem instanceof HTMLInputElement){
+  if (passwordElem instanceof HTMLInputElement) {
     passwordElem.value = arg2;
   }
-
-}
+};
 
 function suggestionsDialouge(element: HTMLInputElement, count: number) {
   if (count % 2 === 0) {
@@ -97,9 +95,6 @@ function suggestionsDialouge(element: HTMLInputElement, count: number) {
   }
 }
 
-
-
-
 function appendIcon(element: HTMLInputElement) {
   let icon = document.createElement("div");
   icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3v18h18V3"/></svg>`;
@@ -120,10 +115,10 @@ function appendIcon(element: HTMLInputElement) {
   let rect = element.getBoundingClientRect();
   icon.style.top = `${
     rect.top + window.scrollY + (element.offsetHeight - 25) / 2
-  }px`; 
+  }px`;
   icon.style.left = `${
     rect.left + window.scrollX + element.offsetWidth - 35
-  }px`; 
+  }px`;
   document.body.appendChild(icon);
   window.addEventListener("scroll", () => {
     let rect = element.getBoundingClientRect();
@@ -154,7 +149,7 @@ try {
     XPathResult.FIRST_ORDERED_NODE_TYPE,
     null
   ).singleNodeValue as Element | null;
-  if(usernameElem instanceof HTMLInputElement){
+  if (usernameElem instanceof HTMLInputElement) {
     appendIcon(usernameElem);
   }
 } catch (e) {
@@ -173,7 +168,7 @@ browser.runtime.onMessage.addListener(function (request) {
       null
     ).singleNodeValue as Element | null;
 
-    if(usernameElem instanceof HTMLInputElement){
+    if (usernameElem instanceof HTMLInputElement) {
       usernameElem.value = request?.body[0];
     }
 
@@ -185,9 +180,8 @@ browser.runtime.onMessage.addListener(function (request) {
       null
     ).singleNodeValue as Element | null;
 
-    if(passwordElem instanceof HTMLInputElement){
+    if (passwordElem instanceof HTMLInputElement) {
       passwordElem.value = request?.body[1];
     }
- 
   }
 });
