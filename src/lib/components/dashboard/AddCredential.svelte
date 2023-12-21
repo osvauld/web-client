@@ -7,11 +7,13 @@
   import { addCredential } from "../../apis/credentials.api";
   import { fetchCredentailsByFolder } from "../../apis/credentials.api";
   import { User } from "../../dtos/user.dto";
+  import { scale, fly } from "svelte/transition";
+
   import {
     AddCredentialFieldPayload,
     AddCredentialPayload,
     CredentialFields,
-    encryptedFieldPayload,
+    userAccessPayload,
   } from "../../dtos/credential.dto";
 
   let credentialFields: AddCredentialFieldPayload[] = [];
@@ -44,12 +46,12 @@
       description: description,
       folderId: $selectedFolder.id,
       unencryptedFields: unencryptedFields,
-      encryptedFields: [],
+      userAccessDetails: [],
     };
     for (const user of folderUsers) {
-      let userPayload: encryptedFieldPayload = {
+      let userPayload: userAccessPayload = {
         userId: user.id,
-        fields: [],
+        encryptedFields: [],
       };
       const publicKey = await importPublicKey(user.publicKey);
       for (const toEncryptField of toEncryptFields) {
@@ -57,22 +59,16 @@
           toEncryptField.fieldValue,
           publicKey
         );
-        userPayload.fields.push({
+        userPayload.encryptedFields.push({
           fieldName: toEncryptField.fieldName,
           fieldValue: encryptedFieldValue,
         });
       }
       encryptedFields.push(userPayload);
     }
+    addCredentialPaylod.userAccessDetails = encryptedFields;
 
-    const payload = {
-      name: name,
-      description: description,
-      folderId: $selectedFolder.id,
-      unencryptedFields: unencryptedFields,
-      encryptedFields: encryptedFields,
-    };
-    await addCredential(payload);
+    await addCredential(addCredentialPaylod);
     if ($selectedFolder === null) throw new Error("folder not selected");
     fetchCredentailsByFolder($selectedFolder.id);
     showAddCredentialDrawer.set(false);
@@ -90,80 +86,75 @@
   });
 </script>
 
-<div class="mb-2 p-4 mx-6 mt-6">
-  <p class="font-normal text-4xl">Add Credential</p>
-</div>
-<div class="mx-6">
-  <input
-    class="flex-grow bg-[#2E3654] rounded-full w-[256px] h-10 ml-4"
-    id="name"
-    type="text"
-    placeholder="name"
-    bind:value={name}
-  />
-  {#each credentialFields as field, index}
-    <div class="field-container rounded-sm transition relative">
-      <div class="flex items-center justify-between p-4">
-        <input
-          class="flex-grow mr-2 bg-[#2E3654] rounded-full w-[256px] h-10"
-          id={`key-${index}`}
-          type="text"
-          placeholder="Username"
-          bind:value={field.fieldName}
-        />
-        <input
-          class="flex-grow mr-2 bg-[#2E3654] rounded-full w-[256px] h-10"
-          id={`value-${index}`}
-          type="text"
-          placeholder="Enter value"
-          bind:value={field.fieldValue}
-        />
-        <div class="flex items-center justify-center">
+<div class="bg-macchiato-surface2 rounded-md" in:fly>
+  <div class="mb-2 p-4 mx-6 mt-6">
+    <p class="font-normal text-4xl">Add Credential</p>
+  </div>
+  <div class="mx-6">
+    <input
+      class="flex-grow bg-macchiato-surface0 rounded-full w-[256px] h-10 ml-4"
+      id="name"
+      type="text"
+      placeholder="name"
+      bind:value={name}
+    />
+    {#each credentialFields as field, index}
+      <div class="field-container rounded-sm transition relative">
+        <div class="flex items-center justify-between p-4">
           <input
-            type="checkbox"
-            id={`sensitive-${index}`}
-            bind:checked={field.sensitive}
+            class="flex-grow mr-2 bg-macchiato-surface0 rounded-full w-[256px] h-10"
+            id={`key-${index}`}
+            type="text"
+            placeholder="Username"
+            bind:value={field.fieldName}
           />
-          <label class="ml-2" for={`sensitive-${index}`}> Sensitive </label>
+          <input
+            class="flex-grow mr-2 bg-macchiato-surface0 rounded-full w-[256px] h-10"
+            id={`value-${index}`}
+            type="text"
+            placeholder="Enter value"
+            bind:value={field.fieldValue}
+          />
+          <div class="flex items-center justify-center">
+            <input
+              type="checkbox"
+              id={`sensitive-${index}`}
+              bind:checked={field.sensitive}
+            />
+            <label class="ml-2" for={`sensitive-${index}`}> Sensitive </label>
+          </div>
         </div>
+        <button
+          class="rounded-md pr-2 pl-2 bg-macchiato-lavender flex justify-center items-center ml-5"
+          on:click={() => removeField(index)}
+        >
+          delete
+        </button>
       </div>
+    {/each}
+    <!-- Add secret btn -->
+    <div class="flex mr-24">
       <button
-        class="rounded-full border border-[#4C598B] w-10 h-10 flex justify-center items-center ml-5"
-        on:click={() => removeField(index)}
+        class="py-2 m-4 bg-macchiato-blue flex-1 flex justify-center items-center rounded-md"
+        on:click={addField}
       >
-        delete
+        addField
       </button>
     </div>
-  {/each}
-  <!-- Add secret btn -->
-  <div class="flex mr-24">
+  </div>
+  <!-- Text Area -->
+  <div>
+    <textarea
+      rows="2"
+      class="bg-macchiato-surface0 w-full rounded-md ml-4 mr-4"
+      bind:value={description}
+      placeholder="Enter description about the secret"
+    />
+  </div>
+  <div class="flex justify-start mt-4 pl-4 ml-6">
     <button
-      class="py-2 m-4 bg-[#363F61] flex-1 flex justify-center items-center rounded-lg border-dashed border border-[#3D476E]"
-      on:click={addField}
+      class="bg-macchiato-blue px-[52px] py-2.5 rounded-full mb-6"
+      on:click={saveCredential}>Add credential</button
     >
-      addField
-    </button>
   </div>
 </div>
-<!-- Text Area -->
-<div class="mx-6 px-4 py-5 mr-[120px]">
-  <textarea
-    id="textarea"
-    class="textarea"
-    rows="2"
-    bind:value={description}
-    placeholder="Enter description about the secret"
-  />
-</div>
-<div class="flex justify-start mt-4 pl-4 ml-6">
-  <button
-    class="bg-[#4E46DC] px-[52px] py-2.5 rounded-full mb-6"
-    on:click={saveCredential}>Add credential</button
-  >
-</div>
-
-<style>
-  #textarea {
-    background: #2e3654;
-  }
-</style>

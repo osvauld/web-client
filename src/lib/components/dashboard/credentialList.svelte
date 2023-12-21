@@ -97,10 +97,10 @@
   {/if}
   {#if $showAddCredentialDrawer}
     <button
-      class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
+      class="fixed inset-0 flex items-center justify-center z-50"
       on:click={closeModal}
     >
-      <button class="p-6 rounded shadow-lg" on:click|stopPropagation>
+      <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
         <AddCredential on:close={closeModal} />
       </button>
     </button>
