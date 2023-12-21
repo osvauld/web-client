@@ -36,7 +36,9 @@
           </thead>
           <tbody class="text-xl font-light">
             {#each groupUsers as user}
-              <tr class="hover:border hover:border-blue-900">
+              <tr
+                class="border border-transparent hover:border-macchiato-sky hover:bg-macchiato-surface1"
+              >
                 <td class="py-3 px-6 text-left whitespace-nowrap">
                   {user.name}
                 </td>
