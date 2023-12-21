@@ -26,6 +26,9 @@ const list = [
 let count = 0;
 
 const fillData = (arg1: string, arg2: string) => {
+
+  let box: Element | null = document.querySelector(".osvauld");
+
   let usernameElem: Element | null = document.evaluate(
     "(//form//input[   @type='email' or contains(@name, 'username')   or contains(@id, 'email')   or contains(@id, 'username')   or contains(@placeholder, 'Email')   or contains(@placeholder, 'Username')   or contains(ancestor::label, 'Email')   or contains(ancestor::label, 'Username')   or contains(@class, 'email')   or contains(@class, 'username')   or @aria-label='Email'   or @aria-label='Username'   or @aria-labelledby='Email'   or @aria-labelledby='Username' ] | //input[@type='text'])[1]",
     document,
@@ -36,6 +39,8 @@ const fillData = (arg1: string, arg2: string) => {
 
   if (usernameElem instanceof HTMLInputElement) {
     usernameElem.value = arg1;
+    usernameElem.dispatchEvent(new Event('input', { bubbles: true }));  
+    box?.remove();
   }
 
   let passwordElem: Element | null = document.evaluate(
@@ -48,8 +53,21 @@ const fillData = (arg1: string, arg2: string) => {
 
   if (passwordElem instanceof HTMLInputElement) {
     passwordElem.value = arg2;
+    passwordElem.dispatchEvent(new Event('input', { bubbles: true }));  
+    box?.remove();
   }
+
+
 };
+
+
+window.addEventListener('resize', () => {
+  let box: Element | null = document.querySelector(".osvauld");
+  if(box){
+    count++
+    box.remove();
+  }
+})
 
 function suggestionsDialouge(element: HTMLInputElement, count: number) {
   if (count % 2 === 0) {
