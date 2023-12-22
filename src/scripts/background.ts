@@ -23,14 +23,12 @@ browser.runtime.onMessage.addListener(async (request) => {
   }
   if (request.action === "fillingSignal") {
     try {
-      const tabs: any[] = await browser.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      if (tabs.length === 0) {
+      const [tab]: any[] =  await browser.tabs.query({ active: true, lastFocusedWindow: true });
+      if (tab.length === 0) {
         throw new Error("No active tabs found");
       }
-      await browser.tabs.sendMessage(tabs[0].id, request);
+    
+      await browser.tabs.sendMessage(tab.id, request);
     } catch (error: any) {
       console.error("Error:", error.message);
     }
@@ -42,26 +40,23 @@ browser.runtime.onMessage.addListener(async (request) => {
 });
 
 
-browser.runtime.onMessage.addListener(async (request, sender) => {
+browser.runtime.onMessage.addListener(async (request) => {
   if (request.action === "credSubmitted") {
     let currentUrl = request.url;
     setTimeout(async () => {
       try {
-        const tabs = await browser.tabs.query({
+        const [tab]: browser.Tabs.Tab[] = await browser.tabs.query({
           active: true,
           currentWindow: true,
         });
-
-        if (tabs[0].url === currentUrl) {
-          console.log('Url same');
-         // browser.runtime.sendMessage({ action: "url changed" });
-        } else {
-          console.log('Url changed');
-          //browser.runtime.sendMessage({ action: "sam urle" });
+        if(tab && tab.id){
+          if (tab.url !== currentUrl){
+            await browser.tabs.sendMessage(tab.id, {action: "saveToVault", username: request.username, password: request.password});
+          }
         }
       } catch (error) {
         console.error("Error querying tabs:", error);
       }
-    }, 3000);
+    }, 2000);
   }
 });

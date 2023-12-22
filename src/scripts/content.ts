@@ -35,6 +35,45 @@ let loginButtonExp = "(//button[contains(@type, 'submit') or contains(@id, 'logi
 
 
 
+function showSavePopup(username: string, password: string) {
+  let popup = document.createElement("div");
+  popup.innerHTML = `
+    <div id="savePopup" style="position: fixed; top: 10px; right: 10px; background-color: #fff; padding: 10px; border: 1px solid #ccc; z-index: 999;">
+      <p>Do you want to save the credentials to osvauld?</p>
+      <p>Username: ${username}</p>
+      <p>Password: ${password}</p>
+      <div style="display: flex; justify-content: space-between;">
+      <button id="saveOsvauld" style="background-color: #a6da95; padding: 10px 15px;">Save</button>
+      <button id="discardOsvauld" style="background-color: #ed8796; padding: 10px 15px;">Discard</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  let saveButton = document.getElementById("saveOsvauld");
+  saveButton?.addEventListener("click", function () {
+    console.log("User chose to save credentials to osvauld.");
+    popup.remove();
+  });
+
+
+  let discardButton = document.getElementById("discardOsvauld");
+   discardButton?.addEventListener("click", function () {
+    console.log("User chose not to save credentials to osvauld.");
+    popup.remove();
+  });
+
+
+}
+
+
+browser.runtime.onMessage.addListener((message) => {
+    if (message.action === "saveToVault") {
+      showSavePopup(message.username, message.password);
+    }
+  });
+
 function getElement(name: string){
 
   if(name === 'username'){
@@ -214,98 +253,28 @@ browser.runtime.onMessage.addListener(function (request) {
   }
 });
 
-//This content script is injected on to every page for now.
-//newly added username and password needs to be saved into osvauld after prompting with a small popup asking whenther they need to save this.
-
-//display username and password into console
-//How am I going to capture the credential?
-//What algoritham should I use to identify customer entered username and next page is successfully rendered?
-
-// Initial point should be identifying "Login button"
-
-// Function to show the save popup
-function showSavePopup() {
-  let popup = document.createElement("div");
-  popup.innerHTML = `
-    <div id="savePopup" style="position: fixed; top: 10px; left: 10px; background-color: #fff; padding: 10px; border: 1px solid #ccc;">
-      <p>Do you want to save the credentials to osvauld?</p>
-      <button id="saveButton">Save</button>
-    </div>
-  `;
-
-  document.body.appendChild(popup);
-
-  // Add event listener for the save button
-  let saveButton = document.getElementById("saveButton");
-  saveButton?.addEventListener("click", function () {
-    console.log("User chose to save credentials to osvauld.");
-    // Implement the logic to save credentials to osvauld
-    // ...
-
-    // Remove the popup
-    popup.remove();
-  });
-}
-
-
-// function hasPathChanged(currentUrl: string) {
-
-//   const extractPathname = (url: string) => {
-//     const urlObject = new URL(url);
-//     return urlObject.pathname;
-//   };
-
-//   const initialPath = extractPathname(initialUrl);
-//   const currentPath = extractPathname(currentUrl);
-
-//   return initialPath && currentPath && initialPath !== currentPath;
-// }
 
 
 function getLoginCredentials() {
-  // Find username and password elements
-  console.log('Login button is clicked, getting credentials');
   let usernameElem = getElement("username");
-
   let passwordElem = getElement("password");
 
-  // Check if username and password elements exist
   if (usernameElem && passwordElem) {
-    // Get values entered in the username and password fields
     let usernameValue = (usernameElem as HTMLInputElement).value;
     let passwordValue = (passwordElem as HTMLInputElement).value;
-
-    // Display values in the console
-    console.log("Username: ", usernameValue);
-    console.log("Password: ", passwordValue);
-
-    // So now we have the username and password.
-    // How can we identify it is the correct username and passowrd?
-    // Once the username and password is obtained, wait for 5 seconds or with one check at 1 second 2 second last one at 5 second. At each Interval get url. If the url subdomain is changed, it means we are in and the credentials user enterd were indeed right.
-    // Once determined those were right, need to prompt with a popup on the left top corner of the screen, fixed at one corner asking us to save the credentials to osvauld. If user choses to click save, console that user chosed to save and if not nothing happens and popup goes away
    
-    (async() => {
-      await browser.runtime.sendMessage({action: 'credSubmitted', url: location.href})
-      // content.js
-
-      browser.runtime.onMessage.addListener((message) => {
-        if (message.action === "responding") {
-          console.log("Received responding message in content script!");
-        }
-      });
-
-      //Abve should be made on top
-    })()
-
+    if(usernameValue.length > 3 && passwordValue.length > 3){
+      (async() => {
+        await browser.runtime.sendMessage({action: 'credSubmitted', url: location.href, username: usernameValue, password: passwordValue})
+      })()
+    }
+ 
   } else {
     console.log("Username or password element not found.");
   }
 }
 
-// Find the login button element
 let loginButtonElem = getElement("login");
-
-// Attach click event listener to the login button
 if (loginButtonElem) {
   loginButtonElem.addEventListener("click", getLoginCredentials);
 } else {
