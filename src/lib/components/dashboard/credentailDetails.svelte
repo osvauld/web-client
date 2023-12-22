@@ -23,11 +23,10 @@
     isLoading = true;
     const credentialDetails = await fetchCredentialById($selectedCredential.id);
     credentialDetailsJSON = {
-      ...credentialDetails.data.credential,
-      encryptedData: credentialDetails.data.encryptedData,
-      unencryptedData: credentialDetails.data.unencryptedData,
+      ...credentialDetails.data,
     };
-    users = credentialDetails.data.users;
+    console.log(credentialDetailsJSON);
+    // users = credentialDetails.data.users;
     isLoading = false;
   };
   const unsubscribe = selectedCredential.subscribe(async (value) => {
@@ -36,7 +35,7 @@
   });
 
   const decryptCredential = async () => {
-    const encryptedData = [...credentialDetailsJSON.encryptedData];
+    const encryptedData = [...credentialDetailsJSON.encryptedFields];
     const response = await browser.runtime.sendMessage({
       eventName: "decrypt",
       data: encryptedData,
@@ -44,9 +43,10 @@
 
     credentialDetailsJSON = {
       ...credentialDetailsJSON,
-      encryptedData: response.data,
+      encryptedFields: response.data,
     };
     console.log(credentialDetailsJSON);
+    isLoading = false;
   };
 
   onMount(async () => {
@@ -65,7 +65,7 @@
     <div class="container mx-auto p-4 card rounded-lg h-auto w-full">
       {#if !isLoading}
         <p class="mb-4">{credentialDetailsJSON?.name}</p>
-        {#each credentialDetailsJSON?.unencryptedData as field, index}
+        {#each credentialDetailsJSON?.unencryptedFields as field, index}
           <div class="relative mb-4">
             <label class="label block mb-2" for={`input-${index}`}
               >{field.fieldName}</label
@@ -82,8 +82,8 @@
             </button>
           </div>
         {/each}
-        {#if credentialDetailsJSON?.encryptedData}
-          {#each credentialDetailsJSON.encryptedData as field, index}
+        {#if credentialDetailsJSON?.encryptedFields}
+          {#each credentialDetailsJSON.encryptedFields as field, index}
             <div class="relative mb-4">
               <label class="label block mb-2" for={`input-${index}`}
                 >{field.fieldName}</label
@@ -102,14 +102,6 @@
           {/each}
         {/if}
         <p class="mb-4">{credentialDetailsJSON.description}</p>
-        <div><h2>Access List</h2></div>
-        {#each users as user}
-          <div
-            class="border rounded-md border-transparent hover:border-macchiato-sky p-2"
-          >
-            {user.name}
-          </div>
-        {/each}
       {/if}
     </div>
     <div class="flex justify-center">
