@@ -32,14 +32,9 @@ browser.runtime.onMessage.addListener(async (request) => {
       console.error("Error:", error.message);
     }
   }
-
   if (request.action === "openFullscreenTab") {
     browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
   }
-});
-
-
-browser.runtime.onMessage.addListener(async (request) => {
   if (request.action === "credSubmitted") {
     let currentUrl = request.url;
     setTimeout(async () => {
