@@ -1,10 +1,9 @@
 import browser from "webextension-polyfill";
 import { token, pvtKey } from "../lib/apis/temp";
 import { decryptCredentialFields } from "../lib/utils/crypto";
-// Listening for an installed event
+
 browser.runtime.onInstalled.addListener(async () => {
   console.log("Extension installed successfully!");
-
   browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
   await browser.storage.local.set({ token: token });
   await browser.storage.local.set({ privateKey: pvtKey });
