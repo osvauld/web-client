@@ -1,62 +1,48 @@
 import browser from "webextension-polyfill";
-
-const list = [
-  { username: "steve@marvel.com", password: "captain@america" },
-  { username: "natashaaa@marvel.com", password: "blackwidow@123" },
-  { username: "bruce@marvel.com", password: "hulk123" },
-  { username: "clint@marvel.com", password: "hawkeye@123" },
-  { username: "thor@marvel.com", password: "godofthunder123" },
-  { username: "wanda@marvel.com", password: "scarletwitch@123" },
-  { username: "peter@marvel.com", password: "spiderman@123" },
-  { username: "logan@marvel.com", password: "wolverine123" },
-  { username: "ororo@marvel.com", password: "storm@123" },
-  { username: "scott@marvel.com", password: "cyclops123" },
-  { username: "jean@marvel.com", password: "phoenix@123" },
-  { username: "rhodey@marvel.com", password: "war_machine@123" },
-  { username: "vision@marvel.com", password: "synthezoid123" },
-  { username: "peterq@marvel.com", password: "starlord@123" },
-  { username: "groot@marvel.com", password: "iamgroot123" },
-  { username: "rocket@marvel.com", password: "rocketraccoon@123" },
-  { username: "gamora@marvel.com", password: "deadliestwoman123" },
-  { username: "drax@marvel.com", password: "thedestroyer@123" },
-  { username: "mantis@marvel.com", password: "celestialbeing@123" },
-  { username: "nick@marvel.com", password: "fury123" },
-];
-
+import { list } from "../lib/components/content/constants";
+import { craftSaveDialouge, createIcon, createSuggestionBox, createSuggestionChildren } from "../lib/components/content/nodeGenerators";
+import { getElement } from "../lib/components/content/xpaths"
+ 
 let count = 0;
 
-const fillData = (arg1: string, arg2: string) => {
+function showSavePopup(username: string, password: string) {
+  let popup = document.createElement("div");
+  popup.innerHTML = craftSaveDialouge(username, password);
+
+  document.body.appendChild(popup);
+
+  let saveButton = document.getElementById("saveOsvauld");
+  saveButton?.addEventListener("click", function () {
+    console.log("User chose to save credentials to osvauld.");
+    popup.remove();
+  });
+
+
+  let discardButton = document.getElementById("discardOsvauld");
+   discardButton?.addEventListener("click", function () {
+    console.log("User chose not to save credentials to osvauld.");
+    popup.remove();
+  });
+}
+
+
+const fillCredentials = (arg1: string, arg2: string) => {
 
   let box: Element | null = document.querySelector(".osvauld");
 
-  let usernameElem: Element | null = document.evaluate(
-    "(//form//input[   @type='email' or contains(@name, 'username')   or contains(@id, 'email')   or contains(@id, 'username')   or contains(@placeholder, 'Email')   or contains(@placeholder, 'Username')   or contains(ancestor::label, 'Email')   or contains(ancestor::label, 'Username')   or contains(@class, 'email')   or contains(@class, 'username')   or @aria-label='Email'   or @aria-label='Username'   or @aria-labelledby='Email'   or @aria-labelledby='Username' ] | //input[@type='text'])[1]",
-    document,
-    null,
-    XPathResult.FIRST_ORDERED_NODE_TYPE,
-    null
-  ).singleNodeValue as Element | null;
-
+  let usernameElem = getElement("username");
   if (usernameElem instanceof HTMLInputElement) {
     usernameElem.value = arg1;
     usernameElem.dispatchEvent(new Event('input', { bubbles: true }));  
     box?.remove();
   }
 
-  let passwordElem: Element | null = document.evaluate(
-    "(//form//input[ @type='password'or contains(@name, 'password')or contains(@id, 'password')or contains(@placeholder, 'Password')or contains(ancestor::label, 'Password')or contains(@class, 'password')or @aria-label='Password'or @aria-labelledby='Password'] | //input[@type='password'])[1]",
-    document,
-    null,
-    XPathResult.FIRST_ORDERED_NODE_TYPE,
-    null
-  ).singleNodeValue as Element | null;
-
+  let passwordElem = getElement("password");
   if (passwordElem instanceof HTMLInputElement) {
     passwordElem.value = arg2;
     passwordElem.dispatchEvent(new Event('input', { bubbles: true }));  
     box?.remove();
   }
-
 
 };
 
@@ -74,38 +60,13 @@ function suggestionsDialouge(element: HTMLInputElement, count: number) {
     let box: Element | null = document.querySelector(".osvauld");
     box instanceof Element ? box?.remove() : undefined;
   } else {
-    let suggestionBox = document.createElement("div");
-    suggestionBox.style.position = "absolute";
-    suggestionBox.style.left = element.getBoundingClientRect().left + "px";
-    suggestionBox.style.top =
-      element.getBoundingClientRect().bottom + window.scrollY + "px";
-    suggestionBox.style.borderRadius = "5px";
-    suggestionBox.style.width = element.offsetWidth + "px";
-    suggestionBox.style.zIndex = "1000"; // To ensure it's above other elements
-    suggestionBox.style.background = "#181926";
-    suggestionBox.style.color = "#fff";
-    suggestionBox.classList.add("osvauld");
-    suggestionBox.style.fontSize = "16px";
-    suggestionBox.style.border = "1px solid #ddd";
-    suggestionBox.style.maxHeight = "280px";
-    suggestionBox.style.overflowY = "scroll";
+    let suggestionBox = createSuggestionBox(element)
     document.body.appendChild(suggestionBox);
     list
       .map((item) => {
-        const mappedDiv = document.createElement("div");
-        mappedDiv.style.paddingTop = "10px";
-        mappedDiv.style.paddingBottom = "10px";
-        mappedDiv.style.paddingLeft = "10px";
-        mappedDiv.style.borderBottom = "1px solid #6e738d";
-        mappedDiv.style.display = "flex";
-        mappedDiv.style.justifyContent = "start";
-        mappedDiv.style.alignItems = "center";
-        mappedDiv.style.cursor = "pointer";
-        mappedDiv.style.color = "#b7bdf8";
-        mappedDiv.innerText = item.username;
-
+        let mappedDiv = createSuggestionChildren(item.username);
         mappedDiv.addEventListener("click", () => {
-          fillData(item.username, item.password);
+          fillCredentials(item.username, item.password);
         });
         return mappedDiv;
       })
@@ -114,15 +75,7 @@ function suggestionsDialouge(element: HTMLInputElement, count: number) {
 }
 
 function appendIcon(element: HTMLInputElement) {
-  let icon = document.createElement("div");
-  icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3v18h18V3"/></svg>`;
-  icon.style.position = "absolute";
-  icon.style.height = "20px";
-  icon.style.width = "20px";
-  icon.style.zIndex = "10";
-  icon.style.pointerEvents = "none";
-  icon.style.cursor = "pointer";
-  icon.style.pointerEvents = "auto";
+  let icon = createIcon();
 
   icon.addEventListener("click", function (event) {
     event.stopPropagation();
@@ -137,6 +90,7 @@ function appendIcon(element: HTMLInputElement) {
   icon.style.left = `${
     rect.left + window.scrollX + element.offsetWidth - 35
   }px`;
+
   document.body.appendChild(icon);
   window.addEventListener("scroll", () => {
     let rect = element.getBoundingClientRect();
@@ -160,13 +114,7 @@ function appendIcon(element: HTMLInputElement) {
 }
 
 try {
-  let usernameElem: Element | null = document.evaluate(
-    "(//form//input[   @type='email' or contains(@name, 'username')   or contains(@id, 'email')   or contains(@id, 'username')   or contains(@placeholder, 'Email')   or contains(@placeholder, 'Username')   or contains(ancestor::label, 'Email')   or contains(ancestor::label, 'Username')   or contains(@class, 'email')   or contains(@class, 'username')   or @aria-label='Email'   or @aria-label='Username'   or @aria-labelledby='Email'   or @aria-labelledby='Username' ] | //input[@type='text'])[1]",
-    document,
-    null,
-    XPathResult.FIRST_ORDERED_NODE_TYPE,
-    null
-  ).singleNodeValue as Element | null;
+  let usernameElem = getElement('username');
   if (usernameElem instanceof HTMLInputElement) {
     appendIcon(usernameElem);
   }
@@ -176,30 +124,49 @@ try {
 
 browser.runtime.onMessage.addListener(function (request) {
   if (request.action === "fillingSignal") {
-    console.log("Message received in content script:", request.body);
-
-    let usernameElem: Element | null = document.evaluate(
-      "(//form//input[   @type='email' or contains(@name, 'username')   or contains(@id, 'email')   or contains(@id, 'username')   or contains(@placeholder, 'Email')   or contains(@placeholder, 'Username')   or contains(ancestor::label, 'Email')   or contains(ancestor::label, 'Username')   or contains(@class, 'email')   or contains(@class, 'username')   or @aria-label='Email'   or @aria-label='Username'   or @aria-labelledby='Email'   or @aria-labelledby='Username' ] | //input[@type='text'])[1]",
-      document,
-      null,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    ).singleNodeValue as Element | null;
+    let usernameElem = getElement('username');
 
     if (usernameElem instanceof HTMLInputElement) {
       usernameElem.value = request?.body[0];
     }
 
-    let passwordElem: Element | null = document.evaluate(
-      "(//form//input[ @type='password'or contains(@name, 'password')or contains(@id, 'password')or contains(@placeholder, 'Password')or contains(ancestor::label, 'Password')or contains(@class, 'password')or @aria-label='Password'or @aria-labelledby='Password'] | //input[@type='password'])[1]",
-      document,
-      null,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    ).singleNodeValue as Element | null;
+    let passwordElem = getElement('password');
 
     if (passwordElem instanceof HTMLInputElement) {
       passwordElem.value = request?.body[1];
     }
   }
+
+  if (request.action === "saveToVault") {
+    showSavePopup(request.username, request.password);
+  }
+
+
 });
+
+
+function getLoginCredentials() {
+  let usernameElem = getElement("username");
+  let passwordElem = getElement("password");
+
+  if (usernameElem && passwordElem) {
+    let usernameValue = (usernameElem as HTMLInputElement).value;
+    let passwordValue = (passwordElem as HTMLInputElement).value;
+   
+    if(usernameValue.length > 3 && passwordValue.length > 3){
+      (async() => {
+        await browser.runtime.sendMessage({action: 'credSubmitted', url: location.href, username: usernameValue, password: passwordValue})
+      })()
+    }
+ 
+  } else {
+    console.log("Username or password element not found.");
+  }
+}
+
+let loginButtonElem = getElement("login");
+if (loginButtonElem) {
+  loginButtonElem.addEventListener("click", getLoginCredentials);
+} else {
+  console.log("Login button not found.");
+}
