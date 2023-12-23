@@ -101,13 +101,18 @@
             </div>
           {/each}
         {/if}
-        <p class="mb-4">{credentialDetailsJSON.description}</p>
+        <textarea
+          class="mt-4 w-full h-auto min-h-[4rem] max-h-[20rem] bg-macchiato-overlay0 rounded-md scrollbar-thin"
+        >
+          {credentialDetailsJSON.description}
+        </textarea>
       {/if}
     </div>
     <div class="flex justify-center">
       <button
         on:click={decryptCredential}
-        class="p-2 bg-macchiato-red rounded-md">DECRYPT</button
+        class="p-2 bg-macchiato-red rounded-md text-macchiato-surface0"
+        >DECRYPT</button
       >
     </div>
   </div>

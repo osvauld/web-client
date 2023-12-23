@@ -65,7 +65,7 @@
   };
 </script>
 
-<div class="bg-macchiato-surface1">
+<div class="bg-macchiato-mantle">
   {#if $selectedFolder}
     <div class="flex items-center p-4">
       <h1 class="text-4xl p-4 italic">{$selectedFolder.name}</h1>
@@ -78,18 +78,18 @@
       </div>
 
       <button
-        class="bg rounded-md p-2 pl-2 mr-2 bg-macchiato-blue"
+        class="bg rounded-md p-2 pl-2 mr-2 bg-macchiato-blue text-macchiato-surface0"
         on:click={openModal}>Create Credential</button
       >
       {#if checkedCards.length === 0}
         <!-- TODO: update to share credentials in the same api -->
         <button
-          class="bg-macchiato-sapphire rounded-md p-2 pl-2 pr-2"
+          class="bg-macchiato-sapphire rounded-md p-2 pl-2 pr-2 text-macchiato-surface0"
           on:click={openshareFolderDrawer}>Share Folder</button
         >
       {:else}
         <button
-          class="bg-[#4E46DC] rounded-md p-2 pl-2"
+          class="bg-macchiato-sapphire rounded-md p-2 pl-2 text-macchiato-surface0"
           on:click={openShareCredentialDrawer}>Share Secrets</button
         >
       {/if}
@@ -107,7 +107,7 @@
   {/if}
   {#if $showFolderShareDrawer}
     <button
-      class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
+      class="bg-transparent fixed inset-0 flex items-center justify-center z-50"
       on:click={() => showFolderShareDrawer.set(false)}
     >
       <button class="p-6 rounded shadow-lg" on:click|stopPropagation>
@@ -137,10 +137,10 @@
     <div class="flex flex-wrap p-6 w-full">
       {#each $credentialStore as credential}
         <div
-          class="mb-6 mr-2 flex-none hover:border hover:border-macchiato-green"
+          class="mb-6 mr-2 flex-none hover:border hover:border-macchiato-pink"
         >
           <button
-            class="container mx-auto p-4 relative rounded-lg group bg-macchiato-surface0"
+            class="container mx-auto p-4 relative rounded-lg group bg-macchiato-base"
             on:click={() => selectCredential(credential)}
             on:keydown={(e) => {
               if (e.key === "Enter") {
@@ -156,7 +156,7 @@
             <p class="mb-4 text-left">{credential.name}</p>
             <!-- Scrollable area for field names and values, starting after the first two fields -->
             <div
-              class="overflow-y-auto max-h-[260px] min-h-[260px] scrollbar-thin"
+              class="overflow-y-auto max-h-[280px] min-h-[280px] scrollbar-thin"
             >
               {#each credential?.unencryptedData as field, index}
                 <div class="mb-4">
@@ -166,7 +166,7 @@
                   >
                   <div class="relative">
                     <input
-                      class={`input pr-10 w-full rounded-2xl items-center bg-macchiato-surface0 border-macchiato-teal`}
+                      class={`input pr-10 w-full rounded-2xl items-center bg-macchiato-surface0 border-macchiato-lavender`}
                       type="text"
                       value={field.fieldValue}
                     />
@@ -180,7 +180,10 @@
               {/each}
             </div>
             <!-- Static description at the bottom -->
-            <p class="mb-4">{credential.description}</p>
+            <textarea
+              class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-macchiato-surface0 rounded-md scrollbar-thin border-macchiato-lavender"
+              >{credential.description}</textarea
+            >
           </button>
         </div>
       {/each}

@@ -11,7 +11,7 @@
 <main
   class="
     bg-macchiato-crust
-   w-screen h-screen text-macchiato-text"
+   w-screen h-screen text-macchiato-text text-lg"
 >
   <div class="flex h-full">
     <div class="w-1/6 overflow-auto scrollbar-thin">

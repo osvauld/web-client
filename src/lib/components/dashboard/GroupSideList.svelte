@@ -17,7 +17,7 @@
 
 <div>
   <button
-    class=" bg-macchiato-maroon rounded-full p-2 pl-8 pr-8"
+    class=" bg-macchiato-maroon rounded-full p-2 pl-8 pr-8 text-macchiato-crust"
     on:click={openModal}>Add Group</button
   >
   {#if $showAddGroupDrawer}

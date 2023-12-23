@@ -23,7 +23,7 @@
 
 <div class="p-2">
   <button
-    class="bg-macchiato-red rounded-full p-2 pl-8 pr-8 mb-4"
+    class="bg-macchiato-red rounded-full p-2 pl-8 pr-8 mb-4 text-macchiato-base"
     on:click={openModal}
     >Add Folder
   </button>
@@ -39,20 +39,16 @@
   {/if}
   <ul>
     {#each $folderStore as folder}
-      <li
-        class={` ${
+      <button
+        on:click={() => selectFolder(folder)}
+        class={`p-2 w-full text-lg rounded-2xl flex items-center cursor-pointer ${
           $selectedFolder === folder
-            ? "bg-macchiato-overlay1 border border-macchiato-flamingo "
-            : "hover:border hover:border-macchiato-teal "
+            ? "bg-macchiato-mauve border border-macchiato-flamingo text-macchiato-crust"
+            : "hover:border hover:border-macchiato-teal text-macchiato-subtext1 "
         } rounded-md`}
       >
-        <button
-          on:click={() => selectFolder(folder)}
-          class={`p-2 text-lg rounded-2xl flex items-center cursor-pointer text-macchiato-subtext1`}
-        >
-          {folder.name}
-        </button>
-      </li>
+        {folder.name}
+      </button>
     {/each}
   </ul>
 </div>
