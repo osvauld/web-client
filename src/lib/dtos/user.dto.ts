@@ -4,3 +4,7 @@ export type User = {
   username: string;
   publicKey: string;
 };
+
+export type UserWithAccessType = User & {
+  accessType: string;
+};

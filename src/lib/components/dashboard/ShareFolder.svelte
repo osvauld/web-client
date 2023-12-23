@@ -1,21 +1,28 @@
 <script lang="ts">
-  import { showFolderShareDrawer } from "../../store/ui.store";
+  import browser from "webextension-polyfill";
+  import { fly } from "svelte/transition";
   import {
     fetchEncryptedCredentialsFields,
     shareCredential,
   } from "../../apis/credentials.api";
   import { shareFolder } from "../../apis/folder.api";
+
   import { selectedFolder } from "../../store/folder.store";
+  import { showFolderShareDrawer } from "../../store/ui.store";
+
   import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
-  import browser from "webextension-polyfill";
-  import { fly } from "svelte/transition";
+
+  import { User, UserWithAccessType } from "../../dtos/user.dto";
+  import { ShareCredentialPayload } from "../../dtos/credential.dto";
+
+  export let users: User[];
+  let selectedUsers: UserWithAccessType[] = [];
+
   const close = () => {
     showFolderShareDrawer.set(false);
   };
 
-  export let users;
-  let selectedUsers = [];
-  function handleCheck(e, user) {
+  function handleCheck(e: any, user: User) {
     if (e.target.checked) {
       selectedUsers = [...selectedUsers, { ...user, accessType: "read" }];
     } else {
@@ -23,7 +30,7 @@
     }
   }
 
-  const handleRoleChange = (e, user) => {
+  const handleRoleChange = (e: any, user: User) => {
     const index = selectedUsers.findIndex((u) => u.id === user.id);
     selectedUsers[index].accessType = e.target.value;
     console.log(selectedUsers);
@@ -31,13 +38,13 @@
   const shareFolderHandler = async () => {
     // TODO: update to share credentials in the same api
     console.log("share folder button");
+    if (!$selectedFolder) throw new Error("folder not selected");
     const responseJson = await fetchEncryptedCredentialsFields(
       $selectedFolder.id
     );
     const creds = responseJson.data;
-    const unencryptedData = [];
-    const payload = [];
-    const shareFolderPayload = {
+    const payload: ShareCredentialPayload[] = [];
+    const shareFolderPayload: any = {
       folderId: $selectedFolder.id,
       users: [],
     };
@@ -47,16 +54,13 @@
         accessType: user.accessType,
       });
     }
-    console.log(shareFolderPayload);
     await shareFolder(shareFolderPayload);
     for (const [index, cred] of creds.entries()) {
       const response = await browser.runtime.sendMessage({
         eventName: "decrypt",
         data: cred.encryptedFields,
       });
-      console.log(response);
       payload[index] = { credentialId: cred.id, users: [] };
-      unencryptedData.push({ fields: response.data, id: cred.id });
       for (const user of selectedUsers) {
         const publicKey = await importPublicKey(user.publicKey);
         const fields = [];
@@ -70,7 +74,11 @@
             fieldValue: encryptedFieldValue,
           });
         }
-        payload[index].users.push({ userId: user.id, fields: fields });
+        payload[index].users.push({
+          userId: user.id,
+          fields: fields,
+          accessType: user.accessType,
+        });
       }
     }
     await shareCredential({ credentialList: payload });

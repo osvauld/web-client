@@ -1,15 +1,17 @@
-<script>
+<script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { selectedCredential } from "../../store/credential.store";
-  import { fetchCredentialById } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
   import CopyIcon from "../basic/copyIcon.svelte";
+
+  import { selectedCredential } from "../../store/credential.store";
+  import { fetchCredentialById } from "../../apis/credentials.api";
+  import { CredentialDetails } from "../../dtos/credential.dto";
   let isLoading = true;
   // TODO: render selected credential when is loading true
   export function close() {
     selectedCredential.set(null);
   }
-  async function copyToClipboard(text) {
+  async function copyToClipboard(text: string) {
     try {
       await navigator.clipboard.writeText(text);
       console.log("Text copied to clipboard");
@@ -17,10 +19,11 @@
       console.error("Failed to copy: ", err);
     }
   }
-  let users = [];
-  let credentialDetailsJSON = {};
+  let credentialDetailsJSON: CredentialDetails;
   const updateCredentailDetails = async () => {
     isLoading = true;
+    if ($selectedCredential === null)
+      throw new Error("credential not selected");
     const credentialDetails = await fetchCredentialById($selectedCredential.id);
     credentialDetailsJSON = {
       ...credentialDetails.data,
@@ -76,7 +79,9 @@
             />
             <button
               class="right-2 absolute top-[calc(50%+10px)]"
-              on:click={copyToClipboard(field.fieldValue)}
+              on:click={() => {
+                copyToClipboard(field.fieldValue);
+              }}
             >
               <CopyIcon />
             </button>
@@ -94,7 +99,7 @@
               />
               <button
                 class="right-2 absolute top-[calc(50%+10px)]"
-                on:click={copyToClipboard(field.fieldValue)}
+                on:click={() => copyToClipboard(field.fieldValue)}
               >
                 <CopyIcon />
               </button>

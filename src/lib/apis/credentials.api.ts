@@ -1,5 +1,5 @@
 import { baseUrl, token } from "./temp";
-import { credentialStore, selectedCredential } from "../store/credential.store";
+import { credentialStore } from "../store/credential.store";
 export const fetchCredentailsByFolder = async (folderId: string) => {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${token}`);

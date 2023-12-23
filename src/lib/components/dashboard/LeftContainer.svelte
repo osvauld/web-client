@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Logo from "../basic/logo.svelte";
   import Toggle from "../basic/toggle.svelte";
   import SideList from "./SideList.svelte";

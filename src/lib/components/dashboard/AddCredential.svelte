@@ -1,24 +1,31 @@
 <script lang="ts">
-  import { fetchFolderUsers } from "../../apis/folder.api";
-  import { selectedFolder } from "../../store/folder.store";
-  import { showAddCredentialDrawer } from "../../store/ui.store";
   import { onMount } from "svelte";
-  import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
-  import { addCredential } from "../../apis/credentials.api";
-  import { fetchCredentailsByFolder } from "../../apis/credentials.api";
-  import { User } from "../../dtos/user.dto";
   import { fly } from "svelte/transition";
 
+  import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
+
+  import { selectedFolder } from "../../store/folder.store";
+  import { showAddCredentialDrawer } from "../../store/ui.store";
+
+  import { addCredential } from "../../apis/credentials.api";
+  import { fetchCredentailsByFolder } from "../../apis/credentials.api";
+  import { fetchFolderUsers } from "../../apis/folder.api";
+
+  import { User } from "../../dtos/user.dto";
   import {
     AddCredentialFieldPayload,
     AddCredentialPayload,
+    UserAccessPayload,
     CredentialFields,
-    userAccessPayload,
   } from "../../dtos/credential.dto";
 
   let credentialFields: AddCredentialFieldPayload[] = [];
   let description = "";
   let name = "";
+  let folderUsers: User[] = [];
+  let userAccessPayload: UserAccessPayload[] = [];
+  let addCredentialPaylod: AddCredentialPayload;
+
   const addField = () => {
     let newField = { fieldName: "", fieldValue: "", sensitive: false };
     credentialFields = [...credentialFields, newField];
@@ -28,6 +35,7 @@
     credentialFields.splice(index, 1);
     credentialFields = [...credentialFields];
   };
+
   const saveCredential = async () => {
     if ($selectedFolder === null) throw new Error("folder not selected");
     const unencryptedFields: CredentialFields[] = [];
@@ -39,9 +47,7 @@
         toEncryptFields.push(field);
       }
     }
-
-    let encryptedFields = [];
-    let addCredentialPaylod: AddCredentialPayload = {
+    addCredentialPaylod = {
       name: name,
       description: description,
       folderId: $selectedFolder.id,
@@ -49,7 +55,7 @@
       userAccessDetails: [],
     };
     for (const user of folderUsers) {
-      let userPayload: userAccessPayload = {
+      let userPayload: UserAccessPayload = {
         userId: user.id,
         encryptedFields: [],
       };
@@ -64,17 +70,15 @@
           fieldValue: encryptedFieldValue,
         });
       }
-      encryptedFields.push(userPayload);
+      userAccessPayload.push(userPayload);
     }
-    addCredentialPaylod.userAccessDetails = encryptedFields;
-
+    addCredentialPaylod.userAccessDetails = userAccessPayload;
     await addCredential(addCredentialPaylod);
     if ($selectedFolder === null) throw new Error("folder not selected");
     fetchCredentailsByFolder($selectedFolder.id);
     showAddCredentialDrawer.set(false);
   };
 
-  let folderUsers: User[] = [];
   onMount(async () => {
     credentialFields = [
       { fieldName: "Username", fieldValue: "", sensitive: false },

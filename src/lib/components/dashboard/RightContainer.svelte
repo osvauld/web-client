@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
   import CredentialList from "./credentialList.svelte";
-  import { selectedPage } from "../../store/ui.store";
   import GroupList from "./GroupList.svelte";
+
+  import { selectedPage } from "../../store/ui.store";
 </script>
 
 <div class="flex flex-col h-full">

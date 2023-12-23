@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { Credential } from "../dtos/credential.dto";
+import { CredentialBase } from "../dtos/credential.dto";
 
-export const credentialStore = writable<Credential[]>([]);
-export const selectedCredential = writable<Credential | null>(null);
+export const credentialStore = writable<CredentialBase[]>([]);
+export const selectedCredential = writable<CredentialBase | null>(null);

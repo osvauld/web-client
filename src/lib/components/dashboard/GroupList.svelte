@@ -1,9 +1,13 @@
 <script lang="ts">
-  import { fetchGroupUsers } from "../../apis/group.api";
   import { onMount, onDestroy } from "svelte";
-  import { selectedGroup } from "../../store/group.store";
-  import { User } from "../../dtos/user.dto";
   import { Unsubscriber } from "svelte/store";
+
+  import { selectedGroup } from "../../store/group.store";
+
+  import { User } from "../../dtos/user.dto";
+
+  import { fetchGroupUsers } from "../../apis/group.api";
+
   let groupUsers: User[] = [];
   let unsubscribe: Unsubscriber;
 

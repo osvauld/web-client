@@ -1,8 +1,9 @@
-<script>
-  let name = "";
-  let description = "";
+<script lang="ts">
   import { createFolder, fetchAllFolders } from "../../apis/folder.api";
   import { showAddFolderDrawer } from "../../store/ui.store";
+
+  let name = "";
+  let description = "";
 
   const addFolderFunc = async () => {
     const payload = {
