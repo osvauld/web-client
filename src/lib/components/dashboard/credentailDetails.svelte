@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
+  import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
   import CopyIcon from "../basic/copyIcon.svelte";
 
@@ -60,9 +61,13 @@
   });
 </script>
 
-<div class="fixed bg-gray-600 top-0 right-0 z-50 flex justify-end rounded-xl">
+<div
+  class="fixed bg-macchiato-base top-0 right-0 z-50 flex justify-end rounded-xl"
+  in:fly
+  out:fly
+>
   <div
-    class=" w-64 h-full shadow-xl transition-transform transform translate-x-0 bg-macchiato-surface1"
+    class=" w-64 h-full shadow-xl transition-transform transform translate-x-0"
   >
     <button class="p-2" on:click={close}>Close</button>
     <div class="container mx-auto p-4 card rounded-lg h-auto w-full">
@@ -74,7 +79,7 @@
               >{field.fieldName}</label
             >
             <input
-              class="input pr-10 w-full items-center bg-macchiato-surface2"
+              class="input pr-10 w-full items-center bg-macchiato-surface0"
               value={field.fieldValue}
             />
             <button
@@ -94,7 +99,7 @@
                 >{field.fieldName}</label
               >
               <input
-                class="input pr-10 w-full items-center bg-macchiato-surface2"
+                class="input pr-10 w-full items-center bg-macchiato-surface0"
                 value={field.fieldValue}
               />
               <button
@@ -107,7 +112,7 @@
           {/each}
         {/if}
         <textarea
-          class="mt-4 w-full h-auto min-h-[4rem] max-h-[20rem] bg-macchiato-overlay0 rounded-md scrollbar-thin"
+          class="mt-4 w-full h-auto min-h-[4rem] max-h-[20rem] bg-macchiato-surface0 rounded-md scrollbar-thin"
         >
           {credentialDetailsJSON.description}
         </textarea>

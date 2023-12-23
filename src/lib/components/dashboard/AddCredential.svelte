@@ -90,7 +90,7 @@
   });
 </script>
 
-<div class="bg-macchiato-base rounded-md" in:fly>
+<div class="bg-macchiato-base rounded-md" in:fly out:fly>
   <div class="mb-2 p-4 mx-6 mt-6">
     <p class="font-normal text-4xl">Add Credential</p>
   </div>
