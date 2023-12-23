@@ -1,11 +1,13 @@
-export type Credential = {
+export type CredentialBase = {
   id: string;
   description: string;
   name: string;
-  unencryptedData: CredentialFields[];
-  encryptedData?: CredentialFields[];
+  unencryptedFields: CredentialFields[];
 };
 
+export type CredentialDetails = CredentialBase & {
+  encryptedFields: CredentialFields[];
+};
 export type CredentialFields = {
   fieldName: string;
   fieldValue: string;
@@ -20,12 +22,21 @@ export type AddCredentialPayload = {
   description: string;
   folderId: string;
   unencryptedFields: CredentialFields[];
-  userAccessDetails: userAccessPayload[];
+  userAccessDetails: UserAccessPayload[];
 };
 
-export type userAccessPayload = {
+export type UserAccessPayload = {
   userId: string;
-  accessType?: string;
-  groupId?: string;
   encryptedFields: CredentialFields[];
+};
+
+export type ShareCredentialPayload = {
+  credentialId: string;
+  users: UserPayaloadForShare[];
+};
+
+type UserPayaloadForShare = {
+  userId: string;
+  fields: CredentialFields[];
+  accessType: string;
 };

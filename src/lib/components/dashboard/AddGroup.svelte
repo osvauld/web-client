@@ -1,8 +1,8 @@
-<script>
-  let name = "";
+<script lang="ts">
   import { fetchAllUserGroups, createGroup } from "../../apis/group.api";
   import { showAddGroupDrawer } from "../../store/ui.store";
 
+  let name = "";
   const addGroupFunc = async () => {
     const payload = {
       name: name,

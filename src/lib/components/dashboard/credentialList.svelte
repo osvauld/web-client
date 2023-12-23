@@ -1,4 +1,17 @@
 <script lang="ts">
+  //components
+  import CredentialDetails from "./credentailDetails.svelte";
+  import AddCredential from "./AddCredential.svelte";
+  import ShareFolder from "./ShareFolder.svelte";
+  import ShareCredential from "./ShareCredential.svelte";
+  import CopyIcon from "../basic/copyIcon.svelte";
+  //apis
+  import { fetchAllUsers } from "../../apis/user.api";
+  import { fetchFolderUsers } from "../../apis/folder.api";
+  import { CredentialBase } from "../../dtos/credential.dto";
+  import { User } from "../../dtos/user.dto";
+
+  // stores
   import {
     credentialStore,
     selectedCredential,
@@ -9,17 +22,11 @@
     showCredentialShareDrawer,
   } from "../../store/ui.store";
   import { selectedFolder } from "../../store/folder.store";
-  import CredentialDetails from "./credentailDetails.svelte";
-  import AddCredential from "./AddCredential.svelte";
-  import ShareFolder from "./ShareFolder.svelte";
-  import CopyIcon from "../basic/copyIcon.svelte";
-  import { fetchAllUsers } from "../../apis/user.api";
-  import { fetchFolderUsers } from "../../apis/folder.api";
-  import ShareCredential from "./ShareCredential.svelte";
-  import { Credential } from "../../dtos/credential.dto";
-  import { User } from "../../dtos/user.dto";
-  let checkedCards: Credential[] = [];
+
+  let checkedCards: CredentialBase[] = [];
   let showDrawer = false;
+  let users: User[] = [];
+
   const openModal = () => {
     showAddCredentialDrawer.set(true);
   };
@@ -27,26 +34,28 @@
   const closeModal = () => {
     showAddCredentialDrawer.set(false);
   };
-  const selectCredential = (credential: Credential) => {
+
+  const selectCredential = (credential: CredentialBase) => {
     selectedCredential.set(credential);
     showDrawer = true;
   };
-  function handleCheck(e: any, card: Credential) {
+
+  function handleCheck(e: any, card: CredentialBase) {
     if (e.target.checked) {
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter((c) => c.id !== card.id);
     }
   }
-  function isChecked(credential: Credential) {
+
+  function isChecked(credential: CredentialBase) {
     return checkedCards.includes(credential);
   }
-  let users: User[] = [];
+
   const openshareFolderDrawer = async () => {
     const allUsers = await fetchAllUsers();
     if ($selectedFolder === null) throw new Error("folder not selected");
     const folderUsers = await fetchFolderUsers($selectedFolder.id);
-
     users = allUsers.filter((user) => {
       return !folderUsers.some((folderUser) => folderUser.id === user.id);
     });
@@ -120,7 +129,7 @@
   {/if}
   {#if $showCredentialShareDrawer}
     <button
-      class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
+      class="bg-transparent fixed inset-0 flex items-center justify-center z-50"
       on:click={() => showCredentialShareDrawer.set(false)}
     >
       <button class="p-6 rounded shadow-lg" on:click|stopPropagation>
@@ -158,7 +167,7 @@
             <div
               class="overflow-y-auto max-h-[280px] min-h-[280px] scrollbar-thin"
             >
-              {#each credential?.unencryptedData as field, index}
+              {#each credential?.unencryptedFields as field, index}
                 <div class="mb-4">
                   <label
                     class="label block mb-2 text-left"

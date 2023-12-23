@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { writable } from "svelte/store";
   import { isLoggedIn } from "../../store/ui.store";
   import Eye from "../basic/eye.svelte";

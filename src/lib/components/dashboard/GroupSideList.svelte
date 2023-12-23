@@ -1,9 +1,12 @@
-<script>
-  import { groupStore, selectedGroup } from "../../store/group.store";
-  import { showAddGroupDrawer } from "../../store/ui.store";
+<script lang="ts">
   import AddGroup from "./AddGroup.svelte";
 
-  const selectGroup = (group) => {
+  import { groupStore, selectedGroup } from "../../store/group.store";
+  import { showAddGroupDrawer } from "../../store/ui.store";
+
+  import { Group } from "../../dtos/group.dto";
+
+  const selectGroup = (group: Group) => {
     selectedGroup.set(group);
   };
   const openModal = () => {

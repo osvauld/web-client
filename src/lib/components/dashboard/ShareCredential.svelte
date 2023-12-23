@@ -1,33 +1,46 @@
-<script>
+<script lang="ts">
+  import browser from "webextension-polyfill";
+  import { fly } from "svelte/transition";
+
+  import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
+
   import { showCredentialShareDrawer } from "../../store/ui.store";
   import {
     shareCredential,
     fetchEncryptedFieldsByIds,
   } from "../../apis/credentials.api";
-  import browser from "webextension-polyfill";
-  import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
+
+  import { UserWithAccessType, User } from "../../dtos/user.dto";
+  import { ShareCredentialPayload } from "../../dtos/credential.dto";
+  import { CredentialBase } from "../../dtos/credential.dto";
+
   const close = () => {
-    console.log("close");
     showCredentialShareDrawer.set(false);
   };
 
-  export let creds;
-  export let users;
+  export let creds: CredentialBase[];
+  export let users: User[];
   const credIds = creds.map((cred) => cred.id);
-  let selectedUsers = [];
-  function handleCheck(e, user) {
+  let selectedUsers: UserWithAccessType[] = [];
+
+  function handleCheck(e: any, user: User) {
     if (e.target.checked) {
-      selectedUsers = [...selectedUsers, user];
+      selectedUsers = [...selectedUsers, { ...user, accessType: "read" }];
     } else {
       selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
     }
   }
+
+  const handleRoleChange = (e: any, user: User) => {
+    const index = selectedUsers.findIndex((u) => u.id === user.id);
+    selectedUsers[index].accessType = e.target.value;
+  };
+
   const shareCredentialHandler = async () => {
     // TODO: update to share credentials in the same api
-    console.log("share folder button");
     const responseJson = await fetchEncryptedFieldsByIds(credIds);
     const creds = responseJson.data;
-    const payload = [];
+    const payload: ShareCredentialPayload[] = [];
 
     for (const [index, cred] of creds.entries()) {
       const response = await browser.runtime.sendMessage({
@@ -48,7 +61,11 @@
             fieldValue: encryptedFieldValue,
           });
         }
-        payload[index].users.push({ userId: user.id, fields: fields });
+        payload[index].users.push({
+          userId: user.id,
+          fields: fields,
+          accessType: user.accessType,
+        });
       }
     }
     await shareCredential({ credentialList: payload });
@@ -56,19 +73,32 @@
 </script>
 
 <div
-  class="fixed bg-macchiato-surface1 top-0 right-0 z-50 flex justify-end rounded-xl"
+  class="fixed top-0 right-0 z-50 flex justify-end rounded-xl"
+  in:fly
+  out:fly
 >
-  <div class="flex flex-col w-72 h-screen">
+  <div class="w-128 h-full shadow-xl translate-x-0 bg-macchiato-base">
     <button class="p-2" on:click={close}>Close</button>
 
     <!-- Scrollable Container for Users -->
-    <div class="flex-grow overflow-y-auto max-h-[85vh]">
+    <div class="flex-grow overflow-y-auto max-h-[85vh] scrollbar-thin">
       {#each users as user}
         <div
-          class="p-4 rounded-xl border border-transparent hover:border-macchiato-mauve"
+          class="p-4 rounded-xl border border-transparent hover:border-macchiato-mauve flex items-center justify-between"
         >
-          <input type="checkbox" on:change={(e) => handleCheck(e, user)} />
-          {user.name}
+          <div class="flex items-center space-x-4">
+            <input type="checkbox" on:change={(e) => handleCheck(e, user)} />
+            <p class="p-2">{user.name}</p>
+          </div>
+          <select
+            class="bg-macchiato-overlay0 ml-auto"
+            on:change={(e) => handleRoleChange(e, user)}
+          >
+            <option value="read">Read</option>
+            <option value="write">Write</option>
+            <option value="owner">Owner</option>
+            <option value="folder owner">Folder Owner</option>
+          </select>
         </div>
       {/each}
     </div>
@@ -76,7 +106,7 @@
     <!-- Button Always Visible at the End -->
     <div class="p-4">
       <button
-        class="w-full p-4 bg-macchiato-maroon"
+        class="w-full p-4 bg-macchiato-sapphire text-macchiato-surface0 rounded-md"
         on:click={shareCredentialHandler}>Share</button
       >
     </div>
