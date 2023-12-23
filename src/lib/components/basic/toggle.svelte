@@ -23,8 +23,8 @@
     {#each ["Credentials", "Groups"] as item}
       <button
         class="px-4 py-2 rounded-full focus:outline-none {$selectedPage === item
-          ? 'bg-macchiato-blue'
-          : ''}"
+          ? 'bg-macchiato-teal text-macchiato-crust'
+          : 'text-macchiato-text'}"
         on:click={() => select(item)}
       >
         {item}

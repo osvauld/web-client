@@ -7,7 +7,7 @@
   import { addCredential } from "../../apis/credentials.api";
   import { fetchCredentailsByFolder } from "../../apis/credentials.api";
   import { User } from "../../dtos/user.dto";
-  import { scale, fly } from "svelte/transition";
+  import { fly } from "svelte/transition";
 
   import {
     AddCredentialFieldPayload,
@@ -86,7 +86,7 @@
   });
 </script>
 
-<div class="bg-macchiato-surface2 rounded-md" in:fly>
+<div class="bg-macchiato-base rounded-md" in:fly>
   <div class="mb-2 p-4 mx-6 mt-6">
     <p class="font-normal text-4xl">Add Credential</p>
   </div>
@@ -125,7 +125,7 @@
           </div>
         </div>
         <button
-          class="rounded-md pr-2 pl-2 bg-macchiato-lavender flex justify-center items-center ml-5"
+          class="rounded-md pr-2 pl-2 bg-macchiato-lavender text-macchiato-surface0 flex justify-center items-center ml-5"
           on:click={() => removeField(index)}
         >
           delete
@@ -135,7 +135,7 @@
     <!-- Add secret btn -->
     <div class="flex mr-24">
       <button
-        class="py-2 m-4 bg-macchiato-blue flex-1 flex justify-center items-center rounded-md"
+        class="py-2 m-4 bg-macchiato-blue flex-1 flex justify-center items-center rounded-md text-macchiato-surface0"
         on:click={addField}
       >
         addField
@@ -153,7 +153,7 @@
   </div>
   <div class="flex justify-start mt-4 pl-4 ml-6">
     <button
-      class="bg-macchiato-blue px-[52px] py-2.5 rounded-full mb-6"
+      class="bg-macchiato-blue px-[52px] py-2.5 rounded-full mb-6 text-macchiato-surface0"
       on:click={saveCredential}>Add credential</button
     >
   </div>
