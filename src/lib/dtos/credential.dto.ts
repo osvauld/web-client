@@ -1,3 +1,9 @@
+export type sampleCredential = {
+  username: string;
+  password: string;
+}
+
+
 export type CredentialBase = {
   id: string;
   description: string;
