@@ -26,8 +26,8 @@
 
   const fillCredentials = async () => {
     console.log("Fiiling signal received");
-    const selectedUsername = $selectedCredential !== undefined ? $selectedCredential.username : undefined;
-    const selectedPassword = $selectedCredential !== undefined ? $selectedCredential.password : undefined;
+    const selectedUsername = $selectedCredential && $selectedCredential.username;
+    const selectedPassword = $selectedCredential && $selectedCredential.password;
     await browser.runtime.sendMessage({
       action: "fillingSignal",
       body:  [selectedUsername, selectedPassword],
