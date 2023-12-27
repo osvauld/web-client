@@ -138,6 +138,7 @@ browser.runtime.onMessage.addListener(function (request) {
   }
 
   if (request.action === "saveToVault") {
+  
     showSavePopup(request.username, request.password);
   }
 
@@ -149,12 +150,14 @@ function getLoginCredentials() {
   let usernameElem = getElement("username");
   let passwordElem = getElement("password");
 
+
   if (usernameElem && passwordElem) {
     let usernameValue = (usernameElem as HTMLInputElement).value;
     let passwordValue = (passwordElem as HTMLInputElement).value;
-   
+
     if(usernameValue.length > 3 && passwordValue.length > 3){
       (async() => {
+      
         await browser.runtime.sendMessage({action: 'credSubmitted', url: location.href, username: usernameValue, password: passwordValue})
       })()
     }
@@ -166,6 +169,7 @@ function getLoginCredentials() {
 
 let loginButtonElem = getElement("login");
 if (loginButtonElem) {
+ 
   loginButtonElem.addEventListener("click", getLoginCredentials);
 } else {
   console.log("Login button not found.");

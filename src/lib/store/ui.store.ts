@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-
+import  { sampleCredential } from "../dtos/credential.dto";
 export let selectedPage = writable("Credentials");
 export let isLoggedIn = writable(true);
 export let list = writable([
@@ -25,7 +25,7 @@ export let list = writable([
   { username: "mantis", password: "celestialbeing@123" },
   { username: "nick", password: "fury123" },
 ]);
-export let selectedCredential = writable(undefined);
+export let selectedCredential = writable<sampleCredential | null>(null);
 export let credOpen = writable(false);
 export let showAddCredentialDrawer = writable(false);
 

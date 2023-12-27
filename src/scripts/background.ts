@@ -3,7 +3,7 @@ import { token, pvtKey } from "../lib/apis/temp";
 import { decryptCredentialFields } from "../lib/utils/crypto";
 
 browser.runtime.onInstalled.addListener(async () => {
-  console.log("Extension installed successfully!");
+
   browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
   await browser.storage.local.set({ token: token });
   await browser.storage.local.set({ privateKey: pvtKey });
@@ -11,7 +11,7 @@ browser.runtime.onInstalled.addListener(async () => {
 
 
 browser.runtime.onMessage.addListener(async (request) => {
-  console.log("receieved message");
+
   const privateKeyObj = await browser.storage.local.get("privateKey");
   const privateKey = privateKeyObj.privateKey;
   if (request.eventName === "decrypt") {
@@ -37,6 +37,7 @@ browser.runtime.onMessage.addListener(async (request) => {
   }
   if (request.action === "credSubmitted") {
     let currentUrl = request.url;
+
     setTimeout(async () => {
       try {
         const [tab]: browser.Tabs.Tab[] = await browser.tabs.query({
@@ -44,13 +45,15 @@ browser.runtime.onMessage.addListener(async (request) => {
           currentWindow: true,
         });
         if(tab && tab.id){
+
           if (tab.url !== currentUrl){
+
             await browser.tabs.sendMessage(tab.id, {action: "saveToVault", username: request.username, password: request.password});
           }
-        }
+        } 
       } catch (error) {
         console.error("Error querying tabs:", error);
       }
-    }, 2000);
+    }, 3000);
   }
 });
