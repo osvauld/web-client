@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import browser from "webextension-polyfill";
   import { list } from "../../../store/ui.store";
   import { selectedCredential } from "../../../store/ui.store";
@@ -8,7 +8,7 @@
   let copiedUsername = false;
   let copiedPassword = false;
 
-  function copyOperation(text, boolean) {
+  function copyOperation(text: string, boolean: boolean) {
     navigator.clipboard.writeText(text);
     boolean ? (copiedPassword = true) : (copiedUsername = true);
     setTimeout(() => {
@@ -18,12 +18,11 @@
 
   const fillCredentials = async () => {
     console.log("Fiiling signal received");
+    const selectedUsername = $selectedCredential !== undefined ? $list[$selectedCredential]?.username : undefined;
+    const selectedPassword = $selectedCredential !== undefined ? $list[$selectedCredential]?.password : undefined;
     await browser.runtime.sendMessage({
       action: "fillingSignal",
-      body: [
-        $list[$selectedCredential]?.username,
-        $list[$selectedCredential]?.password,
-      ],
+      body:  [selectedUsername, selectedPassword],
     });
   };
 </script>
@@ -32,12 +31,12 @@
   class="flex flex-col justify-center items-center w-[80%] h-[300px] my-24 mx-auto bg-[#2B324D] border rounded-md border-[#4C598B4D] text-white"
 >
   <div class="flex justify-end items-center w-3/4">
-    {$list[$selectedCredential]?.username}
+    { $selectedCredential && $list[$selectedCredential]?.username}
     {#if !copiedUsername}
       <button
         class="mx-4 cursor-pointer transition ease-in-out duration-500 transform hover:scale-110"
         on:click={() => {
-          copyOperation($list[$selectedCredential]?.username, false);
+          $selectedCredential && copyOperation($list[$selectedCredential]?.username, false);
         }}
         type="button"
         aria-label="Copy username"
@@ -51,12 +50,12 @@
     {/if}
   </div>
   <div class="flex justify-end items-center w-3/4">
-    {$list[$selectedCredential]?.password}
+    {$selectedCredential && $list[$selectedCredential]?.password}
     {#if !copiedPassword}
       <button
         class="mx-4 cursor-pointer transition ease-in-out duration-500 transform hover:scale-110"
         on:click={() => {
-          copyOperation($list[$selectedCredential]?.password, true);
+         $selectedCredential &&  copyOperation($list[$selectedCredential]?.password, true);
         }}
       >
         <Copy /></button
