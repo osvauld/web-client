@@ -1,4 +1,5 @@
 <script lang="ts">
+  import browser from "webextension-polyfill";
   import { writable } from "svelte/store";
   import { isLoggedIn } from "../../store/ui.store";
   import Eye from "../basic/eye.svelte";
@@ -13,10 +14,14 @@
   function toggleShowPassword() {
     showPassword = !showPassword;
   }
+
   async function handleSubmit() {
     const enteredPassphrase = $passphrase;
     if (enteredPassphrase === hardcodedPassword) {
-      isLoggedIn.set(true);
+      const response = await browser.runtime.sendMessage({
+        action: "initiate_auth",
+      });
+      isLoggedIn.set(response.isAuthenticated);
     } else {
       errorMessage = true;
     }

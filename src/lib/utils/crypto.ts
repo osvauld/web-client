@@ -1,3 +1,5 @@
+import { CryptoKeyPair } from "../dtos/cryptoKeys.dto";
+
 // Function to convert a binary string to an ArrayBuffer
 import { CredentialFields } from "../dtos/credential.dto";
 
@@ -128,3 +130,100 @@ const decryptWithPrivateKey = async (
 
   return decryptedData;
 };
+
+export const importECCPrivateKey = async (keyString: string): Promise<CryptoKey> => {
+  // Assuming keyString is a Base64-encoded string of the private key
+  const keyBuffer = Uint8Array.from(atob(keyString), c => c.charCodeAt(0));
+
+  // Define the import algorithm parameters for ECC
+  const importAlgorithm: EcKeyImportParams = {
+    name: "ECDSA", // Or "ECDSA", depending on your use case
+    namedCurve: "P-256" // Replace with your curve name, e.g., "P-384", "P-521"
+  };
+
+  // Import the key
+  try {
+    const cryptoKey = await window.crypto.subtle.importKey(
+      "pkcs8", // format of the key to import
+      keyBuffer,
+      importAlgorithm,
+      true, // whether the key is extractable
+      ["sign"] // usage of the key
+    );
+
+    return cryptoKey;
+  } catch (e) {
+    console.error("Error importing key: ", e);
+    throw e;
+  }
+}
+
+
+
+export const signTextWithPrivateKey = async (privateKey: CryptoKey, text: string) => {
+
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+
+  // Sign the string
+  return window.crypto.subtle.sign(
+    {
+      name: "ECDSA",
+      hash: { name: "SHA-256" }
+    },
+    privateKey,
+    data
+  ).then((sig) => {
+    return arrayBufferToString(sig)
+  }).catch((error) => {
+    console.log("Errorr", error)
+  })
+
+}
+
+function arrayBufferToString(buffer: ArrayBuffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  const base64String = window.btoa(binary);
+  const formattedBase64 = base64String.match(/.{1,64}/g)?.join('\n');
+  return formattedBase64
+}
+
+export const generateECCKeyPairForSigning = async (): Promise<CryptoKeyPair> => {
+  // Define the algorithm parameters for ECC key generation
+  const keyGenAlgorithm: EcKeyGenParams = {
+    name: "ECDSA",
+    namedCurve: "P-256" // Commonly used curves are P-256, P-384, and P-521
+  };
+
+  try {
+    // Generate the key pair
+    const keyPair = await window.crypto.subtle.generateKey(
+      keyGenAlgorithm,
+      true, // whether the keys are extractable
+      ["sign", "verify"] // private key for signing, public key for verifying
+    );
+
+    const privateKeyString = await exportKey(keyPair.privateKey, "pkcs8");
+
+    // Export the public key
+    const publicKeyString = await exportKey(keyPair.publicKey, "spki");
+
+    return {
+      privateKey: privateKeyString,
+      publicKey: publicKeyString
+    }
+  } catch (e) {
+    console.error("Error generating ECC key pair: ", e);
+    throw e;
+  }
+}
+
+async function exportKey(key: CryptoKey, format: "pkcs8" | "spki"): Promise<string> {
+  const exported = await window.crypto.subtle.exportKey(format, key);
+  const exportedAsBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(exported)));
+  return exportedAsBase64;
+}
