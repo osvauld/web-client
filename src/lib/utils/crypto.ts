@@ -188,8 +188,7 @@ function arrayBufferToString(buffer: ArrayBuffer) {
     binary += String.fromCharCode(bytes[i]);
   }
   const base64String = window.btoa(binary);
-  const formattedBase64 = base64String.match(/.{1,64}/g)?.join('\n');
-  return formattedBase64
+  return base64String
 }
 
 export const generateECCKeyPairForSigning = async (): Promise<CryptoKeyPair> => {
