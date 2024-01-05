@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import { pvtKey, encryptionPvtKey, encryptionPublicKey } from "../lib/apis/temp";
+import { pvtKey, pubKey, encryptionPvtKey, encryptionPublicKey } from "../lib/apis/temp";
 import { decryptCredentialFields, generateECCKeyPairForSigning, importECCPrivateKey } from "../lib/utils/crypto";
 import { intiateAuth } from "../lib/utils/helperMethods";
 
@@ -65,10 +65,10 @@ browser.runtime.onMessage.addListener(async (request) => {
   }
 
   if (request.action === "initiate_auth") {
-    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
-    const signPubKeyObj = await browser.storage.local.get("signPubKey");
-    const signPrivateKey = await importECCPrivateKey(signPvtKeyObj.signPvtKey);
-    const token = await intiateAuth(signPrivateKey, signPubKeyObj.signPubKey);
+    // const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+    // const signPubKeyObj = await browser.storage.local.get("signPubKey");
+    const signPrivateKey = await importECCPrivateKey(pvtKey);
+    const token = await intiateAuth(signPrivateKey, pubKey);
     if (token) {
       await browser.storage.local.set({ token: token });
       return Promise.resolve({ isAuthenticated: true })
