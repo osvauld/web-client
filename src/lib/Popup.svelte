@@ -12,6 +12,7 @@
     if (devType != "popup") openFullscreenTab();
   });
 
+
   const openFullscreenTab = async () => {
     // Send a message to the background sdaash
     console.log("Opening fullscreen tab");
