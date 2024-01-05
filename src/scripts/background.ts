@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import { token, pvtKey, encryptionPvtKey, encryptionPublicKey } from "../lib/apis/temp";
+import { pvtKey, encryptionPvtKey, encryptionPublicKey } from "../lib/apis/temp";
 import { decryptCredentialFields, generateECCKeyPairForSigning, importECCPrivateKey } from "../lib/utils/crypto";
 import { intiateAuth } from "../lib/utils/helperMethods";
 
@@ -8,7 +8,7 @@ browser.runtime.onInstalled.addListener(async () => {
   browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
   // const pubKeyPair = await generateECCKeyPairForSigning() // Creating ECC key pair for signing please change
   // console.log(pubKeyPair);
-  await browser.storage.local.set({ token: token });
+  // await browser.storage.local.set({ token: token });
   await browser.storage.local.set({ privateKey: pvtKey });
   await browser.storage.local.set({ encryptionPvtKey: encryptionPvtKey });
   await browser.storage.local.set({ encryptionPubKey: encryptionPublicKey });
@@ -69,7 +69,6 @@ browser.runtime.onMessage.addListener(async (request) => {
     const signPubKeyObj = await browser.storage.local.get("signPubKey");
     const signPrivateKey = await importECCPrivateKey(signPvtKeyObj.signPvtKey);
     const token = await intiateAuth(signPrivateKey, signPubKeyObj.signPubKey);
-    console.log(token, "TOKEN")
     if (token) {
       await browser.storage.local.set({ token: token });
       return Promise.resolve({ isAuthenticated: true })

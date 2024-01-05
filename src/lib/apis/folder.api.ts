@@ -1,8 +1,12 @@
-import { baseUrl, token } from "./temp";
+import { baseUrl } from "./temp";
+import browser from "webextension-polyfill";
 import { folderStore } from "../store/folder.store";
 import { User } from "../dtos/user.dto";
 
 export const fetchAllFolders = async () => {
+
+  const tokenObj = await await browser.storage.local.get("token");
+  const token = tokenObj.token;
   const options = {
     method: "GET",
     headers: {
@@ -20,6 +24,8 @@ export const fetchAllFolders = async () => {
 };
 export const fetchFolderUsers = async (folderId: string): Promise<User[]> => {
   const headers = new Headers();
+  const tokenObj = await await browser.storage.local.get("token");
+  const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -32,6 +38,8 @@ export const fetchFolderUsers = async (folderId: string): Promise<User[]> => {
 
 export const createFolder = async (payload: any) => {
   const headers = new Headers();
+  const tokenObj = await await browser.storage.local.get("token");
+  const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -50,6 +58,8 @@ export const createFolder = async (payload: any) => {
 
 export const shareFolder = async (payload: any) => {
   const headers = new Headers();
+  const tokenObj = await await browser.storage.local.get("token");
+  const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
