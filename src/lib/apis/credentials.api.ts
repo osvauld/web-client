@@ -1,7 +1,11 @@
-import { baseUrl, token } from "./temp";
+import browser from "webextension-polyfill";
 import { credentialStore } from "../store/credential.store";
+import { baseUrl, } from "./temp";
+
 export const fetchCredentailsByFolder = async (folderId: string) => {
   const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -16,6 +20,8 @@ export const fetchCredentailsByFolder = async (folderId: string) => {
 
 export const fetchCredentialById = async (credentialId: string) => {
   const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -26,6 +32,8 @@ export const fetchCredentialById = async (credentialId: string) => {
 
 export const addCredential = async (payload: any) => {
   const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -40,6 +48,8 @@ export const addCredential = async (payload: any) => {
 
 export const fetchEncryptedCredentialsFields = async (folderId: string) => {
   const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("User-Agent", "Insomnia/2023.5.7");
 
@@ -57,6 +67,8 @@ export const fetchEncryptedCredentialsFields = async (folderId: string) => {
 
 export const shareCredential = async (shareCredential: object) => {
   const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
   headers.append("User-Agent", "Insomnia/2023.5.7");
@@ -76,6 +88,8 @@ export const shareCredential = async (shareCredential: object) => {
 
 export const fetchEncryptedFieldsByIds = async (credentialIds: string[]) => {
   const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
