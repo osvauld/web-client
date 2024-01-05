@@ -2,22 +2,23 @@
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
 
-  import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
+  import { importPublicKey, encryptWithPublicKey } from "../../../utils/crypto";
 
-  import { selectedFolder } from "../../store/folder.store";
-  import { showAddCredentialDrawer } from "../../store/ui.store";
+  import { selectedFolder, showAddCredentialDrawer } from "../store";
 
-  import { addCredential } from "../../apis/credentials.api";
-  import { fetchCredentailsByFolder } from "../../apis/credentials.api";
-  import { fetchFolderUsers } from "../../apis/folder.api";
+  import {
+    fetchFolderUsers,
+    addCredential,
+    fetchCredentailsByFolder,
+  } from "../apis";
 
-  import { User } from "../../dtos/user.dto";
   import {
     AddCredentialFieldPayload,
     AddCredentialPayload,
     UserAccessPayload,
     CredentialFields,
-  } from "../../dtos/credential.dto";
+    User,
+  } from "../dtos";
 
   let credentialFields: AddCredentialFieldPayload[] = [];
   let description = "";
@@ -63,7 +64,7 @@
       for (const toEncryptField of toEncryptFields) {
         const encryptedFieldValue = await encryptWithPublicKey(
           toEncryptField.fieldValue,
-          publicKey
+          publicKey,
         );
         userPayload.encryptedFields.push({
           fieldName: toEncryptField.fieldName,

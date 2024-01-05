@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createFolder, fetchAllFolders } from "../../apis/folder.api";
-  import { showAddFolderDrawer } from "../../store/ui.store";
+  import { createFolder, fetchAllFolders } from "../apis";
+  import { showAddFolderDrawer } from "../store";
 
   let name = "";
   let description = "";

@@ -2,17 +2,17 @@
   import browser from "webextension-polyfill";
   import { fly } from "svelte/transition";
 
-  import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
+  import { importPublicKey, encryptWithPublicKey } from "../../../utils/crypto";
 
-  import { showCredentialShareDrawer } from "../../store/ui.store";
+  import { showCredentialShareDrawer } from "../store";
+  import { shareCredential, fetchEncryptedFieldsByIds } from "../apis";
+
   import {
-    shareCredential,
-    fetchEncryptedFieldsByIds,
-  } from "../../apis/credentials.api";
-
-  import { UserWithAccessType, User } from "../../dtos/user.dto";
-  import { ShareCredentialPayload } from "../../dtos/credential.dto";
-  import { CredentialBase } from "../../dtos/credential.dto";
+    CredentialBase,
+    ShareCredentialPayload,
+    UserWithAccessType,
+    User,
+  } from "../dtos";
 
   const close = () => {
     showCredentialShareDrawer.set(false);
@@ -54,7 +54,7 @@
         for (const field of response.data) {
           const encryptedFieldValue = await encryptWithPublicKey(
             field.fieldValue,
-            publicKey
+            publicKey,
           );
           fields.push({
             fieldName: field.fieldName,

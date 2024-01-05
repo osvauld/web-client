@@ -1,10 +1,9 @@
 <script lang="ts">
   import AddGroup from "./AddGroup.svelte";
 
-  import { groupStore, selectedGroup } from "../../store/group.store";
-  import { showAddGroupDrawer } from "../../store/ui.store";
+  import { groupStore, selectedGroup, showAddGroupDrawer  } from "../store";
 
-  import { Group } from "../../dtos/group.dto";
+  import { Group } from "../dtos";
 
   const selectGroup = (group: Group) => {
     selectedGroup.set(group);
