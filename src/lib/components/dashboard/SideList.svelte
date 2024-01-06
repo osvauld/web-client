@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { selectedPage } from "../../store/ui.store.js";
-  import FolderSideList from "./FolderSideList.svelte";
-  import GroupSideList from "./GroupSideList.svelte";
+  import { selectedPage } from "./store";
+  import FolderSideList from "./folders/FolderSideList.svelte";
+  import GroupSideList from "./groups/GroupSideList.svelte";
 </script>
 
 {#if $selectedPage === "Credentials"}

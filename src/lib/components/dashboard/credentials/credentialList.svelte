@@ -1,27 +1,22 @@
 <script lang="ts">
-  //components
   import CredentialDetails from "./credentailDetails.svelte";
   import AddCredential from "./AddCredential.svelte";
-  import ShareFolder from "./ShareFolder.svelte";
+  import ShareFolder from "../folders/ShareFolder.svelte";
   import ShareCredential from "./ShareCredential.svelte";
-  import CopyIcon from "../basic/copyIcon.svelte";
-  //apis
-  import { fetchAllUsers } from "../../apis/user.api";
-  import { fetchFolderUsers } from "../../apis/folder.api";
-  import { CredentialBase } from "../../dtos/credential.dto";
-  import { User } from "../../dtos/user.dto";
+  import CopyIcon from "../../basic/copyIcon.svelte";
 
-  // stores
+  import { fetchFolderUsers, fetchAllUsers } from "../apis";
+
+  import { CredentialBase, User } from "../dtos";
+
   import {
     credentialStore,
     selectedCredential,
-  } from "../../store/credential.store";
-  import {
     showAddCredentialDrawer,
     showFolderShareDrawer,
     showCredentialShareDrawer,
-  } from "../../store/ui.store";
-  import { selectedFolder } from "../../store/folder.store";
+    selectedFolder,
+  } from "../store";
 
   let checkedCards: CredentialBase[] = [];
   let showDrawer = false;

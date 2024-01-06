@@ -2,11 +2,12 @@
   import { onMount, onDestroy } from "svelte";
   import { Unsubscriber } from "svelte/store";
 
-  import { selectedGroup } from "../../store/group.store";
+  import { selectedGroup, showAddUserDrawer } from "../store";
+  import AddUser from "./AddUser.svelte";
 
-  import { User } from "../../dtos/user.dto";
+  import { User } from "../dtos";
 
-  import { fetchGroupUsers } from "../../apis/group.api";
+  import { fetchGroupUsers } from "../apis";
 
   let groupUsers: User[] = [];
   let unsubscribe: Unsubscriber;
@@ -26,6 +27,32 @@
     groupUsers = [];
   });
 </script>
+
+<div class="z-50">
+  {#if $showAddUserDrawer}
+    <div class="fixed z-10 inset-0 overflow-y-auto">
+      <div
+        class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+
+        <!-- This element is to trick the browser into centering the modal contents. -->
+        <span
+          class="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true">&#8203;</span
+        >
+
+        <div
+          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+        >
+          <AddUser />
+        </div>
+      </div>
+    </div>
+  {/if}
+</div>
 
 <div class="overflow-x-auto">
   <div class="min-w-screen min-h-screen flex overflow-hidden">

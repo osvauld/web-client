@@ -1,13 +1,11 @@
 <script lang="ts">
   import AddFolder from "./AddFolder.svelte";
 
-  import { folderStore, selectedFolder } from "../../store/folder.store";
-  import { showAddFolderDrawer } from "../../store/ui.store";
-  import { selectedCredential } from "../../store/credential.store";
+  import { selectedCredential ,showAddFolderDrawer ,folderStore, selectedFolder } from "../store";
 
-  import { fetchCredentailsByFolder } from "../../apis/credentials.api";
+  import { fetchCredentailsByFolder } from "../apis";
 
-  import { Folder } from "../../dtos/folder.dto";
+  import { Folder } from "../dtos";
 
   const selectFolder = (folder: Folder) => {
     selectedFolder.set(folder);

@@ -4,16 +4,14 @@
   import {
     fetchEncryptedCredentialsFields,
     shareCredential,
-  } from "../../apis/credentials.api";
-  import { shareFolder } from "../../apis/folder.api";
+    shareFolder,
+  } from "../apis";
 
-  import { selectedFolder } from "../../store/folder.store";
-  import { showFolderShareDrawer } from "../../store/ui.store";
+  import { selectedFolder, showFolderShareDrawer } from "../store";
 
-  import { importPublicKey, encryptWithPublicKey } from "../../utils/crypto";
+  import { importPublicKey, encryptWithPublicKey } from "../../../utils/crypto";
 
-  import { User, UserWithAccessType } from "../../dtos/user.dto";
-  import { ShareCredentialPayload } from "../../dtos/credential.dto";
+  import { ShareCredentialPayload, User, UserWithAccessType } from "../dtos";
 
   export let users: User[];
   let selectedUsers: UserWithAccessType[] = [];
@@ -40,7 +38,7 @@
     console.log("share folder button");
     if (!$selectedFolder) throw new Error("folder not selected");
     const responseJson = await fetchEncryptedCredentialsFields(
-      $selectedFolder.id
+      $selectedFolder.id,
     );
     const creds = responseJson.data;
     const payload: ShareCredentialPayload[] = [];
@@ -67,7 +65,7 @@
         for (const field of response.data) {
           const encryptedFieldValue = await encryptWithPublicKey(
             field.fieldValue,
-            publicKey
+            publicKey,
           );
           fields.push({
             fieldName: field.fieldName,

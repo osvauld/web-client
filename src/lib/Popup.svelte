@@ -6,12 +6,11 @@
   import Logo from "./components/basic/logo.svelte";
   import { isLoggedIn } from "../lib/store/ui.store";
   console.log("is logged in status", $isLoggedIn);
-  let devType = "t";
+  let devType = "dw";
 
   onMount(async () => {
     if (devType != "popup") openFullscreenTab();
   });
-
 
   const openFullscreenTab = async () => {
     // Send a message to the background sdaash
