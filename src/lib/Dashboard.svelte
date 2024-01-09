@@ -10,19 +10,15 @@
 
 <main
   class="
-    bg-macchiato-crust
+    bg-osvauld-ninjablack
    w-screen h-screen text-macchiato-text text-lg"
 >
   <div class="flex h-full">
-    <div class="w-1/6 overflow-auto scrollbar-thin">
+    <div class="w-1/5 overflow-auto scrollbar-thin">
       <LeftContainer />
     </div>
-
-    <!-- Vertical line -->
-    <div class="w-px bg-macchiato-maroon" style="flex-grow: 0;"></div>
-
     <!-- Right container -->
-    <div class="w-5/6 overflow-auto scrollbar-thin">
+    <div class="w-4/5 overflow-auto scrollbar-thin">
       <RightContainer />
     </div>
   </div>
