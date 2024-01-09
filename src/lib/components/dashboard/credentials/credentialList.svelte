@@ -57,6 +57,9 @@
     showFolderShareDrawer.set(true);
   };
 
+  credentialStore.subscribe((value) => {
+    console.log(value, "CRED STORE");
+  });
   const openShareCredentialDrawer = async () => {
     //TODO: update users to not include users shared with as custom
     if (!$selectedFolder) throw new Error("folder not selected");

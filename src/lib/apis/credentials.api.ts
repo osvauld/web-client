@@ -12,7 +12,6 @@ export const fetchCredentailsByFolder = async (folderId: string) => {
   const response = await fetch(`${baseUrl}/folder/${folderId}/credential`, {
     headers,
   }).then((response) => response.json());
-
   if (response.data) {
     credentialStore.set(response.data);
   }
