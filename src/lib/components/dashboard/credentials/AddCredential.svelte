@@ -60,6 +60,7 @@
         userId: user.id,
         encryptedFields: [],
       };
+      console.log(user.publicKey);
       const publicKey = await importPublicKey(user.publicKey);
       for (const toEncryptField of toEncryptFields) {
         const encryptedFieldValue = await encryptWithPublicKey(
@@ -76,7 +77,7 @@
     addCredentialPaylod.userAccessDetails = userAccessPayload;
     await addCredential(addCredentialPaylod);
     if ($selectedFolder === null) throw new Error("folder not selected");
-    fetchCredentailsByFolder($selectedFolder.id);
+    await fetchCredentailsByFolder($selectedFolder.id);
     showAddCredentialDrawer.set(false);
   };
 
