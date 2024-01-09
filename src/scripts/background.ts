@@ -1,6 +1,6 @@
 import browser from "webextension-polyfill";
 import { pvtKey, pubKey, encryptionPvtKey, encryptionPublicKey } from "../lib/apis/temp";
-import { decryptCredentialFields, generateECCKeyPairForSigning, importECCPrivateKey } from "../lib/utils/crypto";
+import { decryptCredentialFields, generateECCKeyPairForSigning, importECCPrivateKey, decryptCredentialField } from "../lib/utils/crypto";
 import { intiateAuth } from "../lib/utils/helperMethods";
 
 browser.runtime.onInstalled.addListener(async () => {
@@ -19,14 +19,19 @@ browser.runtime.onInstalled.addListener(async () => {
 
 browser.runtime.onMessage.addListener(async (request) => {
 
-  const privateKeyObj = await browser.storage.local.get("privateKey");
-  const privateKey = privateKeyObj.privateKey;
+  // const privateKeyObj = await browser.storage.local.get("privateKey");
+  // const privateKey = privateKeyObj.privateKey;
+  const privateKey = encryptionPvtKey
   if (request.eventName === "decrypt") {
     const decrypted = await decryptCredentialFields(request.data, privateKey);
     // Decrypt the data here
     // const decryptedData = decrypt(request.data);
     return Promise.resolve({ data: decrypted });
+  } else if (request.eventName === "decryptField") {
+    const decrypted = await decryptCredentialField(privateKey, request.data);
+    return { data: decrypted };
   }
+
   if (request.action === "fillingSignal") {
     try {
       const [tab]: any[] = await browser.tabs.query({ active: true, lastFocusedWindow: true });

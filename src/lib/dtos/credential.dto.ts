@@ -9,11 +9,13 @@ export type CredentialBase = {
   description: string;
   name: string;
   unencryptedFields: CredentialFields[];
+  encryptedFields?: CredentialFields[];
 };
 
 export type CredentialDetails = CredentialBase & {
-  encryptedFields: CredentialFields[];
+  encryptedFields?: CredentialFields[];
 };
+
 export type CredentialFields = {
   fieldName: string;
   fieldValue: string;
