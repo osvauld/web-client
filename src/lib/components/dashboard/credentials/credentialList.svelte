@@ -1,50 +1,30 @@
 <script lang="ts">
-  import CredentialDetails from "./credentailDetails.svelte";
   import AddCredential from "./AddCredential.svelte";
   import ShareFolder from "../folders/ShareFolder.svelte";
   import ShareCredential from "./ShareCredential.svelte";
-  import CopyIcon from "../../basic/copyIcon.svelte";
+  import CredentialCard from "./CredentialCard.svelte";
 
   import { fetchFolderUsers, fetchAllUsers } from "../apis";
 
-  import { CredentialBase, User } from "../dtos";
+  import { User, CredentialDetails } from "../dtos";
 
   import {
     credentialStore,
-    selectedCredential,
     showAddCredentialDrawer,
     showFolderShareDrawer,
     showCredentialShareDrawer,
     selectedFolder,
   } from "../store";
 
-  let checkedCards: CredentialBase[] = [];
-  let showDrawer = false;
+  let checkedCards: CredentialDetails[] = [];
   let users: User[] = [];
 
-  const openModal = () => {
-    showAddCredentialDrawer.set(true);
-  };
-
-  const closeModal = () => {
-    showAddCredentialDrawer.set(false);
-  };
-
-  const selectCredential = (credential: CredentialBase) => {
-    selectedCredential.set(credential);
-    showDrawer = true;
-  };
-
-  function handleCheck(e: any, card: CredentialBase) {
-    if (e.target.checked) {
+  function handleCheck(isChecked: boolean, card: CredentialDetails) {
+    if (isChecked) {
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter((c) => c.id !== card.id);
     }
-  }
-
-  function isChecked(credential: CredentialBase) {
-    return checkedCards.includes(credential);
   }
 
   const openshareFolderDrawer = async () => {
@@ -56,10 +36,6 @@
     });
     showFolderShareDrawer.set(true);
   };
-
-  credentialStore.subscribe((value) => {
-    console.log(value, "CRED STORE");
-  });
   const openShareCredentialDrawer = async () => {
     //TODO: update users to not include users shared with as custom
     if (!$selectedFolder) throw new Error("folder not selected");
@@ -86,7 +62,8 @@
 
       <button
         class="bg rounded-md p-2 pl-2 mr-2 bg-macchiato-blue text-macchiato-surface0"
-        on:click={openModal}>Create Credential</button
+        on:click={() => showAddCredentialDrawer.set(true)}
+        >Create Credential</button
       >
       {#if checkedCards.length === 0}
         <!-- TODO: update to share credentials in the same api -->
@@ -105,10 +82,10 @@
   {#if $showAddCredentialDrawer}
     <button
       class="fixed inset-0 flex items-center justify-center z-50"
-      on:click={closeModal}
+      on:click={() => showAddCredentialDrawer.set(false)}
     >
       <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
-        <AddCredential on:close={closeModal} />
+        <AddCredential on:close={() => showAddCredentialDrawer.set(false)} />
       </button>
     </button>
   {/if}
@@ -140,63 +117,13 @@
     </button>
   {/if}
   <div class="flex overflow-x-auto">
-    <!-- Left Side: List of Cards -->
     <div class="flex flex-wrap p-6 w-full">
       {#each $credentialStore as credential}
-        <div
-          class="mb-6 mr-2 flex-none hover:border hover:border-macchiato-pink"
-        >
-          <button
-            class="container mx-auto p-4 relative rounded-lg group bg-macchiato-base"
-            on:click={() => selectCredential(credential)}
-            on:keydown={(e) => {
-              if (e.key === "Enter") {
-                selectCredential(credential);
-              }
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={isChecked(credential)}
-              on:change={(e) => handleCheck(e, credential)}
-            />
-            <p class="mb-4 text-left">{credential.name}</p>
-            <!-- Scrollable area for field names and values, starting after the first two fields -->
-            <div
-              class="overflow-y-auto max-h-[280px] min-h-[280px] scrollbar-thin"
-            >
-              {#each credential?.unencryptedFields as field, index}
-                <div class="mb-4">
-                  <label
-                    class="label block mb-2 text-left"
-                    for={`input-${index}`}>{field.fieldName}</label
-                  >
-                  <div class="relative">
-                    <input
-                      class={`input pr-10 w-full rounded-2xl items-center bg-macchiato-surface0 border-macchiato-lavender`}
-                      type="text"
-                      value={field.fieldValue}
-                    />
-                    <button
-                      class="absolute right-2 top-1/2 transform -translate-y-1/2"
-                    >
-                      <CopyIcon />
-                    </button>
-                  </div>
-                </div>
-              {/each}
-            </div>
-            <!-- Static description at the bottom -->
-            <textarea
-              class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-macchiato-surface0 rounded-md scrollbar-thin border-macchiato-lavender"
-              >{credential.description}</textarea
-            >
-          </button>
-        </div>
+        <CredentialCard
+          {credential}
+          on:check={(e) => handleCheck(e.detail, credential)}
+        />
       {/each}
     </div>
   </div>
 </div>
-{#if $selectedCredential && checkedCards.length < 2}
-  <CredentialDetails />
-{/if}
