@@ -7,7 +7,7 @@
   import { isLoggedIn, isSignedUp } from "../lib/store/ui.store";
   import Singup from "./components/popup/Singup.svelte";
   console.log("is logged in status", $isLoggedIn);
-  let devType = "popup";
+  let devType = "sda";
 
   onMount(async () => {
     if (devType != "popup") openFullscreenTab();

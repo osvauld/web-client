@@ -109,6 +109,15 @@ export const decryptCredentialFields = async (
   return Promise.resolve(decryptedFields);
 };
 
+export const decryptCredentialField = async (privateKey: string, field: string): Promise<string> => {
+  const pvtKey = await importPrivateKey(privateKey).catch((error) => {
+    console.log("ERRRR", error);
+  })
+  if (pvtKey === undefined) throw new Error("Private key is undefined")
+  const decryptedField = await decryptWithPrivateKey(pvtKey, field);
+  return decryptedField;
+};
+
 const decryptWithPrivateKey = async (
   privateKey: CryptoKey,
   encryptedData: string
