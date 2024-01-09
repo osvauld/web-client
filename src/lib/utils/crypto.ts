@@ -238,6 +238,7 @@ export const verifySignatureWithPublicKey = async (publicKeyBase64: string, text
     console.log("Error", error);
   });
 }
+
 export const generateECCKeyPairForSigning = async (): Promise<CryptoKeyPair> => {
   // Define the algorithm parameters for ECC key generation
   const keyGenAlgorithm: EcKeyGenParams = {
@@ -272,4 +273,100 @@ async function exportKey(key: CryptoKey, format: "pkcs8" | "spki"): Promise<stri
   const exported = await window.crypto.subtle.exportKey(format, key);
   const exportedAsBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(exported)));
   return exportedAsBase64;
+}
+
+export const generateRSAKeyPairForEncryption = async (): Promise<CryptoKeyPair> => {
+
+  try {
+    // Generate the key pair
+    const keyPair = await window.crypto.subtle.generateKey(
+      {
+        name: "RSA-OAEP",
+        modulusLength: 2048,
+        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+        hash: "SHA-256",
+      },
+      true,
+      ["encrypt", "decrypt"]
+    );
+
+    const privateKeyString = await exportKey(keyPair.privateKey, "pkcs8");
+
+    // Export the public key
+    const publicKeyString = await exportKey(keyPair.publicKey, "spki");
+
+    return {
+      privateKey: privateKeyString,
+      publicKey: publicKeyString
+    }
+  } catch (e) {
+    console.error("Error generating ECC key pair: ", e);
+    throw e;
+  }
+}
+
+const base64ToUnit8ArrayBuffer = (base64: string): Uint8Array => {
+  const binaryString = window.atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
+
+export const deriveKeyFromPassphrase = async (passphrase: string, saltString: string): Promise<CryptoKey> => {
+
+  // Convert the passphrase to an ArrayBuffer
+  const enc = new TextEncoder();
+  const passphraseBuffer = enc.encode(passphrase);
+
+  // Generate a salt (use a fixed salt to ensure determinism)
+  const salt = base64ToUnit8ArrayBuffer(saltString)
+
+  // Import the passphrase to a CryptoKey
+  const keyMaterial = await window.crypto.subtle.importKey(
+    "raw",
+    passphraseBuffer,
+    { name: "PBKDF2" },
+    false,
+    ["deriveKey"]
+  );
+
+  // Derive a key from the passphrase
+  const key = await window.crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: salt,
+      iterations: 100000, // Number of iterations (higher means more secure but slower)
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 }, // Specify the desired key type and length
+    true,
+    ["encrypt", "decrypt"]
+  );
+
+  return key
+  // The key can now be used for encryption and decryption
+}
+
+export const encryptPvtKeyWithSymmerticKey = async (symmetricKey: CryptoKey, pvtKeyString: string, ivString: string): Promise<string> => {
+  const enc = new TextEncoder();
+  const dataBuffer = enc.encode(pvtKeyString);
+  const iv = base64ToArrayBuffer(ivString);
+  // Encrypt the data
+  const encrypted = await window.crypto.subtle.encrypt(
+    { name: "AES-GCM", iv: iv },
+    symmetricKey,
+    dataBuffer
+  );
+
+  // Convert the encrypted data to a Base64 string
+  return arrayBufferToString(encrypted);
+}
+
+
+export const generateRandomString = (): string => {
+  const randomStringBuffer = window.crypto.getRandomValues(new Uint8Array(12));
+  return arrayBufferToString(randomStringBuffer)
 }

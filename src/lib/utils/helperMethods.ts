@@ -1,4 +1,4 @@
-import { createChallenge, initiateAuth } from "../apis/auth.api"
+import { createChallenge, initiateAuth, verifyNewUser } from "../apis/auth.api"
 import { signTextWithPrivateKey, verifySignatureWithPublicKey } from "./crypto"
 
 export const intiateAuth = async (privateKey: CryptoKey, publicKey: string): Promise<string> => {
@@ -10,4 +10,10 @@ export const intiateAuth = async (privateKey: CryptoKey, publicKey: string): Pro
 
     console.log("TRIGGERED", response.data)
     return response.data.token
+}
+
+export const verifyUser = async (username: string, password: string, rsaKey: string, eccKey: string): Promise<boolean> => {
+    const response = await verifyNewUser(username, password, rsaKey, eccKey)
+    console.log("API Response===>", response)
+    return response.success
 }

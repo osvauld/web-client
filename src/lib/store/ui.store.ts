@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 import { sampleCredential } from "../dtos/credential.dto";
 export let selectedPage = writable("Credentials");
 export let isLoggedIn = writable(false);
+export let isSignedUp = writable(false);
 export let list = writable([
   { username: "tony", password: "test@123" },
   { username: "steve", password: "captain@america" },
@@ -33,4 +34,3 @@ export let showAddFolderDrawer = writable(false);
 export let showAddGroupDrawer = writable(false);
 export let showFolderShareDrawer = writable(false);
 export let showCredentialShareDrawer = writable(false);
-export let showAddUserDrawer = writable(false);

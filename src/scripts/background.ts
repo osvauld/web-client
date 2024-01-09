@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 import { pvtKey, pubKey, encryptionPvtKey, encryptionPublicKey } from "../lib/apis/temp";
-import { decryptCredentialFields, generateECCKeyPairForSigning, importECCPrivateKey } from "../lib/utils/crypto";
-import { intiateAuth } from "../lib/utils/helperMethods";
+import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateECCKeyPairForSigning, generateRandomString, generateRSAKeyPairForEncryption, importECCPrivateKey } from "../lib/utils/crypto";
+import { intiateAuth, verifyUser } from "../lib/utils/helperMethods";
 
 browser.runtime.onInstalled.addListener(async () => {
 
@@ -76,5 +76,41 @@ browser.runtime.onMessage.addListener(async (request) => {
       return Promise.resolve({ isAuthenticated: false })
     }
 
+  }
+
+  if (request.action === "check_is_signed_up") {
+    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+    if (signPvtKeyObj.signPvtKey) return Promise.resolve({ isSignedUp: true })
+    else return Promise.resolve({ isSignedUp: false })
+  }
+
+  if (request.action === "sign_up_user") {
+    if (request.username && request.password) {
+      const rsaKeyPair = await generateRSAKeyPairForEncryption()
+      const eccKeyPair = await generateECCKeyPairForSigning()
+      const isValidCreds = await verifyUser(request.username, request.password, rsaKeyPair.publicKey || "", eccKeyPair.publicKey || "")
+      if (isValidCreds) {
+        return Promise.resolve({ isAuthenticated: true, rsaKey: rsaKeyPair, eccKey: eccKeyPair })
+      }
+    }
+  }
+
+  if (request.action === "save_passphrase") {
+    if (request.passphrase) {
+      const saltString = generateRandomString()
+      browser.storage.local.set({ passphraseSalt: saltString });
+      const symmetricKey = await deriveKeyFromPassphrase(request.passphrase, saltString)
+      const ivString = generateRandomString()
+      browser.storage.local.set({ passphraseIv: ivString });
+      if (request.rsaKey.privateKey) {
+        const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, request.rsaKey.privateKey, ivString)
+        await browser.storage.local.set({ encryptionPvtKey: pvtKeyCipher });
+      }
+      if (request.eccKey.privateKey) {
+        const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, request.eccKey.privateKey, ivString)
+        await browser.storage.local.set({ signPvtKey: pvtKeyCipher });
+      }
+      return Promise.resolve({ isSaved: true })
+    }
   }
 });
