@@ -2,7 +2,10 @@
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
 
-  import { importPublicKey, encryptWithPublicKey } from "../../../utils/crypto";
+  import {
+    importRSAPublicKey,
+    encryptWithPublicKey,
+  } from "../../../utils/crypto";
 
   import { selectedFolder, showAddCredentialDrawer } from "../store";
 
@@ -61,7 +64,7 @@
         encryptedFields: [],
       };
       console.log(user.publicKey);
-      const publicKey = await importPublicKey(user.publicKey);
+      const publicKey = await importRSAPublicKey(user.publicKey);
       for (const toEncryptField of toEncryptFields) {
         const encryptedFieldValue = await encryptWithPublicKey(
           toEncryptField.fieldValue,
