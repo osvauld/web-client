@@ -1,10 +1,11 @@
 import browser from "webextension-polyfill";
-// import { pvtKey, pubKey, encryptionPvtKey, encryptionPublicKey } from "../lib/apis/temp";
 import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateECCKeyPairForSigning, generateRandomString, generateRSAKeyPairForEncryption, importECCPrivateKey, decryptCredentialField, decryptPvtKeys } from "../lib/utils/crypto";
 import { intiateAuth, verifyUser } from "../lib/utils/helperMethods";
 
 let rsaPvtKey: CryptoKey;
 let eccPvtKey: CryptoKey;
+
+
 
 browser.runtime.onInstalled.addListener(async () => {
 
@@ -21,6 +22,7 @@ browser.runtime.onInstalled.addListener(async () => {
 
 
 browser.runtime.onMessage.addListener(async (request) => {
+
 
   if (request.eventName === "decrypt") {
     const decrypted = await decryptCredentialFields(request.data, rsaPvtKey);
