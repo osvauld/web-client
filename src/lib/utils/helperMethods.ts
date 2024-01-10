@@ -1,7 +1,10 @@
 import { createChallenge, initiateAuth, verifyNewUser } from "../apis/auth.api"
-import { signTextWithPrivateKey, verifySignatureWithPublicKey } from "./crypto"
+import { signTextWithPrivateKey, verifySignatureWithPublicKey, derivePublicKeyFromECCPrivateKey } from "./crypto"
 
-export const intiateAuth = async (privateKey: CryptoKey, publicKey: string): Promise<string> => {
+export const intiateAuth = async (privateKey: CryptoKey): Promise<string> => {
+    console.log('privateKey', privateKey)
+    const publicKey = await derivePublicKeyFromECCPrivateKey(privateKey)
+    console.log('publicKey', publicKey)
     const responseJson = await createChallenge(publicKey);
     const signedText = await signTextWithPrivateKey(privateKey, responseJson.data.challenge) || ""
     const verified = await verifySignatureWithPublicKey(publicKey, responseJson.data.challenge, signedText)

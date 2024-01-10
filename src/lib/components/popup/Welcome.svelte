@@ -1,13 +1,9 @@
 <script lang="ts">
   import browser from "webextension-polyfill";
-  import { writable } from "svelte/store";
   import { isLoggedIn } from "../../store/ui.store";
   import Eye from "../basic/eye.svelte";
 
-  const passphrase = writable("");
-
-  const hardcodedPassword = "test";
-
+  let passphrase = "";
   let showPassword = false;
   let errorMessage = false;
 
@@ -15,17 +11,17 @@
     showPassword = !showPassword;
   }
 
+  $: type = showPassword ? "text" : "password";
   async function handleSubmit() {
-    const enteredPassphrase = $passphrase;
-    if (enteredPassphrase === hardcodedPassword) {
-      const response = await browser.runtime.sendMessage({
-        action: "initiate_auth",
-      });
-      isLoggedIn.set(response.isAuthenticated);
-    } else {
-      errorMessage = true;
-    }
+    const response = await browser.runtime.sendMessage({
+      action: "initiate_auth",
+      data: { passphrase },
+    });
+    isLoggedIn.set(response.isAuthenticated);
   }
+  const onInput = (event) => {
+    passphrase = event.target.value;
+  };
 </script>
 
 <div
@@ -40,21 +36,12 @@
     <div
       class="flex bg-[#2E3654] px-3 mt-4 border rounded-3xl border-[#4C598B4D]"
     >
-      {#if showPassword}
-        <input
-          class="text-white bg-[#2E3654] border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
-          type="text"
-          id="passphrase"
-          bind:value={$passphrase}
-        />
-      {:else}
-        <input
-          class="text-white bg-[#2E3654] border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
-          type="password"
-          id="passphrase"
-          bind:value={$passphrase}
-        />
-      {/if}
+      <input
+        class="text-white bg-[#2E3654] border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
+        {type}
+        id="passphrase"
+        on:input={onInput}
+      />
       <button
         type="button"
         class="flex justify-center items-center"

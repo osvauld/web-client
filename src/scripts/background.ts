@@ -1,7 +1,10 @@
 import browser from "webextension-polyfill";
-import { pvtKey, pubKey, encryptionPvtKey, encryptionPublicKey } from "../lib/apis/temp";
-import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateECCKeyPairForSigning, generateRandomString, generateRSAKeyPairForEncryption, importECCPrivateKey, decryptCredentialField } from "../lib/utils/crypto";
+// import { pvtKey, pubKey, encryptionPvtKey, encryptionPublicKey } from "../lib/apis/temp";
+import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateECCKeyPairForSigning, generateRandomString, generateRSAKeyPairForEncryption, importECCPrivateKey, decryptCredentialField, decryptPvtKeys } from "../lib/utils/crypto";
 import { intiateAuth, verifyUser } from "../lib/utils/helperMethods";
+
+let rsaPvtKey: CryptoKey;
+let eccPvtKey: CryptoKey;
 
 browser.runtime.onInstalled.addListener(async () => {
 
@@ -9,9 +12,9 @@ browser.runtime.onInstalled.addListener(async () => {
   // const pubKeyPair = await generateECCKeyPairForSigning() // Creating ECC key pair for signing please change
   // console.log(pubKeyPair);
   // await browser.storage.local.set({ token: token });
-  await browser.storage.local.set({ privateKey: pvtKey });
-  await browser.storage.local.set({ encryptionPvtKey: encryptionPvtKey });
-  await browser.storage.local.set({ encryptionPubKey: encryptionPublicKey });
+  // await browser.storage.local.set({ privateKey: pvtKey });
+  // await browser.storage.local.set({ encryptionPvtKey: encryptionPvtKey });
+  // await browser.storage.local.set({ encryptionPubKey: encryptionPublicKey });
   // await browser.storage.local.set({ signPvtKey: pubKeyPair.privateKey });
   // await browser.storage.local.set({ signPubKey: pubKeyPair.publicKey });
 });
@@ -19,16 +22,13 @@ browser.runtime.onInstalled.addListener(async () => {
 
 browser.runtime.onMessage.addListener(async (request) => {
 
-  // const privateKeyObj = await browser.storage.local.get("privateKey");
-  // const privateKey = privateKeyObj.privateKey;
-  const privateKey = encryptionPvtKey
   if (request.eventName === "decrypt") {
-    const decrypted = await decryptCredentialFields(request.data, privateKey);
+    const decrypted = await decryptCredentialFields(request.data, rsaPvtKey);
     // Decrypt the data here
     // const decryptedData = decrypt(request.data);
     return Promise.resolve({ data: decrypted });
   } else if (request.eventName === "decryptField") {
-    const decrypted = await decryptCredentialField(privateKey, request.data);
+    const decrypted = await decryptCredentialField(rsaPvtKey, request.data);
     return { data: decrypted };
   }
 
@@ -70,10 +70,18 @@ browser.runtime.onMessage.addListener(async (request) => {
   }
 
   if (request.action === "initiate_auth") {
-    // const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
-    // const signPubKeyObj = await browser.storage.local.get("signPubKey");
-    const signPrivateKey = await importECCPrivateKey(pvtKey);
-    const token = await intiateAuth(signPrivateKey, pubKey);
+    const passphrase = request.data.passphrase;
+    const saltObj = await browser.storage.local.get('passphraseSalt');
+    const symmetricKey = await deriveKeyFromPassphrase(passphrase, saltObj.passphraseSalt)
+    const ivObj = await browser.storage.local.get('passphraseIv');
+    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+    const encryptionPvtKeyObj = await browser.storage.local.get("encryptionPvtKey");
+    const decryptedKeys = await decryptPvtKeys(symmetricKey, signPvtKeyObj.signPvtKey, encryptionPvtKeyObj.encryptionPvtKey, ivObj.passphraseIv);
+    rsaPvtKey = decryptedKeys.rsaPvtKey;
+    eccPvtKey = decryptedKeys.eccPvtKey;
+    const token = await intiateAuth(eccPvtKey).catch((err) => {
+      console.error(err);
+    });
     if (token) {
       await browser.storage.local.set({ token: token });
       return Promise.resolve({ isAuthenticated: true })
@@ -103,10 +111,10 @@ browser.runtime.onMessage.addListener(async (request) => {
   if (request.action === "save_passphrase") {
     if (request.passphrase) {
       const saltString = generateRandomString()
-      browser.storage.local.set({ passphraseSalt: saltString });
+      await browser.storage.local.set({ passphraseSalt: saltString });
       const symmetricKey = await deriveKeyFromPassphrase(request.passphrase, saltString)
       const ivString = generateRandomString()
-      browser.storage.local.set({ passphraseIv: ivString });
+      await browser.storage.local.set({ passphraseIv: ivString });
       if (request.rsaKey.privateKey) {
         const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, request.rsaKey.privateKey, ivString)
         await browser.storage.local.set({ encryptionPvtKey: pvtKeyCipher });
