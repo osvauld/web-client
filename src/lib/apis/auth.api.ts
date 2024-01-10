@@ -17,7 +17,8 @@ export const createChallenge = async (publicKey: string) => {
 };
 
 export const verifyNewUser = async (username: string, password: string, rsaKey: string, eccKey: string) => {
-    return await fetch(`${baseUrl}/user/challenge`, {
+    return await fetch(`${baseUrl}/user/register`, {
+
         method: "POST",
         body: JSON.stringify({ username, password, rsaKey, eccKey })
     }).then(res => res.json())

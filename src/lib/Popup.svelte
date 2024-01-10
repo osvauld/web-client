@@ -5,7 +5,7 @@
   import Home from "./components/popup/Home.svelte";
   import Logo from "./components/basic/logo.svelte";
   import { isLoggedIn, isSignedUp } from "../lib/store/ui.store";
-  import Singup from "./components/popup/Singup.svelte";
+  import Signup from "./components/popup/Signup.svelte";
   console.log("is logged in status", $isLoggedIn);
   let devType = "sda";
 
@@ -15,6 +15,7 @@
       action: "check_is_signed_up",
     });
     isSignedUp.set(response.isSignedUp);
+    // isSignedUp.set(false);
   });
 
   const openFullscreenTab = async () => {
@@ -27,7 +28,7 @@
 <main>
   <div class="w-[380px] h-[520px] bg-[#262C44] overflow-hidden">
     {#if !$isSignedUp}
-      <Singup />
+      <Signup />
     {:else if $isLoggedIn}
       <Home />
     {:else}
