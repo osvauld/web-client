@@ -1,11 +1,7 @@
 <script lang="ts">
   import browser from "webextension-polyfill";
   import { fly } from "svelte/transition";
-  import {
-    fetchEncryptedCredentialsFields,
-    shareCredential,
-    shareFolder,
-  } from "../apis";
+  import { fetchEncryptedCredentialsFields, shareFolder } from "../apis";
 
   import { selectedFolder, showFolderShareDrawer } from "../store";
 
@@ -14,7 +10,7 @@
     encryptWithPublicKey,
   } from "../../../utils/crypto";
 
-  import { ShareCredentialPayload, User, UserWithAccessType } from "../dtos";
+  import { User, UserWithAccessType } from "../dtos";
 
   export let users: User[];
   let selectedUsers: UserWithAccessType[] = [];
@@ -44,7 +40,7 @@
       $selectedFolder.id,
     );
     const creds = responseJson.data;
-    const payload: ShareCredentialPayload[] = [];
+    const payload: any = [];
     const shareFolderPayload: any = {
       folderId: $selectedFolder.id,
       users: [],
@@ -55,7 +51,7 @@
         accessType: user.accessType,
       });
     }
-    await shareFolder(shareFolderPayload);
+    // await shareFolder(shareFolderPayload);
     for (const [index, cred] of creds.entries()) {
       const response = await browser.runtime.sendMessage({
         eventName: "decrypt",
@@ -82,7 +78,7 @@
         });
       }
     }
-    await shareCredential({ credentialList: payload });
+    // await shareCredential({ credentialList: payload });
     showFolderShareDrawer.set(false);
   };
 </script>

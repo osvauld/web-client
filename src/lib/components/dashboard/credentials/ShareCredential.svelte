@@ -2,19 +2,19 @@
   import browser from "webextension-polyfill";
   import { fly } from "svelte/transition";
 
-  import {
-    importRSAPublicKey,
-    encryptWithPublicKey,
-  } from "../../../utils/crypto";
-
   import { showCredentialShareDrawer } from "../store";
-  import { shareCredential, fetchEncryptedFieldsByIds } from "../apis";
+  import {
+    shareCredentialsWithUsers,
+    fetchEncryptedFieldsByIds,
+  } from "../apis";
+  import { encryptCredentialsForUser } from "../../../utils/helperMethods";
 
   import {
     CredentialBase,
-    ShareCredentialPayload,
+    ShareCredentialsWithUsersPayload,
     UserWithAccessType,
     User,
+    EncryptedCredentialFields,
   } from "../dtos";
 
   const close = () => {
@@ -42,36 +42,28 @@
   const shareCredentialHandler = async () => {
     // TODO: update to share credentials in the same api
     const responseJson = await fetchEncryptedFieldsByIds(credIds);
-    const creds = responseJson.data;
-    const payload: ShareCredentialPayload[] = [];
+    const creds: EncryptedCredentialFields[] = responseJson.data;
+    const payload: ShareCredentialsWithUsersPayload = { userData: [] };
+    // for (const [index, cred] of creds.entries()) {
+    const response = await browser.runtime.sendMessage({
+      eventName: "decrypt",
+      data: creds,
+    });
 
-    for (const [index, cred] of creds.entries()) {
-      const response = await browser.runtime.sendMessage({
-        eventName: "decrypt",
-        data: cred.encryptedFields,
+    for (const user of selectedUsers) {
+      const userEncryptedFields = await encryptCredentialsForUser(
+        response.data,
+        user.publicKey,
+      );
+      payload.userData.push({
+        userId: user.id,
+        credentials: userEncryptedFields,
+        accessType: user.accessType,
       });
-      payload[index] = { credentialId: cred.id, users: [] };
-      for (const user of selectedUsers) {
-        const publicKey = await importRSAPublicKey(user.publicKey);
-        const fields = [];
-        for (const field of response.data) {
-          const encryptedFieldValue = await encryptWithPublicKey(
-            field.fieldValue,
-            publicKey,
-          );
-          fields.push({
-            fieldName: field.fieldName,
-            fieldValue: encryptedFieldValue,
-          });
-        }
-        payload[index].users.push({
-          userId: user.id,
-          fields: fields,
-          accessType: user.accessType,
-        });
-      }
     }
-    await shareCredential({ credentialList: payload });
+    console.log(payload);
+
+    await shareCredentialsWithUsers(payload);
   };
 </script>
 

@@ -2,6 +2,7 @@ import browser from "webextension-polyfill";
 
 import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateECCKeyPairForSigning, generateRandomString, generateRSAKeyPairForEncryption, importECCPrivateKey, decryptCredentialField, decryptPvtKeys } from "../lib/utils/crypto";
 import { intiateAuth, verifyUser } from "../lib/utils/helperMethods";
+import { EncryptedCredentialFields, DecryptedPaylod } from "../lib/dtos/credential.dto";
 
 let rsaPvtKey: CryptoKey;
 let eccPvtKey: CryptoKey;
@@ -26,10 +27,18 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 
   if (request.eventName === "decrypt") {
-    const decrypted = await decryptCredentialFields(request.data, rsaPvtKey);
-    // Decrypt the data here
-    // const decryptedData = decrypt(request.data);
-    return Promise.resolve({ data: decrypted });
+    const credentials: EncryptedCredentialFields[] = request.data;
+    const returnPayload: DecryptedPaylod[] = [];
+    for (const credential of credentials) {
+      console.log(credential, 'credential');
+      const decryptedFields = await decryptCredentialFields(credential.encryptedFields, rsaPvtKey);
+      const payload: DecryptedPaylod = {
+        credentialId: credential.credentialId,
+        decryptedFields
+      }
+      returnPayload.push(payload)
+    }
+    return { data: returnPayload };
   } else if (request.eventName === "decryptField") {
     const decrypted = await decryptCredentialField(rsaPvtKey, request.data);
     return { data: decrypted };
