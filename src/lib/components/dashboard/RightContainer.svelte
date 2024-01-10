@@ -9,10 +9,10 @@
 </script>
 
 <div class="flex flex-col h-full">
-  <div class="h-[124px] pr-4 flex justify-between items-center cursor-pointer">
-    <div class="h-[30px] w-2/5 px-2 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg">
+  <div class="h-[124px] pr-4 flex justify-between items-center ">
+    <div class="h-[30px] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer">
       <Lens/>
-      <input type="text" class="h-[28px] bg-osvauld-ninjablack border-0 text-osvauld-pearlgreen border-transparent focus:border-transparent focus:ring-0" placeholder="Search">
+      <input type="text" class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search">
       <Shortcut/>
     </div>
     <div><Profile/></div>

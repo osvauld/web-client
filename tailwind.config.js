@@ -56,6 +56,8 @@ export default {
           khakiorange: "#F9E2AF",
           frostylabel: "#9399B2",
           illutionpurple: "#B7BDF8",
+          frameblack: "#0D1117",
+          placeholderblack: "#30363D",
         },
       },
     },
