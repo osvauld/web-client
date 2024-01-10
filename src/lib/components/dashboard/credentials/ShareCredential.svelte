@@ -17,14 +17,11 @@
     EncryptedCredentialFields,
   } from "../dtos";
 
-  const close = () => {
-    showCredentialShareDrawer.set(false);
-  };
-
   export let creds: CredentialBase[];
   export let users: User[];
-  const credIds = creds.map((cred) => cred.id);
   let selectedUsers: UserWithAccessType[] = [];
+
+  const credIds = creds.map((cred) => cred.id);
 
   function handleCheck(e: any, user: User) {
     if (e.target.checked) {
@@ -44,7 +41,6 @@
     const responseJson = await fetchEncryptedFieldsByIds(credIds);
     const creds: EncryptedCredentialFields[] = responseJson.data;
     const payload: ShareCredentialsWithUsersPayload = { userData: [] };
-    // for (const [index, cred] of creds.entries()) {
     const response = await browser.runtime.sendMessage({
       eventName: "decrypt",
       data: creds,
@@ -61,8 +57,6 @@
         accessType: user.accessType,
       });
     }
-    console.log(payload);
-
     await shareCredentialsWithUsers(payload);
   };
 </script>
@@ -73,9 +67,9 @@
   out:fly
 >
   <div class="w-128 h-full shadow-xl translate-x-0 bg-macchiato-base">
-    <button class="p-2" on:click={close}>Close</button>
-
-    <!-- Scrollable Container for Users -->
+    <button class="p-2" on:click={() => showCredentialShareDrawer.set(false)}
+      >Close</button
+    >
     <div class="flex-grow overflow-y-auto max-h-[85vh] scrollbar-thin">
       {#each users as user}
         <div
@@ -92,13 +86,10 @@
             <option value="read">Read</option>
             <option value="write">Write</option>
             <option value="owner">Owner</option>
-            <option value="folder owner">Folder Owner</option>
           </select>
         </div>
       {/each}
     </div>
-
-    <!-- Button Always Visible at the End -->
     <div class="p-4">
       <button
         class="w-full p-4 bg-macchiato-sapphire text-macchiato-surface0 rounded-md"
