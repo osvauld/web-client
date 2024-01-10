@@ -2,7 +2,10 @@
   import browser from "webextension-polyfill";
   import { fly } from "svelte/transition";
 
-  import { importPublicKey, encryptWithPublicKey } from "../../../utils/crypto";
+  import {
+    importRSAPublicKey,
+    encryptWithPublicKey,
+  } from "../../../utils/crypto";
 
   import { showCredentialShareDrawer } from "../store";
   import { shareCredential, fetchEncryptedFieldsByIds } from "../apis";
@@ -49,7 +52,7 @@
       });
       payload[index] = { credentialId: cred.id, users: [] };
       for (const user of selectedUsers) {
-        const publicKey = await importPublicKey(user.publicKey);
+        const publicKey = await importRSAPublicKey(user.publicKey);
         const fields = [];
         for (const field of response.data) {
           const encryptedFieldValue = await encryptWithPublicKey(
