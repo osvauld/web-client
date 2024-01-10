@@ -6,6 +6,7 @@
   import { fetchCredentailsByFolder } from "../apis";
 
   import { Folder } from "../dtos";
+  import Add from '../../basic/add.svelte';
 
   const selectFolder = (folder: Folder) => {
     selectedFolder.set(folder);
@@ -22,11 +23,12 @@
   };
 </script>
 
-<div class="p-2">
+<div>
   <button
-    class="bg-macchiato-red rounded-full p-2 pl-8 pr-8 mb-4 text-macchiato-base"
-    on:click={openModal}
-    >Add Folder
+  class="bg-osvauld-illutionpurple whitespace-nowrap rounded-lg py-2 px-16 mb-4 flex justify-center items-center text-macchiato-base xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
+  on:click={openModal}
+    >Create New
+    <Add/>
   </button>
   {#if $showAddFolderDrawer}
     <button

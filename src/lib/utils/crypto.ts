@@ -55,6 +55,7 @@ export const decryptCredentialFields = async (
 };
 
 
+
 export const decryptCredentialField = async (privateKey: CryptoKey, field: string): Promise<string> => {
   const decryptedField = await decryptWithPrivateKey(privateKey, field);
   return decryptedField;

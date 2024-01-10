@@ -48,7 +48,7 @@
   };
 </script>
 
-<div class="bg-macchiato-mantle">
+<div >
   {#if $selectedFolder}
     <div class="flex items-center p-4">
       <h1 class="text-4xl p-4 italic">{$selectedFolder.name}</h1>

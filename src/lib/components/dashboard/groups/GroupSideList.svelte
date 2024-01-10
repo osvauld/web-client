@@ -7,6 +7,7 @@
     showAddUserDrawer,
   } from "../store";
   import { Group } from "../dtos";
+  import Add from '../../basic/add.svelte';
 
   const selectGroup = (group: Group) => {
     selectedGroup.set(group);
@@ -27,12 +28,12 @@
 
 <div>
   <button
-    class=" bg-macchiato-maroon rounded-full p-2 pl-8 pr-8 text-macchiato-crust"
-    on:click={() => openModal("group")}>Add Group</button
+    class="w-full bg-osvauld-activelavender rounded-full p-2 pl-8 pr-8 text-macchiato-crust flex justify-center items-center m-2"
+    on:click={() => openModal("group")}>Add Group <Add/> </button
   >
   <button
-    class=" bg-macchiato-pink rounded-full p-2 pl-8 pr-8 text-macchiato-crust"
-    on:click={() => openModal("user")}>Add User</button
+    class="w-full bg-osvauld-grapegreen rounded-full p-2 pl-8 pr-8 text-macchiato-crust flex justify-center items-center m-2"
+    on:click={() => openModal("user")}>Add User <Add/> </button
   >
   {#if $showAddGroupDrawer}
     <button
