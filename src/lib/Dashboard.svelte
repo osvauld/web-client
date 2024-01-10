@@ -10,7 +10,7 @@
 
 <main
   class="
-    bg-osvauld-frameblack
+    bg-osvauld-ninjablack
    w-screen h-screen text-macchiato-text text-lg"
 >
   <div class="flex h-full">
