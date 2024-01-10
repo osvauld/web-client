@@ -198,53 +198,6 @@ function arrayBufferToString(buffer: ArrayBuffer) {
   return base64String
 }
 
-export const verifySignatureWithPublicKey = async (publicKeyBase64: string, text: string, signature: string) => {
-  console.log("VERIFYING", publicKeyBase64, text, signature)
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-
-  // Convert the base64 signature back to an ArrayBuffer
-  const binary = window.atob(signature);
-  const signatureBytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    signatureBytes[i] = binary.charCodeAt(i);
-  }
-
-  // Convert the base64 public key back to an ArrayBuffer
-  const publicKeyBinary = window.atob(publicKeyBase64);
-  const publicKeyBytes = new Uint8Array(publicKeyBinary.length);
-  for (let i = 0; i < publicKeyBinary.length; i++) {
-    publicKeyBytes[i] = publicKeyBinary.charCodeAt(i);
-  }
-
-  // Import the public key
-  const publicKey = await window.crypto.subtle.importKey(
-    "spki",
-    publicKeyBytes,
-    {
-      name: "ECDSA",
-      namedCurve: "P-256",
-      hash: { name: "SHA-256" }
-    },
-    true,
-    ["verify"]
-  );
-
-  // Verify the signature
-  return window.crypto.subtle.verify(
-    {
-      name: "ECDSA",
-      hash: { name: "SHA-256" }
-    },
-    publicKey,
-    signatureBytes,
-    data
-  ).then((isValid) => {
-    return isValid;
-  }).catch((error) => {
-    console.log("Error", error);
-  });
-}
 
 export const generateECCKeyPairForSigning = async (): Promise<CryptoKeyPair> => {
   // Define the algorithm parameters for ECC key generation

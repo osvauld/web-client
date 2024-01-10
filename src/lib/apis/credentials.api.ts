@@ -64,16 +64,15 @@ export const fetchEncryptedCredentialsFields = async (folderId: string) => {
   return response.json();
 };
 
-export const shareCredential = async (shareCredential: object) => {
+export const shareCredentialsWithUsers = async (shareCredential: object) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
-  headers.append("User-Agent", "Insomnia/2023.5.7");
 
-  const response = await fetch(`${baseUrl}/credentials/`, {
-    method: "PUT",
+  const response = await fetch(`${baseUrl}/share-credential/users`, {
+    method: "POST",
     headers,
     body: JSON.stringify(shareCredential),
   });

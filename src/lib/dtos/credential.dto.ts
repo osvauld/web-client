@@ -38,13 +38,30 @@ export type UserAccessPayload = {
   encryptedFields: CredentialFields[];
 };
 
-export type ShareCredentialPayload = {
-  credentialId: string;
-  users: UserPayaloadForShare[];
-};
 
-type UserPayaloadForShare = {
+
+export type ShareCredentialsWithUsersPayload = {
+  userData: MultipleCredentialForUsersPayload[]
+}
+
+type MultipleCredentialForUsersPayload = {
   userId: string;
-  fields: CredentialFields[];
   accessType: string;
-};
+  credentials: UserCredentialPayload[];
+}
+
+type UserCredentialPayload = {
+  credentialId: string;
+  encryptedFields: CredentialFields[];
+}
+
+export type EncryptedCredentialFields = {
+  credentialId: string;
+  encryptedFields: CredentialFields[];
+}
+
+
+export type DecryptedPaylod = {
+  credentialId: string,
+  decryptedFields: CredentialFields[]
+}
