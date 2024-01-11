@@ -20,8 +20,10 @@ export const encryptCredentialsForUser = async (credentials: DecryptedPaylod[], 
     const encryptedCredsForUser: EncryptedCredentialFields[] = []
     for (const credential of credentials) {
         const encryptedCred: EncryptedCredentialFields = {
-            credentialId: credential.credentialId,
             encryptedFields: []
+        }
+        if (credential.credentialId) {
+            encryptedCred.credentialId = credential.credentialId
         }
         for (const field of credential.decryptedFields) {
             const encryptedValue = await encryptWithPublicKey(field.fieldValue, publicKey)

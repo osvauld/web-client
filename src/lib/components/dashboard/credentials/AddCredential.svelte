@@ -2,10 +2,7 @@
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
 
-  import {
-    importRSAPublicKey,
-    encryptWithPublicKey,
-  } from "../../../utils/crypto";
+  import { encryptCredentialsForUser } from "../../../utils/helperMethods";
 
   import { selectedFolder, showAddCredentialDrawer } from "../store";
 
@@ -18,16 +15,15 @@
   import {
     AddCredentialFieldPayload,
     AddCredentialPayload,
-    UserAccessPayload,
     CredentialFields,
     User,
+    DecryptedPaylod,
   } from "../dtos";
 
   let credentialFields: AddCredentialFieldPayload[] = [];
   let description = "";
   let name = "";
   let folderUsers: User[] = [];
-  let userAccessPayload: UserAccessPayload[] = [];
   let addCredentialPaylod: AddCredentialPayload;
 
   const addField = () => {
@@ -43,12 +39,15 @@
   const saveCredential = async () => {
     if ($selectedFolder === null) throw new Error("folder not selected");
     const unencryptedFields: CredentialFields[] = [];
-    const toEncryptFields: CredentialFields[] = [];
+    const toEncryptFields: DecryptedPaylod = { decryptedFields: [] };
     for (const field of credentialFields) {
       if (!field.sensitive) {
         unencryptedFields.push(field);
       } else {
-        toEncryptFields.push(field);
+        toEncryptFields.decryptedFields.push({
+          fieldName: field.fieldName,
+          fieldValue: field.fieldValue,
+        });
       }
     }
     addCredentialPaylod = {
@@ -59,25 +58,17 @@
       userAccessDetails: [],
     };
     for (const user of folderUsers) {
-      let userPayload: UserAccessPayload = {
-        userId: user.id,
-        encryptedFields: [],
-      };
       console.log(user.publicKey);
-      const publicKey = await importRSAPublicKey(user.publicKey);
-      for (const toEncryptField of toEncryptFields) {
-        const encryptedFieldValue = await encryptWithPublicKey(
-          toEncryptField.fieldValue,
-          publicKey,
-        );
-        userPayload.encryptedFields.push({
-          fieldName: toEncryptField.fieldName,
-          fieldValue: encryptedFieldValue,
-        });
-      }
-      userAccessPayload.push(userPayload);
+      const encryptedData = await encryptCredentialsForUser(
+        [toEncryptFields],
+        user.publicKey,
+      );
+      addCredentialPaylod.userAccessDetails.push({
+        userId: user.id,
+        encryptedFields: encryptedData[0].encryptedFields,
+      });
     }
-    addCredentialPaylod.userAccessDetails = userAccessPayload;
+    console.log(addCredentialPaylod);
     await addCredential(addCredentialPaylod);
     if ($selectedFolder === null) throw new Error("folder not selected");
     await fetchCredentailsByFolder($selectedFolder.id);
@@ -141,7 +132,6 @@
         </button>
       </div>
     {/each}
-    <!-- Add secret btn -->
     <div class="flex mr-24">
       <button
         class="py-2 m-4 bg-macchiato-blue flex-1 flex justify-center items-center rounded-md text-macchiato-surface0"
@@ -151,7 +141,6 @@
       </button>
     </div>
   </div>
-  <!-- Text Area -->
   <div>
     <textarea
       rows="2"
