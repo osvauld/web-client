@@ -1,23 +1,28 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
   import { fly } from "svelte/transition";
-  import { fetchEncryptedCredentialsFields, shareFolder } from "../apis";
+  import { onMount } from "svelte";
+
+  import {
+    fetchEncryptedCredentialsFields,
+    shareFolderWithUsers,
+  } from "../apis";
 
   import { selectedFolder, showFolderShareDrawer } from "../store";
 
   import {
-    importRSAPublicKey,
-    encryptWithPublicKey,
-  } from "../../../utils/crypto";
+    User,
+    UserWithAccessType,
+    ShareFolderWithUsersPayload,
+    EncryptedCredentialFields,
+  } from "../dtos";
 
-  import { User, UserWithAccessType } from "../dtos";
+  import { createShareCredsPayload } from "../helper";
 
   export let users: User[];
-  let selectedUsers: UserWithAccessType[] = [];
 
-  const close = () => {
-    showFolderShareDrawer.set(false);
-  };
+  let creds: EncryptedCredentialFields[];
+
+  let selectedUsers: UserWithAccessType[] = [];
 
   function handleCheck(e: any, user: User) {
     if (e.target.checked) {
@@ -30,57 +35,26 @@
   const handleRoleChange = (e: any, user: User) => {
     const index = selectedUsers.findIndex((u) => u.id === user.id);
     selectedUsers[index].accessType = e.target.value;
-    console.log(selectedUsers);
   };
+
   const shareFolderHandler = async () => {
-    // TODO: update to share credentials in the same api
-    console.log("share folder button");
+    const userData = await createShareCredsPayload(creds, selectedUsers);
+    const shareFolderPayload: ShareFolderWithUsersPayload = {
+      folderId: $selectedFolder.id,
+      userData,
+    };
+    console.log(shareFolderPayload);
+    await shareFolderWithUsers(shareFolderPayload);
+    // showFolderShareDrawer.set(false);
+  };
+
+  onMount(async () => {
     if (!$selectedFolder) throw new Error("folder not selected");
     const responseJson = await fetchEncryptedCredentialsFields(
       $selectedFolder.id,
     );
-    const creds = responseJson.data;
-    const payload: any = [];
-    const shareFolderPayload: any = {
-      folderId: $selectedFolder.id,
-      users: [],
-    };
-    for (const user of selectedUsers) {
-      shareFolderPayload.users.push({
-        userId: user.id,
-        accessType: user.accessType,
-      });
-    }
-    // await shareFolder(shareFolderPayload);
-    for (const [index, cred] of creds.entries()) {
-      const response = await browser.runtime.sendMessage({
-        eventName: "decrypt",
-        data: cred.encryptedFields,
-      });
-      payload[index] = { credentialId: cred.id, users: [] };
-      for (const user of selectedUsers) {
-        const publicKey = await importRSAPublicKey(user.publicKey);
-        const fields = [];
-        for (const field of response.data) {
-          const encryptedFieldValue = await encryptWithPublicKey(
-            field.fieldValue,
-            publicKey,
-          );
-          fields.push({
-            fieldName: field.fieldName,
-            fieldValue: encryptedFieldValue,
-          });
-        }
-        payload[index].users.push({
-          userId: user.id,
-          fields: fields,
-          accessType: user.accessType,
-        });
-      }
-    }
-    // await shareCredential({ credentialList: payload });
-    showFolderShareDrawer.set(false);
-  };
+    creds = responseJson.data;
+  });
 </script>
 
 <div
@@ -89,9 +63,9 @@
   out:fly
 >
   <div class="w-128 h-full shadow-xl translate-x-0 bg-macchiato-base">
-    <button class="p-2" on:click={close}>Close</button>
-
-    <!-- Scrollable Container for Users -->
+    <button class="p-2" on:click={() => showFolderShareDrawer.set(false)}
+      >Close</button
+    >
     <div class="flex-grow overflow-y-auto max-h-[85vh] scrollbar-thin">
       {#each users as user}
         <div
@@ -108,13 +82,10 @@
             <option value="read">Read</option>
             <option value="write">Write</option>
             <option value="owner">Owner</option>
-            <option value="folder owner">Folder Owner</option>
           </select>
         </div>
       {/each}
     </div>
-
-    <!-- Button Always Visible at the End -->
     <div class="p-4">
       <button
         class="w-full p-4 bg-macchiato-sapphire text-macchiato-surface0 rounded-md"

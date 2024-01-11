@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill";
 import { credentialStore } from "../store/credential.store";
 import { baseUrl, } from "./temp";
+import { ShareCredentialsWithUsersPayload } from "../dtos/credential.dto";
 
 export const fetchCredentailsByFolder = async (folderId: string) => {
   const headers = new Headers();
@@ -64,7 +65,7 @@ export const fetchEncryptedCredentialsFields = async (folderId: string) => {
   return response.json();
 };
 
-export const shareCredentialsWithUsers = async (shareCredential: object) => {
+export const shareCredentialsWithUsers = async (shareCredential: ShareCredentialsWithUsersPayload) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;

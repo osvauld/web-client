@@ -1,5 +1,4 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
   import { fly } from "svelte/transition";
 
   import { showCredentialShareDrawer } from "../store";
@@ -7,7 +6,6 @@
     shareCredentialsWithUsers,
     fetchEncryptedFieldsByIds,
   } from "../apis";
-  import { encryptCredentialsForUser } from "../../../utils/helperMethods";
 
   import {
     CredentialBase,
@@ -17,6 +15,7 @@
     EncryptedCredentialFields,
   } from "../dtos";
 
+  import { createShareCredsPayload } from "../helper";
   export let creds: CredentialBase[];
   export let users: User[];
   let selectedUsers: UserWithAccessType[] = [];
@@ -40,23 +39,8 @@
     // TODO: update to share credentials in the same api
     const responseJson = await fetchEncryptedFieldsByIds(credIds);
     const creds: EncryptedCredentialFields[] = responseJson.data;
-    const payload: ShareCredentialsWithUsersPayload = { userData: [] };
-    const response = await browser.runtime.sendMessage({
-      eventName: "decrypt",
-      data: creds,
-    });
-
-    for (const user of selectedUsers) {
-      const userEncryptedFields = await encryptCredentialsForUser(
-        response.data,
-        user.publicKey,
-      );
-      payload.userData.push({
-        userId: user.id,
-        credentials: userEncryptedFields,
-        accessType: user.accessType,
-      });
-    }
+    const userData = await createShareCredsPayload(creds, selectedUsers);
+    const payload: ShareCredentialsWithUsersPayload = { userData };
     await shareCredentialsWithUsers(payload);
   };
 </script>
