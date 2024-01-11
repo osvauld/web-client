@@ -41,19 +41,15 @@ export type UserAccessPayload = {
 
 
 export type ShareCredentialsWithUsersPayload = {
-  userData: MultipleCredentialForUsersPayload[]
+  userData: CredentialsForUsersPayload[]
 }
 
-type MultipleCredentialForUsersPayload = {
+export type CredentialsForUsersPayload = {
   userId: string;
   accessType: string;
-  credentials: UserCredentialPayload[];
+  credentials: EncryptedCredentialFields[];
 }
 
-type UserCredentialPayload = {
-  credentialId: string;
-  encryptedFields: CredentialFields[];
-}
 
 export type EncryptedCredentialFields = {
   credentialId: string;

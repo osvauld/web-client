@@ -2,6 +2,7 @@ import { baseUrl } from "./temp";
 import browser from "webextension-polyfill";
 import { folderStore } from "../store/folder.store";
 import { User } from "../dtos/user.dto";
+import { ShareFolderWithUsersPayload } from "../dtos/folder.dto";
 
 export const fetchAllFolders = async () => {
 
@@ -38,7 +39,7 @@ export const fetchFolderUsers = async (folderId: string): Promise<User[]> => {
 
 export const createFolder = async (payload: any) => {
   const headers = new Headers();
-  const tokenObj = await await browser.storage.local.get("token");
+  const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
@@ -56,15 +57,15 @@ export const createFolder = async (payload: any) => {
   return response.json();
 };
 
-export const shareFolder = async (payload: any) => {
+export const shareFolderWithUsers = async (payload: ShareFolderWithUsersPayload) => {
   const headers = new Headers();
-  const tokenObj = await await browser.storage.local.get("token");
+  const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
-  const response = await fetch(`${baseUrl}/folder`, {
-    method: "PUT",
+  const response = await fetch(`${baseUrl}/share-folder/users`, {
+    method: "POST",
     headers,
     body: JSON.stringify(payload),
   });
