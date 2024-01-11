@@ -5,6 +5,7 @@
     import { fly } from "svelte/transition";
     import { fetchCredentialById } from "../apis";
     import browser from "webextension-polyfill";
+  import More from '../../basic/more.svelte';
     const dispatch = createEventDispatcher();
 
     export let credential;
@@ -36,15 +37,17 @@
         });
         encryptedFields[index].fieldValue = response.data;
     };
+     /* eslint-disable */
 </script>
 
+
 <div
-    class="mb-6 mr-2 flex-none hover:border hover:border-macchiato-pink"
+    class="mb-6 mr-2 flex-none hover:border hover:border-osvauld-activelavender rounded-xl"
     on:mouseenter={handleMouseEnter}
     on:mouseleave={handleMouseLeave}
 >
     <button
-        class="container mx-auto p-4 relative rounded-lg group bg-macchiato-base"
+        class="container mx-auto p-4 relative group bg-osvauld-frameblack rounded-xl"
         on:click={toggleCheck}
         on:keydown={(e) => {
             if (e.key === "Enter") {
@@ -52,9 +55,12 @@
             }
         }}
     >
-        <input type="checkbox" {checked} on:change={(e) => toggleCheck()} />
-        <p class="mb-4 text-left">{credential.name}</p>
-        <div class="overflow-y-auto max-h-[280px] min-h-[280px] scrollbar-thin">
+        <div class="flex justify-between items-center border-b-2 border-osvauld-iconblack pb-2">
+            <input type="checkbox" class="bg-osvauld-frameblack mr-2 border-osvauld-iconblack" on:change={(e) => toggleCheck()} />
+            <p class="text-xl font-medium">{credential.name}</p>
+            <More />
+        </div>
+        <div class="overflow-y-auto max-h-[280px] min-h-[280px] scrollbar-thin mt-2">
             {#each credential?.unencryptedFields as field, index}
                 <div class="mb-4">
                     <label
@@ -63,7 +69,7 @@
                     >
                     <div class="relative">
                         <input
-                            class={`input pr-10 w-full rounded-2xl items-center bg-macchiato-surface0 border-macchiato-lavender`}
+                            class={`input pr-10 w-full rounded-2xl items-center bg-osvauld-frameblack border-osvauld-iconblack`}
                             type="text"
                             value={field.fieldValue}
                         />
@@ -84,7 +90,7 @@
                         >
                         <div class="relative">
                             <input
-                                class={`input pr-10 w-full rounded-2xl items-center bg-macchiato-surface0 border-macchiato-lavender`}
+                                class={`input pr-10 w-full rounded-2xl items-center bg-osvauld-frameblack border-osvauld-iconblack`}
                                 type="text"
                                 value={field.fieldValue}
                             />
@@ -107,7 +113,7 @@
         </div>
         <!-- Static description at the bottom -->
         <textarea
-            class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-macchiato-surface0 rounded-md scrollbar-thin border-macchiato-lavender"
+            class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-md scrollbar-thin border-osvauld-iconblack resize-none"
             >{credential.description}</textarea
         >
     </button>

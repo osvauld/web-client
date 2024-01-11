@@ -28,11 +28,11 @@
 
 <div>
   <button
-    class="w-full bg-osvauld-activelavender rounded-full p-2 pl-8 pr-8 text-macchiato-crust flex justify-center items-center m-2"
+    class="w-full bg-osvauld-activelavender rounded-lg p-2 pl-8 pr-8 text-macchiato-crust flex justify-center items-center m-2"
     on:click={() => openModal("group")}>Add Group <Add/> </button
   >
   <button
-    class="w-full bg-osvauld-grapegreen rounded-full p-2 pl-8 pr-8 text-macchiato-crust flex justify-center items-center m-2"
+    class="w-full bg-osvauld-grapegreen rounded-lg p-2 pl-8 pr-8 text-macchiato-crust flex justify-center items-center m-2"
     on:click={() => openModal("user")}>Add User <Add/> </button
   >
   {#if $showAddGroupDrawer}

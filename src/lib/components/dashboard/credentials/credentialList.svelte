@@ -3,7 +3,9 @@
   import ShareFolder from "../folders/ShareFolder.svelte";
   import ShareCredential from "./ShareCredential.svelte";
   import CredentialCard from "./CredentialCard.svelte";
-
+  import Lens from '../../basic/lens.svelte';
+  import Share from "../../basic/share.svelte";
+  import Add from  "../../basic/add.svelte";
   import { fetchFolderUsers, fetchAllUsers } from "../apis";
 
   import { User, CredentialDetails } from "../dtos";
@@ -51,34 +53,34 @@
 <div >
   {#if $selectedFolder}
     <div class="flex items-center p-4">
-      <h1 class="text-4xl p-4 italic">{$selectedFolder.name}</h1>
-      <div class="rounded-full flex items-center">
-        <input
-          type="search"
-          placeholder="Search"
-          class="bg-transparent ml-4 mr-4 pl-8 py-1 rounded-full w-full focus:outline-none"
-        />
-      </div>
-
-      <button
-        class="bg rounded-md p-2 pl-2 mr-2 bg-macchiato-blue text-macchiato-surface0"
-        on:click={() => showAddCredentialDrawer.set(true)}
-        >Create Credential</button
-      >
+      <h1 class="text-4xl p-4 font-normal w-1/3">{$selectedFolder.name}</h1>
       {#if checkedCards.length === 0}
-        <!-- TODO: update to share credentials in the same api -->
-        <button
-          class="bg-macchiato-sapphire rounded-md p-2 pl-2 pr-2 text-macchiato-surface0"
-          on:click={openshareFolderDrawer}>Share Folder</button
-        >
-      {:else}
-        <button
-          class="bg-macchiato-sapphire rounded-md p-2 pl-2 text-macchiato-surface0"
-          on:click={openShareCredentialDrawer}>Share Secrets</button
-        >
-      {/if}
+      <!-- TODO: update to share credentials in the same api -->
+      <button
+        class="bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-macchiato-surface0 flex justify-center items-center xl:scale-90 lg:scale-95"
+        on:click={openshareFolderDrawer}> <Share/> <span class="ml-1"> Manage Access</span> </button
+      >
+    {:else}
+      <button
+        class="bg-osvauld-carolinablue  rounded-md  py-1 px-4 !text-lg text-macchiato-surface0 flex  justify-center items-center  xl:scale-90 lg:scale-95"
+        on:click={openShareCredentialDrawer}> <Share/><span class="ml-1">  Share Secrets </span> </button
+      >
+    {/if}
+      <div class="h-[34px] w-1/4 px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer">
+        <Lens/>
+        <input type="text" class="h-[28px] w-full bg-osvauld-ninjablack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Find what you need faster..">
+      </div>
+      <button
+        class="bg rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center xl:scale-90 lg:scale-95"
+        on:click={() => showAddCredentialDrawer.set(true)}
+        ><span class="mr-1"> Add Credential</span> <Add/> </button
+      >
+   
     </div>
   {/if}
+
+
+
   {#if $showAddCredentialDrawer}
     <button
       class="fixed inset-0 flex items-center justify-center z-50"
