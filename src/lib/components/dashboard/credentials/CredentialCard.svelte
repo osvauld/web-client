@@ -12,6 +12,7 @@
     import SensitiveEye from '../../basic/sensitiveEye.svelte';
     import SensitiveEye2 from '../../basic/sensitiveEyeBlue.svelte';
   import ActiveCopy from '../../basic/activeCopy.svelte';
+  import ClosedEye from '../../basic/closedEye.svelte';
     const dispatch = createEventDispatcher();
 
     export let credential;
@@ -44,10 +45,15 @@
     }
 
     function makeVisible(){
-        visibility = true;
-        setTimeout(()=> {
+        if(visibility){
             visibility = false;
-        }, 3000)
+        } else {
+            visibility = true;
+            setTimeout(()=> {
+                visibility = false;
+            }, 3000)
+        }
+       
     }
 
     const decrypt = async (encryptedFieldValue: string, index: number) => {
@@ -65,7 +71,7 @@
 
 
 <div
-    class="mb-3 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 "
+    class="mb-3 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 transition-all"
     on:mouseenter={handleMouseEnter}
     on:mouseleave={handleMouseLeave}
 >
@@ -80,7 +86,7 @@
     >
   
         <div class="flex justify-center items-center border-osvauld-iconblack pb-2">
-            <input type="checkbox" class="bg-osvauld-frameblack mr-2 border-osvauld-iconblack" on:change={(e) => toggleCheck()} />
+            <input type="checkbox" class="bg-osvauld-frameblack mr-2 border-osvauld-iconblack checked:bg-osvauld-lilacpink active:outline-none focus:text-primary focus:ring-offset-0 focus:ring-0 cursor-pointer" on:change={(e) => toggleCheck()} />
             <p class="text-xl font-medium w-full text-left ml-2">{credential.name}</p>
             <More />
         </div>
@@ -146,14 +152,27 @@
                                     <button>
                                       <Unlocked/>
                                     </button>
+                                    {#if visibility}
+                                        <button   on:click={
+                                            makeVisible
+                                            } >
+                                          <ClosedEye/>
+                                        </button>
+                                   {:else}
                                     <button       
-                                     on:click={
+                                    on:click={
                                         makeVisible
                                         } >
                                         <Eye/>
                                     </button>
+                                    {/if}
+                                  
                                     <button>
-                                      <CopyIcon />
+                                        {#if hoverEffect}
+                                        <ActiveCopy />
+                                        {:else}
+                                        <CopyIcon />
+                                        {/if}
                                     </button>
                                  </div>
 
