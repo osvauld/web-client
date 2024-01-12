@@ -11,6 +11,7 @@
   import Eye from '../../basic/eye.svelte';
   import Unlocked from '../../basic/unlocked.svelte';
   import SensitiveEye from '../../basic/sensitiveEye.svelte';
+  import SensitiveEye2 from '../../basic/sensitiveEyeBlue.svelte';
     const dispatch = createEventDispatcher();
 
     export let credential;
@@ -18,6 +19,7 @@
     let encryptedFields = [];
     let decrypted = false;
     let checked = false;
+    let hoverEffect = false;
     let hoverTimeout;
 
     function toggleCheck() {
@@ -25,6 +27,7 @@
         dispatch("check", checked);
     }
     function handleMouseEnter() {
+        hoverEffect = true;
         if(!decrypted){
             hoverTimeout = setTimeout(async () => {
             const response = await fetchCredentialById(credential.id);
@@ -37,6 +40,7 @@
         encryptedFields = [];
         clearTimeout(hoverTimeout);
         decrypted = false;
+        hoverEffect = false;
     }
 
     function makeVisible(){
@@ -81,7 +85,7 @@
             <More />
         </div>
         <div class="border-b border-osvauld-bordergreen w-[calc(100%+32px)] -translate-x-4 "></div>
-        <div class="w-[240px] h-[170px] overflow-scroll .scrollbar-thin::-webkit-scrollbar-track mt-2">
+        <div class="w-[240px] h-[170px] overflow-scroll .scrollbar-thin::-webkit-scrollbar-thumb mt-2">
             {#each credential?.unencryptedFields as field, index}
                 <div class="mb-4">
                     <label
@@ -159,7 +163,12 @@
         >
         <div class="border-t border-osvauld-bordergreen w-[calc(100%+32px)] -translate-x-4 my-2"></div>
         <div class="flex justify-start">
-            <span class="bg-osvauld-sensitivebgblack py-0 px-3 text-sm border border-osvauld-bordergreen rounded-sm text-osvauld-chalkwhite flex justify-center items-center"> <SensitiveEye /> <span class="ml-2 text-osvauld-placeholderblack">Sensitive Fields</span></span>
+            {#if hoverEffect}
+            <span class="bg-osvauld-sensitivebgblue py-0 px-3 text-sm border border-osvauld-bordergreen rounded-[4px] text-osvauld-carolinablue flex justify-center items-center"> <SensitiveEye2 /> <span class="ml-2 text-osvauld-carolinablue">Sensitive Fields</span></span>
+            {:else}
+            <span class="bg-osvauld-sensitivebgblack py-0 px-3 text-sm border border-osvauld-bordergreen rounded-[4px] text-osvauld-chalkwhite flex justify-center items-center"> <SensitiveEye /> <span class="ml-2 text-osvauld-placeholderblack">Sensitive Fields</span></span>
+            {/if}
+          
         </div>
     </button>
 </div>

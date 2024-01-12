@@ -59,6 +59,7 @@ export default {
           frameblack: "#0D1117",
           placeholderblack: "#30363D",
           sensitivebgblack: "#14191E",
+          sensitivebgblue: "#253244",
         },
       },
     },
