@@ -6,12 +6,16 @@
     import { fetchCredentialById } from "../apis";
     import browser from "webextension-polyfill";
   import More from '../../basic/more.svelte';
+  import Locked from '../../basic/locked.svelte';
+  import Eye from '../../basic/eye.svelte';
+  import Unlocked from '../../basic/unlocked.svelte';
     const dispatch = createEventDispatcher();
 
     export let credential;
+    let visibility = false;
     let encryptedFields = [];
     const selectCredential = (credential: CredentialDetails) => {
-        encryptedFields = [{ fieldName: "test22", fieldValue: "test" }];
+        encryptedFields = [{ fieldName: "test22", fieldValue: "test"}];
     };
     let checked = false;
     function toggleCheck() {
@@ -23,6 +27,7 @@
         hoverTimeout = setTimeout(async () => {
             const response = await fetchCredentialById(credential.id);
             encryptedFields = response.data.encryptedFields;
+            encryptedFields = encryptedFields.map(item => ({ ...item, lockIcon: false }));
         }, 300);
     }
     function handleMouseLeave() {
@@ -30,19 +35,26 @@
         clearTimeout(hoverTimeout);
     }
 
+    function makeVisible(index: number){
+        console.log("eye clicked"); 
+        visibility = true;
+    }
+
     const decrypt = async (encryptedFieldValue: string, index: number) => {
         const response = await browser.runtime.sendMessage({
             eventName: "decryptField",
             data: encryptedFieldValue,
         });
+        console.log(response);
         encryptedFields[index].fieldValue = response.data;
+        encryptedFields[index].lockIcon = false;
     };
      /* eslint-disable */
 </script>
 
 
 <div
-    class="mb-6 mr-2 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite"
+    class="mb-6 mr-2 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 "
     on:mouseenter={handleMouseEnter}
     on:mouseleave={handleMouseLeave}
 >
@@ -60,7 +72,7 @@
             <p class="text-xl font-medium w-full text-left ml-2">{credential.name}</p>
             <More />
         </div>
-        <div class="overflow-y-auto max-h-[280px] min-h-[280px] .scrollbar-thin::-webkit-scrollbar-track mt-2">
+        <div class="overflow-y-auto max-h-[280px] min-h-[160px] .scrollbar-thin::-webkit-scrollbar-track mt-2">
             {#each credential?.unencryptedFields as field, index}
                 <div class="mb-4">
                     <label
@@ -88,24 +100,39 @@
                             class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
                             for={`input-${index}`}>{field.fieldName}</label
                         >
-                        <div class="relative">
+                        <div class="relative pr-2 input w-full rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border border-osvauld-iconblack">
                             <input
-                                class={`input pr-10 w-full rounded-lg items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border-osvauld-iconblack`}
-                                type="text"
+                                class={`text-osvauld-sheffieldgrey bg-osvauld-frameblack border-0`}
+                                type={`${field.lockIcon && visibility ? "text": "password"}`}
                                 value={field.fieldValue}
                             />
-                            <button
+                            <!-- If decrypt in not clicked yet -->
+                            {#if field.lockIcon}
+                                <button
                                 on:click={() =>
                                     decrypt(field.fieldValue, index)}
-                                class="bg-red-400 absolute right-2 top-1/2 transform -translate-y-1/2"
-                            >
-                                Decrypt
-                            </button>
-                            <button
-                                class="absolute right-2 top-1/2 transform -translate-y-1/2"
-                            >
-                                <CopyIcon />
-                            </button>
+                                 class="">
+                                  <Locked/>
+                                </button>
+                             {:else}
+                             <div>
+                                    <button>
+                                      <Unlocked/>
+                                    </button>
+                                    <button       
+                                     on:click={() =>
+                                        makeVisible(index)} >
+                                        <Eye/>
+                                    </button>
+                                    <button>
+                                      <CopyIcon />
+                                    </button>
+                                 </div>
+
+                            {/if}
+                         
+                            <!-- else -->
+                           
                         </div>
                     </div>
                 {/each}

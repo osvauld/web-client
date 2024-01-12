@@ -115,8 +115,8 @@
       </button>
     </button>
   {/if}
-  <div class="flex !overflow-hidden">
-    <div class="flex flex-wrap p-6 w-full h-[690px]  ">
+  <div class="flex">
+    <div class="flex flex-wrap p-6 w-full">
       {#each $credentialStore as credential}
         <CredentialCard
           {credential}
