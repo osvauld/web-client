@@ -1,21 +1,21 @@
 <script lang="ts">
-    import { writable } from 'svelte/store';
     import CopyIcon from "../../basic/copyIcon.svelte";
     import { CredentialDetails } from "../dtos";
     import { createEventDispatcher } from "svelte";
     import { fly } from "svelte/transition";
     import { fetchCredentialById } from "../apis";
     import browser from "webextension-polyfill";
-  import More from '../../basic/more.svelte';
-  import Locked from '../../basic/locked.svelte';
-  import Eye from '../../basic/eye.svelte';
-  import Unlocked from '../../basic/unlocked.svelte';
-  import SensitiveEye from '../../basic/sensitiveEye.svelte';
-  import SensitiveEye2 from '../../basic/sensitiveEyeBlue.svelte';
+    import More from '../../basic/more.svelte';
+    import Locked from '../../basic/locked.svelte';
+    import Eye from '../../basic/eye.svelte';
+    import Unlocked from '../../basic/unlocked.svelte';
+    import SensitiveEye from '../../basic/sensitiveEye.svelte';
+    import SensitiveEye2 from '../../basic/sensitiveEyeBlue.svelte';
+  import ActiveCopy from '../../basic/activeCopy.svelte';
     const dispatch = createEventDispatcher();
 
     export let credential;
-    export let visibility = writable(false)
+    let visibility = false;
     let encryptedFields = [];
     let decrypted = false;
     let checked = false;
@@ -44,9 +44,9 @@
     }
 
     function makeVisible(){
-        visibility.set(true);
+        visibility = true;
         setTimeout(()=> {
-            visibility.set(false)
+            visibility = false;
         }, 3000)
     }
 
@@ -85,7 +85,7 @@
             <More />
         </div>
         <div class="border-b border-osvauld-bordergreen w-[calc(100%+32px)] -translate-x-4 "></div>
-        <div class="w-[240px] h-[170px] overflow-scroll .scrollbar-thin::-webkit-scrollbar-thumb mt-2">
+        <div class="w-[240px] h-[170px] overflow-scroll .scrollbar-thin::-webkit-scrollbar .scrollbar-thin::-webkit-scrollbar-thumb:hover mt-2">
             {#each credential?.unencryptedFields as field, index}
                 <div class="mb-4">
                     <label
@@ -93,15 +93,28 @@
                         for={`input-${index}`}>{field.fieldName}</label
                     >
                     <div class="relative">
+                        {#if hoverEffect}
                         <input
-                            class={`input pr-10 w-full rounded-lg items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border-osvauld-iconblack`}
-                            type="text"
-                            value={field.fieldValue}
-                        />
+                        class={`input pr-10 w-full rounded-lg items-center text-base text-osvauld-quarzowhite bg-osvauld-frameblack border-osvauld-iconblack`}
+                        type="text"
+                        value={field.fieldValue}
+                    />
+                        {:else}
+                        <input
+                        class={`input pr-10 w-full rounded-lg items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border-osvauld-iconblack`}
+                        type="text"
+                        value={field.fieldValue}
+                    />
+                        {/if}
+                      
                         <button
                             class="absolute right-2 top-1/2 transform -translate-y-1/2"
                         >
-                            <CopyIcon />
+                        {#if hoverEffect}
+                        <ActiveCopy />
+                        {:else}
+                        <CopyIcon />
+                        {/if}
                         </button>
                     </div>
                 </div>
@@ -115,8 +128,8 @@
                         >
                         <div class="relative pr-2 input w-full rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border border-osvauld-iconblack">
                             <input
-                                class={`text-osvauld-sheffieldgrey bg-osvauld-frameblack border-0`}
-                                type={`${!field.lockIcon && $visibility ? "text": "password"}`}
+                                class={`text-osvauld-sheffieldgrey bg-osvauld-frameblack border-0 w-2/3`}
+                                type={`${!field.lockIcon && visibility ? "text": "password"}`}
                                 value={field.fieldValue}
                             />
                             <!-- If decrypt in not clicked yet -->
@@ -129,7 +142,7 @@
                                   <Locked/>
                                 </button>
                              {:else}
-                             <div>
+                             <div class="flex justify-center items-center">
                                     <button>
                                       <Unlocked/>
                                     </button>
@@ -157,10 +170,18 @@
         <label class="text-osvauld-dusklabel block text-left text-sm font-normal">
             Description
         </label>
+        {#if hoverEffect}
         <textarea
-            class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base text-osvauld-sheffieldgrey"
-            >{credential.description}</textarea
-        >
+        class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base text-osvauld-quarzowhite"
+        >{credential.description}
+    </textarea>
+        {:else}
+        <textarea
+        class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base text-osvauld-sheffieldgrey"
+        >{credential.description}
+    </textarea>
+        {/if}
+     
         <div class="border-t border-osvauld-bordergreen w-[calc(100%+32px)] -translate-x-4 my-2"></div>
         <div class="flex justify-start">
             {#if hoverEffect}
