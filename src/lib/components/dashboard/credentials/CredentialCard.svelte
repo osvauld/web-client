@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { writable } from 'svelte/store';
     import CopyIcon from "../../basic/copyIcon.svelte";
     import { CredentialDetails } from "../dtos";
     import { createEventDispatcher } from "svelte";
@@ -12,42 +13,47 @@
     const dispatch = createEventDispatcher();
 
     export let credential;
-    let visibility = false;
+    export let visibility = writable(false)
     let encryptedFields = [];
-    const selectCredential = (credential: CredentialDetails) => {
-        encryptedFields = [{ fieldName: "test22", fieldValue: "test"}];
-    };
+    let decrypted = false;
     let checked = false;
+    let hoverTimeout;
+
     function toggleCheck() {
         checked = !checked;
         dispatch("check", checked);
     }
-    let hoverTimeout;
     function handleMouseEnter() {
-        hoverTimeout = setTimeout(async () => {
+        if(!decrypted){
+            hoverTimeout = setTimeout(async () => {
             const response = await fetchCredentialById(credential.id);
             encryptedFields = response.data.encryptedFields;
-            encryptedFields = encryptedFields.map(item => ({ ...item, lockIcon: false }));
+            encryptedFields = encryptedFields.map(item => ({ ...item, lockIcon: true }));
         }, 300);
+        }
     }
     function handleMouseLeave() {
         encryptedFields = [];
         clearTimeout(hoverTimeout);
+        decrypted = false;
     }
 
-    function makeVisible(index: number){
-        console.log("eye clicked"); 
-        visibility = true;
+    function makeVisible(){
+        visibility.set(true);
+        setTimeout(()=> {
+            visibility.set(false)
+        }, 3000)
     }
 
     const decrypt = async (encryptedFieldValue: string, index: number) => {
+
         const response = await browser.runtime.sendMessage({
             eventName: "decryptField",
             data: encryptedFieldValue,
         });
-        console.log(response);
         encryptedFields[index].fieldValue = response.data;
         encryptedFields[index].lockIcon = false;
+        decrypted = true;
     };
      /* eslint-disable */
 </script>
@@ -103,14 +109,15 @@
                         <div class="relative pr-2 input w-full rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border border-osvauld-iconblack">
                             <input
                                 class={`text-osvauld-sheffieldgrey bg-osvauld-frameblack border-0`}
-                                type={`${field.lockIcon && visibility ? "text": "password"}`}
+                                type={`${!field.lockIcon && $visibility ? "text": "password"}`}
                                 value={field.fieldValue}
                             />
                             <!-- If decrypt in not clicked yet -->
                             {#if field.lockIcon}
                                 <button
                                 on:click={() =>
-                                    decrypt(field.fieldValue, index)}
+                                    decrypt(field.fieldValue, index)  
+                                    }
                                  class="">
                                   <Locked/>
                                 </button>
@@ -120,8 +127,9 @@
                                       <Unlocked/>
                                     </button>
                                     <button       
-                                     on:click={() =>
-                                        makeVisible(index)} >
+                                     on:click={
+                                        makeVisible
+                                        } >
                                         <Eye/>
                                     </button>
                                     <button>
