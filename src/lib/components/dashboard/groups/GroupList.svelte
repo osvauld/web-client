@@ -2,8 +2,14 @@
   import { onMount, onDestroy } from "svelte";
   import { Unsubscriber } from "svelte/store";
 
-  import { selectedGroup, showAddUserDrawer } from "../store";
+  import {
+    selectedGroup,
+    showAddUserDrawer,
+    showAddUserToGroupDrawer,
+  } from "../store";
+
   import AddUser from "./AddUser.svelte";
+  import AddUserToGroup from "./AddUserToGroup.svelte";
 
   import { User } from "../dtos";
 
@@ -29,7 +35,7 @@
 </script>
 
 <div class="z-50">
-  {#if $showAddUserDrawer}
+  {#if $showAddUserDrawer || $showAddUserToGroupDrawer}
     <div class="fixed z-10 inset-0 overflow-y-auto">
       <div
         class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
@@ -47,7 +53,11 @@
         <div
           class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
         >
-          <AddUser />
+          {#if $showAddUserDrawer}
+            <AddUser />
+          {:else if $showAddUserToGroupDrawer}
+            <AddUserToGroup />
+          {/if}
         </div>
       </div>
     </div>
@@ -58,6 +68,12 @@
   <div class="min-w-screen min-h-screen flex overflow-hidden">
     <div class="w-full">
       <div class="shadow-md rounded my-6">
+        {#if $selectedGroup}
+          <button
+            class="bg-macchiato-lavender text-macchiato-base p-2 rounded-md"
+            on:click={() => showAddUserToGroupDrawer.set(true)}>Add User</button
+          >
+        {/if}
         <table class="min-w-max w-full table-auto">
           <thead>
             <tr class="text-sm leading-normal">
