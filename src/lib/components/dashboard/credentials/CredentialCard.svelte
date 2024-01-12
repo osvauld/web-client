@@ -10,6 +10,7 @@
   import Locked from '../../basic/locked.svelte';
   import Eye from '../../basic/eye.svelte';
   import Unlocked from '../../basic/unlocked.svelte';
+  import SensitiveEye from '../../basic/sensitiveEye.svelte';
     const dispatch = createEventDispatcher();
 
     export let credential;
@@ -60,7 +61,7 @@
 
 
 <div
-    class="mb-6 mr-2 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 "
+    class="mb-3 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 "
     on:mouseenter={handleMouseEnter}
     on:mouseleave={handleMouseLeave}
 >
@@ -73,12 +74,14 @@
             }
         }}
     >
+  
         <div class="flex justify-center items-center border-osvauld-iconblack pb-2">
             <input type="checkbox" class="bg-osvauld-frameblack mr-2 border-osvauld-iconblack" on:change={(e) => toggleCheck()} />
             <p class="text-xl font-medium w-full text-left ml-2">{credential.name}</p>
             <More />
         </div>
-        <div class="overflow-y-auto max-h-[280px] min-h-[160px] .scrollbar-thin::-webkit-scrollbar-track mt-2">
+        <div class="border-b border-osvauld-bordergreen w-[calc(100%+32px)] -translate-x-4 "></div>
+        <div class="w-[240px] h-[170px] overflow-scroll .scrollbar-thin::-webkit-scrollbar-track mt-2">
             {#each credential?.unencryptedFields as field, index}
                 <div class="mb-4">
                     <label
@@ -154,5 +157,9 @@
             class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base text-osvauld-sheffieldgrey"
             >{credential.description}</textarea
         >
+        <div class="border-t border-osvauld-bordergreen w-[calc(100%+32px)] -translate-x-4 my-2"></div>
+        <div class="flex justify-start">
+            <span class="bg-osvauld-sensitivebgblack py-0 px-3 text-sm border border-osvauld-bordergreen rounded-sm text-osvauld-chalkwhite flex justify-center items-center"> <SensitiveEye /> <span class="ml-2 text-osvauld-placeholderblack">Sensitive Fields</span></span>
+        </div>
     </button>
 </div>
