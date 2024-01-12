@@ -9,6 +9,7 @@
   console.log("is logged in status", $isLoggedIn);
   let devType = "po";
 
+
   onMount(async () => {
     if (devType != "popup") openFullscreenTab();
     const response = await browser.runtime.sendMessage({
