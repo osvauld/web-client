@@ -57,12 +57,12 @@
       {#if checkedCards.length === 0}
       <!-- TODO: update to share credentials in the same api -->
       <button
-        class="bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-macchiato-surface0 flex justify-center items-center xl:scale-90 lg:scale-95"
+        class="bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 "
         on:click={openshareFolderDrawer}> <Share/> <span class="ml-1"> Manage Access</span> </button
       >
     {:else}
       <button
-        class="bg-osvauld-carolinablue  rounded-md  py-1 px-4 !text-lg text-macchiato-surface0 flex  justify-center items-center  xl:scale-90 lg:scale-95"
+        class="bg-osvauld-carolinablue  rounded-md  py-1 px-4 !text-lg text-macchiato-surface0 flex  justify-center items-center  whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 "
         on:click={openShareCredentialDrawer}> <Share/><span class="ml-1">  Share Secrets </span> </button
       >
     {/if}
@@ -71,16 +71,13 @@
         <input type="text" class="h-[28px] w-full bg-osvauld-ninjablack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Find what you need faster..">
       </div>
       <button
-        class="bg rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center xl:scale-90 lg:scale-95"
+        class="bg rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75  "
         on:click={() => showAddCredentialDrawer.set(true)}
         ><span class="mr-1"> Add Credential</span> <Add/> </button
       >
    
     </div>
   {/if}
-
-
-
   {#if $showAddCredentialDrawer}
     <button
       class="fixed inset-0 flex items-center justify-center z-50"
@@ -118,8 +115,8 @@
       </button>
     </button>
   {/if}
-  <div class="flex overflow-x-auto">
-    <div class="flex flex-wrap p-6 w-full">
+  <div class="flex !overflow-hidden">
+    <div class="flex flex-wrap p-6 w-full h-[690px]  ">
       {#each $credentialStore as credential}
         <CredentialCard
           {credential}

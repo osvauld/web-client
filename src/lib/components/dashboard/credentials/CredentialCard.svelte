@@ -42,7 +42,7 @@
 
 
 <div
-    class="mb-6 mr-2 flex-none hover:border hover:border-osvauld-activelavender rounded-xl"
+    class="mb-6 mr-2 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite"
     on:mouseenter={handleMouseEnter}
     on:mouseleave={handleMouseLeave}
 >
@@ -55,21 +55,21 @@
             }
         }}
     >
-        <div class="flex justify-between items-center border-b-2 border-osvauld-iconblack pb-2">
+        <div class="flex justify-center items-center border-osvauld-iconblack pb-2">
             <input type="checkbox" class="bg-osvauld-frameblack mr-2 border-osvauld-iconblack" on:change={(e) => toggleCheck()} />
-            <p class="text-xl font-medium">{credential.name}</p>
+            <p class="text-xl font-medium w-full text-left ml-2">{credential.name}</p>
             <More />
         </div>
-        <div class="overflow-y-auto max-h-[280px] min-h-[280px] scrollbar-thin mt-2">
+        <div class="overflow-y-auto max-h-[280px] min-h-[280px] .scrollbar-thin::-webkit-scrollbar-track mt-2">
             {#each credential?.unencryptedFields as field, index}
                 <div class="mb-4">
                     <label
-                        class="label block mb-2 text-left"
+                        class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
                         for={`input-${index}`}>{field.fieldName}</label
                     >
                     <div class="relative">
                         <input
-                            class={`input pr-10 w-full rounded-2xl items-center bg-osvauld-frameblack border-osvauld-iconblack`}
+                            class={`input pr-10 w-full rounded-lg items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border-osvauld-iconblack`}
                             type="text"
                             value={field.fieldValue}
                         />
@@ -85,12 +85,12 @@
                 {#each encryptedFields as field, index}
                     <div class="mb-4" in:fly out:fly>
                         <label
-                            class="label block mb-2 text-left"
+                            class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
                             for={`input-${index}`}>{field.fieldName}</label
                         >
                         <div class="relative">
                             <input
-                                class={`input pr-10 w-full rounded-2xl items-center bg-osvauld-frameblack border-osvauld-iconblack`}
+                                class={`input pr-10 w-full rounded-lg items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border-osvauld-iconblack`}
                                 type="text"
                                 value={field.fieldValue}
                             />
@@ -112,8 +112,11 @@
             {/if}
         </div>
         <!-- Static description at the bottom -->
+        <label class="text-osvauld-dusklabel block text-left text-sm font-normal">
+            Description
+        </label>
         <textarea
-            class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-md scrollbar-thin border-osvauld-iconblack resize-none"
+            class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base text-osvauld-sheffieldgrey"
             >{credential.description}</textarea
         >
     </button>
