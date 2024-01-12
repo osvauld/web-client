@@ -55,7 +55,7 @@
       description: description,
       folderId: $selectedFolder.id,
       unencryptedFields: unencryptedFields,
-      userAccessDetails: [],
+      userEncryptedFields: [],
     };
     for (const user of folderUsers) {
       console.log(user.publicKey);
@@ -63,7 +63,7 @@
         [toEncryptFields],
         user.publicKey,
       );
-      addCredentialPaylod.userAccessDetails.push({
+      addCredentialPaylod.userEncryptedFields.push({
         userId: user.id,
         encryptedFields: encryptedData[0].encryptedFields,
       });
