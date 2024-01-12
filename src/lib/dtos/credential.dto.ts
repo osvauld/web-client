@@ -30,10 +30,10 @@ export type AddCredentialPayload = {
   description: string;
   folderId: string;
   unencryptedFields: CredentialFields[];
-  userAccessDetails: UserAccessPayload[];
+  userEncryptedFields: UserEncryptedPayload[];
 };
 
-export type UserAccessPayload = {
+type UserEncryptedPayload = {
   userId: string;
   encryptedFields: CredentialFields[];
 };
@@ -52,12 +52,12 @@ export type CredentialsForUsersPayload = {
 
 
 export type EncryptedCredentialFields = {
-  credentialId: string;
+  credentialId?: string;
   encryptedFields: CredentialFields[];
 }
 
 
 export type DecryptedPaylod = {
-  credentialId: string,
+  credentialId?: string,
   decryptedFields: CredentialFields[]
 }
