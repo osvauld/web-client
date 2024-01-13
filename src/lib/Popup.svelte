@@ -6,22 +6,19 @@
   import Logo from "./components/basic/logo.svelte";
   import { isLoggedIn, isSignedUp } from "../lib/store/ui.store";
   import Signup from "./components/popup/Signup.svelte";
-  console.log("is logged in status", $isLoggedIn);
-  let devType = "pop";
-
+  let devType = "popup";
 
   onMount(async () => {
     if (devType != "popup") openFullscreenTab();
     const response = await browser.runtime.sendMessage({
       action: "check_is_signed_up",
     });
-       isSignedUp.set(response.isSignedUp);
-      // isSignedUp.set(false);
+    isSignedUp.set(response.isSignedUp);
+    // isSignedUp.set(false);
   });
 
   const openFullscreenTab = async () => {
     // Send a message to the background sdaash
-    console.log("Opening fullscreen tab");
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
   };
 </script>

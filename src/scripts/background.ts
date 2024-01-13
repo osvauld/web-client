@@ -30,7 +30,6 @@ browser.runtime.onMessage.addListener(async (request) => {
     const credentials: EncryptedCredentialFields[] = request.data;
     const returnPayload: DecryptedPaylod[] = [];
     for (const credential of credentials) {
-      console.log(credential, 'credential');
       const decryptedFields = await decryptCredentialFields(credential.encryptedFields, rsaPvtKey);
       const payload: DecryptedPaylod = {
         credentialId: credential.credentialId,

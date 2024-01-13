@@ -4,10 +4,10 @@ import { User } from "../dtos/user.dto";
 import browser from "webextension-polyfill";
 
 export const fetchAllUserGroups = async () => {
-
+  // TODO: change store setting from here.
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
-  fetch(`${baseUrl}/groups`, {
+  return fetch(`${baseUrl}/groups`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -15,6 +15,7 @@ export const fetchAllUserGroups = async () => {
     .then((response) => response.json())
     .then((responseJson) => {
       groupStore.set(responseJson.data);
+      return responseJson.data;
     });
 };
 

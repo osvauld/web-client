@@ -34,6 +34,5 @@ export const createUser = async (payload: any) => {
     headers,
     body: JSON.stringify(payload),
   }).then((response) => response.json());
-  console.log(response, "RESP###########")
   return response;
 }

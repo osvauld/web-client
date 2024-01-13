@@ -337,7 +337,6 @@ export const decryptPvtKeys = async (symmetricKey: CryptoKey, signPvtKey: string
   const eccPvtKey = await importECCPrivateKey(eccKeyStr);
   const rsaKeyStr = await decryptWithSymmetricKey(symmetricKey, encryptionPvtKey, iv);
   const rsaPvtKey = await importRSAPrivateKey(rsaKeyStr);
-  console.log(rsaPvtKey)
   return { eccPvtKey, rsaPvtKey }
 }
 

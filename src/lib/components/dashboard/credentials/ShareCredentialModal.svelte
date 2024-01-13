@@ -13,14 +13,17 @@
     UserWithAccessType,
     User,
     EncryptedCredentialFields,
+    Group,
   } from "../dtos";
 
   import { createShareCredsPayload } from "../helper";
-  export let creds: CredentialBase[];
+  import { onMount } from "svelte";
+  export let credentials: CredentialBase[];
   export let users: User[];
+  export let groups: Group[];
   let selectedUsers: UserWithAccessType[] = [];
 
-  const credIds = creds.map((cred) => cred.id);
+  const credIds = credentials.map((cred) => cred.id);
 
   function handleCheck(e: any, user: User) {
     if (e.target.checked) {
@@ -34,15 +37,21 @@
     const index = selectedUsers.findIndex((u) => u.id === user.id);
     selectedUsers[index].accessType = e.target.value;
   };
-
+  let encryptedCredentials: EncryptedCredentialFields[] = [];
   const shareCredentialHandler = async () => {
-    // TODO: update to share credentials in the same api
-    const responseJson = await fetchEncryptedFieldsByIds(credIds);
-    const creds: EncryptedCredentialFields[] = responseJson.data;
-    const userData = await createShareCredsPayload(creds, selectedUsers);
+    const userData = await createShareCredsPayload(
+      encryptedCredentials,
+      selectedUsers,
+    );
     const payload: ShareCredentialsWithUsersPayload = { userData };
     await shareCredentialsWithUsers(payload);
   };
+
+  onMount(async () => {
+    console.log(users);
+    const responseJson = await fetchEncryptedFieldsByIds(credIds);
+    encryptedCredentials = responseJson.data;
+  });
 </script>
 
 <div
