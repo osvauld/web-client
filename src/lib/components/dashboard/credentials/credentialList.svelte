@@ -116,7 +116,7 @@
     </button>
   {/if}
   <div class="flex">
-    <div class="flex flex-wrap p-6 w-full">
+    <div class="flex flex-wrap p-3 w-full">
       {#each $credentialStore as credential}
         <CredentialCard
           {credential}

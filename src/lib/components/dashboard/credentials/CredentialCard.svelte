@@ -45,15 +45,10 @@
     }
 
     function makeVisible(){
-        if(visibility){
-            visibility = false;
-        } else {
-            visibility = true;
+            visibility = !visibility
             setTimeout(()=> {
                 visibility = false;
             }, 3000)
-        }
-       
     }
 
     const decrypt = async (encryptedFieldValue: string, index: number) => {
@@ -76,7 +71,7 @@
     on:mouseleave={handleMouseLeave}
 >
     <button
-        class="container mx-auto p-4 relative group bg-osvauld-frameblack rounded-xl"
+        class="container mx-auto p-3 relative group bg-osvauld-frameblack rounded-xl"
         on:click={toggleCheck}
         on:keydown={(e) => {
             if (e.key === "Enter") {
@@ -90,8 +85,8 @@
             <p class="text-xl font-medium w-full text-left ml-2">{credential.name}</p>
             <More />
         </div>
-        <div class="border-b border-osvauld-bordergreen w-[calc(100%+32px)] -translate-x-4 "></div>
-        <div class="w-[240px] h-[170px] overflow-scroll .scrollbar-thin::-webkit-scrollbar .scrollbar-thin::-webkit-scrollbar-thumb:hover mt-2">
+        <div class="border-b border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3"></div>
+        <div class="w-[260px] h-[170px] overflow-y-scroll scrollbar-thin {hoverEffect ? "active" : "" } mt-2">
             {#each credential?.unencryptedFields as field, index}
                 <div class="mb-4">
                     <label
@@ -100,13 +95,13 @@
                     >
                     <div class="relative">
                         <input
-                        class={`input pr-10 w-full rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack ${hoverEffect ? 'text-osvauld-quarzowhite' : 'text-osvauld-sheffieldgrey'}`}
+                        class={`input py-1 pr-10 w-[95%] rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack ${hoverEffect ? 'text-osvauld-quarzowhite' : 'text-osvauld-sheffieldgrey'}`}
                         type="text"
                         value={field.fieldValue}
                       />
                       
                         <button
-                            class="absolute right-2 top-1/2 transform -translate-y-1/2"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2"
                         >
                         {#if hoverEffect}
                         <ActiveCopy />
@@ -124,9 +119,9 @@
                             class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
                             for={`input-${index}`}>{field.fieldName}</label
                         >
-                        <div class="relative pr-2 input w-full rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border border-osvauld-iconblack">
+                        <div class="relative pr-2 input w-[95%] rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border border-osvauld-iconblack">
                             <input
-                                class={`text-osvauld-sheffieldgrey bg-osvauld-frameblack border-0 w-2/3`}
+                                class={`text-osvauld-sheffieldgrey bg-osvauld-frameblack border-0 rounded-lg py-1 w-2/3`}
                                 type={`${!field.lockIcon && visibility ? "text": "password"}`}
                                 value={field.fieldValue}
                             />
@@ -178,7 +173,7 @@
       </textarea>
       
      
-        <div class="border-t border-osvauld-bordergreen w-[calc(100%+32px)] -translate-x-4 my-2"></div>
+        <div class="border-t border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3 my-2"></div>
         <div class="flex justify-start">
             <span class="{ hoverEffect ? 'bg-osvauld-sensitivebgblue text-osvauld-carolinablue' : 'bg-osvauld-sensitivebgblack text-osvauld-chalkwhite'} py-0 px-3 text-sm border border-osvauld-bordergreen rounded-[4px] flex justify-center items-center">
                 {#if hoverEffect}
