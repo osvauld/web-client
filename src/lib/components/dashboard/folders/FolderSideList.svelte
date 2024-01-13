@@ -27,7 +27,7 @@
   <button
   class="bg-osvauld-illutionpurple whitespace-nowrap rounded-lg py-2 px-16 mb-4 flex justify-center items-center text-macchiato-base xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
   on:click={openModal}
-    >Create New
+    ><span class="mr-1">Create New </span> 
     <Add/>
   </button>
   {#if $showAddFolderDrawer}
@@ -46,7 +46,7 @@
         on:click={() => selectFolder(folder)}
         class={`p-2 w-full text-lg rounded-2xl flex items-center cursor-pointer ${
           $selectedFolder === folder
-            ? "bg-macchiato-mauve border border-macchiato-flamingo text-macchiato-crust"
+            ? "bg-osvauld-cretangreen border border-osvauld-cretangreen text-macchiato-crust"
             : "hover:border hover:border-macchiato-teal text-macchiato-subtext1 "
         } rounded-md`}
       >

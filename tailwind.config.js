@@ -58,6 +58,8 @@ export default {
           illutionpurple: "#B7BDF8",
           frameblack: "#0D1117",
           placeholderblack: "#30363D",
+          sensitivebgblack: "#14191E",
+          sensitivebgblue: "#253244",
         },
       },
     },

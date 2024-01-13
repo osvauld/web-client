@@ -7,15 +7,16 @@
   import { isLoggedIn, isSignedUp } from "../lib/store/ui.store";
   import Signup from "./components/popup/Signup.svelte";
   console.log("is logged in status", $isLoggedIn);
-  let devType = "dash";
+  let devType = "pop";
+
 
   onMount(async () => {
     if (devType != "popup") openFullscreenTab();
     const response = await browser.runtime.sendMessage({
       action: "check_is_signed_up",
     });
-    isSignedUp.set(response.isSignedUp);
-    // isSignedUp.set(false);
+       isSignedUp.set(response.isSignedUp);
+      // isSignedUp.set(false);
   });
 
   const openFullscreenTab = async () => {
