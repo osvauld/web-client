@@ -11,8 +11,8 @@
     import Unlocked from '../../basic/unlocked.svelte';
     import SensitiveEye from '../../basic/sensitiveEye.svelte';
     import SensitiveEye2 from '../../basic/sensitiveEyeBlue.svelte';
-  import ActiveCopy from '../../basic/activeCopy.svelte';
-  import ClosedEye from '../../basic/closedEye.svelte';
+    import ActiveCopy from '../../basic/activeCopy.svelte';
+    import ClosedEye from '../../basic/closedEye.svelte';
     const dispatch = createEventDispatcher();
 
     export let credential;
@@ -71,7 +71,7 @@
 
 
 <div
-    class="mb-3 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 transition-all"
+    class="mb-3 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 "
     on:mouseenter={handleMouseEnter}
     on:mouseleave={handleMouseLeave}
 >
@@ -99,19 +99,11 @@
                         for={`input-${index}`}>{field.fieldName}</label
                     >
                     <div class="relative">
-                        {#if hoverEffect}
                         <input
-                        class={`input pr-10 w-full rounded-lg items-center text-base text-osvauld-quarzowhite bg-osvauld-frameblack border-osvauld-iconblack`}
+                        class={`input pr-10 w-full rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack ${hoverEffect ? 'text-osvauld-quarzowhite' : 'text-osvauld-sheffieldgrey'}`}
                         type="text"
                         value={field.fieldValue}
-                    />
-                        {:else}
-                        <input
-                        class={`input pr-10 w-full rounded-lg items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border-osvauld-iconblack`}
-                        type="text"
-                        value={field.fieldValue}
-                    />
-                        {/if}
+                      />
                       
                         <button
                             class="absolute right-2 top-1/2 transform -translate-y-1/2"
@@ -140,46 +132,35 @@
                             />
                             <!-- If decrypt in not clicked yet -->
                             {#if field.lockIcon}
-                                <button
-                                on:click={() =>
-                                    decrypt(field.fieldValue, index)  
-                                    }
-                                 class="">
-                                  <Locked/>
+                                <button on:click={() => decrypt(field.fieldValue, index)}>
+                                    <Locked/>
                                 </button>
-                             {:else}
-                             <div class="flex justify-center items-center">
-                                    <button>
-                                      <Unlocked/>
-                                    </button>
+                           {:else}
+                            <div class="flex justify-center items-center">
+                                <!-- Unlocked Button -->
+                                <button>
+                                    <Unlocked/>
+                                </button>
+                        
+                                <!-- Visibility Toggle Button -->
+                                <button on:click={makeVisible}>
                                     {#if visibility}
-                                        <button   on:click={
-                                            makeVisible
-                                            } >
-                                          <ClosedEye/>
-                                        </button>
-                                   {:else}
-                                    <button       
-                                    on:click={
-                                        makeVisible
-                                        } >
+                                        <ClosedEye/>
+                                    {:else}
                                         <Eye/>
-                                    </button>
                                     {/if}
-                                  
-                                    <button>
-                                        {#if hoverEffect}
+                                </button>
+                        
+                                <!-- Copy Button -->
+                                <button>
+                                    {#if hoverEffect}
                                         <ActiveCopy />
-                                        {:else}
+                                    {:else}
                                         <CopyIcon />
-                                        {/if}
-                                    </button>
-                                 </div>
-
-                            {/if}
-                         
-                            <!-- else -->
-                           
+                                    {/if}
+                                </button>
+                            </div>
+                        {/if}
                         </div>
                     </div>
                 {/each}
@@ -189,26 +170,25 @@
         <label class="text-osvauld-dusklabel block text-left text-sm font-normal">
             Description
         </label>
-        {#if hoverEffect}
         <textarea
-        class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base text-osvauld-quarzowhite"
-        >{credential.description}
-    </textarea>
-        {:else}
-        <textarea
-        class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base text-osvauld-sheffieldgrey"
-        >{credential.description}
-    </textarea>
-        {/if}
+        class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base 
+        {hoverEffect ? 'text-osvauld-quarzowhite' : 'text-osvauld-sheffieldgrey'}"
+      >
+        {credential.description}
+      </textarea>
+      
      
         <div class="border-t border-osvauld-bordergreen w-[calc(100%+32px)] -translate-x-4 my-2"></div>
         <div class="flex justify-start">
-            {#if hoverEffect}
-            <span class="bg-osvauld-sensitivebgblue py-0 px-3 text-sm border border-osvauld-bordergreen rounded-[4px] text-osvauld-carolinablue flex justify-center items-center"> <SensitiveEye2 /> <span class="ml-2 text-osvauld-carolinablue">Sensitive Fields</span></span>
-            {:else}
-            <span class="bg-osvauld-sensitivebgblack py-0 px-3 text-sm border border-osvauld-bordergreen rounded-[4px] text-osvauld-chalkwhite flex justify-center items-center"> <SensitiveEye /> <span class="ml-2 text-osvauld-placeholderblack">Sensitive Fields</span></span>
-            {/if}
-          
+            <span class="{ hoverEffect ? 'bg-osvauld-sensitivebgblue text-osvauld-carolinablue' : 'bg-osvauld-sensitivebgblack text-osvauld-chalkwhite'} py-0 px-3 text-sm border border-osvauld-bordergreen rounded-[4px] flex justify-center items-center">
+                {#if hoverEffect}
+                    <SensitiveEye2 />
+                {:else}
+                    <SensitiveEye />
+                {/if}
+                <span class="ml-2 { hoverEffect ? 'text-osvauld-carolinablue' : 'text-osvauld-placeholderblack'}">Sensitive Fields</span>
+            </span>
         </div>
+        
     </button>
 </div>
