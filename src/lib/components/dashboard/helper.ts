@@ -16,11 +16,18 @@ export const createShareCredsPayload = async (creds: EncryptedCredentialFields[]
             response.data,
             user.publicKey,
         );
-        userData.push({
-            userId: user.id,
-            credentials: userEncryptedFields,
-            accessType: user.accessType,
-        });
+        if (user.accessType) {
+            userData.push({
+                userId: user.id,
+                credentials: userEncryptedFields,
+                accessType: user.accessType,
+            });
+        } else {
+            userData.push({
+                userId: user.id,
+                credentials: userEncryptedFields,
+            });
+        }
     }
     return userData;
 }

@@ -1,57 +1,37 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
+  import { onMount } from "svelte";
 
   import { showCredentialShareDrawer } from "../store";
-  import {
-    shareCredentialsWithUsers,
-    fetchEncryptedFieldsByIds,
-  } from "../apis";
+  import { fetchEncryptedFieldsByIds } from "../apis";
 
   import {
     CredentialBase,
-    ShareCredentialsWithUsersPayload,
-    UserWithAccessType,
     User,
     EncryptedCredentialFields,
     Group,
   } from "../dtos";
 
-  import { createShareCredsPayload } from "../helper";
-  import { onMount } from "svelte";
+  import UserGroupToggle from "./UserGroupToggle.svelte";
+  import ShareCredentialsWithUser from "./ShareCredentialsWithUsers.svelte";
+  import Share from "../../basic/share.svelte";
+  import ShareCredentialsWithGroups from "./ShareCredentialsWithGroups.svelte";
   export let credentials: CredentialBase[];
   export let users: User[];
   export let groups: Group[];
-  let selectedUsers: UserWithAccessType[] = [];
+  let encryptedCredentials: EncryptedCredentialFields[] = [];
 
   const credIds = credentials.map((cred) => cred.id);
-
-  function handleCheck(e: any, user: User) {
-    if (e.target.checked) {
-      selectedUsers = [...selectedUsers, { ...user, accessType: "read" }];
-    } else {
-      selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
-    }
-  }
-
-  const handleRoleChange = (e: any, user: User) => {
-    const index = selectedUsers.findIndex((u) => u.id === user.id);
-    selectedUsers[index].accessType = e.target.value;
-  };
-  let encryptedCredentials: EncryptedCredentialFields[] = [];
-  const shareCredentialHandler = async () => {
-    const userData = await createShareCredsPayload(
-      encryptedCredentials,
-      selectedUsers,
-    );
-    const payload: ShareCredentialsWithUsersPayload = { userData };
-    await shareCredentialsWithUsers(payload);
-  };
-
   onMount(async () => {
     console.log(users);
     const responseJson = await fetchEncryptedFieldsByIds(credIds);
     encryptedCredentials = responseJson.data;
   });
+
+  let selectedTab = "Groups";
+  const toggleSelect = (e: any) => {
+    selectedTab = e.detail;
+  };
 </script>
 
 <div
@@ -63,31 +43,13 @@
     <button class="p-2" on:click={() => showCredentialShareDrawer.set(false)}
       >Close</button
     >
+    <UserGroupToggle on:select={toggleSelect} />
     <div class="flex-grow overflow-y-auto max-h-[85vh] scrollbar-thin">
-      {#each users as user}
-        <div
-          class="p-4 rounded-xl border border-transparent hover:border-macchiato-mauve flex items-center justify-between"
-        >
-          <div class="flex items-center space-x-4">
-            <input type="checkbox" on:change={(e) => handleCheck(e, user)} />
-            <p class="p-2">{user.name}</p>
-          </div>
-          <select
-            class="bg-macchiato-overlay0 ml-auto"
-            on:change={(e) => handleRoleChange(e, user)}
-          >
-            <option value="read">Read</option>
-            <option value="write">Write</option>
-            <option value="owner">Owner</option>
-          </select>
-        </div>
-      {/each}
-    </div>
-    <div class="p-4">
-      <button
-        class="w-full p-4 bg-macchiato-sapphire text-macchiato-surface0 rounded-md"
-        on:click={shareCredentialHandler}>Share</button
-      >
+      {#if selectedTab === "Users"}
+        <ShareCredentialsWithUser {users} {encryptedCredentials} />
+      {:else}
+        <ShareCredentialsWithGroups {groups} {encryptedCredentials} />
+      {/if}
     </div>
   </div>
 </div>

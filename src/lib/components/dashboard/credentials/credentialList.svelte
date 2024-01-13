@@ -44,6 +44,7 @@
     users = allUsers.filter((user) => {
       return !folderUsers.some((folderUser) => folderUser.id === user.id);
     });
+    checkedCards = [];
   });
 
   onDestroy(() => {
