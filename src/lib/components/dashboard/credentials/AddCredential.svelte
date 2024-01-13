@@ -58,7 +58,6 @@
       userEncryptedFields: [],
     };
     for (const user of folderUsers) {
-      console.log(user.publicKey);
       const encryptedData = await encryptCredentialsForUser(
         [toEncryptFields],
         user.publicKey,
@@ -68,7 +67,6 @@
         encryptedFields: encryptedData[0].encryptedFields,
       });
     }
-    console.log(addCredentialPaylod);
     await addCredential(addCredentialPaylod);
     if ($selectedFolder === null) throw new Error("folder not selected");
     await fetchCredentailsByFolder($selectedFolder.id);

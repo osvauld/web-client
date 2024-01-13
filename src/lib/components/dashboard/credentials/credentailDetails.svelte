@@ -29,7 +29,6 @@
     credentialDetailsJSON = {
       ...credentialDetails.data,
     };
-    console.log(credentialDetailsJSON);
     // users = credentialDetails.data.users;
     isLoading = false;
   };

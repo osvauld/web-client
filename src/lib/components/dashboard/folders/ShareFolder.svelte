@@ -43,7 +43,6 @@
       folderId: $selectedFolder.id,
       userData,
     };
-    console.log(shareFolderPayload);
     await shareFolderWithUsers(shareFolderPayload);
     // showFolderShareDrawer.set(false);
   };

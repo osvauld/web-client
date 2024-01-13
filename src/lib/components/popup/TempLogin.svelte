@@ -31,7 +31,6 @@
         password = event.target.value;
     }
     const togglePassword = () => {
-        console.log("toggle password");
         showPassword = !showPassword;
     };
 </script>

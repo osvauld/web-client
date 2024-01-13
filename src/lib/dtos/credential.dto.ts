@@ -46,7 +46,7 @@ export type ShareCredentialsWithUsersPayload = {
 
 export type CredentialsForUsersPayload = {
   userId: string;
-  accessType: string;
+  accessType?: string;
   credentials: EncryptedCredentialFields[];
 }
 

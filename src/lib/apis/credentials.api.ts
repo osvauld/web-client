@@ -72,7 +72,7 @@ export const shareCredentialsWithUsers = async (shareCredential: ShareCredential
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
-  const response = await fetch(`${baseUrl}/share-credential/users`, {
+  const response = await fetch(`${baseUrl}/share-credentials/users`, {
     method: "POST",
     headers,
     body: JSON.stringify(shareCredential),

@@ -5,7 +5,6 @@
     let name = "";
     let tempPassword = "";
     const submit = async (event) => {
-        console.log("submitterd");
         const payload = {
             username,
             name,
