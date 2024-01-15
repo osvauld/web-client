@@ -4,9 +4,15 @@
         GroupWithAccessType,
         EncryptedCredentialFields,
     } from "../dtos";
-    import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
+    import {
+        fetchUsersByGroupIds,
+        shareFolderWithGroups,
+        fetchAllUserGroups,
+    } from "../apis";
     import { createShareCredsPayload } from "../helper";
-    export let groups: Group[];
+    import { selectedFolder } from "../store";
+    import { onMount } from "svelte";
+    let groups: Group[] = [];
     export let encryptedCredentials: EncryptedCredentialFields[];
 
     let selectedGroups = new Map<string, GroupWithAccessType>();
@@ -29,7 +35,7 @@
         }
     };
 
-    const shareCredentialHandler = async () => {
+    const shareFolderHandler = async () => {
         const groupIds = Array.from(selectedGroups.keys());
         const response = await fetchUsersByGroupIds(groupIds);
         const groupUsersList = response.data;
@@ -46,10 +52,15 @@
                 encryptedUserData,
             });
         }
-        await shareCredentialsWithGroups({
+        await shareFolderWithGroups({
+            folderId: $selectedFolder.id,
             groupData: payload,
         });
     };
+    onMount(async () => {
+        // TODO: change fetch all groups to fetch groups where folder not shared.
+        groups = await fetchAllUserGroups();
+    });
 </script>
 
 {#each groups as group}
@@ -74,6 +85,6 @@
 <div class="p-4">
     <button
         class="w-full p-4 bg-macchiato-sapphire text-macchiato-surface0 rounded-md"
-        on:click={shareCredentialHandler}>Share</button
+        on:click={shareFolderHandler}>Share</button
     >
 </div>

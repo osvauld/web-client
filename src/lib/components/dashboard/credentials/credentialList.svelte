@@ -1,6 +1,6 @@
 <script lang="ts">
   import AddCredential from "./AddCredential.svelte";
-  import ShareFolder from "../folders/ShareFolder.svelte";
+  import ShareFolderModal from "../folders/ShareFolderModal.svelte";
   import ShareCredentialModal from "./ShareCredentialModal.svelte";
   import CredentialCard from "./CredentialCard.svelte";
   import Lens from "../../basic/lens.svelte";
@@ -105,7 +105,7 @@
       on:click={() => showFolderShareDrawer.set(false)}
     >
       <button class="p-6 rounded shadow-lg" on:click|stopPropagation>
-        <ShareFolder
+        <ShareFolderModal
           {users}
           on:close={() => showFolderShareDrawer.set(false)}
         />
