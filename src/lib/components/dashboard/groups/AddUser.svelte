@@ -18,7 +18,7 @@
 <div class="bg-macchiato-base">
     <form on:submit={submit}>
         <label for="username">Username:</label>
-        <input id="username" bind:value={tempPassword} type="text" required />
+        <input id="username" bind:value={username} type="text" required />
 
         <label for="name">Name:</label>
         <input id="name" bind:value={name} type="text" required />

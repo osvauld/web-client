@@ -76,3 +76,23 @@ export const shareFolderWithUsers = async (payload: ShareFolderWithUsersPayload)
 
   return response.json();
 };
+
+export const shareFolderWithGroups = async (payload: any) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/share-folder/groups`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}

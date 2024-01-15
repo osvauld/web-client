@@ -13,9 +13,8 @@
     Group,
   } from "../dtos";
 
-  import UserGroupToggle from "./UserGroupToggle.svelte";
+  import UserGroupToggle from "../UserGroupToggle.svelte";
   import ShareCredentialsWithUser from "./ShareCredentialsWithUsers.svelte";
-  import Share from "../../basic/share.svelte";
   import ShareCredentialsWithGroups from "./ShareCredentialsWithGroups.svelte";
   export let credentials: CredentialBase[];
   export let users: User[];
