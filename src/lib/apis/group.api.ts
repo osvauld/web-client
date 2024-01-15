@@ -105,3 +105,14 @@ export const shareCredentialsWithGroups = async (payload: any) => {
 
   return response.json();
 }
+
+export const getGroupsWithoutAccess = async (folderId: string) => {
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  const response = await fetch(`${baseUrl}/groups/without-access/${folderId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+  return response.data;
+}
