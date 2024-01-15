@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ClosePanel from "../../basic/closePanel.svelte";
   import { fly } from "svelte/transition";
   import { onMount } from "svelte";
 
@@ -39,10 +40,13 @@
   in:fly
   out:fly
 >
-  <div class="w-128 h-full shadow-xl translate-x-0 bg-macchiato-base">
-    <button class="p-2" on:click={() => showCredentialShareDrawer.set(false)}
-      >Close</button
-    >
+  <div class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6">
+    <div class="flex justify-between items-center p-3">
+      <span class="font-sans text-white text-28 font-normal">Share Credentials</span>
+      <button class="p-2" on:click={() => showCredentialShareDrawer.set(false)}
+        ><ClosePanel/></button
+      >
+    </div>
     <UserGroupToggle on:select={toggleSelect} />
     <div class="flex-grow overflow-y-auto max-h-[85vh] scrollbar-thin">
       {#if selectedTab === "Users"}
