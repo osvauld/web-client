@@ -7,7 +7,7 @@
     import {
         fetchUsersByGroupIds,
         shareFolderWithGroups,
-        fetchAllUserGroups,
+        getGroupsWithoutAccess,
     } from "../apis";
     import { createShareCredsPayload } from "../helper";
     import { selectedFolder } from "../store";
@@ -59,7 +59,7 @@
     };
     onMount(async () => {
         // TODO: change fetch all groups to fetch groups where folder not shared.
-        groups = await fetchAllUserGroups();
+        groups = await getGroupsWithoutAccess($selectedFolder.id);
     });
 </script>
 
