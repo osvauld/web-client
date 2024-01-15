@@ -35,7 +35,7 @@
 </script>
 
 <div
-  class="fixed top-0 right-0 z-50 flex justify-end rounded-xl"
+  class="fixed top-0 right-0 z-50 flex justify-end rounded-xl blur-none"
   in:fly
   out:fly
 >
@@ -47,7 +47,8 @@
       >
     </div>
     <UserGroupToggle on:select={toggleSelect} />
-    <div class="flex-grow overflow-y-auto max-h-[85vh] scrollbar-thin">
+    <div class="border border-osvauld-bordergreen mb-2 w-full"></div>
+    <div class="flex-grow max-h-[85vh]">
       {#if selectedTab === "Users"}
         <ShareCredentialsWithUser {users} {encryptedCredentials} />
       {:else}

@@ -3,6 +3,7 @@
   import LeftContainer from "./components/dashboard/LeftContainer.svelte";
   import RightContainer from "./components/dashboard/RightContainer.svelte";
   import { fetchAllFolders } from "./apis/folder.api";
+
   onMount(() => {
     fetchAllFolders();
   });
