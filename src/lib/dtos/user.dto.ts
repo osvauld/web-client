@@ -1,5 +1,6 @@
 export type User = {
   checked: boolean;
+  selectedOption: string;
   id: string;
   name: string;
   username: string;

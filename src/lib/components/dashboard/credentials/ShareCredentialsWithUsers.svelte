@@ -8,48 +8,59 @@
     import { shareCredentialsWithUsers } from "../apis";
     import { createShareCredsPayload } from "../helper";
     import Lens from "../../basic/lens.svelte"
+    import BinIcon from "../../basic/binIcon.svelte"
     export let users: User[];
     export let encryptedCredentials: EncryptedCredentialFields[];
 
     let selectedUsers: UserWithAccessType[] = [];
 
-
+    $: sortedUsers = users.slice().sort((a, b) => {
+        const aSelected = selectedUsers.some(u => u.id === a.id);
+        const bSelected = selectedUsers.some(u => u.id === b.id);
+        return bSelected - aSelected;
+    });
 
     function handleItemClick(e: any, user: User){
-        console.log('click detected');
+        console.log('click registerd at top level');
         if(e.target.tagName.toLowerCase() === 'select'){
-            console.log('inside click', 'inside select', e.target.value)
-            selectedUsers = [...selectedUsers, { ...user, accessType: e.target.value }];
-            console.log(selectedUsers)
             return
         } 
         const index = selectedUsers.findIndex(u => u.id === user.id);
         if(index === -1){
             selectedUsers = [...selectedUsers, { ...user, accessType: "read" }];
+            user.selectedOption = "read";
         } else {
             selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+            user.selectedOption = "default";
         }
-        console.log(selectedUsers);
+    
+    }
+
+    function handleItemRemove(e: any, user: User){
+        const index = selectedUsers.findIndex(u => u.id === user.id);
+        if(index !== -1){
+            selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+            user.selectedOption = "default";
+        }
     }
 
     function handleItemSelection(e: any, user: User) {
-        console.log('Role change detected Handle Item selection invoked')
-        if(e.target.tagName.toLowerCase() === 'select'){
-            const index = selectedUsers.findIndex(u => u.id === user.id);
-            if(index !== -1){
-                selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
-                selectedUsers = [...selectedUsers, { ...user, accessType: e.target.value }];
-            }
-            console.log(selectedUsers)
+        if(e.target.value === "default"){
+            user.selectedOption = e.target.value;
+            selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+            return 
         } 
-        // if (e.target?.checked) {
-        //     selectedUsers = [...selectedUsers, { ...user, accessType: "read" }];
-        // } else {
-        //     console.log('Else condition invoked');
-        //     selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
-        // }
+       
+        const index = selectedUsers.findIndex(u => u.id === user.id);
+        if(index !== -1){
+            selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+            selectedUsers = [...selectedUsers, { ...user, accessType: e.target.value }];
+        } else {
+            user.selectedOption = e.target.value;
+            selectedUsers = [...selectedUsers, { ...user, accessType: e.target.value }];
+        }
+        
     }
-
 
     const shareCredentialHandler = async () => {
         const userData = await createShareCredsPayload(
@@ -70,26 +81,31 @@
         <input type="text" class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search for users">
     </div>
 
-    <div class="border border-osvauld-bordergreen my-1 w-full mb-2"></div>
+    <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
 
     <div class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full">
-        {#each users as user}
+        {#each sortedUsers as user}
             <div
-                class="rounded-lg w-full cursor-pointer  hover:bg-osvauld-bordergreen flex items-center justify-between ${selectedUsers.some(anySelectedUser => anySelectedUser.id === user.id) ? "bg-osvauld-cretangreen": ""}" on:click={(e) => handleItemClick(e, user)}
+                class="w-full my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {selectedUsers.some(anySelectedUser => anySelectedUser.id === user.id) ? "bg-osvauld-bordergreen text-osvauld-highlightwhite": ""}" on:click={(e) => handleItemClick(e, user)}
             >
-                <div class="w-full flex items-center justify-between" on:change={(e) => handleItemSelection(e, user)}>
+                <div class="w-full flex items-center justify-between" >
                     <div class="flex items-center justify-center">
-                        <label class="p-1 cursor-pointer">{user.name}</label>
+                        <label class="p-1 pl-3 font-normal text-base cursor-pointer">{user.name}</label>
                     </div>
                         <select
-                        class="bg-osvauld-bordergreen border-0"
-                        >
+                        class="bg-osvauld-bordergreen border-0 rounded-lg {user.selectedOption === 'read' ? "bg-osvauld-readerOrange":""} {user.selectedOption === 'write' ? "bg-osvauld-managerPurple":""} {user.selectedOption === 'owner' ? "bg-osvauld-ownerGreen":""}"
+                        bind:value={user.selectedOption} 
+                        on:change={(e) => handleItemSelection(e, user)}
+                        >  
+                           <option value="default">permission</option>
                             <option value="read">Reader</option>
                             <option value="write">Manager</option>
                             <option value="owner">Owner</option>
                         </select>
                 </div>
-               
+                {#if selectedUsers.some(anySelectedUser => anySelectedUser.id === user.id)}
+                   <span><BinIcon/></span>
+                {/if}
             </div>
         {/each}
     </div>
