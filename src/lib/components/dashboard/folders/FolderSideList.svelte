@@ -1,17 +1,22 @@
 <script lang="ts">
   import AddFolder from "./AddFolder.svelte";
 
-  import { selectedCredential ,showAddFolderDrawer ,folderStore, selectedFolder } from "../store";
+  import {
+    selectedCredential,
+    showAddFolderDrawer,
+    folderStore,
+    selectedFolder,
+  } from "../store";
 
-  import { fetchCredentailsByFolder } from "../apis";
+  import { fetchCredentialsByFolder } from "../apis";
 
   import { Folder } from "../dtos";
-  import Add from '../../basic/add.svelte';
+  import Add from "../../basic/add.svelte";
 
   const selectFolder = (folder: Folder) => {
     selectedFolder.set(folder);
     selectedCredential.set(null);
-    fetchCredentailsByFolder(folder.id);
+    fetchCredentialsByFolder(folder.id);
   };
 
   const openModal = () => {
@@ -25,10 +30,10 @@
 
 <div>
   <button
-  class="bg-osvauld-illutionpurple whitespace-nowrap rounded-lg py-2 px-16 mb-4 flex justify-center items-center text-macchiato-base xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
-  on:click={openModal}
-    ><span class="mr-1">Create New </span> 
-    <Add/>
+    class="bg-osvauld-illutionpurple whitespace-nowrap rounded-lg py-2 px-16 mb-4 flex justify-center items-center text-macchiato-base xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
+    on:click={openModal}
+    ><span class="mr-1">Create New </span>
+    <Add />
   </button>
   {#if $showAddFolderDrawer}
     <button

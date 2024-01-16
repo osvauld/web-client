@@ -3,7 +3,7 @@ import { credentialStore } from "../store/credential.store";
 import { baseUrl, } from "./temp";
 import { ShareCredentialsWithUsersPayload } from "../dtos/credential.dto";
 
-export const fetchCredentailsByFolder = async (folderId: string) => {
+export const fetchCredentialsByFolder = async (folderId: string) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -104,3 +104,21 @@ export const fetchEncryptedFieldsByIds = async (credentialIds: string[]) => {
 
   return response.json();
 };
+
+export const fetchCredsByUrl = async (url: string) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+
+  const response = await fetch(`${baseUrl}/credentials/url/${url}`, {
+    method: "GET",
+    headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}

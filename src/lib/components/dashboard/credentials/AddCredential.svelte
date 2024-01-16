@@ -9,7 +9,7 @@
   import {
     fetchFolderUsers,
     addCredential,
-    fetchCredentailsByFolder,
+    fetchCredentialsByFolder,
   } from "../apis";
 
   import {
@@ -69,7 +69,7 @@
     }
     await addCredential(addCredentialPaylod);
     if ($selectedFolder === null) throw new Error("folder not selected");
-    await fetchCredentailsByFolder($selectedFolder.id);
+    await fetchCredentialsByFolder($selectedFolder.id);
     showAddCredentialDrawer.set(false);
   };
 

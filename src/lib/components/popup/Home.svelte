@@ -2,13 +2,19 @@
   import CredsListed from "./components/CredsListed.svelte";
   import CredsOpen from "./components/CredsOpen.svelte";
   import { credOpen } from "../../store/ui.store";
+  import { fetchCredsByUrl } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
+  import { onMount } from "svelte";
 
   const openFullscreenTab = async () => {
     // Send a message to the background sdaash
     console.log("Opening fullscreen tab");
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
   };
+  onMount(async () => {
+    const responseJson = await fetchCredsByUrl("www.facebook.com");
+    console.log(responseJson.Data);
+  });
 </script>
 
 <div class="flex justify-center flex-col items-center">
