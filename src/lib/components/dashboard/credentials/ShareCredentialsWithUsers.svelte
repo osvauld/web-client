@@ -36,13 +36,6 @@
     
     }
 
-    function handleItemRemove(e: any, user: User){
-        const index = selectedUsers.findIndex(u => u.id === user.id);
-        if(index !== -1){
-            selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
-            user.selectedOption = "default";
-        }
-    }
 
     function handleItemSelection(e: any, user: User) {
         if(e.target.value === "default"){
