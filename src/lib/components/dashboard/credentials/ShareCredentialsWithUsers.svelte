@@ -88,12 +88,12 @@
             <div
                 class="w-full my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {selectedUsers.some(anySelectedUser => anySelectedUser.id === user.id) ? "bg-osvauld-bordergreen text-osvauld-highlightwhite": ""}" on:click={(e) => handleItemClick(e, user)}
             >
-                <div class="w-full flex items-center justify-between" >
+                <div class="w-full flex items-center justify-between py-1" >
                     <div class="flex items-center justify-center">
                         <label class="p-1 pl-3 font-normal text-base cursor-pointer">{user.name}</label>
                     </div>
                         <select
-                        class="bg-osvauld-bordergreen border-0 rounded-lg {user.selectedOption === 'read' ? "bg-osvauld-readerOrange":""} {user.selectedOption === 'write' ? "bg-osvauld-managerPurple":""} {user.selectedOption === 'owner' ? "bg-osvauld-ownerGreen":""}"
+                        class="appearance-none bg-osvauld-bordergreen border-0 rounded-lg {user.selectedOption === 'read' ? "bg-osvauld-readerOrange text-osvauld-readerText":""} {user.selectedOption === 'write' ? "bg-osvauld-managerPurple text-osvauld-managerText":""} {user.selectedOption === 'owner' ? "bg-osvauld-ownerGreen text-osvauld-ownerText":""}"
                         bind:value={user.selectedOption} 
                         on:change={(e) => handleItemSelection(e, user)}
                         >  
@@ -104,7 +104,7 @@
                         </select>
                 </div>
                 {#if selectedUsers.some(anySelectedUser => anySelectedUser.id === user.id)}
-                   <span><BinIcon/></span>
+                   <span class="ml-2"><BinIcon/></span>
                 {/if}
             </div>
         {/each}
