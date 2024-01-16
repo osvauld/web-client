@@ -24,7 +24,6 @@
 
   const credIds = credentials.map((cred) => cred.id);
   onMount(async () => {
-    console.log(users);
     const responseJson = await fetchEncryptedFieldsByIds(credIds);
     encryptedCredentials = responseJson.data;
   });
