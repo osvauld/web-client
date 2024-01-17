@@ -7,54 +7,31 @@
     } from "../dtos";
     import { shareCredentialsWithUsers } from "../apis";
     import { createShareCredsPayload } from "../helper";
-    import Lens from "../../basic/lens.svelte"
-    import BinIcon from "../../basic/binIcon.svelte"
+    import Lens from "../../basic/lens.svelte";
+    import BinIcon from "../../basic/binIcon.svelte";
+    import DownArrow from "../../basic/downArrow.svelte";
     export let users: User[];
     export let encryptedCredentials: EncryptedCredentialFields[];
 
     let selectedUsers: UserWithAccessType[] = [];
+    let showOptions = false; 
+    let selectionIndex = null
+    let permissionSelected = false;
+    let topList = false;
+    let arrowColor = null;
 
-    $: sortedUsers = users.slice().sort((a, b) => {
-        const aSelected = selectedUsers.some(u => u.id === a.id);
-        const bSelected = selectedUsers.some(u => u.id === b.id);
-        return bSelected - aSelected;
-    });
+    // function handleCheck(e: any, user: User) {
+    //     if (e.target.checked) {
+    //         selectedUsers = [...selectedUsers, { ...user, accessType: "read" }];
+    //     } else {
+    //         selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+    //     }
+    // }
 
-    function handleItemClick(e: any, user: User){
-        console.log('click registerd at top level');
-        if(e.target.tagName.toLowerCase() === 'select'){
-            return
-        } 
-        const index = selectedUsers.findIndex(u => u.id === user.id);
-        if(index === -1){
-            selectedUsers = [...selectedUsers, { ...user, accessType: "read" }];
-            user.selectedOption = "read";
-        } else {
-            selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
-            user.selectedOption = "default";
-        }
-    
-    }
-
-
-    function handleItemSelection(e: any, user: User) {
-        if(e.target.value === "default"){
-            user.selectedOption = e.target.value;
-            selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
-            return 
-        } 
-       
-        const index = selectedUsers.findIndex(u => u.id === user.id);
-        if(index !== -1){
-            selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
-            selectedUsers = [...selectedUsers, { ...user, accessType: e.target.value }];
-        } else {
-            user.selectedOption = e.target.value;
-            selectedUsers = [...selectedUsers, { ...user, accessType: e.target.value }];
-        }
-        
-    }
-
+    // const handleRoleChange = (e: any, user: User) => {
+    //     const index = selectedUsers.findIndex((u) => u.id === user.id);
+    //     selectedUsers[index].accessType = e.target.value;
+    // };
     const shareCredentialHandler = async () => {
         const userData = await createShareCredsPayload(
             encryptedCredentials,
@@ -64,7 +41,43 @@
         await shareCredentialsWithUsers(payload);
     };
 
-   /* eslint-disable */
+    function handleClick(index: number, isSelectedList: boolean){
+        console.log('click detected');
+        showOptions = !showOptions
+        selectionIndex = index
+        topList = isSelectedList
+    }
+
+    function handleItemRemove(user: UserWithAccessType){
+        selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+        const { accessType, ...userWithoutAccessType } = user;
+        users = [...users, { ...userWithoutAccessType}]
+    }
+
+    function handleRoleChange(option: string, user: User){
+        showOptions = !showOptions
+        selectionIndex = null
+        const index = selectedUsers.findIndex((u) => u.id === user.id);
+        if(index !== -1){
+            selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+            selectedUsers = [...selectedUsers, { ...user, accessType: option }];
+        } else {
+            selectedUsers = [...selectedUsers, { ...user, accessType: option }];
+            users = users.filter((u) => u.id !== user.id);
+        }
+        console.log(showOptions, selectionIndex);
+    }
+
+    function setbackground(type: string){
+        if(type === 'read'){
+            return "bg-osvauld-readerOrange text-osvauld-readerText"
+        } else if(type === "write"){
+            return "bg-osvauld-managerPurple text-osvauld-managerText"
+        } else {
+            return "bg-osvauld-ownerGreen text-osvauld-ownerText"
+        }
+    }
+    /* eslint-disable */
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[65vh]">
@@ -77,29 +90,46 @@
     <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
 
     <div class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full">
-        {#each sortedUsers as user}
-            <div
-                class="w-full my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {selectedUsers.some(anySelectedUser => anySelectedUser.id === user.id) ? "bg-osvauld-bordergreen text-osvauld-highlightwhite": ""}" on:click={(e) => handleItemClick(e, user)}
-            >
-                <div class="w-full flex items-center justify-between py-1" >
-                    <div class="flex items-center justify-center">
-                        <label class="p-1 pl-3 font-normal text-base cursor-pointer">{user.name}</label>
-                    </div>
-                        <select
-                        class="appearance-none bg-osvauld-bordergreen border-0 rounded-lg {user.selectedOption === 'read' ? "bg-osvauld-readerOrange text-osvauld-readerText":""} {user.selectedOption === 'write' ? "bg-osvauld-managerPurple text-osvauld-managerText":""} {user.selectedOption === 'owner' ? "bg-osvauld-ownerGreen text-osvauld-ownerText":""}"
-                        bind:value={user.selectedOption} 
-                        on:change={(e) => handleItemSelection(e, user)}
-                        >  
-                           <option value="default">permission</option>
-                            <option value="read">Reader</option>
-                            <option value="write">Manager</option>
-                            <option value="owner">Owner</option>
-                        </select>
-                </div>
-                {#if selectedUsers.some(anySelectedUser => anySelectedUser.id === user.id)}
-                   <span class="ml-2"><BinIcon/></span>
-                {/if}
+        {#each selectedUsers as user, index}
+        <div
+            class=" relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {index === selectionIndex && topList ? "bg-osvauld-bordergreen" : ""}" >
+            <div class="flex items-center space-x-4">
+                <p class="p-2 w-3/4 whitespace-nowrap">{user.name}</p>
             </div>
+            <div class="flex justify-center items-center">
+                <button class="w-[100px] rounded-md cursor-pointer px-2 py-1 pl-2 flex justify-between items-center   {setbackground(user.accessType)}" on:click={() => handleClick(index, true)}>{user.accessType}
+                <span><DownArrow type={user.accessType}/></span>
+                </button>
+                {#if showOptions && topList && index === selectionIndex}
+                    <div
+                        class="absolute top-2 right-5 !z-50 w-[140px] h-[110px] bg-osvauld-frameblack border-osvauld-bordergreen  ml-auto flex flex-col justify-center items-center"
+                    >
+                        <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-readerOrange text-osvauld-readerText m-1" on:click|stopPropagation={() => handleRoleChange('read', user)}>Read</button>
+                        <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-managerPurple text-osvauld-managerText m-1" on:click|stopPropagation={() => handleRoleChange('write', user)}>Write</button>
+                        <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-ownerGreen text-osvauld-ownerText m-1" on:click|stopPropagation={() => handleRoleChange('owner', user)}>Owner</button>
+                    </div>
+                {/if}
+                <button class="ml-2" on:click={()=> handleItemRemove(user)}><BinIcon/></button>
+            </div>
+        </div>
+        {/each}
+        {#each users as user, index}
+       
+        <div
+            class=" relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {index === selectionIndex && !topList ? "bg-osvauld-bordergreen" : ""}" on:click={() => handleClick(index,false)}>
+            <div class="flex items-center space-x-4">
+                <p class="p-2">{user.name}</p>
+            </div>
+            {#if showOptions && !topList && index === selectionIndex}
+                <div
+                    class="absolute top-2 right-0  !z-50 w-[170px] h-[110px] bg-osvauld-frameblack border-osvauld-bordergreen  ml-auto flex flex-col justify-center items-center"
+                >
+                    <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-readerOrange text-osvauld-readerText m-1" on:click|stopPropagation={() => handleRoleChange('read', user)}>Read</button>
+                    <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-managerPurple text-osvauld-managerText m-1" on:click|stopPropagation={() => handleRoleChange('write', user)}>Write</button>
+                    <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-ownerGreen text-osvauld-ownerText m-1" on:click|stopPropagation={() => handleRoleChange('owner', user)}>Owner</button>
+                </div>
+            {/if}
+        </div>
         {/each}
     </div>
 
