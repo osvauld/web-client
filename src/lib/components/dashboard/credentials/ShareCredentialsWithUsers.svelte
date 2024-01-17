@@ -15,23 +15,9 @@
 
     let selectedUsers: UserWithAccessType[] = [];
     let showOptions = false; 
-    let selectionIndex = null
-    let permissionSelected = false;
+    let selectionIndex = null;
     let topList = false;
-    let arrowColor = null;
 
-    // function handleCheck(e: any, user: User) {
-    //     if (e.target.checked) {
-    //         selectedUsers = [...selectedUsers, { ...user, accessType: "read" }];
-    //     } else {
-    //         selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
-    //     }
-    // }
-
-    // const handleRoleChange = (e: any, user: User) => {
-    //     const index = selectedUsers.findIndex((u) => u.id === user.id);
-    //     selectedUsers[index].accessType = e.target.value;
-    // };
     const shareCredentialHandler = async () => {
         const userData = await createShareCredsPayload(
             encryptedCredentials,
@@ -42,7 +28,6 @@
     };
 
     function handleClick(index: number, isSelectedList: boolean){
-        console.log('click detected');
         showOptions = !showOptions
         selectionIndex = index
         topList = isSelectedList
@@ -77,7 +62,6 @@
             return "bg-osvauld-ownerGreen text-osvauld-ownerText"
         }
     }
-    /* eslint-disable */
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[65vh]">
