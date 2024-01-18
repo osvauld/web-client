@@ -7,13 +7,9 @@
     } from "../dtos";
     import { shareCredentialsWithUsers } from "../apis";
     import { createShareCredsPayload } from "../helper";
-<<<<<<< HEAD
     import Lens from "../../basic/lens.svelte";
-    import BinIcon from "../../basic/binIcon.svelte";
-    import DownArrow from "../../basic/downArrow.svelte";
-=======
-    import Lens from "../../basic/lens.svelte"
->>>>>>> 785c9cb (users list scroll in progress)
+    import ListItem from '../components/ListItem.svelte';
+
     export let users: User[];
     export let encryptedCredentials: EncryptedCredentialFields[];
 
@@ -79,45 +75,30 @@
 
     <div class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full">
         {#each selectedUsers as user, index}
-        <div
-            class=" relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between bg-osvauld-bordergreen" >
-            <div class="flex items-center space-x-4">
-                <p class="p-2 w-3/4 whitespace-nowrap">{user.name}</p>
-            </div>
-            <div class="flex justify-center items-center">
-                <button class="w-[100px] rounded-md cursor-pointer px-2 py-1 pl-2 flex justify-between items-center   {setbackground(user.accessType)}" on:click={() => handleClick(index, true)}>{user.accessType}
-                <span><DownArrow type={user.accessType}/></span>
-                </button>
-                {#if showOptions && topList && index === selectionIndex}
-                    <div
-                        class="absolute top-2 right-7 !z-50 w-[140px] h-[110px] bg-osvauld-frameblack border-osvauld-bordergreen  ml-auto flex flex-col justify-center items-center"
-                    >
-                        <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-readerOrange text-osvauld-readerText m-1" on:click|stopPropagation={() => handleRoleChange('read', user)}>Read</button>
-                        <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-managerPurple text-osvauld-managerText m-1" on:click|stopPropagation={() => handleRoleChange('write', user)}>Write</button>
-                        <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-ownerGreen text-osvauld-ownerText m-1" on:click|stopPropagation={() => handleRoleChange('owner', user)}>Owner</button>
-                    </div>
-                {/if}
-                <button class="ml-2" on:click={()=> handleItemRemove(user)}><BinIcon/></button>
-            </div>
-        </div>
+            <ListItem
+            {user}
+            index={index}
+            isSelected={index === selectionIndex && topList}
+            isTopList={true}
+            {handleClick}
+            {handleRoleChange}
+            {handleItemRemove}
+            {setbackground}
+            {showOptions}
+             />
         {/each}
         {#each users as user, index}
-       
-        <div
-            class=" relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {index === selectionIndex && !topList ? "bg-osvauld-bordergreen" : ""}" on:click={() => handleClick(index,false)}>
-            <div class="flex items-center space-x-4">
-                <p class="p-2">{user.name}</p>
-            </div>
-            {#if showOptions && !topList && index === selectionIndex}
-                <div
-                    class="absolute top-2 right-0  !z-50 w-[170px] h-[110px] bg-osvauld-frameblack border-osvauld-bordergreen  ml-auto flex flex-col justify-center items-center"
-                >
-                    <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-readerOrange text-osvauld-readerText m-1" on:click|stopPropagation={() => handleRoleChange('read', user)}>Read</button>
-                    <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-managerPurple text-osvauld-managerText m-1" on:click|stopPropagation={() => handleRoleChange('write', user)}>Write</button>
-                    <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-ownerGreen text-osvauld-ownerText m-1" on:click|stopPropagation={() => handleRoleChange('owner', user)}>Owner</button>
-                </div>
-            {/if}
-        </div>
+            <ListItem
+            {user}
+            index={index}
+            isSelected={index === selectionIndex && !topList}
+            isTopList={false}
+            {handleClick}
+            {handleRoleChange}
+            {handleItemRemove}
+            {setbackground}
+            {showOptions}
+             />
         {/each}
     </div>
 
