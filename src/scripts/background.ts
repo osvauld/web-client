@@ -7,6 +7,7 @@ import { fetchCredsByUrl } from "../lib/apis/credentials.api"
 
 let rsaPvtKey: CryptoKey;
 let urls: string[] = [];
+let activeCredSuggetion: any[] = [];
 
 browser.runtime.onInstalled.addListener(async () => {
   browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
@@ -37,7 +38,6 @@ browser.runtime.onMessage.addListener(async (request) => {
 
     case "credSubmitted": {
       let currentUrl = request.url;
-      console.log('cred sub event', 'dsafdsafsdaf')
       setTimeout(async () => {
         try {
           const [tab]: browser.Tabs.Tab[] = await browser.tabs.query({
@@ -88,15 +88,21 @@ browser.runtime.onMessage.addListener(async (request) => {
       }
       break;
     case "updateAllUrls":
-      console.log('updating urls', request.data)
       urls = request.data;
 
       break;
 
     case "checkPvtLoaded":
-      console.log('checking....')
       if (rsaPvtKey) return Promise.resolve({ isLoaded: true })
       else return Promise.resolve({ isLoaded: false })
+    case "getActiveCredSuggestion":
+      for (const cred of activeCredSuggetion) {
+        if (cred.id === request.data) {
+          const decrypted = await decryptCredentialField(rsaPvtKey, cred.password);
+          return Promise.resolve({ username: cred.username, password: decrypted })
+        }
+      }
+      break;
 
     default:
       console.log(request.action)
@@ -116,7 +122,6 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   // Log for debugging
-  console.log('Tab update:', changeInfo.status, changeInfo.url);
 
   // Check if the tab status is 'complete'
   if (changeInfo.status === 'complete') {
@@ -130,15 +135,16 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     // Check if the domain is in your list
     if (urls.includes(domain)) {
       const responseData = await fetchCredsByUrl(domain);
-      console.log('sending message to content script', responseData);
+      // TODO: payload change in future
       const payload: any = [];
       for (const cred of responseData.data) {
         for (const field of cred.unencryptedFields) {
-          if (!field.isUrl)
-            payload.push({ id: cred.id, username: field.fieldValue });
+          if (!field.isUrl) {
+            activeCredSuggetion.push({ id: cred.credentialId, username: field.fieldValue, password: cred.encryptedFields[0].fieldValue })
+            payload.push({ id: cred.credentialId, username: field.fieldValue });
+          }
         }
       }
-      console.log(payload, 'payload')
       try {
         await browser.tabs.sendMessage(tabId, { action: "updateCredsList", creds: payload });
       } catch (error) {

@@ -65,10 +65,10 @@ function suggestionsDialouge(element: HTMLInputElement, count: number) {
     document.body.appendChild(suggestionBox);
     creds
       .map((item) => {
-        console.log(item)
         let mappedDiv = createSuggestionChildren(item.username);
-        mappedDiv.addEventListener("click", () => {
-          fillCredentials(item.username, item.password);
+        mappedDiv.addEventListener("click", async () => {
+          const userDetails = await browser.runtime.sendMessage({ action: 'getActiveCredSuggestion', data: item.id })
+          fillCredentials(userDetails.username, userDetails.password);
         });
         return mappedDiv;
       })
