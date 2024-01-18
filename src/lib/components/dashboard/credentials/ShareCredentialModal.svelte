@@ -34,7 +34,7 @@
 </script>
 
 <div
-  class="fixed top-0 right-0 z-50 flex justify-end rounded-xl border border-osvauld-bordergreen"
+  class="fixed top-0 right-0 z-50 flex justify-end rounded-xl blur-none"
   in:fly
   out:fly
 >
