@@ -1,6 +1,6 @@
 <script>
-    import GroupIcon from "../../basic/groupIcon.svelte";
-    import UserIcon from "../../basic/userIcon.svelte";
+    import GroupIcon from "../basic/groupIcon.svelte";
+    import UserIcon from "../basic/userIcon.svelte";
     import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
