@@ -40,7 +40,7 @@
   const decryptCredential = async () => {
     const encryptedData = [...credentialDetailsJSON.encryptedFields];
     const response = await browser.runtime.sendMessage({
-      eventName: "decrypt",
+      action: "decrypt",
       data: encryptedData,
     });
 

@@ -2,6 +2,8 @@
   import browser from "webextension-polyfill";
   import { isLoggedIn } from "../../store/ui.store";
   import Eye from "../basic/eye.svelte";
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
 
   let passphrase = "";
   let showPassword = false;
@@ -14,10 +16,13 @@
   $: type = showPassword ? "text" : "password";
   async function handleSubmit() {
     const response = await browser.runtime.sendMessage({
-      action: "initiate_auth",
+      action: "initiateAuth",
       data: { passphrase },
     });
-    isLoggedIn.set(response.isAuthenticated);
+    if (response.isAuthenticated) {
+      console.log("dispatching event....");
+      dispatch("authenticated", true);
+    }
   }
   const onInput = (event) => {
     passphrase = event.target.value;
