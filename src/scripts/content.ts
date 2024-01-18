@@ -2,8 +2,9 @@ import browser from "webextension-polyfill";
 import { list } from "../lib/components/content/constants";
 import { craftSaveDialouge, createIcon, createSuggestionBox, createSuggestionChildren } from "../lib/components/content/nodeGenerators";
 import { getElement } from "../lib/components/content/xpaths"
- 
+
 let count = 0;
+let creds: any = [];
 
 function showSavePopup(username: string, password: string) {
   let popup = document.createElement("div");
@@ -19,7 +20,7 @@ function showSavePopup(username: string, password: string) {
 
 
   let discardButton = document.getElementById("discardOsvauld");
-   discardButton?.addEventListener("click", function () {
+  discardButton?.addEventListener("click", function () {
     console.log("User chose not to save credentials to osvauld.");
     popup.remove();
   });
@@ -33,14 +34,14 @@ const fillCredentials = (arg1: string, arg2: string) => {
   let usernameElem = getElement("username");
   if (usernameElem instanceof HTMLInputElement) {
     usernameElem.value = arg1;
-    usernameElem.dispatchEvent(new Event('input', { bubbles: true }));  
+    usernameElem.dispatchEvent(new Event('input', { bubbles: true }));
     box?.remove();
   }
 
   let passwordElem = getElement("password");
   if (passwordElem instanceof HTMLInputElement) {
     passwordElem.value = arg2;
-    passwordElem.dispatchEvent(new Event('input', { bubbles: true }));  
+    passwordElem.dispatchEvent(new Event('input', { bubbles: true }));
     box?.remove();
   }
 
@@ -49,7 +50,7 @@ const fillCredentials = (arg1: string, arg2: string) => {
 
 window.addEventListener('resize', () => {
   let box: Element | null = document.querySelector(".osvauld");
-  if(box){
+  if (box) {
     count++
     box.remove();
   }
@@ -62,11 +63,12 @@ function suggestionsDialouge(element: HTMLInputElement, count: number) {
   } else {
     let suggestionBox = createSuggestionBox(element)
     document.body.appendChild(suggestionBox);
-    list
+    creds
       .map((item) => {
         let mappedDiv = createSuggestionChildren(item.username);
-        mappedDiv.addEventListener("click", () => {
-          fillCredentials(item.username, item.password);
+        mappedDiv.addEventListener("click", async () => {
+          const userDetails = await browser.runtime.sendMessage({ action: 'getActiveCredSuggestion', data: item.id })
+          fillCredentials(userDetails.username, userDetails.password);
         });
         return mappedDiv;
       })
@@ -75,6 +77,7 @@ function suggestionsDialouge(element: HTMLInputElement, count: number) {
 }
 
 function appendIcon(element: HTMLInputElement) {
+
   let icon = createIcon();
 
   icon.addEventListener("click", function (event) {
@@ -84,32 +87,26 @@ function appendIcon(element: HTMLInputElement) {
   });
 
   let rect = element.getBoundingClientRect();
-  icon.style.top = `${
-    rect.top + window.scrollY + (element.offsetHeight - 25) / 2
-  }px`;
-  icon.style.left = `${
-    rect.left + window.scrollX + element.offsetWidth - 35
-  }px`;
+  icon.style.top = `${rect.top + window.scrollY + (element.offsetHeight - 25) / 2
+    }px`;
+  icon.style.left = `${rect.left + window.scrollX + element.offsetWidth - 35
+    }px`;
 
   document.body.appendChild(icon);
   window.addEventListener("scroll", () => {
     let rect = element.getBoundingClientRect();
-    icon.style.top = `${
-      rect.top + window.scrollY + (element.offsetHeight - 25) / 2
-    }px`;
-    icon.style.left = `${
-      rect.left + window.scrollX + element.offsetWidth - 35
-    }px`;
+    icon.style.top = `${rect.top + window.scrollY + (element.offsetHeight - 25) / 2
+      }px`;
+    icon.style.left = `${rect.left + window.scrollX + element.offsetWidth - 35
+      }px`;
   });
 
   window.addEventListener("resize", () => {
     let rect = element.getBoundingClientRect();
-    icon.style.top = `${
-      rect.top + window.scrollY + (element.offsetHeight - 25) / 2
-    }px`;
-    icon.style.left = `${
-      rect.left + window.scrollX + element.offsetWidth - 35
-    }px`;
+    icon.style.top = `${rect.top + window.scrollY + (element.offsetHeight - 25) / 2
+      }px`;
+    icon.style.left = `${rect.left + window.scrollX + element.offsetWidth - 35
+      }px`;
   });
 }
 
@@ -138,8 +135,13 @@ browser.runtime.onMessage.addListener(function (request) {
   }
 
   if (request.action === "saveToVault") {
-  
+
     showSavePopup(request.username, request.password);
+  }
+
+  if (request.action === "updateCredsList") {
+    console.log('update creds list', request.creds)
+    creds = request.creds;
   }
 
 
@@ -155,13 +157,13 @@ function getLoginCredentials() {
     let usernameValue = (usernameElem as HTMLInputElement).value;
     let passwordValue = (passwordElem as HTMLInputElement).value;
 
-    if(usernameValue.length > 3 && passwordValue.length > 3){
-      (async() => {
-      
-        await browser.runtime.sendMessage({action: 'credSubmitted', url: location.href, username: usernameValue, password: passwordValue})
+    if (usernameValue.length > 3 && passwordValue.length > 3) {
+      (async () => {
+
+        await browser.runtime.sendMessage({ action: 'credSubmitted', url: location.href, username: usernameValue, password: passwordValue })
       })()
     }
- 
+
   } else {
     console.log("Username or password element not found.");
   }
@@ -169,8 +171,17 @@ function getLoginCredentials() {
 
 let loginButtonElem = getElement("login");
 if (loginButtonElem) {
- 
+
   loginButtonElem.addEventListener("click", getLoginCredentials);
 } else {
   console.log("Login button not found.");
 }
+
+
+// browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//   if (message.event === "updateCreds") {
+//     // creds = message.data;
+//     console.log(creds, "FFFFFFFFFFFFFFFFFFFFFFFF");
+//     // Update your state here
+//   }
+// });
