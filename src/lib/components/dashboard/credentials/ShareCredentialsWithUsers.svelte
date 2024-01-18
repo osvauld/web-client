@@ -7,9 +7,13 @@
     } from "../dtos";
     import { shareCredentialsWithUsers } from "../apis";
     import { createShareCredsPayload } from "../helper";
+<<<<<<< HEAD
     import Lens from "../../basic/lens.svelte";
     import BinIcon from "../../basic/binIcon.svelte";
     import DownArrow from "../../basic/downArrow.svelte";
+=======
+    import Lens from "../../basic/lens.svelte"
+>>>>>>> 785c9cb (users list scroll in progress)
     export let users: User[];
     export let encryptedCredentials: EncryptedCredentialFields[];
 
@@ -64,9 +68,9 @@
     /* eslint-disable */
 </script>
 
-<div class="p-2 border border-osvauld-bordergreen rounded-lg h-[65vh]">
+<div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">
 
-    <div class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-2">
+    <div class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer">
         <Lens/>
         <input type="text" class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search for users">
     </div>
