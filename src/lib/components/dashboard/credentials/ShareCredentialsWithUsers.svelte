@@ -33,23 +33,25 @@
         topList = isSelectedList
     }
 
-    function handleItemRemove(user: UserWithAccessType){
-        selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
-        const { accessType, ...userWithoutAccessType } = user;
+    function handleItemRemove(index: number){
+        const removedUser = selectedUsers.splice(index, 1)
+        selectedUsers = [...selectedUsers]
+        const [{ accessType, ...userWithoutAccessType }] = removedUser;
         users = [...users, { ...userWithoutAccessType}]
     }
 
-    function handleRoleChange(option: string, user: User){
+    function handleRoleChange(e: any, index: number, type: string){
+        const user = e.detail.user;
+        const option = e.detail.permission;
         showOptions = !showOptions
         selectionIndex = null
-        const index = selectedUsers.findIndex((u) => u.id === user.id);
-        if(index !== -1){
-            selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+       if(type === "selectedUsers"){
+            selectedUsers.splice(index, 1)
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
-        } else {
+       } else {
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
             users = users.filter((u) => u.id !== user.id);
-        }
+       }
     }
 
     function setbackground(type: string){
@@ -61,7 +63,6 @@
 
        return typeToClassMap[type] || "";
     }
-    /* eslint-disable */
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">
@@ -77,27 +78,24 @@
         {#each selectedUsers as user, index}
             <ListItem
             {user}
-            index={index}
             isSelected={index === selectionIndex && topList}
             isTopList={true}
-            {handleClick}
-            {handleRoleChange}
-            {handleItemRemove}
+            on:click =  {()=>handleClick(index, true)}
+            on:remove = {() => handleItemRemove(index)}
             {setbackground}
             {showOptions}
+            on:select={(e)=> handleRoleChange(e,index, 'selectedUsers')}
              />
         {/each}
         {#each users as user, index}
-            <ListItem
+        <ListItem
             {user}
-            index={index}
             isSelected={index === selectionIndex && !topList}
             isTopList={false}
-            {handleClick}
-            {handleRoleChange}
-            {handleItemRemove}
+            on:click =  {()=>handleClick(index,false)}
             {setbackground}
             {showOptions}
+            on:select={(e)=> handleRoleChange(e,index, 'users')}
              />
         {/each}
     </div>
