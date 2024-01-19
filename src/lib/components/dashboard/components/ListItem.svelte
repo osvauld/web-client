@@ -1,24 +1,34 @@
-<script>
+<script lang="ts">
     export let user;
-    export let index;
     export let isSelected;
     export let isTopList;
-    export let handleClick;
-    export let handleRoleChange;
-    export let handleItemRemove;
     export let setbackground;
     export let showOptions;
     import BinIcon from "../../basic/binIcon.svelte";
     import DownArrow from "../../basic/downArrow.svelte";
     import AccessSelector from '../components/accessSelector.svelte';
 
+    import { createEventDispatcher } from "svelte";
+
+    const dispatch = createEventDispatcher();
+    
+    const handleRemove = () => {
+        dispatch('remove', user);
+    }
+    const eventPasser =(e: any)=> {
+        dispatch("select", e.detail);
+    };
+
+    const handleClick = () => {
+        dispatch("click");
+    }
+
     /* eslint-disable */
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
     class="relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {isSelected ? 'bg-osvauld-bordergreen' : ''}"
-    on:click={() => handleClick(index, isTopList)}>
+    on:click={handleClick}>
     <div class="flex items-center space-x-4">
         <p class="p-2 w-3/4 whitespace-nowrap">{user.name}</p>
     </div>
@@ -28,12 +38,12 @@
                 <span> <DownArrow type={user.accessType}/></span>
             </button>
             {#if showOptions && isSelected}
-                <AccessSelector {user} {handleRoleChange} />
+                <AccessSelector {user}  on:select={(e)=>eventPasser(e)}  />
             {/if}
-            <button class="ml-2" on:click={()=> handleItemRemove(user)}><BinIcon/></button>
+            <button class="ml-2" on:click|stopPropagation={handleRemove}><BinIcon/></button>
         </div>
     {/if}
     {#if !isTopList && showOptions && isSelected}
-        <AccessSelector {user} {handleRoleChange} />
+        <AccessSelector {user} on:select={(e)=>eventPasser(e)} />
     {/if}
 </div>
