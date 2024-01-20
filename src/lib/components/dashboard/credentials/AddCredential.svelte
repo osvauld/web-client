@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import Close from "../../basic/"
 
   import { encryptCredentialsForUser } from "../../../utils/helperMethods";
 
@@ -85,7 +84,7 @@
   });
 </script>
 
-<div class="bg-osvauld-frameblack rounded-lg" in:fly out:fly>
+<div class="bg-osvauld-frameblack rounded-3xl" in:fly out:fly>
 
   <div class="flex justify-between items-center px-12 py-5">
     <p class="text-[28px] font-sans font-normal text-osvauld-sheffieldgrey">Add Credential</p>
@@ -98,7 +97,7 @@
 
   <div class="mx-6">
     <input
-      class="flex-grow bg-macchiato-surface0 rounded-full w-[256px] h-10 ml-4"
+      class=" w-full h-[60px] my-2 ml-4  bg-osvauld-frameblack border-0 rounded-none text-2xl text-osvauld-quarzowhite font-medium focus:ring-0 focus:ring-offset-0"
       id="name"
       type="text"
       placeholder="Enter Credential name"
@@ -110,33 +109,44 @@
       <div class="field-container rounded-sm transition relative">
         <div class="flex items-center justify-between p-4">
           <input
-            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[256px] h-10"
+            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[256px] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
             id={`key-${index}`}
             type="text"
             placeholder="Username"
             bind:value={field.fieldName}
           />
           <input
-            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[256px] h-10"
+            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[256px] h-10 mx-2  focus:border-osvauld-iconblack focus:ring-0"
             id={`value-${index}`}
             type="text"
             placeholder="Enter value"
             bind:value={field.fieldValue}
           />
           <div class="flex items-center justify-center">
-            <input
-              type="checkbox"
-              id={`sensitive-${index}`}
-              bind:checked={field.sensitive}
-            />
-            <label class="ml-2" for={`sensitive-${index}`}> Sensitive </label>
+            <label for={`toggle-${index}`} class="inline-flex items-center cursor-pointer">
+              <span class="relative">
+                <span class="block w-10 h-6 {
+                  field.sensitive ? 'bg-osvauld-carolinablue' : 'bg-osvauld-placeholderblack'
+                } rounded-full shadow-inner"></span>
+                <span class="absolute block w-4 h-4 mt-1 ml-1 rounded-full shadow inset-y-0 left-0 focus-within:shadow-outline transform transition-transform duration-300 ease-in-out {
+                    field.sensitive ? 'bg-osvauld-plainwhite translate-x-full' : 'bg-osvauld-chalkwhite'
+                  }">
+                  <input
+                    type="checkbox"
+                    id={`toggle-${index}`}
+                    class="absolute opacity-0 w-0 h-0"
+                    bind:checked={field.sensitive}
+                  />
+                </span>
+              </span>
+            </label>
           </div>
           <div class="flex items-center justify-center">
             <button
-            class="rounded-md pr-2 pl-2 bg-macchiato-lavender text-macchiato-surface0 flex justify-center items-center ml-5"
+            class="rounded-md pr-2 pl-2 bg-osvauld-frameblack text-osvauld-quarzowhite flex justify-center items-center ml-5"
             on:click={() => removeField(index)}
             >
-              delete
+              X
             </button>
           </div>
         </div>
@@ -148,22 +158,30 @@
         class="py-2 m-4 bg-macchiato-blue flex-1 flex justify-center items-center rounded-md text-macchiato-surface0"
         on:click={addField}
       >
-        addField
+        Add Field
       </button>
     </div>
   </div>
   <div class=" mx-6 pl-3 flex justify-start items-center">
     <textarea
       rows="2"
-      class="w-5/6 mt-4 h-auto min-h-[6rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base"
+      class="w-5/6 mt-4 h-auto min-h-[6rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base  focus:border-osvauld-iconblack focus:ring-0"
       bind:value={description}
       placeholder="Enter description about the secret"
     />
   </div>
-  <div class="flex justify-start mt-4 pl-4 ml-6 ">
+  <div
+  class="border-b border-osvauld-bordergreen w-full my-2"
+  ></div>
+  <div class="flex justify-end items-center mx-10">
     <button
-      class="bg-macchiato-blue px-[52px] py-2.5 rounded-full mb-6 text-macchiato-surface0"
+    class="text-osvauld-sheffieldgrey border border-osvauld-iconblack px-[52px] w-1/3 py-2.5 rounded-lg mb-6 bg-osvauld-placeholderblack mr-3"
+    >Cancel</button>
+
+    <button
+      class="bg-macchiato-blue px-[52px] py-2.5 rounded-lg mb-6 text-macchiato-surface0"
       on:click={saveCredential}>Add credential</button
     >
+  
   </div>
 </div>
