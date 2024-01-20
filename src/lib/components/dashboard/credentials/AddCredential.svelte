@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
+  import Close from "../../basic/"
 
   import { encryptCredentialsForUser } from "../../../utils/helperMethods";
 
@@ -84,10 +85,17 @@
   });
 </script>
 
-<div class="bg-macchiato-base rounded-md" in:fly out:fly>
-  <div class="mb-2 p-4 mx-6 mt-6">
-    <p class="font-normal text-4xl">Add Credential</p>
+<div class="bg-osvauld-frameblack rounded-lg" in:fly out:fly>
+
+  <div class="flex justify-between items-center px-12 py-5">
+    <p class="text-[28px] font-sans font-normal text-osvauld-sheffieldgrey">Add Credential</p>
+    <button class="bg-osvauld-frameblack">X</button>
   </div>
+
+  <div
+  class="border-b border-osvauld-bordergreen w-full"
+  ></div>
+
   <div class="mx-6">
     <input
       class="flex-grow bg-macchiato-surface0 rounded-full w-[256px] h-10 ml-4"
@@ -139,15 +147,15 @@
       </button>
     </div>
   </div>
-  <div>
+  <div class=" mx-6 pl-3 flex justify-start items-center">
     <textarea
       rows="2"
-      class="bg-macchiato-surface0 w-full rounded-md ml-4 mr-4"
+      class="bg-macchiato-surface0 w-5/6 rounded-md "
       bind:value={description}
       placeholder="Enter description about the secret"
     />
   </div>
-  <div class="flex justify-start mt-4 pl-4 ml-6">
+  <div class="flex justify-start mt-4 pl-4 ml-6 ">
     <button
       class="bg-macchiato-blue px-[52px] py-2.5 rounded-full mb-6 text-macchiato-surface0"
       on:click={saveCredential}>Add credential</button

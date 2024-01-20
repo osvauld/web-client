@@ -67,6 +67,7 @@
     onMount(async () => {
         checked = false;
     });
+    /*eslint-disable*/
 </script>
 
 <div
