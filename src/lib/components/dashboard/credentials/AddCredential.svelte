@@ -101,21 +101,23 @@
       class="flex-grow bg-macchiato-surface0 rounded-full w-[256px] h-10 ml-4"
       id="name"
       type="text"
-      placeholder="name"
+      placeholder="Enter Credential name"
       bind:value={name}
     />
+
+  
     {#each credentialFields as field, index}
       <div class="field-container rounded-sm transition relative">
         <div class="flex items-center justify-between p-4">
           <input
-            class="flex-grow mr-2 bg-macchiato-surface0 rounded-full w-[256px] h-10"
+            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[256px] h-10"
             id={`key-${index}`}
             type="text"
             placeholder="Username"
             bind:value={field.fieldName}
           />
           <input
-            class="flex-grow mr-2 bg-macchiato-surface0 rounded-full w-[256px] h-10"
+            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[256px] h-10"
             id={`value-${index}`}
             type="text"
             placeholder="Enter value"
@@ -129,13 +131,16 @@
             />
             <label class="ml-2" for={`sensitive-${index}`}> Sensitive </label>
           </div>
+          <div class="flex items-center justify-center">
+            <button
+            class="rounded-md pr-2 pl-2 bg-macchiato-lavender text-macchiato-surface0 flex justify-center items-center ml-5"
+            on:click={() => removeField(index)}
+            >
+              delete
+            </button>
+          </div>
         </div>
-        <button
-          class="rounded-md pr-2 pl-2 bg-macchiato-lavender text-macchiato-surface0 flex justify-center items-center ml-5"
-          on:click={() => removeField(index)}
-        >
-          delete
-        </button>
+       
       </div>
     {/each}
     <div class="flex mr-24">
@@ -150,7 +155,7 @@
   <div class=" mx-6 pl-3 flex justify-start items-center">
     <textarea
       rows="2"
-      class="bg-macchiato-surface0 w-5/6 rounded-md "
+      class="w-5/6 mt-4 h-auto min-h-[6rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base"
       bind:value={description}
       placeholder="Enter description about the secret"
     />
