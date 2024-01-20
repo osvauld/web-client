@@ -82,22 +82,39 @@
     if ($selectedFolder === null) throw new Error("folder not selected");
     folderUsers = await fetchFolderUsers($selectedFolder.id);
   });
+
+  function closeDialouge(){
+    showAddCredentialDrawer.set(false)
+  }
 </script>
 
-<div class="bg-osvauld-frameblack rounded-3xl" in:fly out:fly>
+<style>
+.triangle::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent #21262D transparent;
+  transform: translateX(-50%) rotate(180deg);
+}
+</style>
 
-  <div class="flex justify-between items-center px-12 py-5">
-    <p class="text-[28px] font-sans font-normal text-osvauld-sheffieldgrey">Add Credential</p>
-    <button class="bg-osvauld-frameblack">X</button>
+<div class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack " in:fly out:fly>
+
+  <div class="flex justify-between items-center px-12 py-9">
+    <p class="text-[28px] font-sans font-normal text-osvauld-quarzowhite">Add Credential</p>
+    <button class="bg-osvauld-frameblack"  on:click={closeDialouge}>X</button>
   </div>
 
   <div
-  class="border-b border-osvauld-bordergreen w-full"
+  class="border-b border-osvauld-iconblack w-full"
   ></div>
 
   <div class="mx-6">
     <input
-      class=" w-full h-[60px] my-2 ml-4  bg-osvauld-frameblack border-0 rounded-none text-2xl text-osvauld-quarzowhite font-medium focus:ring-0 focus:ring-offset-0"
+      class=" w-full h-[60px] my-2 ml-4  bg-osvauld-frameblack border-0 rounded-none text-2xl text-osvauld-quarzowhite font-normal focus:ring-0 focus:ring-offset-0"
       id="name"
       type="text"
       placeholder="Enter Credential name"
@@ -122,7 +139,7 @@
             placeholder="Enter value"
             bind:value={field.fieldValue}
           />
-          <div class="flex items-center justify-center">
+          <div class="flex items-center justify-centerm { index===0 ? "relative": ""}">
             <label for={`toggle-${index}`} class="inline-flex items-center cursor-pointer">
               <span class="relative">
                 <span class="block w-10 h-6 {
@@ -140,6 +157,9 @@
                 </span>
               </span>
             </label>
+            {#if index === 0}
+            <span class="absolute top-[-60px] left-[-25px] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle">Sensitive</span>
+            {/if}
           </div>
           <div class="flex items-center justify-center">
             <button
@@ -162,7 +182,7 @@
       </button>
     </div>
   </div>
-  <div class=" mx-6 pl-3 flex justify-start items-center">
+  <div class=" mx-6 pl-3 flex justify-start items-center mb-5">
     <textarea
       rows="2"
       class="w-5/6 mt-4 h-auto min-h-[6rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base  focus:border-osvauld-iconblack focus:ring-0"
@@ -171,12 +191,12 @@
     />
   </div>
   <div
-  class="border-b border-osvauld-bordergreen w-full my-2"
+  class="border-b border-osvauld-iconblack w-full my-2"
   ></div>
-  <div class="flex justify-end items-center mx-10">
+  <div class="flex justify-end items-center mx-10 py-2">
     <button
     class="text-osvauld-sheffieldgrey border border-osvauld-iconblack px-[52px] w-1/3 py-2.5 rounded-lg mb-6 bg-osvauld-placeholderblack mr-3"
-    >Cancel</button>
+    on:click={closeDialouge}>Cancel</button>
 
     <button
       class="bg-macchiato-blue px-[52px] py-2.5 rounded-lg mb-6 text-macchiato-surface0"
