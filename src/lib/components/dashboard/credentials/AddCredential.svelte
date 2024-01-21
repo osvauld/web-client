@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import Close from "../../basic/"
 
   import { encryptCredentialsForUser } from "../../../utils/helperMethods";
 
@@ -89,6 +88,7 @@
   }
 </script>
 
+<<<<<<< HEAD
 <style>
 .triangle::after {
   content: '';
@@ -101,6 +101,9 @@
   transform: translateX(-50%) rotate(180deg);
 }
 </style>
+=======
+<div class="bg-osvauld-frameblack rounded-3xl" in:fly out:fly>
+>>>>>>> cfd605f (1 another conflict resolved)
 
 <div class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack " in:fly out:fly>
 
@@ -140,7 +143,11 @@
             placeholder="Enter value"
             bind:value={field.fieldValue}
           />
+<<<<<<< HEAD
           <div class="flex items-center justify-centerm { index===0 ? "relative": ""}">
+=======
+          <div class="flex items-center justify-center">
+>>>>>>> cfd605f (1 another conflict resolved)
             <label for={`toggle-${index}`} class="inline-flex items-center cursor-pointer">
               <span class="relative">
                 <span class="block w-10 h-6 {
@@ -158,9 +165,12 @@
                 </span>
               </span>
             </label>
+<<<<<<< HEAD
             {#if index === 0}
             <span class="absolute top-[-60px] left-[-25px] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle">Sensitive</span>
             {/if}
+=======
+>>>>>>> cfd605f (1 another conflict resolved)
           </div>
           <div class="flex items-center justify-center">
             <button
@@ -192,12 +202,17 @@
   <div class=" mx-6 pl-3 flex justify-start items-center">
     <textarea
       rows="2"
+<<<<<<< HEAD
       class="bg-macchiato-surface0 w-5/6 rounded-md "
 >>>>>>> 182f5ca (3 conflicts resolved)
+=======
+      class="w-5/6 mt-4 h-auto min-h-[6rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base  focus:border-osvauld-iconblack focus:ring-0"
+>>>>>>> cfd605f (1 another conflict resolved)
       bind:value={description}
       placeholder="Enter description about the secret"
     />
   </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
   <div
   class="border-b border-osvauld-iconblack w-full my-2"
@@ -209,6 +224,15 @@
     <button
     class="text-osvauld-sheffieldgrey border border-osvauld-iconblack px-[52px] w-1/3 py-2.5 rounded-lg mb-6 bg-osvauld-placeholderblack mr-3"
     on:click={closeDialouge}>Cancel</button>
+=======
+  <div
+  class="border-b border-osvauld-bordergreen w-full my-2"
+  ></div>
+  <div class="flex justify-end items-center mx-10">
+    <button
+    class="text-osvauld-sheffieldgrey border border-osvauld-iconblack px-[52px] w-1/3 py-2.5 rounded-lg mb-6 bg-osvauld-placeholderblack mr-3"
+    >Cancel</button>
+>>>>>>> cfd605f (1 another conflict resolved)
 
     <button
       class="bg-macchiato-blue px-[52px] py-2.5 rounded-lg mb-6 text-macchiato-surface0"

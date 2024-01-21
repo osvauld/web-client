@@ -72,6 +72,7 @@ export default {
           ownerText: "#A6E3A1",
           readerText: "#F9E2AF",
           managerText: "#F5C2E7",
+          plainwhite: "#FFF",
         },
       },
       fontFamily: {
