@@ -60,7 +60,7 @@
 
     const decrypt = async (encryptedFieldValue: string, index: number) => {
         const response = await browser.runtime.sendMessage({
-            eventName: "decryptField",
+            action: "decryptField",
             data: encryptedFieldValue,
         });
         encryptedFields[index].fieldValue = response.data;

@@ -6,7 +6,7 @@ import { encryptCredentialsForUser } from "../../utils/helperMethods";
 export const createShareCredsPayload = async (creds: EncryptedCredentialFields[], selectedUsers: UserWithAccessType[]): Promise<CredentialsForUsersPayload[]> => {
 
     const response = await browser.runtime.sendMessage({
-        eventName: "decrypt",
+        action: "decrypt",
         data: creds,
     });
 

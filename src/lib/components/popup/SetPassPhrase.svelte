@@ -13,7 +13,7 @@
     const handlePassPhraseSubmit = async () => {
         if (passphrase === confirmPassphrase) {
             const response = await browser.runtime.sendMessage({
-                action: "save_passphrase",
+                action: "savePassphrase",
                 passphrase: passphrase,
                 rsaKey,
                 eccKey,

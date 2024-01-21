@@ -1,140 +1,159 @@
 import browser from "webextension-polyfill";
 
-import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateECCKeyPairForSigning, generateRandomString, generateRSAKeyPairForEncryption, importECCPrivateKey, decryptCredentialField, decryptPvtKeys } from "../lib/utils/crypto";
-import { intiateAuth, verifyUser } from "../lib/utils/helperMethods";
-import { EncryptedCredentialFields, DecryptedPaylod } from "../lib/dtos/credential.dto";
+import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptCredentialField, } from "../lib/utils/crypto";
+import { verifyUser } from "../lib/utils/helperMethods";
+import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler } from "./backgroundService";
+import { fetchCredsByUrl } from "../lib/apis/credentials.api"
 
 let rsaPvtKey: CryptoKey;
-let eccPvtKey: CryptoKey;
-
-
+let urls: string[] = [];
+let activeCredSuggetion: any[] = [];
 
 browser.runtime.onInstalled.addListener(async () => {
-
   browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
-  // const pubKeyPair = await generateECCKeyPairForSigning() // Creating ECC key pair for signing please change
-  // console.log(pubKeyPair);
-  // await browser.storage.local.set({ token: token });
-  // await browser.storage.local.set({ privateKey: pvtKey });
-  // await browser.storage.local.set({ encryptionPvtKey: encryptionPvtKey });
-  // await browser.storage.local.set({ encryptionPubKey: encryptionPublicKey });
-  // await browser.storage.local.set({ signPvtKey: pubKeyPair.privateKey });
-  // await browser.storage.local.set({ signPubKey: pubKeyPair.publicKey });
 });
 
 
 browser.runtime.onMessage.addListener(async (request) => {
 
-
-  if (request.eventName === "decrypt") {
-    const credentials: EncryptedCredentialFields[] = request.data;
-    const returnPayload: DecryptedPaylod[] = [];
-    for (const credential of credentials) {
-      const decryptedFields = await decryptCredentialFields(credential.encryptedFields, rsaPvtKey);
-      const payload: DecryptedPaylod = {
-        credentialId: credential.credentialId,
-        decryptedFields
-      }
-      returnPayload.push(payload)
+  switch (request.action) {
+    case "decrypt": {
+      return decryptCredentialFieldsHandler(request.data, rsaPvtKey);
     }
-    return { data: returnPayload };
-  } else if (request.eventName === "decryptField") {
-    const decrypted = await decryptCredentialField(rsaPvtKey, request.data);
-    return { data: decrypted };
-  }
+    case "decryptField": {
+      const decrypted = await decryptCredentialField(rsaPvtKey, request.data);
+      return { data: decrypted };
+    }
 
-  if (request.action === "fillingSignal") {
-    try {
-      const [tab]: any[] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
-      if (tab.length === 0) {
-        throw new Error("No active tabs found");
+    case "fillingSignal":
+      {
+        const [tab]: any[] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+        await browser.tabs.sendMessage(tab.id, request);
+        break;
       }
 
-      await browser.tabs.sendMessage(tab.id, request);
-    } catch (error: any) {
-      console.error("Error:", error.message);
+    case "openFullscreenTab":
+      browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
+      break;
+
+    case "credSubmitted": {
+      let currentUrl = request.url;
+      setTimeout(async () => {
+        try {
+          const [tab]: browser.Tabs.Tab[] = await browser.tabs.query({
+            active: true,
+            currentWindow: true,
+          });
+          if (tab && tab.id) {
+            if (tab.url !== currentUrl) {
+              await browser.tabs.sendMessage(tab.id, { action: "saveToVault", username: request.username, password: request.password });
+            }
+          }
+        } catch (error) {
+          console.error("Error querying tabs:", error);
+        }
+      }, 3000);
     }
+      break;
+
+    case "initiateAuth": {
+      const passphrase = request.data.passphrase;
+      const response = await initiateAuthHandler(passphrase)
+      rsaPvtKey = response.rsaPvtKey;
+      if (response.token) return { isAuthenticated: true }
+      else return { isAuthenticated: false }
+    }
+
+    case "isSignedUp": {
+      const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+      if (signPvtKeyObj.signPvtKey) return { isSignedUp: true }
+      else return { isSignedUp: false }
+    }
+
+    case "signUp": {
+      if (request.username && request.password) {
+        const rsaKeyPair = await generateRSAKeyPairForEncryption()
+        const eccKeyPair = await generateECCKeyPairForSigning()
+        const isValidCreds = await verifyUser(request.username, request.password, rsaKeyPair.publicKey || "", eccKeyPair.publicKey || "")
+        if (isValidCreds) {
+          return Promise.resolve({ isAuthenticated: true, rsaKey: rsaKeyPair, eccKey: eccKeyPair })
+        }
+      }
+    }
+      break;
+
+    case "savePassphrase":
+      if (request.passphrase) {
+        return savePassphraseHandler(request.passphrase, request.rsaKey.privateKey, request.eccKey.privateKey);
+      }
+      break;
+    case "updateAllUrls":
+      urls = request.data;
+
+      break;
+
+    case "checkPvtLoaded":
+      if (rsaPvtKey) return Promise.resolve({ isLoaded: true })
+      else return Promise.resolve({ isLoaded: false })
+    case "getActiveCredSuggestion":
+      for (const cred of activeCredSuggetion) {
+        if (cred.id === request.data) {
+          const decrypted = await decryptCredentialField(rsaPvtKey, cred.password);
+          return Promise.resolve({ username: cred.username, password: decrypted })
+        }
+      }
+      break;
+
+    default:
+      console.log(request.action)
+      break;
   }
-  if (request.action === "openFullscreenTab") {
-    browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
-  }
-  if (request.action === "credSubmitted") {
-    let currentUrl = request.url;
+});
 
-    setTimeout(async () => {
-      try {
-        const [tab]: browser.Tabs.Tab[] = await browser.tabs.query({
-          active: true,
-          currentWindow: true,
-        });
-        if (tab && tab.id) {
 
-          if (tab.url !== currentUrl) {
+// browser.tabs.onCreated.addListener(async (tab) => {
 
-            await browser.tabs.sendMessage(tab.id, { action: "saveToVault", username: request.username, password: request.password });
+//   console.log('Tab created: ', tab)
+// })
+
+
+
+
+
+browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  // Log for debugging
+
+  // Check if the tab status is 'complete'
+  if (changeInfo.status === 'complete') {
+    // Get the current tab URL directly from the tab object
+    let url;
+    if (tab.url) {
+      url = new URL(tab.url);
+    }
+    const domain = url.hostname;
+
+    // Check if the domain is in your list
+    if (urls.includes(domain)) {
+      const responseData = await fetchCredsByUrl(domain);
+      // TODO: payload change in future
+      const payload: any = [];
+      for (const cred of responseData.data) {
+        for (const field of cred.unencryptedFields) {
+          if (!field.isUrl) {
+            activeCredSuggetion.push({ id: cred.credentialId, username: field.fieldValue, password: cred.encryptedFields[0].fieldValue })
+            payload.push({ id: cred.credentialId, username: field.fieldValue });
           }
         }
+      }
+      try {
+        await browser.tabs.sendMessage(tabId, { action: "updateCredsList", creds: payload });
       } catch (error) {
-        console.error("Error querying tabs:", error);
+        console.error("Error sending message to tab:", error);
       }
-    }, 3000);
-  }
-
-  if (request.action === "initiate_auth") {
-    const passphrase = request.data.passphrase;
-    const saltObj = await browser.storage.local.get('passphraseSalt');
-    const symmetricKey = await deriveKeyFromPassphrase(passphrase, saltObj.passphraseSalt)
-    const ivObj = await browser.storage.local.get('passphraseIv');
-    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
-    const encryptionPvtKeyObj = await browser.storage.local.get("encryptionPvtKey");
-    const decryptedKeys = await decryptPvtKeys(symmetricKey, signPvtKeyObj.signPvtKey, encryptionPvtKeyObj.encryptionPvtKey, ivObj.passphraseIv);
-    rsaPvtKey = decryptedKeys.rsaPvtKey;
-    eccPvtKey = decryptedKeys.eccPvtKey;
-    const token = await intiateAuth(eccPvtKey).catch((err) => {
-      console.error(err);
-    });
-    if (token) {
-      await browser.storage.local.set({ token: token });
-      return Promise.resolve({ isAuthenticated: true })
     } else {
-      return Promise.resolve({ isAuthenticated: false })
-    }
-
-  }
-
-  if (request.action === "check_is_signed_up") {
-    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
-    if (signPvtKeyObj.signPvtKey) return Promise.resolve({ isSignedUp: true })
-    else return Promise.resolve({ isSignedUp: false })
-  }
-
-  if (request.action === "sign_up_user") {
-    if (request.username && request.password) {
-      const rsaKeyPair = await generateRSAKeyPairForEncryption()
-      const eccKeyPair = await generateECCKeyPairForSigning()
-      const isValidCreds = await verifyUser(request.username, request.password, rsaKeyPair.publicKey || "", eccKeyPair.publicKey || "")
-      if (isValidCreds) {
-        return Promise.resolve({ isAuthenticated: true, rsaKey: rsaKeyPair, eccKey: eccKeyPair })
-      }
-    }
-  }
-
-  if (request.action === "save_passphrase") {
-    if (request.passphrase) {
-      const saltString = generateRandomString()
-      await browser.storage.local.set({ passphraseSalt: saltString });
-      const symmetricKey = await deriveKeyFromPassphrase(request.passphrase, saltString)
-      const ivString = generateRandomString()
-      await browser.storage.local.set({ passphraseIv: ivString });
-      if (request.rsaKey.privateKey) {
-        const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, request.rsaKey.privateKey, ivString)
-        await browser.storage.local.set({ encryptionPvtKey: pvtKeyCipher });
-      }
-      if (request.eccKey.privateKey) {
-        const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, request.eccKey.privateKey, ivString)
-        await browser.storage.local.set({ signPvtKey: pvtKeyCipher });
-      }
-      return Promise.resolve({ isSaved: true })
+      console.log('Domain is not in the URLs array:', domain);
     }
   }
 });
+
+// ... rest of your script ...

@@ -17,7 +17,7 @@
     async function handleSubmit() {
         // verify
         const response = await browser.runtime.sendMessage({
-            action: "sign_up_user",
+            action: "signUp",
             username: username,
             password: password,
         });
