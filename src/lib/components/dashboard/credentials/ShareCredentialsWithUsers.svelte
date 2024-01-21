@@ -12,7 +12,6 @@
 
     export let users: User[];
     export let encryptedCredentials: EncryptedCredentialFields[];
-
     let selectedUsers: UserWithAccessType[] = [];
     let showOptions = false; 
     let selectionIndex = null;

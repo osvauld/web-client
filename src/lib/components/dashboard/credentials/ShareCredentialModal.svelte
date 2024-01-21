@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ClosePanel from "../../basic/closePanel.svelte";
+
   import { fly } from "svelte/transition";
   import { onMount } from "svelte";
 
@@ -18,6 +18,7 @@
   import ShareCredentialsWithGroups from "./ShareCredentialsWithGroups.svelte";
   import InfoIcon from '../../basic/infoIcon.svelte';
   import InfoOverlay from '../components/info.svelte';
+  import ClosePanel from "../../basic/closePanel.svelte";
   export let credentials: CredentialBase[];
   export let users: User[];
   export let groups: Group[];
@@ -71,3 +72,4 @@
     </div>
   </div>
 </div>
+
