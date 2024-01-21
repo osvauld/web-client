@@ -64,7 +64,6 @@ export default {
           placeholderblack: "#30363D",
           sensitivebgblack: "#14191E",
           sensitivebgblue: "#253244",
-          plainwhite: "#FFF",
           highlightwhite: "#E8EFF6",
           managerPurple: "#3B3441",
           ownerGreen: "#2C3B33",
