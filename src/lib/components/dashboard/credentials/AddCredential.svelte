@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
+  import Close from "../../basic/"
 
   import { encryptCredentialsForUser } from "../../../utils/helperMethods";
 
@@ -182,18 +183,29 @@
       </button>
     </div>
   </div>
+<<<<<<< HEAD
   <div class=" mx-6 pl-3 flex justify-start items-center mb-5">
     <textarea
       rows="2"
       class="w-5/6 mt-4 h-auto min-h-[6rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base  focus:border-osvauld-iconblack focus:ring-0"
+=======
+  <div class=" mx-6 pl-3 flex justify-start items-center">
+    <textarea
+      rows="2"
+      class="bg-macchiato-surface0 w-5/6 rounded-md "
+>>>>>>> 182f5ca (3 conflicts resolved)
       bind:value={description}
       placeholder="Enter description about the secret"
     />
   </div>
+<<<<<<< HEAD
   <div
   class="border-b border-osvauld-iconblack w-full my-2"
   ></div>
   <div class="flex justify-end items-center mx-10 py-2">
+=======
+  <div class="flex justify-start mt-4 pl-4 ml-6 ">
+>>>>>>> 182f5ca (3 conflicts resolved)
     <button
     class="text-osvauld-sheffieldgrey border border-osvauld-iconblack px-[52px] w-1/3 py-2.5 rounded-lg mb-6 bg-osvauld-placeholderblack mr-3"
     on:click={closeDialouge}>Cancel</button>
