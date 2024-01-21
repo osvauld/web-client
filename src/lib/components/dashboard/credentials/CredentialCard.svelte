@@ -22,6 +22,7 @@
     let decrypted = false;
     let checked = false;
     let hoverEffect = false;
+    let sensitiveCard = false;
     let hoverTimeout;
 
     function toggleCheck() {
@@ -34,6 +35,7 @@
             hoverTimeout = setTimeout(async () => {
                 const response = await fetchCredentialById(credential.id);
                 encryptedFields = response.data.encryptedFields;
+                encryptedFields.length >= 1 ? sensitiveCard = true: sensitiveCard = false
                 encryptedFields = encryptedFields.map((item) => ({
                     ...item,
                     lockIcon: true,
@@ -46,6 +48,7 @@
         clearTimeout(hoverTimeout);
         decrypted = false;
         hoverEffect = false;
+        sensitiveCard = false;
     }
 
     function makeVisible() {
@@ -67,7 +70,8 @@
     onMount(async () => {
         checked = false;
     });
-    /*eslint-disable*/
+
+    /* eslint-disable */
 </script>
 
 <div
@@ -96,7 +100,7 @@
             class="border-b border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3"
         ></div>
         <div
-            class="w-[260px] h-[170px] overflow-y-scroll scrollbar-thin {hoverEffect
+            class="w-[260px] h-[240px] overflow-y-scroll scrollbar-thin {hoverEffect
                 ? 'active'
                 : ''} mt-2"
         >
@@ -187,37 +191,35 @@
                 {/each}
             {/if}
         </div>
-        <!-- Static description at the bottom -->
-        <label
-            class="text-osvauld-dusklabel block text-left text-sm font-normal"
-        >
-            Description
-        </label>
-        <textarea
-            class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base
-        {hoverEffect
-                ? 'text-osvauld-quarzowhite'
-                : 'text-osvauld-sheffieldgrey'}"
-        >
-            {credential.description}
-        </textarea>
-
+            <label
+                class="text-osvauld-dusklabel block text-left text-sm font-normal"
+            >
+                Description
+            </label>
+            <textarea
+                class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base
+            {hoverEffect
+                    ? 'text-osvauld-quarzowhite'
+                    : 'text-osvauld-sheffieldgrey'}"
+            >
+                {credential.description}
+            </textarea>
         <div
             class="border-t border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3 my-2"
         ></div>
         <div class="flex justify-start">
             <span
-                class="{hoverEffect
+                class="{hoverEffect && sensitiveCard
                     ? 'bg-osvauld-sensitivebgblue text-osvauld-carolinablue'
                     : 'bg-osvauld-sensitivebgblack text-osvauld-chalkwhite'} py-0 px-3 text-sm border border-osvauld-bordergreen rounded-[4px] flex justify-center items-center"
             >
-                {#if hoverEffect}
+                {#if hoverEffect && sensitiveCard}
                     <SensitiveEye2 />
                 {:else}
                     <SensitiveEye />
                 {/if}
                 <span
-                    class="ml-2 {hoverEffect
+                    class="ml-2 {hoverEffect && sensitiveCard
                         ? 'text-osvauld-carolinablue'
                         : 'text-osvauld-placeholderblack'}"
                     >Sensitive Fields</span
