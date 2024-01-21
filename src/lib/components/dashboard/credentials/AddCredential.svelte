@@ -3,6 +3,8 @@
   import { fly } from "svelte/transition";
 
   import { encryptCredentialsForUser } from "../../../utils/helperMethods";
+  import ClosePanel from "../../basic/closePanel.svelte"
+  import BinIcon from "../../basic/binIcon.svelte"
 
   import { selectedFolder, showAddCredentialDrawer } from "../store";
 
@@ -83,7 +85,7 @@
     folderUsers = await fetchFolderUsers($selectedFolder.id);
   });
 
-  function closeDialouge(){
+  function closeDialog(){
     showAddCredentialDrawer.set(false)
   }
 </script>
@@ -105,7 +107,7 @@
 
   <div class="flex justify-between items-center px-12 py-9">
     <p class="text-[28px] font-sans font-normal text-osvauld-quarzowhite">Add Credential</p>
-    <button class="bg-osvauld-frameblack"  on:click={closeDialouge}>X</button>
+    <button class="bg-osvauld-frameblack"  on:click={closeDialog}><ClosePanel/></button>
   </div>
 
   <div
@@ -166,7 +168,7 @@
             class="rounded-md pr-2 pl-2 bg-osvauld-frameblack text-osvauld-quarzowhite flex justify-center items-center ml-5"
             on:click={() => removeField(index)}
             >
-              X
+            <BinIcon/>
             </button>
           </div>
         </div>
@@ -196,7 +198,7 @@
   <div class="flex justify-end items-center mx-10 py-2">
     <button
     class="text-osvauld-sheffieldgrey border border-osvauld-iconblack px-[52px] w-1/3 py-2.5 rounded-lg mb-6 bg-osvauld-placeholderblack mr-3"
-    on:click={closeDialouge}>Cancel</button>
+    on:click={closeDialog}>Cancel</button>
 
     <button
       class="bg-macchiato-blue px-[52px] py-2.5 rounded-lg mb-6 text-macchiato-surface0"
