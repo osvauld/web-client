@@ -50,18 +50,18 @@
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
             users = users.filter((u) => u.id !== user.id);
         }
-        console.log(showOptions, selectionIndex);
     }
 
     function setbackground(type: string){
-        if(type === 'read'){
-            return "bg-osvauld-readerOrange text-osvauld-readerText"
-        } else if(type === "write"){
-            return "bg-osvauld-managerPurple text-osvauld-managerText"
-        } else {
-            return "bg-osvauld-ownerGreen text-osvauld-ownerText"
-        }
+        const typeToClassMap = {
+        read: "bg-osvauld-readerOrange text-osvauld-readerText",
+        write: "bg-osvauld-managerPurple text-osvauld-managerText",
+        owner: "bg-osvauld-ownerGreen text-osvauld-ownerText"
+       };
+
+       return typeToClassMap[type] || "";
     }
+    /* eslint-disable */
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[65vh]">
@@ -76,7 +76,7 @@
     <div class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full">
         {#each selectedUsers as user, index}
         <div
-            class=" relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {index === selectionIndex && topList ? "bg-osvauld-bordergreen" : ""}" >
+            class=" relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between bg-osvauld-bordergreen" >
             <div class="flex items-center space-x-4">
                 <p class="p-2 w-3/4 whitespace-nowrap">{user.name}</p>
             </div>
@@ -86,7 +86,7 @@
                 </button>
                 {#if showOptions && topList && index === selectionIndex}
                     <div
-                        class="absolute top-2 right-5 !z-50 w-[140px] h-[110px] bg-osvauld-frameblack border-osvauld-bordergreen  ml-auto flex flex-col justify-center items-center"
+                        class="absolute top-2 right-7 !z-50 w-[140px] h-[110px] bg-osvauld-frameblack border-osvauld-bordergreen  ml-auto flex flex-col justify-center items-center"
                     >
                         <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-readerOrange text-osvauld-readerText m-1" on:click|stopPropagation={() => handleRoleChange('read', user)}>Read</button>
                         <button class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-managerPurple text-osvauld-managerText m-1" on:click|stopPropagation={() => handleRoleChange('write', user)}>Write</button>

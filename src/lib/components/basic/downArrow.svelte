@@ -1,13 +1,12 @@
 <script>
     export let type;
      function setbackground(type){
-        if(type === 'read'){
-           return "#F9E2AF"
-        } else if(type === "write"){
-            return "#F5C2E7"
-        } else {
-            return "#A6E3A1"
-        }
+        const typeToClassMap = {
+            read: "#F9E2AF",
+            write: "#F5C2E7",
+            owner: "#A6E3A1"
+          };
+       return typeToClassMap[type] || "";
     }
 </script>
 
