@@ -6,6 +6,7 @@
   import Logo from "./components/basic/logo.svelte";
   import { isLoggedIn, isSignedUp } from "../lib/store/ui.store";
   import Signup from "./components/popup/Signup.svelte";
+
   let devType = "popup";
   let loggedIn = false;
   onMount(async () => {
@@ -13,6 +14,7 @@
     const response = await browser.runtime.sendMessage({
       action: "isSignedUp",
     });
+
     isSignedUp.set(response.isSignedUp);
     const checkPvtLoad = await browser.runtime.sendMessage({
       action: "checkPvtLoaded",
@@ -23,6 +25,7 @@
     } else {
       loggedIn = false;
     }
+
     // isSignedUp.set(false);
   });
 
