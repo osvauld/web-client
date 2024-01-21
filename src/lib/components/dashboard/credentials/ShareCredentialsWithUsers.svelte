@@ -13,18 +13,44 @@
 
     let selectedUsers: UserWithAccessType[] = [];
 
-    function handleCheck(e: any, user: User) {
-        if (e.target.checked) {
+
+
+    function handleItemClick(e: any, user: User){
+        console.log('click detected');
+        if(e.target.tagName.toLowerCase() === 'select'){
+            console.log('inside click', 'inside select', e.target.value)
+            selectedUsers = [...selectedUsers, { ...user, accessType: e.target.value }];
+            console.log(selectedUsers)
+            return
+        } 
+        const index = selectedUsers.findIndex(u => u.id === user.id);
+        if(index === -1){
             selectedUsers = [...selectedUsers, { ...user, accessType: "read" }];
         } else {
             selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
         }
+        console.log(selectedUsers);
     }
 
-    const handleRoleChange = (e: any, user: User) => {
-        const index = selectedUsers.findIndex((u) => u.id === user.id);
-        selectedUsers[index].accessType = e.target.value;
-    };
+    function handleItemSelection(e: any, user: User) {
+        console.log('Role change detected Handle Item selection invoked')
+        if(e.target.tagName.toLowerCase() === 'select'){
+            const index = selectedUsers.findIndex(u => u.id === user.id);
+            if(index !== -1){
+                selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+                selectedUsers = [...selectedUsers, { ...user, accessType: e.target.value }];
+            }
+            console.log(selectedUsers)
+        } 
+        // if (e.target?.checked) {
+        //     selectedUsers = [...selectedUsers, { ...user, accessType: "read" }];
+        // } else {
+        //     console.log('Else condition invoked');
+        //     selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+        // }
+    }
+
+
     const shareCredentialHandler = async () => {
         const userData = await createShareCredsPayload(
             encryptedCredentials,
@@ -33,6 +59,8 @@
         const payload: ShareCredentialsWithUsersPayload = { userData };
         await shareCredentialsWithUsers(payload);
     };
+
+   /* eslint-disable */
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[65vh]">
@@ -47,16 +75,14 @@
     <div class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full">
         {#each users as user}
             <div
-                class="rounded-lg w-full cursor-pointer  hover:bg-osvauld-bordergreen flex items-center justify-between"
+                class="rounded-lg w-full cursor-pointer  hover:bg-osvauld-bordergreen flex items-center justify-between ${selectedUsers.some(anySelectedUser => anySelectedUser.id === user.id) ? "bg-osvauld-cretangreen": ""}" on:click={(e) => handleItemClick(e, user)}
             >
-                <div class="w-full flex items-center justify-between">
+                <div class="w-full flex items-center justify-between" on:change={(e) => handleItemSelection(e, user)}>
                     <div class="flex items-center justify-center">
-                        <input type="checkbox" on:change={(e) => handleCheck(e, user)} />
-                        <p class="p-1">{user.name}</p>
+                        <label class="p-1 cursor-pointer">{user.name}</label>
                     </div>
                         <select
                         class="bg-osvauld-bordergreen border-0"
-                        on:change={(e) => handleRoleChange(e, user)}
                         >
                             <option value="read">Reader</option>
                             <option value="write">Manager</option>

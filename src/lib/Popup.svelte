@@ -6,8 +6,13 @@
   import Logo from "./components/basic/logo.svelte";
   import { isLoggedIn, isSignedUp } from "../lib/store/ui.store";
   import Signup from "./components/popup/Signup.svelte";
+<<<<<<< HEAD
   let devType = "popu";
   let loggedIn = false;
+=======
+  let devType = "pop";
+
+>>>>>>> b871eb2 (users list click  done styling remains)
   onMount(async () => {
     if (devType != "popup") openFullscreenTab();
     const response = await browser.runtime.sendMessage({
