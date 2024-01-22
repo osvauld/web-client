@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Logo from "../basic/logo.svelte";
-  import Toggle from "../basic/toggle.svelte";
+
+  import { Logo, Toggle } from "./icons"
   import SideList from "./SideList.svelte";
 </script>
 

@@ -2,7 +2,7 @@
   import { onDestroy, onMount } from "svelte";
   import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
-  import CopyIcon from "../../basic/copyIcon.svelte";
+  import { CopyIcon } from "../icons"
 
   import { selectedCredential } from "../store";
   import { fetchCredentialById } from "../apis";

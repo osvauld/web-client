@@ -6,14 +6,9 @@
     import { fly } from "svelte/transition";
     import { fetchCredentialById } from "../apis";
     import browser from "webextension-polyfill";
-    import More from "../../basic/more.svelte";
-    import Locked from "../../basic/locked.svelte";
-    import Eye from "../../basic/eye.svelte";
-    import Unlocked from "../../basic/unlocked.svelte";
-    import SensitiveEye from "../../basic/sensitiveEye.svelte";
-    import SensitiveEye2 from "../../basic/sensitiveEyeBlue.svelte";
-    import ActiveCopy from "../../basic/activeCopy.svelte";
-    import ClosedEye from "../../basic/closedEye.svelte";
+    import { More, Locked, Eye, Unlocked, SensitiveEye, SensitiveEye2, ActiveCopy, ClosedEye } from "../icons"
+
+
     const dispatch = createEventDispatcher();
 
     export let credential;

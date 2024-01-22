@@ -7,7 +7,7 @@
     } from "../dtos";
     import { shareCredentialsWithUsers } from "../apis";
     import { createShareCredsPayload } from "../helper";
-    import Lens from "../../basic/lens.svelte";
+    import { Lens } from "../icons"
     import ListItem from '../components/ListItem.svelte';
 
     export let users: User[];
@@ -40,14 +40,14 @@
     }
 
     function handleRoleChange(e: any, index: number, type: string){
-        const user = e.detail.user;
+        const user = e.detail.item;
         const option = e.detail.permission;
         showOptions = !showOptions
         selectionIndex = null
        if(type === "selectedUsers"){
             selectedUsers.splice(index, 1)
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
-       } else {
+        } else {
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
             users = users.filter((u) => u.id !== user.id);
        }
@@ -76,7 +76,7 @@
     <div class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full">
         {#each selectedUsers as user, index}
             <ListItem
-            {user}
+            item={user}
             isSelected={index === selectionIndex && topList}
             isTopList={true}
             on:click =  {()=>handleClick(index, true)}
@@ -88,7 +88,7 @@
         {/each}
         {#each users as user, index}
         <ListItem
-            {user}
+            item={user}
             isSelected={index === selectionIndex && !topList}
             isTopList={false}
             on:click =  {()=>handleClick(index,false)}
@@ -108,3 +108,4 @@
     </div>
 
 </div>
+

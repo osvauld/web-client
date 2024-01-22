@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import Welcome from "./components/popup/Welcome.svelte";
   import Home from "./components/popup/Home.svelte";
-  import Logo from "./components/basic/logo.svelte";
+  import { Logo } from "./components/dashboard/icons";
   import { isLoggedIn, isSignedUp } from "../lib/store/ui.store";
   import Signup from "./components/popup/Signup.svelte";
 
@@ -25,7 +25,6 @@
     } else {
       loggedIn = false;
     }
-
     // isSignedUp.set(false);
   });
 
