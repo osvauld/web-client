@@ -31,3 +31,4 @@ export const createShareCredsPayload = async (creds: EncryptedCredentialFields[]
     }
     return userData;
 }
+

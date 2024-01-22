@@ -1,5 +1,4 @@
 import browser from "webextension-polyfill";
-import { credentialStore } from "../store/credential.store";
 import { baseUrl, } from "./temp";
 import { ShareCredentialsWithUsersPayload } from "../dtos/credential.dto";
 
@@ -10,12 +9,9 @@ export const fetchCredentialsByFolder = async (folderId: string) => {
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
-  const response = await fetch(`${baseUrl}/folder/${folderId}/credential`, {
+  return fetch(`${baseUrl}/folder/${folderId}/credential`, {
     headers,
   }).then((response) => response.json());
-  if (response.data) {
-    credentialStore.set(response.data);
-  }
 };
 
 export const fetchCredentialById = async (credentialId: string) => {

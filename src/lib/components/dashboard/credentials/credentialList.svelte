@@ -4,9 +4,9 @@
   import ShareCredentialModal from "./ShareCredentialModal.svelte";
   import CredentialCard from "./CredentialCard.svelte";
 
-  import { Lens, Share, Add } from "../icons"
+  import { Lens, Share, Add } from "../icons";
   import { fetchFolderUsers, fetchAllUsers, fetchAllUserGroups } from "../apis";
-  import { User, CredentialDetails, Group } from "../dtos";
+  import { User, CredentialDetails, Group, Credential } from "../dtos";
 
   import {
     credentialStore,
@@ -17,13 +17,13 @@
   } from "../store";
   import { onDestroy } from "svelte";
 
-  let checkedCards: CredentialDetails[] = [];
+  let checkedCards: Credential[] = [];
   let users: User[] = [];
   let allUsers: User[] = [];
   let folderUsers: User[] = [];
   let allGroups: Group[] = [];
 
-  function handleCheck(isChecked: boolean, card: CredentialDetails) {
+  function handleCheck(isChecked: boolean, card: Credential) {
     if (isChecked) {
       checkedCards = [...checkedCards, card];
     } else {
