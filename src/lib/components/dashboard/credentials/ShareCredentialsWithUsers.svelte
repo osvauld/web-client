@@ -40,7 +40,7 @@
     }
 
     function handleRoleChange(e: any, index: number, type: string){
-        const user = e.detail.user;
+        const user = e.detail.item;
         const option = e.detail.permission;
         showOptions = !showOptions
         selectionIndex = null
@@ -76,7 +76,7 @@
     <div class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full">
         {#each selectedUsers as user, index}
             <ListItem
-            {user}
+            item={user}
             isSelected={index === selectionIndex && topList}
             isTopList={true}
             on:click =  {()=>handleClick(index, true)}
@@ -88,7 +88,7 @@
         {/each}
         {#each users as user, index}
         <ListItem
-            {user}
+            item={user}
             isSelected={index === selectionIndex && !topList}
             isTopList={false}
             on:click =  {()=>handleClick(index,false)}

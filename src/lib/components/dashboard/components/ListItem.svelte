@@ -4,10 +4,8 @@
     export let isTopList;
     export let setbackground;
     export let showOptions;
-    export let isGroup;
 
-    import BinIcon from "../../basic/binIcon.svelte";
-    import DownArrow from "../../basic/downArrow.svelte";
+    import { BinIcon, DownArrow } from "../icons"
     import AccessSelector from '../components/accessSelector.svelte';
 
     import { createEventDispatcher } from "svelte";

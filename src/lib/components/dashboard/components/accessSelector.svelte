@@ -5,7 +5,7 @@
 
    const dispatch = createEventDispatcher();
     const select = (permission, item) => {
-        dispatch("select", {permission, item});
+        dispatch("select", { permission, item });
     };
 </script>
 

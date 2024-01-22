@@ -25,7 +25,6 @@
     } else {
       loggedIn = false;
     }
-
     // isSignedUp.set(false);
   });
 

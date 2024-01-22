@@ -4,6 +4,7 @@
         GroupWithAccessType,
         EncryptedCredentialFields,
     } from "../dtos";
+    import { writable } from 'svelte/store';
     import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
     import { createShareCredsPayload } from "../helper";
     import { Lens } from "../icons"
@@ -12,19 +13,20 @@
 
     export let groups: Group[];
     export let encryptedCredentials: EncryptedCredentialFields[];
-    let selectedGroups = new Map<string, GroupWithAccessType>();
+    let selectedGroups = writable(new Map<string, GroupWithAccessType>());
     let showOptions = false; 
     let selectionIndex = null;
     let topList = false;
 
 
     const shareCredentialHandler = async () => {
-        const groupIds = Array.from(selectedGroups.keys());
+     
+        const groupIds = Array.from($selectedGroups.keys());
         const response = await fetchUsersByGroupIds(groupIds);
         const groupUsersList = response.data;
         const payload = [];
         for (const groupUsers of groupUsersList) {
-            const group = selectedGroups.get(groupUsers.groupId);
+            const group = $selectedGroups.get(groupUsers.groupId);
             const encryptedUserData = await createShareCredsPayload(
                 encryptedCredentials,
                 groupUsers.userDetails,
@@ -40,51 +42,36 @@
         });
     };
 
-    // function handleCheck(e: any, group: Group) {
-    //     if (e.target.checked) {
-    //         selectedGroups.set(group.groupId, { ...group, accessType: "read" });
-    //     } else {
-    //         selectedGroups.delete(group.groupId);
-    //     }
-    // }
-
     function handleClick(index: number, isSelectedList: boolean){
         showOptions = !showOptions
         selectionIndex = index
         topList = isSelectedList
     }
 
-
-    function handleItemRemove(index: number){
-        console.log('selected grps inside handle item remove',selectedGroups )
-        // const removedUser = selectedGroups.splice(index, 1)
-        // selectedGroups = [...selectedGroups]
-        // const [{ accessType, ...userWithoutAccessType }] = removedUser;
-        // groups = [...groups, { ...userWithoutAccessType}]
+    function handleItemRemove(id: string){
+        let removedUser 
+        selectedGroups.update(currentGroups => {
+                removedUser = currentGroups.get(id)
+                currentGroups.delete(id);
+                return currentGroups;
+            });
+        groups = [...groups, { ...removedUser}]
     }
 
-
-    // const handleRoleChange = (e: any, group: Group) => {
-    //     if (selectedGroups.has(group.groupId)) {
-    //         const updatedGroup = {
-    //             ...selectedGroups.get(group.groupId),
-    //             accessType: e.target.value,
-    //         };
-    //         selectedGroups.set(group.groupId, updatedGroup);
-    //     }
-    // };
-
     function handleRoleChange(e: any, index: number, type: string){
+
          const item = e.detail.item;
          const option = e.detail.permission;
-        showOptions = !showOptions
-        selectionIndex = null
+         showOptions = !showOptions
+         selectionIndex = null
+
        if(type === "selectedGroups"){
-            selectedGroups.splice(index, 1)
-            selectedGroups = [...selectedGroups, { ...item, accessType: option }];
+            selectedGroups.update(currentGroups => {
+                currentGroups.set(item.groupId, { ...item, accessType: option });
+                return currentGroups;
+            });
         } else {
-            selectedGroups = [...selectedGroups, { ...item, accessType: option }];
-            console.log('Handle role change', groups, selectedGroups)
+            $selectedGroups.set(item.groupId, { ...item, accessType: option });
             groups = groups.filter((u) => u.groupId !== item.groupId);
        }
     }
@@ -111,14 +98,13 @@
     <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
 
     <div class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full">
-        {#each selectedGroups as group, index}
+        {#each Array.from($selectedGroups) as [groupId, group], index}
             <ListItem
             item={group}
-            isGroup={true}
             isSelected={index === selectionIndex && topList}
             isTopList={true}
             on:click =  {()=>handleClick(index, true)}
-            on:remove = {() => handleItemRemove(index)}
+            on:remove = {() => handleItemRemove(groupId)}
             {setbackground}
             {showOptions}
             on:select={(e)=> handleRoleChange(e,index, 'selectedGroups')}
@@ -127,7 +113,6 @@
         {#each groups as group, index}
         <ListItem
             item={group}
-            isGroup={true}
             isSelected={index === selectionIndex && !topList}
             isTopList={false}
             on:click =  {()=>handleClick(index,false)}
