@@ -25,7 +25,7 @@
   let encryptedCredentials: EncryptedCredentialFields[] = [];
   let infoDropdown = false;
 
-  const credIds = credentials.map((cred) => cred.id);
+  const credIds = credentials.map((cred) => cred.credentialId);
   onMount(async () => {
     const responseJson = await fetchEncryptedFieldsByIds(credIds);
     encryptedCredentials = responseJson.data;
