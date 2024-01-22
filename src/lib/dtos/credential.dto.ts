@@ -25,18 +25,18 @@ export type AddCredentialFieldPayload = CredentialFields & {
   sensitive: boolean;
 };
 
-export type AddCredentialPayload = {
-  name: string;
-  description: string;
-  folderId: string;
-  unencryptedFields: CredentialFields[];
-  userEncryptedFields: UserEncryptedPayload[];
-};
+// export type AddCredentialPayload = {
+//   name: string;
+//   description: string;
+//   folderId: string;
+//   unencryptedFields: CredentialFields[];
+//   userEncryptedFields: UserEncryptedPayload[];
+// };
 
-type UserEncryptedPayload = {
-  userId: string;
-  encryptedFields: CredentialFields[];
-};
+// type UserEncryptedPayload = {
+//   userId: string;
+//   encryptedFields: CredentialFields[];
+// };
 
 
 
@@ -60,4 +60,45 @@ export type EncryptedCredentialFields = {
 export type DecryptedPaylod = {
   credentialId?: string,
   decryptedFields: CredentialFields[]
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// new cred definitons
+
+type UUID = string;
+type FieldType = 'meta' | 'sensitive' | 'additional';
+export type Fields = {
+  id?: string;
+  fieldName: string;
+  fieldValue: string;
+  fieldType: FieldType;
+}
+
+
+export type AddCredentialPayload = {
+  name: string;
+  description: string;
+  folderId: string;
+  credentialType: string;
+  userFields: UserEncryptedFields[];
+}
+
+export type UserEncryptedFields = {
+  userId: string;
+  fields: Fields[];
+}
+
+export type CredentialBasic = {
+  credentialId?: string,
+  fields: Fields[]
+}
+
+export type Credential = CredentialBasic & {
+  name: string;
+  description: string;
+  folderId: UUID;
+  credentialType: string;
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
 }

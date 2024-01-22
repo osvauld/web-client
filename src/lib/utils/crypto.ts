@@ -1,7 +1,7 @@
 import { CryptoKeyPair } from "../dtos/cryptoKeys.dto";
 
 // Function to convert a binary string to an ArrayBuffer
-import { CredentialFields } from "../dtos/credential.dto";
+import { CredentialFields, Fields } from "../dtos/credential.dto";
 
 const str2ab = (str: string) => {
   const buffer = new Uint8Array(str.length);
@@ -41,11 +41,11 @@ export const encryptWithPublicKey = async (
 
 
 export const decryptCredentialFields = async (
-  encryptedFields: CredentialFields[],
+  encryptedFields: Fields[],
   privateKey: CryptoKey
-): Promise<CredentialFields[]> => {
+): Promise<Fields[]> => {
 
-  const decryptedFields: CredentialFields[] = [];
+  const decryptedFields: Fields[] = [];
   for (const field of encryptedFields) {
 
     const decryptedData = await decryptWithPrivateKey(privateKey, field.fieldValue);

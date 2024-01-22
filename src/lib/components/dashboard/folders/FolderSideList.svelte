@@ -6,17 +6,25 @@
     showAddFolderDrawer,
     folderStore,
     selectedFolder,
+    credentialStore,
   } from "../store";
 
+  import browser from "webextension-polyfill";
   import { fetchCredentialsByFolder } from "../apis";
 
   import { Folder } from "../dtos";
   import Add from "../../basic/add.svelte";
 
-  const selectFolder = (folder: Folder) => {
+  const selectFolder = async (folder: Folder) => {
     selectedFolder.set(folder);
     selectedCredential.set(null);
-    fetchCredentialsByFolder(folder.id);
+    const responseJson = await fetchCredentialsByFolder(folder.id);
+
+    const response = await browser.runtime.sendMessage({
+      action: "decryptMeta",
+      data: responseJson.data,
+    });
+    credentialStore.set(response.data);
   };
 
   const openModal = () => {
