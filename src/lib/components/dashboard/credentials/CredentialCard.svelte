@@ -1,10 +1,13 @@
 <script lang="ts">
     import CopyIcon from "../../basic/copyIcon.svelte";
-    import { CredentialDetails, Credential } from "../dtos";
+    import { Credential } from "../dtos";
     import { onMount } from "svelte";
     import { createEventDispatcher } from "svelte";
     import { fly } from "svelte/transition";
-    import { fetchCredentialById } from "../apis";
+    import {
+        fetchCredentialById,
+        fetchSensitiveFieldsByCredentialId,
+    } from "../apis";
     import browser from "webextension-polyfill";
     import {
         More,
@@ -36,8 +39,11 @@
         hoverEffect = true;
         if (!decrypted) {
             hoverTimeout = setTimeout(async () => {
-                const response = await fetchCredentialById(credential.id);
-                encryptedFields = response.data.encryptedFields;
+                const response = await fetchSensitiveFieldsByCredentialId(
+                    credential.credentialId,
+                );
+                console.log(response.data, "credential details");
+                encryptedFields = response.data;
                 encryptedFields.length >= 1
                     ? (sensitiveCard = true)
                     : (sensitiveCard = false);

@@ -136,3 +136,21 @@ export const fetchAllUserUrls = async () => {
 
   return response.json();
 }
+
+export const fetchSensitiveFieldsByCredentialId = async (credentialId: string) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+
+  const response = await fetch(`${baseUrl}/credential/${credentialId}/sensitive`, {
+    method: "GET",
+    headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}
