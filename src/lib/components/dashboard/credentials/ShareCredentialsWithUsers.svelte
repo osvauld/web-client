@@ -47,7 +47,7 @@
        if(type === "selectedUsers"){
             selectedUsers.splice(index, 1)
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
-       } else {
+        } else {
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
             users = users.filter((u) => u.id !== user.id);
        }
@@ -108,3 +108,4 @@
     </div>
 
 </div>
+
