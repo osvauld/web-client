@@ -4,14 +4,15 @@
 
 
   import { fetchEncryptedCredentialsFields } from "../apis";
+  import { selectedFolder, showFolderShareDrawer } from "../store";
+  import { User, EncryptedCredentialFields } from "../dtos";
+  import { InfoIcon, ClosePanel } from "../icons";
+
+
   import ShareFolderWithGroups from "./ShareFolderWithGroups.svelte";
   import UserGroupToggle from "../UserGroupToggle.svelte";
   import ShareFolderWithUsers from "./ShareFolderWithUsers.svelte";
-  import { selectedFolder, showFolderShareDrawer } from "../store";
-  import { User, EncryptedCredentialFields } from "../dtos";
-  import InfoIcon from '../../basic/infoIcon.svelte';
   import InfoOverlay from '../components/info.svelte';
-  import ClosePanel from "../../basic/closePanel.svelte";
 
 
   export let users: User[];

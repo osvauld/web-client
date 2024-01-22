@@ -12,7 +12,7 @@
     import { selectedFolder, showFolderShareDrawer } from "../store";
     import { createShareCredsPayload } from "../helper";
     
-    import Lens from "../../basic/lens.svelte";
+    import { Lens } from "../icons";
     import ListItem from '../components/ListItem.svelte';
 
 

@@ -3,12 +3,9 @@
   import ShareFolderModal from "../folders/ShareFolderModal.svelte";
   import ShareCredentialModal from "./ShareCredentialModal.svelte";
   import CredentialCard from "./CredentialCard.svelte";
-  import Lens from "../../basic/lens.svelte";
-  import Share from "../../basic/share.svelte";
-  import Add from "../../basic/add.svelte";
 
+  import { Lens, Share, Add } from "../icons"
   import { fetchFolderUsers, fetchAllUsers, fetchAllUserGroups } from "../apis";
-
   import { User, CredentialDetails, Group } from "../dtos";
 
   import {

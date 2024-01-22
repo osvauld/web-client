@@ -1,10 +1,9 @@
 <script lang="ts">
   import CredentialList from "./credentials/credentialList.svelte";
   import GroupList from "./groups/GroupList.svelte";
-  import Profile from "../../components/basic/profile.svelte"
-
+  
   import { selectedPage } from "./store";
-  import Lens from '../basic/lens.svelte';
+  import { Profile, Lens } from "./icons"
 
 </script>
 

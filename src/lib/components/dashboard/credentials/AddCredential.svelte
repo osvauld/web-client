@@ -2,9 +2,8 @@
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
 
+  import {ClosePanel, BinIcon} from "../icons"
   import { encryptCredentialsForUser } from "../../../utils/helperMethods";
-  import ClosePanel from "../../basic/closePanel.svelte"
-  import BinIcon from "../../basic/binIcon.svelte"
 
   import { selectedFolder, showAddCredentialDrawer } from "../store";
 

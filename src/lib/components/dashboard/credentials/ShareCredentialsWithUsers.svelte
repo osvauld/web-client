@@ -7,7 +7,7 @@
     } from "../dtos";
     import { shareCredentialsWithUsers } from "../apis";
     import { createShareCredsPayload } from "../helper";
-    import Lens from "../../basic/lens.svelte";
+    import { Lens } from "../icons"
     import ListItem from '../components/ListItem.svelte';
 
     export let users: User[];
