@@ -1,5 +1,9 @@
 <script lang="ts">
-    import { shareFolderWithUsers } from "../apis";
+    import {
+        fetchEncryptedCredentialsFields,
+        shareFolderWithUsers,
+        fetchFolderUsers,
+    } from "../apis";
     import {
         User,
         UserWithAccessType,
@@ -9,8 +13,9 @@
     import { selectedFolder, showFolderShareDrawer } from "../store";
     import { createShareCredsPayload, setbackground } from "../helper";
 
-    import { Lens } from "../icons";
+    import { Lens, DownArrow } from "../icons";
     import ListItem from "../components/ListItem.svelte";
+    import ExistingListItem from "../components/ExistingListItem.svelte";
 
     export let users: User[];
     export let credentialsFields: CredentialFields[];
@@ -19,12 +24,21 @@
     let selectionIndex = null;
     let topList = false;
     let searchInput = "";
+    let existingUserData: UserWithAccessType[] = [];
 
     $: filteredUsers = searchInput
         ? users.filter((user) =>
               user.name.toLowerCase().includes(searchInput.toLowerCase()),
           )
         : users;
+
+    const existingUsers = async () => {
+        if (existingUserData.length === 0) {
+            existingUserData = await fetchFolderUsers($selectedFolder.id);
+        } else {
+            existingUserData.length = 0;
+        }
+    };
 
     const shareFolderHandler = async () => {
         const userData = await createShareCredsPayload(
@@ -65,6 +79,28 @@
         }
     }
 </script>
+
+<div
+    class="p-2 border border-osvauld-bordergreen rounded-lg min-h-min max-h-[50vh] mb-2"
+>
+    <button
+        class="flex justify-between items-center p-1 w-full bg-osvauld-frameblack text-osvauld-sheffieldgrey text-base font-semibold cursor-pointer border border-osvauld-bordergreen rounded-lg"
+        on:click={existingUsers}
+    >
+        <span class="ml-3">Users with Access</span>
+        <span class="bg-osvauld-bordergreen px-3 rounded-[4px]">
+            <DownArrow type={"common"} />
+        </span>
+    </button>
+    <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
+    <div
+        class="overflow-y-auto scrollbar-thin min-h-min max-h-[30vh] bg-osvauld-frameblack w-full"
+    >
+        {#each existingUserData as user, index}
+            <ExistingListItem item={user} />
+        {/each}
+    </div>
+</div>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">
     <div
