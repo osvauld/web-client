@@ -32,3 +32,12 @@ export const createShareCredsPayload = async (creds: EncryptedCredentialFields[]
     return userData;
 }
 
+export const setbackground = (type: string) => {
+    const typeToClassMap = {
+        read: "bg-osvauld-readerOrange text-osvauld-readerText",
+        write: "bg-osvauld-managerPurple text-osvauld-managerText",
+        owner: "bg-osvauld-ownerGreen text-osvauld-ownerText"
+    };
+
+    return typeToClassMap[type] || "";
+}

@@ -10,7 +10,7 @@
         EncryptedCredentialFields,
     } from "../dtos";
     import { selectedFolder, showFolderShareDrawer } from "../store";
-    import { createShareCredsPayload } from "../helper";
+    import { createShareCredsPayload, setbackground } from "../helper";
     
     import { Lens } from "../icons";
     import ListItem from '../components/ListItem.svelte';
@@ -63,16 +63,6 @@
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
             users = users.filter((u) => u.id !== user.id);
        }
-    }
-
-    function setbackground(type: string){
-        const typeToClassMap = {
-        read: "bg-osvauld-readerOrange text-osvauld-readerText",
-        write: "bg-osvauld-managerPurple text-osvauld-managerText",
-        owner: "bg-osvauld-ownerGreen text-osvauld-ownerText"
-       };
-
-       return typeToClassMap[type] || "";
     }
 
 
