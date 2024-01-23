@@ -34,6 +34,7 @@ export const createShareCredsPayload = async (creds: CredentialFields[], selecte
 }
 
 export const setbackground = (type: string): string => {
+
     const typeToClassMap = {
         read: "bg-osvauld-readerOrange text-osvauld-readerText",
         write: "bg-osvauld-managerPurple text-osvauld-managerText",

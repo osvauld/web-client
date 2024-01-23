@@ -8,9 +8,9 @@
     import { writable } from "svelte/store";
     import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
     import { createShareCredsPayload, setbackground } from "../helper";
+
     import { Lens } from "../icons";
     import ListItem from "../components/ListItem.svelte";
-
     export let groups: Group[];
     export let credentialsFields: CredentialFields[];
     let selectedGroups = writable(new Map<string, GroupWithAccessType>());
@@ -138,3 +138,4 @@
         >
     </div>
 </div>
+

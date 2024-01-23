@@ -2,6 +2,7 @@ import { createChallenge, initiateAuth, verifyNewUser } from "../apis/auth.api"
 import { signTextWithPrivateKey, derivePublicKeyFromECCPrivateKey, importRSAPublicKey, encryptWithPublicKey } from "./crypto"
 import { CredentialBasic } from "../dtos/credential.dto"
 
+
 export const intiateAuth = async (privateKey: CryptoKey): Promise<string> => {
     const publicKey = await derivePublicKeyFromECCPrivateKey(privateKey)
     const responseJson = await createChallenge(publicKey);
@@ -36,3 +37,5 @@ export const encryptCredentialsForUserNew = async (credentials: CredentialBasic[
     }
     return encryptedCredsForUser;
 }
+
+

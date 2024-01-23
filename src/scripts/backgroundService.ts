@@ -6,6 +6,7 @@ import { intiateAuth, } from "../lib/utils/helperMethods";
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
 
 
+
 export const decryptCredentialFieldsHandler = async (credentials: CredentialFields[], rsaPvtKey: CryptoKey) => {
 
     const returnPayload: CredentialFields[] = [];
@@ -20,6 +21,7 @@ export const decryptCredentialFieldsHandler = async (credentials: CredentialFiel
         returnPayload.push(payload)
     }
     return { data: returnPayload };
+
 }
 
 

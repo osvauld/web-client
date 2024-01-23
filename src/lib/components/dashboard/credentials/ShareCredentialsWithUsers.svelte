@@ -10,7 +10,6 @@
     import { createShareCredsPayload, setbackground } from "../helper";
     import { Lens } from "../icons";
     import ListItem from "../components/ListItem.svelte";
-
     export let users: User[];
     export let credentialsFields: CredentialFields[] = [];
     let selectedUsers: UserWithAccessType[] = [];
@@ -61,6 +60,7 @@
             users = users.filter((u) => u.id !== user.id);
         }
     }
+
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">

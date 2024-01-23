@@ -1,8 +1,6 @@
 import { CryptoKeyPair } from "../dtos/cryptoKeys.dto";
 import { Fields } from "../dtos/credential.dto";
-
-
-
+import { CredentialFields, Fields } from "../dtos/credential.dto";
 
 
 function base64ToArrayBuffer(base64: string) {

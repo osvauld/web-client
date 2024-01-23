@@ -68,6 +68,7 @@ export type DecryptedPaylod = {
 type UUID = string;
 type FieldType = 'meta' | 'sensitive' | 'additional';
 export type Fields = {
+
   fieldId?: string;
   fieldName?: string;
   fieldValue: string;
@@ -111,4 +112,5 @@ export type CredentialFields = {
 export type BasicFields = {
   fieldId: string;
   fieldValue: string;
+
 }
