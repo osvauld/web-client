@@ -1,9 +1,5 @@
 <script lang="ts">
-    import {
-        Group,
-        GroupWithAccessType,
-        EncryptedCredentialFields,
-    } from "../dtos";
+    import { Group, GroupWithAccessType, CredentialFields } from "../dtos";
     import {
         fetchUsersByGroupIds,
         shareFolderWithGroups,
@@ -17,7 +13,7 @@
     import ListItem from "../components/ListItem.svelte";
 
     let groups: Group[] = [];
-    export let encryptedCredentials: EncryptedCredentialFields[];
+    export let credentialsFields: CredentialFields[];
 
     let selectedGroups = writable(new Map<string, GroupWithAccessType>());
     let showOptions = false;
@@ -39,7 +35,7 @@
         for (const groupUsers of groupUsersList) {
             const group = $selectedGroups.get(groupUsers.groupId);
             const encryptedUserData = await createShareCredsPayload(
-                encryptedCredentials,
+                credentialsFields,
                 groupUsers.userDetails,
             );
             payload.push({

@@ -3,21 +3,23 @@ import browser from "webextension-polyfill";
 
 import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateRandomString, decryptPvtKeys } from "../lib/utils/crypto";
 import { intiateAuth, } from "../lib/utils/helperMethods";
-import { EncryptedCredentialFields, DecryptedPaylod, Credential } from "../lib/dtos/credential.dto";
+import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
 
 
-export const decryptCredentialFieldsHandler = async (credentials: EncryptedCredentialFields[], rsaPvtKey: CryptoKey) => {
+export const decryptCredentialFieldsHandler = async (credentials: CredentialFields[], rsaPvtKey: CryptoKey) => {
 
-    // const returnPayload: DecryptedPaylod[] = [];
-    // for (const credential of credentials) {
-    //     const decryptedFields = await decryptCredentialFields(credential.encryptedFields, rsaPvtKey);
-    //     const payload: DecryptedPaylod = {
-    //         credentialId: credential.credentialId,
-    //         decryptedFields
-    //     }
-    //     returnPayload.push(payload)
-    // }
-    // return { data: returnPayload };
+    const returnPayload: CredentialFields[] = [];
+    for (const credential of credentials) {
+        const decryptedFields: any = await decryptCredentialFields(credential.fields, rsaPvtKey);
+
+        console.log(decryptedFields)
+        const payload: CredentialFields = {
+            credentialId: credential.credentialId,
+            fields: [...decryptedFields]
+        }
+        returnPayload.push(payload)
+    }
+    return { data: returnPayload };
 }
 
 
