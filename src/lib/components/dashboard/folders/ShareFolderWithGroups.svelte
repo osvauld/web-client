@@ -24,6 +24,14 @@
     let showOptions = false; 
     let selectionIndex = null;
     let topList = false;
+    let searchInput = "";
+
+
+    $: filteredGroups = searchInput
+        ? groups.filter(group => 
+            group.name.toLowerCase().includes(searchInput.toLowerCase()))
+        : groups;
+
 
     const shareFolderHandler = async () => {
         const groupIds = Array.from($selectedGroups.keys());
@@ -96,7 +104,7 @@
 
     <div class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer">
         <Lens/>
-        <input type="text" class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search for users">
+        <input type="text" bind:value={searchInput} class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search for users">
     </div>
 
     <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
@@ -114,7 +122,7 @@
             on:select={(e)=> handleRoleChange(e,index, 'selectedGroups')}
              />
         {/each}
-        {#each groups as group, index}
+        {#each filteredGroups as group, index}
         <ListItem
             item={group}
             isSelected={index === selectionIndex && !topList}

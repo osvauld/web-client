@@ -17,6 +17,14 @@
     let selectionIndex = null;
     let topList = false;
 
+    let searchInput = "";
+
+
+    $: filteredUsers = searchInput
+        ? users.filter(user => 
+            user.name.toLowerCase().includes(searchInput.toLowerCase()))
+        : users;
+
     const shareCredentialHandler = async () => {
         const userData = await createShareCredsPayload(
             encryptedCredentials,
@@ -60,7 +68,7 @@
 
     <div class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer">
         <Lens/>
-        <input type="text" class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search for users">
+        <input type="text" bind:value={searchInput} class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search for users">
     </div>
 
     <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
@@ -78,7 +86,7 @@
             on:select={(e)=> handleRoleChange(e,index, 'selectedUsers')}
              />
         {/each}
-        {#each users as user, index}
+        {#each filteredUsers as user, index}
         <ListItem
             item={user}
             isSelected={index === selectionIndex && !topList}
