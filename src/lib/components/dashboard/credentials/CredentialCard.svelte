@@ -42,7 +42,6 @@
                 const response = await fetchSensitiveFieldsByCredentialId(
                     credential.credentialId,
                 );
-                console.log(response.data, "credential details");
                 encryptedFields = response.data;
                 encryptedFields.length >= 1
                     ? (sensitiveCard = true)
