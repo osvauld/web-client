@@ -1,16 +1,6 @@
 import { CryptoKeyPair } from "../dtos/cryptoKeys.dto";
-
-// Function to convert a binary string to an ArrayBuffer
+import { Fields } from "../dtos/credential.dto";
 import { CredentialFields, Fields } from "../dtos/credential.dto";
-
-const str2ab = (str: string) => {
-  const buffer = new Uint8Array(str.length);
-  for (let i = 0; i < str.length; i++) {
-    buffer[i] = str.charCodeAt(i);
-  }
-  return buffer;
-};
-
 
 
 function base64ToArrayBuffer(base64: string) {

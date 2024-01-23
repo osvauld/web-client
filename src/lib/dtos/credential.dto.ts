@@ -16,10 +16,10 @@ export type CredentialDetails = CredentialBase & {
   encryptedFields?: CredentialFields[];
 };
 
-export type CredentialFields = {
-  fieldName: string;
-  fieldValue: string;
-};
+// export type CredentialFields = {
+//   fieldName: string;
+//   fieldValue: string;
+// };
 
 export type AddCredentialFieldPayload = CredentialFields & {
   sensitive: boolean;
@@ -68,10 +68,11 @@ export type DecryptedPaylod = {
 type UUID = string;
 type FieldType = 'meta' | 'sensitive' | 'additional';
 export type Fields = {
-  id?: string;
-  fieldName: string;
+
+  fieldId?: string;
+  fieldName?: string;
   fieldValue: string;
-  fieldType: FieldType;
+  fieldType?: FieldType;
 }
 
 
@@ -101,4 +102,15 @@ export type Credential = CredentialBasic & {
   createdAt: string;
   createdBy: string;
   updatedAt: string;
+}
+
+export type CredentialFields = {
+  credentialId: string;
+  fields: BasicFields[];
+}
+
+export type BasicFields = {
+  fieldId: string;
+  fieldValue: string;
+
 }
