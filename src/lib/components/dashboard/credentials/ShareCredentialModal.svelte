@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
 
   import { showCredentialShareDrawer } from "../store";
-  import { fetchEncryptedFieldsByIds } from "../apis";
+  import { fetchCredentialsFieldsByIds } from "../apis";
 
   import {
     CredentialBase,
@@ -11,6 +11,7 @@
     EncryptedCredentialFields,
     Group,
     Credential,
+    CredentialFields,
   } from "../dtos";
 
   import UserGroupToggle from "../UserGroupToggle.svelte";
@@ -22,13 +23,13 @@
   export let credentials: Credential[];
   export let users: User[];
   export let groups: Group[];
-  let encryptedCredentials: EncryptedCredentialFields[] = [];
+  let credentialsFields: CredentialFields[] = [];
   let infoDropdown = false;
 
   const credIds = credentials.map((cred) => cred.credentialId);
   onMount(async () => {
-    const responseJson = await fetchEncryptedFieldsByIds(credIds);
-    encryptedCredentials = responseJson.data;
+    const responseJson = await fetchCredentialsFieldsByIds(credIds);
+    credentialsFields = responseJson.data;
   });
 
   let selectedTab = "Groups";
@@ -80,9 +81,9 @@
     <div class="border border-osvauld-bordergreen mb-2 w-full"></div>
     <div class="flex-grow max-h-[85vh]">
       {#if selectedTab === "Users"}
-        <ShareCredentialsWithUser {users} {encryptedCredentials} />
+        <ShareCredentialsWithUser {users} {credentialsFields} />
       {:else}
-        <ShareCredentialsWithGroups {groups} {encryptedCredentials} />
+        <ShareCredentialsWithGroups {groups} {credentialsFields} />
       {/if}
     </div>
   </div>

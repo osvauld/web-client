@@ -81,14 +81,14 @@ export const shareCredentialsWithUsers = async (shareCredential: ShareCredential
   return response.json();
 };
 
-export const fetchEncryptedFieldsByIds = async (credentialIds: string[]) => {
+export const fetchCredentialsFieldsByIds = async (credentialIds: string[]) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
-  const response = await fetch(`${baseUrl}/credentials/encrypted/`, {
+  const response = await fetch(`${baseUrl}/credentials/fields/`, {
     method: "POST",
     headers,
     body: JSON.stringify({ credentialIds }),

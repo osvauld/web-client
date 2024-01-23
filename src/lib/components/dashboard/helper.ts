@@ -1,9 +1,9 @@
 
 import browser from 'webextension-polyfill';
-import { CredentialsForUsersPayload, EncryptedCredentialFields, UserWithAccessType } from './dtos';
+import { CredentialFields, CredentialsForUsersPayload, EncryptedCredentialFields, UserWithAccessType } from './dtos';
 import { encryptCredentialsForUser } from "../../utils/helperMethods";
 
-export const createShareCredsPayload = async (creds: EncryptedCredentialFields[], selectedUsers: UserWithAccessType[]): Promise<CredentialsForUsersPayload[]> => {
+export const createShareCredsPayload = async (creds: CredentialFields[], selectedUsers: UserWithAccessType[]): Promise<CredentialsForUsersPayload[]> => {
 
     const response = await browser.runtime.sendMessage({
         action: "decrypt",

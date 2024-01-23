@@ -16,10 +16,10 @@ export type CredentialDetails = CredentialBase & {
   encryptedFields?: CredentialFields[];
 };
 
-export type CredentialFields = {
-  fieldName: string;
-  fieldValue: string;
-};
+// export type CredentialFields = {
+//   fieldName: string;
+//   fieldValue: string;
+// };
 
 export type AddCredentialFieldPayload = CredentialFields & {
   sensitive: boolean;
@@ -101,4 +101,14 @@ export type Credential = CredentialBasic & {
   createdAt: string;
   createdBy: string;
   updatedAt: string;
+}
+
+export type CredentialFields = {
+  credentialId: string;
+  fields: BasicFields[];
+}
+
+export type BasicFields = {
+  fieldId: string;
+  fieldValue: string;
 }

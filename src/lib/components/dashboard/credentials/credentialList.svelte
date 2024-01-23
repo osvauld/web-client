@@ -27,7 +27,9 @@
     if (isChecked) {
       checkedCards = [...checkedCards, card];
     } else {
-      checkedCards = checkedCards.filter((c) => c.id !== card.id);
+      checkedCards = checkedCards.filter(
+        (c) => c.credentialId !== card.credentialId,
+      );
     }
   }
   const subscribe = selectedFolder.subscribe(async (folder) => {
