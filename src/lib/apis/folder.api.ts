@@ -1,7 +1,7 @@
 import { baseUrl } from "./temp";
 import browser from "webextension-polyfill";
 import { folderStore } from "../store/folder.store";
-import { User } from "../dtos/user.dto";
+import { User, UserWithAccessType } from "../dtos/user.dto";
 import { ShareFolderWithUsersPayload } from "../dtos/folder.dto";
 
 export const fetchAllFolders = async () => {
@@ -23,7 +23,7 @@ export const fetchAllFolders = async () => {
     folderStore.set(response.data);
   }
 };
-export const fetchFolderUsers = async (folderId: string): Promise<User[]> => {
+export const fetchFolderUsers = async (folderId: string): Promise<UserWithAccessType[]> => {
   const headers = new Headers();
   const tokenObj = await await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -33,7 +33,7 @@ export const fetchFolderUsers = async (folderId: string): Promise<User[]> => {
   const response = await fetch(`${baseUrl}/folder/${folderId}/users`, {
     headers,
   }).then((response) => response.json());
-  const users: User[] = response.data;
+  const users: UserWithAccessType[] = response.data;
   return users;
 };
 
