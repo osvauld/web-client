@@ -6,7 +6,7 @@
         ShareCredentialsWithUsersPayload,
     } from "../dtos";
     import { shareCredentialsWithUsers } from "../apis";
-    import { createShareCredsPayload } from "../helper";
+    import { createShareCredsPayload, setbackground } from "../helper";
     import { Lens } from "../icons"
     import ListItem from '../components/ListItem.svelte';
 
@@ -53,15 +53,7 @@
        }
     }
 
-    function setbackground(type: string){
-        const typeToClassMap = {
-        read: "bg-osvauld-readerOrange text-osvauld-readerText",
-        write: "bg-osvauld-managerPurple text-osvauld-managerText",
-        owner: "bg-osvauld-ownerGreen text-osvauld-ownerText"
-       };
-
-       return typeToClassMap[type] || "";
-    }
+ 
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">
