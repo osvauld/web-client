@@ -86,9 +86,6 @@
         }
     }
 
-
-  
-
     onMount(async () => {
         // TODO: change fetch all groups to fetch groups where folder not shared.
         groups = await getGroupsWithoutAccess($selectedFolder.id);
@@ -149,4 +146,3 @@
         >
     </div>
 </div>
-

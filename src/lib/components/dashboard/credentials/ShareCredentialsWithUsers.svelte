@@ -30,6 +30,7 @@
             credentialsFields,
             selectedUsers,
         );
+        console.log(userData, "sharecredwithusers payload");
         const payload: ShareCredentialsWithUsersPayload = { userData };
         await shareCredentialsWithUsers(payload);
     };
@@ -60,7 +61,6 @@
             users = users.filter((u) => u.id !== user.id);
         }
     }
-
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">

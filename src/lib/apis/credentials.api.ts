@@ -42,14 +42,14 @@ export const addCredential = async (payload: any) => {
   return response;
 };
 
-export const fetchEncryptedCredentialsFields = async (folderId: string) => {
+export const fetchCredentialsFieldsByFolderId = async (folderId: string) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("User-Agent", "Insomnia/2023.5.7");
 
-  const response = await fetch(`${baseUrl}/credentials/encrypted/${folderId}`, {
+  const response = await fetch(`${baseUrl}/credentials/fields/${folderId}`, {
     method: "GET",
     headers,
   });

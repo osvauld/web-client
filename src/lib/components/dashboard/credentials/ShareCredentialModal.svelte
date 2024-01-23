@@ -5,15 +5,7 @@
   import { showCredentialShareDrawer } from "../store";
   import { fetchCredentialsFieldsByIds } from "../apis";
 
-  import {
-    CredentialBase,
-    User,
-    EncryptedCredentialFields,
-    Group,
-    Credential,
-    CredentialFields,
-
-  } from "../dtos";
+  import { User, Group, Credential, CredentialFields } from "../dtos";
 
   import UserGroupToggle from "../UserGroupToggle.svelte";
   import ShareCredentialsWithUser from "./ShareCredentialsWithUsers.svelte";
