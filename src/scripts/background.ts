@@ -2,7 +2,7 @@ import browser from "webextension-polyfill";
 
 import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptCredentialField, } from "../lib/utils/crypto";
 import { verifyUser } from "../lib/utils/helperMethods";
-import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler } from "./backgroundService";
+import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew } from "./backgroundService";
 import { fetchCredsByUrl } from "../lib/apis/credentials.api"
 
 let rsaPvtKey: CryptoKey;
@@ -103,6 +103,8 @@ browser.runtime.onMessage.addListener(async (request) => {
         }
       }
       break;
+    case "decryptMeta":
+      return decryptCredentialFieldsHandlerNew(request.data, rsaPvtKey);
 
     default:
       console.log(request.action)

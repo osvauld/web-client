@@ -8,31 +8,39 @@
         User,
         UserWithAccessType,
         ShareFolderWithUsersPayload,
-        EncryptedCredentialFields,
+        CredentialFields,
     } from "../dtos";
     import { selectedFolder, showFolderShareDrawer } from "../store";
     import { createShareCredsPayload, setbackground } from "../helper";
-    
-    import { Lens, DownArrow } from "../icons";
-    import ListItem from '../components/ListItem.svelte';
-  import ExistingListItem from '../components/ExistingListItem.svelte';
 
+    import { Lens, DownArrow } from "../icons";
+    import ListItem from "../components/ListItem.svelte";
+    import ExistingListItem from "../components/ExistingListItem.svelte";
 
     export let users: User[];
-    export let creds;
+    export let credentialsFields: CredentialFields[];
     let selectedUsers: UserWithAccessType[] = [];
-    let showOptions = false; 
+    let showOptions = false;
     let selectionIndex = null;
     let topList = false;
     let searchInput = "";
-    let existingUserData: UserWithAccessType[] = []
-  
+
+    let existingUserData: UserWithAccessType[] = [];
+
 
     $: filteredUsers = searchInput
-        ? users.filter(user => 
-            user.name.toLowerCase().includes(searchInput.toLowerCase()))
+        ? users.filter((user) =>
+              user.name.toLowerCase().includes(searchInput.toLowerCase()),
+          )
         : users;
 
+    const existingUsers = async () => {
+        if (existingUserData.length === 0) {
+            existingUserData = await fetchFolderUsers($selectedFolder.id);
+        } else {
+            existingUserData.length = 0;
+        }
+    };
 
     const existingUsers = async () => {
         if(existingUserData.length === 0){
@@ -44,7 +52,7 @@
 
     const shareFolderHandler = async () => {
         const userData = await createShareCredsPayload(
-            creds,
+            credentialsFields,
             selectedUsers,
         );
         const shareFolderPayload: ShareFolderWithUsersPayload = {
@@ -54,37 +62,34 @@
         await shareFolderWithUsers(shareFolderPayload);
     };
 
-
-    function handleClick(index: number, isSelectedList: boolean){
-        showOptions = !showOptions
-        selectionIndex = index
-        topList = isSelectedList
+    function handleClick(index: number, isSelectedList: boolean) {
+        showOptions = !showOptions;
+        selectionIndex = index;
+        topList = isSelectedList;
     }
 
-    function handleItemRemove(index: number){
-        const removedUser = selectedUsers.splice(index, 1)
-        selectedUsers = [...selectedUsers]
+    function handleItemRemove(index: number) {
+        const removedUser = selectedUsers.splice(index, 1);
+        selectedUsers = [...selectedUsers];
         const [{ accessType, ...userWithoutAccessType }] = removedUser;
-        users = [...users, { ...userWithoutAccessType}]
+        users = [...users, { ...userWithoutAccessType }];
     }
 
-
-    function handleRoleChange(e: any, index: number, type: string){
+    function handleRoleChange(e: any, index: number, type: string) {
         const user = e.detail.item;
         const option = e.detail.permission;
-        showOptions = !showOptions
-        selectionIndex = null
-       if(type === "selectedUsers"){
-            selectedUsers.splice(index, 1)
+        showOptions = !showOptions;
+        selectionIndex = null;
+        if (type === "selectedUsers") {
+            selectedUsers.splice(index, 1);
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
-       } else {
+        } else {
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
             users = users.filter((u) => u.id !== user.id);
-       }
+        }
     }
-
-
 </script>
+
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg min-h-min max-h-[50vh] mb-2">
 <button class="flex justify-between items-center p-1 w-full bg-osvauld-frameblack text-osvauld-sheffieldgrey text-base font-semibold  cursor-pointer  border border-osvauld-bordergreen rounded-lg" on:click={existingUsers}>
@@ -102,48 +107,54 @@
 </div>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">
-
-    <div class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer">
-        <Lens/>
-        <input type="text" bind:value={searchInput} class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search for users">
+    <div
+        class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer"
+    >
+        <Lens />
+        <input
+            type="text"
+            bind:value={searchInput}
+            class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+            placeholder="Search for users"
+        />
     </div>
 
     <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
-
- 
-
     <div class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full">
+
         {#each selectedUsers as user, index}
             <ListItem
-            item={user}
-            isSelected={index === selectionIndex && topList}
-            isTopList={true}
-            on:click =  {()=>handleClick(index, true)}
-            on:remove = {() => handleItemRemove(index)}
-            {setbackground}
-            {showOptions}
-            on:select={(e)=> handleRoleChange(e,index, 'selectedUsers')}
-             />
+                item={user}
+                isSelected={index === selectionIndex && topList}
+                isTopList={true}
+                on:click={() => handleClick(index, true)}
+                on:remove={() => handleItemRemove(index)}
+                {setbackground}
+                {showOptions}
+                on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
+            />
         {/each}
         {#each filteredUsers as user, index}
-        <ListItem
-            item={user}
-            isSelected={index === selectionIndex && !topList}
-            isTopList={false}
-            on:click =  {()=>handleClick(index,false)}
-            {setbackground}
-            {showOptions}
-            on:select={(e)=> handleRoleChange(e,index, 'users')}
-             />
+            <ListItem
+                item={user}
+                isSelected={index === selectionIndex && !topList}
+                isTopList={false}
+                on:click={() => handleClick(index, false)}
+                {setbackground}
+                {showOptions}
+                on:select={(e) => handleRoleChange(e, index, "users")}
+            />
         {/each}
     </div>
 
     <div class="p-2 flex justify-between items-center box-border">
-        <button class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md">Cancel</button>
+        <button
+            class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md"
+            >Cancel</button
+        >
         <button
             class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
             on:click={shareFolderHandler}>Share</button
         >
     </div>
-
 </div>

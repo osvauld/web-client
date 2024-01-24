@@ -1,5 +1,4 @@
 import browser from "webextension-polyfill";
-import { credentialStore } from "../store/credential.store";
 import { baseUrl, } from "./temp";
 import { ShareCredentialsWithUsersPayload } from "../dtos/credential.dto";
 
@@ -10,12 +9,9 @@ export const fetchCredentialsByFolder = async (folderId: string) => {
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
-  const response = await fetch(`${baseUrl}/folder/${folderId}/credential`, {
+  return fetch(`${baseUrl}/folder/${folderId}/credential`, {
     headers,
   }).then((response) => response.json());
-  if (response.data) {
-    credentialStore.set(response.data);
-  }
 };
 
 export const fetchCredentialById = async (credentialId: string) => {
@@ -46,14 +42,14 @@ export const addCredential = async (payload: any) => {
   return response;
 };
 
-export const fetchEncryptedCredentialsFields = async (folderId: string) => {
+export const fetchCredentialsFieldsByFolderId = async (folderId: string) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("User-Agent", "Insomnia/2023.5.7");
 
-  const response = await fetch(`${baseUrl}/credentials/encrypted/${folderId}`, {
+  const response = await fetch(`${baseUrl}/credentials/fields/${folderId}`, {
     method: "GET",
     headers,
   });
@@ -85,14 +81,14 @@ export const shareCredentialsWithUsers = async (shareCredential: ShareCredential
   return response.json();
 };
 
-export const fetchEncryptedFieldsByIds = async (credentialIds: string[]) => {
+export const fetchCredentialsFieldsByIds = async (credentialIds: string[]) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
-  const response = await fetch(`${baseUrl}/credentials/encrypted/`, {
+  const response = await fetch(`${baseUrl}/credentials/fields/`, {
     method: "POST",
     headers,
     body: JSON.stringify({ credentialIds }),
@@ -130,6 +126,24 @@ export const fetchAllUserUrls = async () => {
   headers.append("Authorization", `Bearer ${token}`);
 
   const response = await fetch(`${baseUrl}/urls`, {
+    method: "GET",
+    headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export const fetchSensitiveFieldsByCredentialId = async (credentialId: string) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+
+  const response = await fetch(`${baseUrl}/credential/${credentialId}/sensitive`, {
     method: "GET",
     headers,
   });
