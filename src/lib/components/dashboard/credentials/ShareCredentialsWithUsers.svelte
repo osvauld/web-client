@@ -8,10 +8,9 @@
     } from "../dtos";
     import { shareCredentialsWithUsers } from "../apis";
     import { createShareCredsPayload, setbackground } from "../helper";
-    import { Lens } from "../icons"
-    import ListItem from '../components/ListItem.svelte';
-    import ShareToast from '../components/ShareToast.svelte';
-
+    import { Lens } from "../icons";
+    import ListItem from "../components/ListItem.svelte";
+    import ShareToast from "../components/ShareToast.svelte";
 
     export let users: User[];
     export let credentialsFields: CredentialFields[] = [];
@@ -19,7 +18,7 @@
     let showOptions = false;
     let selectionIndex = null;
     let topList = false;
-    let shareToast = true;
+    let shareToast = false;
     let searchInput = "";
 
     $: filteredUsers = searchInput
@@ -36,8 +35,8 @@
         console.log(userData, "sharecredwithusers payload");
         const payload: ShareCredentialsWithUsersPayload = { userData };
         const shareStatus = await shareCredentialsWithUsers(payload);
-        console.log('share status =>', shareStatus)
-        shareToast = shareStatus.success === true 
+        console.log("share status =>", shareStatus);
+        shareToast = shareStatus.success === true;
     };
 
     function handleClick(index: number, isSelectedList: boolean) {
@@ -112,7 +111,10 @@
     </div>
 
     <div class="p-2 flex justify-between items-center box-border">
-        <button class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey">Cancel</button>
+        <button
+            class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
+            >Cancel</button
+        >
 
         <button
             class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
@@ -120,8 +122,6 @@
         >
     </div>
     {#if shareToast}
-       <ShareToast on:close={()=> shareToast = !shareToast}/>
+        <ShareToast on:close={() => (shareToast = !shareToast)} />
     {/if}
-
-
 </div>
