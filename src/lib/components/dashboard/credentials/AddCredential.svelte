@@ -36,7 +36,9 @@
   let name = "";
   let folderUsers: User[] = [];
   let addCredentialPaylod: AddCredentialPayload;
+  let hoveredIndex = null;
   let credentialType = "Login";
+
   const addField = () => {
     let newField: AddCredentialField = {
       fieldName: "",
@@ -114,6 +116,11 @@
   function closeDialog() {
     showAddCredentialDrawer.set(false);
   }
+
+  function triggerSensitiveBubble(index: number, isEnter: boolean){
+    isEnter ? hoveredIndex = index : hoveredIndex = null
+  }
+  
 </script>
 
 <div
@@ -158,15 +165,9 @@
             placeholder="Enter value"
             bind:value={field.fieldValue}
           />
-          <div
-            class="flex items-center justify-centerm {index === 0
-              ? 'relative'
-              : ''}"
-          >
-            <label
-              for={`toggle-${index}`}
-              class="inline-flex items-center cursor-pointer"
-            >
+          <div class="flex items-center justify-center { index === hoveredIndex ? "relative": ""}" on:mouseenter={()=>triggerSensitiveBubble(index, true)} on:mouseleave={()=>triggerSensitiveBubble(index, false)}>
+            <label for={`toggle-${index}`} class="inline-flex items-center cursor-pointer">
+
               <span class="relative">
                 <span
                   class="block w-10 h-6 {field.sensitive
@@ -187,11 +188,9 @@
                 </span>
               </span>
             </label>
-            {#if index === 0}
-              <span
-                class="absolute top-[-60px] left-[-25px] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle"
-                >Sensitive</span
-              >
+            {#if index === hoveredIndex}
+            <span class="absolute top-[-60px] left-[-25px] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle">Sensitive</span>
+
             {/if}
           </div>
           <div class="flex items-center justify-center">

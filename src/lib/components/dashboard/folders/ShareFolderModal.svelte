@@ -10,8 +10,8 @@
   import ShareFolderWithGroups from "./ShareFolderWithGroups.svelte";
   import UserGroupToggle from "../UserGroupToggle.svelte";
   import ShareFolderWithUsers from "./ShareFolderWithUsers.svelte";
-  import InfoOverlay from "../components/info.svelte";
-
+  import InfoOverlay from '../components/Info.svelte';
+  
   export let users: User[];
   let credentialsFields: CredentialFields[];
   let infoDropdown = false;
@@ -47,19 +47,9 @@
         ><ClosePanel /></button
       >
     </div>
-    <div
-      class="relative h-[30px] w-full px-4 py-2 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown
-        ? 'bg-osvauld-bordergreen'
-        : ''}"
-      on:click={() => (infoDropdown = !infoDropdown)}
-    >
-      <p
-        class="whitespace-nowrap text-base text-osvauld-sheffieldgrey font-normal {infoDropdown
-          ? 'text-osvauld-highlightwhite'
-          : ''}"
-      >
-        Select groups/users and choose access type
-      </p>
+    <div class="relative h-auto w-full px-4 py-2 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown ? "bg-osvauld-bordergreen": ""}" on:click={()=>infoDropdown = !infoDropdown}>
+      <p class="text-base text-osvauld-sheffieldgrey font-normal {infoDropdown ? "text-osvauld-highlightwhite": ""}">Select groups/users and choose access type</p>
+
       <span class="">
         <InfoIcon />
       </span>

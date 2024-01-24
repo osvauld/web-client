@@ -9,20 +9,14 @@
         fetchSensitiveFieldsByCredentialId,
     } from "../apis";
     import browser from "webextension-polyfill";
-    import {
-        More,
-        Locked,
-        Eye,
-        Unlocked,
-        SensitiveEye,
-        SensitiveEye2,
-        ActiveCopy,
-        ClosedEye,
-    } from "../icons";
+    import { More, Locked, Eye, Unlocked, SensitiveEye, SensitiveEyeBlue, ActiveCopy, ClosedEye } from "../icons"
+
 
     const dispatch = createEventDispatcher();
 
-    export let credential: Credential;
+    export let credential;
+    export let index;
+
     let visibility = false;
     let encryptedFields = [];
     let decrypted = false;
@@ -97,13 +91,14 @@
         >
             <input
                 type="checkbox"
+                id="credentialChecker{index}"
                 class="bg-osvauld-frameblack mr-2 border-osvauld-iconblack checked:bg-osvauld-lilacpink active:outline-none focus:text-primary focus:ring-offset-0 focus:ring-0 cursor-pointer"
                 on:change={(e) => toggleCheck()}
                 {checked}
             />
-            <p class="text-xl font-medium w-full text-left ml-2">
+            <label class="text-xl font-medium w-full text-left ml-2 cursor-pointer" for="credentialChecker{index}" >
                 {credential.name}
-            </p>
+            </label>
             <More />
         </div>
         <div
@@ -209,11 +204,12 @@
         <textarea
             class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base
             {hoverEffect
-                ? 'text-osvauld-quarzowhite'
-                : 'text-osvauld-sheffieldgrey'}"
-        >
-            {credential.description}
-        </textarea>
+                    ? 'text-osvauld-quarzowhite'
+                    : 'text-osvauld-sheffieldgrey'}"
+            
+            value={credential.description}
+            />
+
         <div
             class="border-t border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3 my-2"
         ></div>
@@ -224,7 +220,7 @@
                     : 'bg-osvauld-sensitivebgblack text-osvauld-chalkwhite'} py-0 px-3 text-sm border border-osvauld-bordergreen rounded-[4px] flex justify-center items-center"
             >
                 {#if hoverEffect && sensitiveCard}
-                    <SensitiveEye2 />
+                    <SensitiveEyeBlue />
                 {:else}
                     <SensitiveEye />
                 {/if}
