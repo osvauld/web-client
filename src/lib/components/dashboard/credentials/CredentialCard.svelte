@@ -6,7 +6,7 @@
     import { fly } from "svelte/transition";
     import { fetchCredentialById } from "../apis";
     import browser from "webextension-polyfill";
-    import { More, Locked, Eye, Unlocked, SensitiveEye, SensitiveEye2, ActiveCopy, ClosedEye } from "../icons"
+    import { More, Locked, Eye, Unlocked, SensitiveEye, SensitiveEyeBlue, ActiveCopy, ClosedEye } from "../icons"
 
 
     const dispatch = createEventDispatcher();
@@ -196,9 +196,9 @@
             {hoverEffect
                     ? 'text-osvauld-quarzowhite'
                     : 'text-osvauld-sheffieldgrey'}"
-            >
-                {credential.description}
-            </textarea>
+            
+            value={credential.description}
+            />
         <div
             class="border-t border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3 my-2"
         ></div>
@@ -209,7 +209,7 @@
                     : 'bg-osvauld-sensitivebgblack text-osvauld-chalkwhite'} py-0 px-3 text-sm border border-osvauld-bordergreen rounded-[4px] flex justify-center items-center"
             >
                 {#if hoverEffect && sensitiveCard}
-                    <SensitiveEye2 />
+                    <SensitiveEyeBlue />
                 {:else}
                     <SensitiveEye />
                 {/if}
