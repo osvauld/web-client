@@ -3,10 +3,13 @@ import browser from "webextension-polyfill";
 import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptCredentialField, } from "../lib/utils/crypto";
 import { verifyUser } from "../lib/utils/helperMethods";
 import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew } from "./backgroundService";
-import { fetchCredsByUrl } from "../lib/apis/credentials.api"
+import { fetchCredsByIds } from "../lib/apis/credentials.api"
 
 let rsaPvtKey: CryptoKey;
-let urls: Set<string> = new Set();
+
+
+let urlObj = new Map<string, Set<string>>();
+
 let activeCredSuggetion: any[] = [];
 
 browser.runtime.onInstalled.addListener(async () => {
@@ -88,14 +91,21 @@ browser.runtime.onMessage.addListener(async (request) => {
       }
       break;
     case "updateAllUrls":
-      for (let i = 0; i < request.data.length; i++) {
-
-        const decrypted = await decryptCredentialField(rsaPvtKey, request.data[i]);
-        urls.add(decrypted);
+      for (let i = 0; i < request.data.urls.length; i++) {
+        const decrypted = await decryptCredentialField(rsaPvtKey, request.data.urls[i].value);
+        if (urlObj.has(decrypted)) {
+          // @ts-ignore
+          urlObj.get(decrypted).add(request.data.urls[i].credentialId)
+        } else {
+          urlObj.set(decrypted, new Set([request.data.urls[i].credentialId]))
+        }
       }
-      console.log(urls);
+      return Promise.resolve({
+        credIds: Array.from(urlObj.get(request.data.domain) || [])
 
-      break;
+      });
+
+
 
     case "checkPvtLoaded":
       if (rsaPvtKey) return Promise.resolve({ isLoaded: true })
@@ -118,14 +128,6 @@ browser.runtime.onMessage.addListener(async (request) => {
 });
 
 
-// browser.tabs.onCreated.addListener(async (tab) => {
-
-//   console.log('Tab created: ', tab)
-// })
-
-
-
-
 
 browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   // Log for debugging
@@ -140,8 +142,9 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const domain = url.hostname;
 
     // Check if the domain is in your list
-    if (urls.includes(domain)) {
-      const responseData = await fetchCredsByUrl(domain);
+    if (urlObj.has(domain)) {
+      // @ts-ignore
+      const responseData = await fetchCredsByIds(urlObj.get(domain));
       // TODO: payload change in future
       const payload: any = [];
       for (const cred of responseData.data) {
