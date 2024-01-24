@@ -1,18 +1,19 @@
 
 import browser from 'webextension-polyfill';
-import { CredentialsForUsersPayload, EncryptedCredentialFields, UserWithAccessType } from './dtos';
-import { encryptCredentialsForUser } from "../../utils/helperMethods";
+import { CredentialFields, CredentialsForUsersPayload, UserWithAccessType } from './dtos';
+import { encryptCredentialsForUserNew } from "../../utils/helperMethods";
 
-export const createShareCredsPayload = async (creds: EncryptedCredentialFields[], selectedUsers: UserWithAccessType[]): Promise<CredentialsForUsersPayload[]> => {
+export const createShareCredsPayload = async (creds: CredentialFields[], selectedUsers: UserWithAccessType[]): Promise<CredentialsForUsersPayload[]> => {
+
 
     const response = await browser.runtime.sendMessage({
         action: "decrypt",
         data: creds,
     });
 
-    const userData: CredentialsForUsersPayload[] = [];
+    const userData: any = [];
     for (const user of selectedUsers) {
-        const userEncryptedFields = await encryptCredentialsForUser(
+        const userEncryptedFields = await encryptCredentialsForUserNew(
             response.data,
             user.publicKey,
         );
@@ -33,11 +34,12 @@ export const createShareCredsPayload = async (creds: EncryptedCredentialFields[]
 }
 
 export const setbackground = (type: string): string => {
-    const typeToClassMap = {
-    read: "bg-osvauld-readerOrange text-osvauld-readerText",
-    write: "bg-osvauld-managerPurple text-osvauld-managerText",
-    owner: "bg-osvauld-ownerGreen text-osvauld-ownerText"
-   };
 
-   return typeToClassMap[type] || "";
+    const typeToClassMap = {
+        read: "bg-osvauld-readerOrange text-osvauld-readerText",
+        write: "bg-osvauld-managerPurple text-osvauld-managerText",
+        owner: "bg-osvauld-ownerGreen text-osvauld-ownerText"
+    };
+
+    return typeToClassMap[type] || "";
 }

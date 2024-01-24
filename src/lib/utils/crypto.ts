@@ -1,16 +1,5 @@
 import { CryptoKeyPair } from "../dtos/cryptoKeys.dto";
-
-// Function to convert a binary string to an ArrayBuffer
-import { CredentialFields } from "../dtos/credential.dto";
-
-const str2ab = (str: string) => {
-  const buffer = new Uint8Array(str.length);
-  for (let i = 0; i < str.length; i++) {
-    buffer[i] = str.charCodeAt(i);
-  }
-  return buffer;
-};
-
+import { Fields } from "../dtos/credential.dto";
 
 
 function base64ToArrayBuffer(base64: string) {
@@ -41,11 +30,11 @@ export const encryptWithPublicKey = async (
 
 
 export const decryptCredentialFields = async (
-  encryptedFields: CredentialFields[],
+  encryptedFields: Fields[],
   privateKey: CryptoKey
-): Promise<CredentialFields[]> => {
+): Promise<Fields[]> => {
 
-  const decryptedFields: CredentialFields[] = [];
+  const decryptedFields: Fields[] = [];
   for (const field of encryptedFields) {
 
     const decryptedData = await decryptWithPrivateKey(privateKey, field.fieldValue);

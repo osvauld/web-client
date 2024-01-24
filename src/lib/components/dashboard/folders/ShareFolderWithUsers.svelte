@@ -1,52 +1,51 @@
 <script lang="ts">
-    import {
-        fetchEncryptedCredentialsFields,
-        shareFolderWithUsers,
-        fetchFolderUsers
-    } from "../apis";
+    import { shareFolderWithUsers, fetchFolderUsers } from "../apis";
     import {
         User,
         UserWithAccessType,
         ShareFolderWithUsersPayload,
-        EncryptedCredentialFields,
+        CredentialFields,
     } from "../dtos";
     import { selectedFolder, showFolderShareDrawer } from "../store";
     import { createShareCredsPayload, setbackground } from "../helper";
-    
     import { Lens, DownArrow, RightArrow } from "../icons";
     import ListItem from '../components/ListItem.svelte';
     import ExistingListItem from '../components/ExistingListItem.svelte';
 
 
+    import { Lens, DownArrow } from "../icons";
+    import ListItem from "../components/ListItem.svelte";
+    import ExistingListItem from "../components/ExistingListItem.svelte";
+
     export let users: User[];
-    export let creds;
+    export let credentialsFields: CredentialFields[];
     let selectedUsers: UserWithAccessType[] = [];
-    let showOptions = false; 
+    let showOptions = false;
     let selectionIndex = null;
     let topList = false;
     let searchInput = "";
     let existingUsersDropdown = false;
     let existingUserData: UserWithAccessType[] = []
-  
-
+ 
     $: filteredUsers = searchInput
-        ? users.filter(user => 
-            user.name.toLowerCase().includes(searchInput.toLowerCase()))
+        ? users.filter((user) =>
+              user.name.toLowerCase().includes(searchInput.toLowerCase()),
+          )
         : users;
-
 
     const existingUsers = async () => {
         existingUsersDropdown = !existingUsersDropdown
         if(existingUserData.length === 0){
+
             existingUserData = await fetchFolderUsers($selectedFolder.id);
         } else {
-            existingUserData.length = 0
+            existingUserData.length = 0;
         }
-    }
+    };
 
     const shareFolderHandler = async () => {
         const userData = await createShareCredsPayload(
-            creds,
+            credentialsFields,
             selectedUsers,
         );
         const shareFolderPayload: ShareFolderWithUsersPayload = {
@@ -56,36 +55,32 @@
         await shareFolderWithUsers(shareFolderPayload);
     };
 
-
-    function handleClick(index: number, isSelectedList: boolean){
-        showOptions = !showOptions
-        selectionIndex = index
-        topList = isSelectedList
+    function handleClick(index: number, isSelectedList: boolean) {
+        showOptions = !showOptions;
+        selectionIndex = index;
+        topList = isSelectedList;
     }
 
-    function handleItemRemove(index: number){
-        const removedUser = selectedUsers.splice(index, 1)
-        selectedUsers = [...selectedUsers]
+    function handleItemRemove(index: number) {
+        const removedUser = selectedUsers.splice(index, 1);
+        selectedUsers = [...selectedUsers];
         const [{ accessType, ...userWithoutAccessType }] = removedUser;
-        users = [...users, { ...userWithoutAccessType}]
+        users = [...users, { ...userWithoutAccessType }];
     }
 
-
-    function handleRoleChange(e: any, index: number, type: string){
+    function handleRoleChange(e: any, index: number, type: string) {
         const user = e.detail.item;
         const option = e.detail.permission;
-        showOptions = !showOptions
-        selectionIndex = null
-       if(type === "selectedUsers"){
-            selectedUsers.splice(index, 1)
+        showOptions = !showOptions;
+        selectionIndex = null;
+        if (type === "selectedUsers") {
+            selectedUsers.splice(index, 1);
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
-       } else {
+        } else {
             selectedUsers = [...selectedUsers, { ...user, accessType: option }];
             users = users.filter((u) => u.id !== user.id);
-       }
+        }
     }
-
-
 </script>
 
 
@@ -102,33 +97,36 @@
  
 
     <div class="overflow-y-auto scrollbar-thin h-[35vh] bg-osvauld-frameblack w-full">
+
+
         {#each selectedUsers as user, index}
             <ListItem
-            item={user}
-            isSelected={index === selectionIndex && topList}
-            isTopList={true}
-            on:click =  {()=>handleClick(index, true)}
-            on:remove = {() => handleItemRemove(index)}
-            {setbackground}
-            {showOptions}
-            on:select={(e)=> handleRoleChange(e,index, 'selectedUsers')}
-             />
+                item={user}
+                isSelected={index === selectionIndex && topList}
+                isTopList={true}
+                on:click={() => handleClick(index, true)}
+                on:remove={() => handleItemRemove(index)}
+                {setbackground}
+                {showOptions}
+                on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
+            />
         {/each}
         {#each filteredUsers as user, index}
-        <ListItem
-            item={user}
-            isSelected={index === selectionIndex && !topList}
-            isTopList={false}
-            on:click =  {()=>handleClick(index,false)}
-            {setbackground}
-            {showOptions}
-            on:select={(e)=> handleRoleChange(e,index, 'users')}
-             />
+            <ListItem
+                item={user}
+                isSelected={index === selectionIndex && !topList}
+                isTopList={false}
+                on:click={() => handleClick(index, false)}
+                {setbackground}
+                {showOptions}
+                on:select={(e) => handleRoleChange(e, index, "users")}
+            />
         {/each}
     </div>
 
     <div class="p-2 flex justify-between items-center box-border">
         <button class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey">Cancel</button>
+
         <button
             class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
             on:click={shareFolderHandler}>Share</button
@@ -159,3 +157,4 @@
         {/each}
     </div>
     </div>
+

@@ -1,10 +1,13 @@
 <script lang="ts">
     import CopyIcon from "../../basic/copyIcon.svelte";
-    import { CredentialDetails } from "../dtos";
+    import { Credential } from "../dtos";
     import { onMount } from "svelte";
     import { createEventDispatcher } from "svelte";
     import { fly } from "svelte/transition";
-    import { fetchCredentialById } from "../apis";
+    import {
+        fetchCredentialById,
+        fetchSensitiveFieldsByCredentialId,
+    } from "../apis";
     import browser from "webextension-polyfill";
     import { More, Locked, Eye, Unlocked, SensitiveEye, SensitiveEyeBlue, ActiveCopy, ClosedEye } from "../icons"
 
@@ -13,6 +16,7 @@
 
     export let credential;
     export let index;
+
     let visibility = false;
     let encryptedFields = [];
     let decrypted = false;
@@ -29,9 +33,13 @@
         hoverEffect = true;
         if (!decrypted) {
             hoverTimeout = setTimeout(async () => {
-                const response = await fetchCredentialById(credential.id);
-                encryptedFields = response.data.encryptedFields;
-                encryptedFields.length >= 1 ? sensitiveCard = true: sensitiveCard = false
+                const response = await fetchSensitiveFieldsByCredentialId(
+                    credential.credentialId,
+                );
+                encryptedFields = response.data;
+                encryptedFields.length >= 1
+                    ? (sensitiveCard = true)
+                    : (sensitiveCard = false);
                 encryptedFields = encryptedFields.map((item) => ({
                     ...item,
                     lockIcon: true,
@@ -101,7 +109,7 @@
                 ? 'active'
                 : ''} mt-2"
         >
-            {#each credential?.unencryptedFields as field, index}
+            {#each credential?.fields as field, index}
                 <div class="mb-4">
                     <label
                         class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
@@ -188,19 +196,20 @@
                 {/each}
             {/if}
         </div>
-            <label
-                class="text-osvauld-dusklabel block text-left text-sm font-normal"
-            >
-                Description
-            </label>
-            <textarea
-                class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base
+        <label
+            class="text-osvauld-dusklabel block text-left text-sm font-normal"
+        >
+            Description
+        </label>
+        <textarea
+            class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base
             {hoverEffect
                     ? 'text-osvauld-quarzowhite'
                     : 'text-osvauld-sheffieldgrey'}"
             
             value={credential.description}
             />
+
         <div
             class="border-t border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3 my-2"
         ></div>

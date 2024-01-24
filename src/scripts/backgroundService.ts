@@ -3,21 +3,25 @@ import browser from "webextension-polyfill";
 
 import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateRandomString, decryptPvtKeys } from "../lib/utils/crypto";
 import { intiateAuth, } from "../lib/utils/helperMethods";
-import { EncryptedCredentialFields, DecryptedPaylod } from "../lib/dtos/credential.dto";
+import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
 
 
-export const decryptCredentialFieldsHandler = async (credentials: EncryptedCredentialFields[], rsaPvtKey: CryptoKey) => {
 
-    const returnPayload: DecryptedPaylod[] = [];
+export const decryptCredentialFieldsHandler = async (credentials: CredentialFields[], rsaPvtKey: CryptoKey) => {
+
+    const returnPayload: CredentialFields[] = [];
     for (const credential of credentials) {
-        const decryptedFields = await decryptCredentialFields(credential.encryptedFields, rsaPvtKey);
-        const payload: DecryptedPaylod = {
+        const decryptedFields: any = await decryptCredentialFields(credential.fields, rsaPvtKey);
+
+        console.log(decryptedFields)
+        const payload: CredentialFields = {
             credentialId: credential.credentialId,
-            decryptedFields
+            fields: [...decryptedFields]
         }
         returnPayload.push(payload)
     }
     return { data: returnPayload };
+
 }
 
 
@@ -59,4 +63,18 @@ export const savePassphraseHandler = async (passphrase: string, rsaPvtKey: strin
         await browser.storage.local.set({ signPvtKey: pvtKeyCipher });
     }
     return { isSaved: true }
+}
+
+export const decryptCredentialFieldsHandlerNew = async (credentials: Credential[], rsaPvtKey: CryptoKey) => {
+
+    const returnPayload: Credential[] = [];
+    for (const credential of credentials) {
+        const decryptedFields = await decryptCredentialFields(credential.fields, rsaPvtKey);
+        const payload: Credential = {
+            ...credential,
+            fields: decryptedFields
+        }
+        returnPayload.push(payload)
+    }
+    return { data: returnPayload };
 }
