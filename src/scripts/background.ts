@@ -6,7 +6,7 @@ import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHand
 import { fetchCredsByUrl } from "../lib/apis/credentials.api"
 
 let rsaPvtKey: CryptoKey;
-let urls: string[] = [];
+let urls: Set<string> = new Set();
 let activeCredSuggetion: any[] = [];
 
 browser.runtime.onInstalled.addListener(async () => {
@@ -88,7 +88,12 @@ browser.runtime.onMessage.addListener(async (request) => {
       }
       break;
     case "updateAllUrls":
-      urls = request.data;
+      for (let i = 0; i < request.data.length; i++) {
+
+        const decrypted = await decryptCredentialField(rsaPvtKey, request.data[i]);
+        urls.add(decrypted);
+      }
+      console.log(urls);
 
       break;
 

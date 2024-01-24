@@ -17,6 +17,7 @@
   let creds = [];
   onMount(async () => {
     const responseJson = await fetchAllUserUrls();
+    console.log("URLS", responseJson.data);
     const urls = responseJson.data;
     await browser.runtime.sendMessage({
       action: "updateAllUrls",
