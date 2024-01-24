@@ -101,15 +101,16 @@ export const fetchCredentialsFieldsByIds = async (credentialIds: string[]) => {
   return response.json();
 };
 
-export const fetchCredsByUrl = async (url: string) => {
+export const fetchCredsByIds = async (credentialIds: string[]) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
 
-  const response = await fetch(`${baseUrl}/credentials/url/${url}`, {
-    method: "GET",
+  const response = await fetch(`${baseUrl}/credentials/by-ids`, {
+    method: "POST",
     headers,
+    body: JSON.stringify({ credentialIds }),
   });
 
   if (!response.ok) {
