@@ -11,7 +11,7 @@
   import ShareCredentialsWithUser from "./ShareCredentialsWithUsers.svelte";
   import ShareCredentialsWithGroups from "./ShareCredentialsWithGroups.svelte";
   import InfoIcon from "../../basic/infoIcon.svelte";
-  import InfoOverlay from "../components/info.svelte";
+  import InfoOverlay from "../components/Info.svelte";
   import ClosePanel from "../../basic/closePanel.svelte";
   export let credentials: Credential[];
   export let users: User[];

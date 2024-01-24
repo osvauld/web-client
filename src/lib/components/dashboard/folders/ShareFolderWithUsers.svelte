@@ -8,6 +8,10 @@
     } from "../dtos";
     import { selectedFolder, showFolderShareDrawer } from "../store";
     import { createShareCredsPayload, setbackground } from "../helper";
+    import { Lens, DownArrow, RightArrow } from "../icons";
+    import ListItem from '../components/ListItem.svelte';
+    import ExistingListItem from '../components/ExistingListItem.svelte';
+
 
     import { Lens, DownArrow } from "../icons";
     import ListItem from "../components/ListItem.svelte";
@@ -20,9 +24,9 @@
     let selectionIndex = null;
     let topList = false;
     let searchInput = "";
-
-    let existingUserData: UserWithAccessType[] = [];
-
+    let existingUsersDropdown = false;
+    let existingUserData: UserWithAccessType[] = []
+ 
     $: filteredUsers = searchInput
         ? users.filter((user) =>
               user.name.toLowerCase().includes(searchInput.toLowerCase()),
@@ -30,7 +34,9 @@
         : users;
 
     const existingUsers = async () => {
-        if (existingUserData.length === 0) {
+        existingUsersDropdown = !existingUsersDropdown
+        if(existingUserData.length === 0){
+
             existingUserData = await fetchFolderUsers($selectedFolder.id);
         } else {
             existingUserData.length = 0;
@@ -77,45 +83,22 @@
     }
 </script>
 
-<div
-    class="p-2 border border-osvauld-bordergreen rounded-lg min-h-min max-h-[50vh] mb-2"
->
-    <button
-        class="flex justify-between items-center p-1 w-full bg-osvauld-frameblack text-osvauld-sheffieldgrey text-base font-semibold cursor-pointer border border-osvauld-bordergreen rounded-lg"
-        on:click={existingUsers}
-    >
-        <span class="ml-3">Users with Access</span>
-        <span class="bg-osvauld-bordergreen px-3 rounded-[4px]">
-            <DownArrow type={"common"} />
-        </span>
-    </button>
-    <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
-    <div
-        class="overflow-y-auto scrollbar-thin min-h-min max-h-[30vh] bg-osvauld-frameblack w-full"
-    >
-        {#each existingUserData as user, index}
-            <ExistingListItem item={user} />
-        {/each}
-    </div>
-</div>
 
-<div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">
-    <div
-        class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer"
-    >
-        <Lens />
-        <input
-            type="text"
-            bind:value={searchInput}
-            class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-            placeholder="Search for users"
-        />
+
+<div class="p-2 border border-osvauld-bordergreen rounded-lg h-[50vh]">
+
+    <div class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-2">
+        <Lens/>
+        <input type="text" bind:value={searchInput} class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search for users">
     </div>
 
     <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
-    <div
-        class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full"
-    >
+
+ 
+
+    <div class="overflow-y-auto scrollbar-thin h-[35vh] bg-osvauld-frameblack w-full">
+
+
         {#each selectedUsers as user, index}
             <ListItem
                 item={user}
@@ -142,13 +125,36 @@
     </div>
 
     <div class="p-2 flex justify-between items-center box-border">
-        <button
-            class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md"
-            >Cancel</button
-        >
+        <button class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey">Cancel</button>
+
         <button
             class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
             on:click={shareFolderHandler}>Share</button
         >
     </div>
+
 </div>
+
+<div class="p-2 my-2 border border-osvauld-bordergreen rounded-lg min-h-min max-h-[50vh] mb-2">
+    <button class="flex justify-between items-center p-1 w-full bg-osvauld-frameblack text-osvauld-sheffieldgrey text-base font-semibold  cursor-pointer  border border-osvauld-bordergreen rounded-lg" on:click={existingUsers}>
+        <span class="ml-3">Users with Access</span>
+        <span class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px]">
+            {#if existingUsersDropdown}
+               <DownArrow type={'common'} />
+               
+            {:else}
+               <RightArrow />
+            {/if}
+        </span>
+    </button>
+    {#if existingUsersDropdown}
+    <div class="border border-osvauld-bordergreen my-2 w-full"></div>
+    {/if}
+    <div class="overflow-y-auto scrollbar-thin min-h-min max-h-[30vh] bg-osvauld-frameblack w-full"
+    >
+        {#each existingUserData as user, index}
+         <ExistingListItem item={user}/>
+        {/each}
+    </div>
+    </div>
+
