@@ -34,14 +34,14 @@
         const payload = [];
         for (const groupUsers of groupUsersList) {
             const group = $selectedGroups.get(groupUsers.groupId);
-            const encryptedUserData = await createShareCredsPayload(
+            const userData = await createShareCredsPayload(
                 credentialsFields,
                 groupUsers.userDetails,
             );
             payload.push({
                 groupId: group.groupId,
                 accessType: group.accessType,
-                encryptedUserData,
+                userData,
             });
         }
         await shareFolderWithGroups({
