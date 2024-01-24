@@ -12,6 +12,7 @@
     const dispatch = createEventDispatcher();
 
     export let credential;
+    export let index;
     let visibility = false;
     let encryptedFields = [];
     let decrypted = false;
@@ -82,13 +83,14 @@
         >
             <input
                 type="checkbox"
+                id="credentialChecker{index}"
                 class="bg-osvauld-frameblack mr-2 border-osvauld-iconblack checked:bg-osvauld-lilacpink active:outline-none focus:text-primary focus:ring-offset-0 focus:ring-0 cursor-pointer"
                 on:change={(e) => toggleCheck()}
                 {checked}
             />
-            <p class="text-xl font-medium w-full text-left ml-2">
+            <label class="text-xl font-medium w-full text-left ml-2 cursor-pointer" for="credentialChecker{index}" >
                 {credential.name}
-            </p>
+            </label>
             <More />
         </div>
         <div

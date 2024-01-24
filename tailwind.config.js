@@ -72,6 +72,7 @@ export default {
           readerText: "#F9E2AF",
           managerText: "#F5C2E7",
           plainwhite: "#FFF",
+          toastCloseBlue: "#2D3A4D",
         },
       },
       fontFamily: {

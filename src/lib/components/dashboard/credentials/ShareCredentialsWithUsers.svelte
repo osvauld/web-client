@@ -9,6 +9,7 @@
     import { createShareCredsPayload, setbackground } from "../helper";
     import { Lens } from "../icons"
     import ListItem from '../components/ListItem.svelte';
+    import ShareToast from '../components/ShareToast.svelte';
 
     export let users: User[];
     export let encryptedCredentials: EncryptedCredentialFields[];
@@ -16,7 +17,7 @@
     let showOptions = false; 
     let selectionIndex = null;
     let topList = false;
-
+    let shareToast = true;
     let searchInput = "";
 
 
@@ -31,7 +32,9 @@
             selectedUsers,
         );
         const payload: ShareCredentialsWithUsersPayload = { userData };
-        await shareCredentialsWithUsers(payload);
+        const shareStatus = await shareCredentialsWithUsers(payload);
+        console.log('share status =>', shareStatus)
+        shareToast = shareStatus.success === true 
     };
 
     function handleClick(index: number, isSelectedList: boolean){
@@ -106,6 +109,9 @@
             on:click={shareCredentialHandler}>Share</button
         >
     </div>
+    {#if shareToast}
+       <ShareToast on:close={()=> shareToast = !shareToast}/>
+    {/if}
 
 </div>
 

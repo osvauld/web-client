@@ -126,9 +126,10 @@
   {/if}
   <div class="flex">
     <div class="flex flex-wrap p-3 w-full">
-      {#each $credentialStore as credential}
+      {#each $credentialStore as credential, index}
         <CredentialCard
           {credential}
+          {index}
           on:check={(e) => handleCheck(e.detail, credential)}
         />
       {/each}
