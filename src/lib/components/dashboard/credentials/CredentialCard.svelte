@@ -1,16 +1,20 @@
 <script lang="ts">
     import CopyIcon from "../../basic/copyIcon.svelte";
-    import { Credential } from "../dtos";
     import { onMount } from "svelte";
     import { createEventDispatcher } from "svelte";
     import { fly } from "svelte/transition";
-    import {
-        fetchCredentialById,
-        fetchSensitiveFieldsByCredentialId,
-    } from "../apis";
+    import { fetchSensitiveFieldsByCredentialId } from "../apis";
     import browser from "webextension-polyfill";
-    import { More, Locked, Eye, Unlocked, SensitiveEye, SensitiveEyeBlue, ActiveCopy, ClosedEye } from "../icons"
-
+    import {
+        More,
+        Locked,
+        Eye,
+        Unlocked,
+        SensitiveEye,
+        SensitiveEyeBlue,
+        ActiveCopy,
+        ClosedEye,
+    } from "../icons";
 
     const dispatch = createEventDispatcher();
 
@@ -96,7 +100,10 @@
                 on:change={(e) => toggleCheck()}
                 {checked}
             />
-            <label class="text-xl font-medium w-full text-left ml-2 cursor-pointer" for="credentialChecker{index}" >
+            <label
+                class="text-xl font-medium w-full text-left ml-2 cursor-pointer"
+                for="credentialChecker{index}"
+            >
                 {credential.name}
             </label>
             <More />
@@ -204,11 +211,10 @@
         <textarea
             class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base
             {hoverEffect
-                    ? 'text-osvauld-quarzowhite'
-                    : 'text-osvauld-sheffieldgrey'}"
-            
+                ? 'text-osvauld-quarzowhite'
+                : 'text-osvauld-sheffieldgrey'}"
             value={credential.description}
-            />
+        />
 
         <div
             class="border-t border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3 my-2"

@@ -1,11 +1,5 @@
 <script lang="ts">
-    import {
-        User,
-        UserWithAccessType,
-        EncryptedCredentialFields,
-        ShareCredentialsWithUsersPayload,
-        CredentialFields,
-    } from "../dtos";
+    import { User, UserWithAccessType, CredentialFields } from "../dtos";
     import { shareCredentialsWithUsers } from "../apis";
     import { createShareCredsPayload, setbackground } from "../helper";
     import { Lens } from "../icons";
@@ -33,7 +27,7 @@
             selectedUsers,
         );
         console.log(userData, "sharecredwithusers payload");
-        const payload: ShareCredentialsWithUsersPayload = { userData };
+        const payload: any = { userData };
         const shareStatus = await shareCredentialsWithUsers(payload);
         shareToast = shareStatus.success === true;
     };

@@ -1,12 +1,11 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
-  import { CopyIcon } from "../icons"
+  import { CopyIcon } from "../icons";
 
   import { selectedCredential } from "../store";
   import { fetchCredentialById } from "../apis";
-  import { CredentialDetails } from "../dtos";
   let isLoading = true;
   // TODO: render selected credential when is loading true
   export function close() {
@@ -125,4 +124,4 @@
       >
     </div>
   </div>
-</div>
+</div> -->
