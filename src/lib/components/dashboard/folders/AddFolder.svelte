@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createFolder, fetchAllFolders } from "../apis";
-  import { showAddFolderDrawer } from "../store";
+  import { showAddFolderDrawer, folderStore } from "../store";
 
   let name = "";
   let description = "";
@@ -11,7 +11,8 @@
       description: description,
     };
     await createFolder(payload);
-    await fetchAllFolders();
+    const responseJson = await fetchAllFolders();
+    folderStore.set(responseJson.data);
     showAddFolderDrawer.set(false);
   };
 </script>

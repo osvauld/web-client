@@ -19,8 +19,6 @@
 
   let checkedCards: Credential[] = [];
   let users: User[] = [];
-  let allUsers: User[] = [];
-  let folderUsers: User[] = [];
   let allGroups: Group[] = [];
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -35,13 +33,17 @@
   const subscribe = selectedFolder.subscribe(async (folder) => {
     //TODO: fetch shared groups.
     if (folder === null) return;
-    [allUsers, folderUsers, allGroups] = await Promise.all([
+    let folderUsersResponse;
+    let allUsersResponse;
+    [allUsersResponse, folderUsersResponse, allGroups] = await Promise.all([
       fetchAllUsers(),
       fetchFolderUsers(folder.id),
       fetchAllUserGroups(),
     ]);
-    users = allUsers.filter((user) => {
-      return !folderUsers.some((folderUser) => folderUser.id === user.id);
+    users = allUsersResponse.data.filter((user) => {
+      return !folderUsersResponse.data.some(
+        (folderUser) => folderUser.id === user.id,
+      );
     });
     checkedCards = [];
   });

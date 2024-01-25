@@ -12,7 +12,13 @@
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
   };
 
-  let credMap = {};
+  type CredMap = {
+    [key: string]: {
+      username: string;
+      password: string;
+    };
+  };
+  let credMap: CredMap = {};
   onMount(async () => {
     let creds = [];
     const responseJson = await fetchAllUserUrls();

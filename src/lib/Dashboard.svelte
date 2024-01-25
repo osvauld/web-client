@@ -3,9 +3,11 @@
   import LeftContainer from "./components/dashboard/LeftContainer.svelte";
   import RightContainer from "./components/dashboard/RightContainer.svelte";
   import { fetchAllFolders } from "./apis/folder.api";
+  import { folderStore } from "./store/folder.store";
 
-  onMount(() => {
-    fetchAllFolders();
+  onMount(async () => {
+    const responseJson = await fetchAllFolders();
+    folderStore.set(responseJson.data);
   });
 </script>
 
