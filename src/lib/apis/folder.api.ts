@@ -1,7 +1,7 @@
 import { baseUrl } from "./temp";
 import browser from "webextension-polyfill";
 import { folderStore } from "../store/folder.store";
-import { User, UserWithAccessType } from "../dtos/user.dto";
+import { User, UserWithAccessType, GroupWithAccessType } from "../dtos/user.dto";
 import { ShareFolderWithUsersPayload } from "../dtos/folder.dto";
 
 export const fetchAllFolders = async () => {
@@ -23,6 +23,7 @@ export const fetchAllFolders = async () => {
     folderStore.set(response.data);
   }
 };
+
 export const fetchFolderUsers = async (folderId: string): Promise<UserWithAccessType[]> => {
   const headers = new Headers();
   const tokenObj = await await browser.storage.local.get("token");
@@ -35,6 +36,21 @@ export const fetchFolderUsers = async (folderId: string): Promise<UserWithAccess
   }).then((response) => response.json());
   const users: UserWithAccessType[] = response.data;
   return users;
+};
+
+export const fetchFolderGroups = async (folderId: string): Promise<GroupWithAccessType[]> => {
+  const headers = new Headers();
+  const tokenObj = await await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/folder/${folderId}/groups`, {
+    headers,
+  }).then((response) => response.json());
+  const groups:GroupWithAccessType = response.data;
+  console.log('groups with access to this folder =>', groups)
+  return groups;
 };
 
 export const createFolder = async (payload: any) => {

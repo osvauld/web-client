@@ -11,6 +11,7 @@
 
     import { Lens } from "../icons";
     import ListItem from "../components/ListItem.svelte";
+    import ShareToast from '../components/ShareToast.svelte';
     export let groups: Group[];
     export let credentialsFields: CredentialFields[];
     let selectedGroups = writable(new Map<string, GroupWithAccessType>());
@@ -18,6 +19,7 @@
     let selectionIndex = null;
     let topList = false;
     let searchInput = "";
+    let shareToast = false;
 
     $: filteredGroups = searchInput
         ? groups.filter((group) =>
@@ -42,9 +44,11 @@
                 userData,
             });
         }
-        await shareCredentialsWithGroups({
+        const shareStatus =  await shareCredentialsWithGroups({
             groupData: payload,
         });
+       
+        shareToast = shareStatus.success === true;
     };
 
     function handleClick(index: number, isSelectedList: boolean) {
@@ -135,4 +139,7 @@
             on:click={shareCredentialHandler}>Share</button
         >
     </div>
+    {#if shareToast}
+        <ShareToast on:close={() => (shareToast = !shareToast)} />
+    {/if}
 </div>

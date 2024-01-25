@@ -11,6 +11,9 @@
     import { onMount } from "svelte";
     import { Lens } from "../icons";
     import ListItem from "../components/ListItem.svelte";
+    import { fetchFolderGroups } from '../../../apis/folder.api';
+    import ExistingListParent from '../components/ExistingListParent.svelte';
+    import ShareToast from '../components/ShareToast.svelte';
 
     let groups: Group[] = [];
     export let credentialsFields: CredentialFields[];
@@ -20,12 +23,26 @@
     let selectionIndex = null;
     let topList = false;
     let searchInput = "";
+    let shareToast = false;
+    let existingItemDropdown = false;
+    let existingGroupsData: GroupWithAccessType[] = []
 
     $: filteredGroups = searchInput
         ? groups.filter((group) =>
               group.name.toLowerCase().includes(searchInput.toLowerCase()),
           )
         : groups;
+
+
+    const existingGroups = async () => {
+        existingItemDropdown = !existingItemDropdown
+        if(existingGroupsData.length === 0){
+            console.log('inside existingGroups')
+            existingGroupsData = await fetchFolderGroups($selectedFolder.id);
+        } else {
+            existingGroupsData.length = 0;
+        }
+    };
 
     const shareFolderHandler = async () => {
         const groupIds = Array.from($selectedGroups.keys());
@@ -44,10 +61,11 @@
                 userData,
             });
         }
-        await shareFolderWithGroups({
+        const shareStatus =  await shareFolderWithGroups({
             folderId: $selectedFolder.id,
             groupData: payload,
         });
+        shareToast = shareStatus.success === true;
     };
 
     function handleClick(index: number, isSelectedList: boolean) {
@@ -92,7 +110,7 @@
     });
 </script>
 
-<div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">
+<div class="p-2 border border-osvauld-bordergreen rounded-lg h-[50vh]">
     <div
         class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer"
     >
@@ -108,7 +126,7 @@
     <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
 
     <div
-        class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full"
+        class="overflow-y-auto scrollbar-thin h-[35vh] bg-osvauld-frameblack w-full"
     >
         {#each Array.from($selectedGroups) as [groupId, group], index}
             <ListItem
@@ -143,4 +161,9 @@
             on:click={shareFolderHandler}>Share</button
         >
     </div>
+    {#if shareToast}
+        <ShareToast on:close={() => (shareToast = !shareToast)} />
+    {/if}
 </div>
+
+<ExistingListParent  {existingItemDropdown} existingItemsData={existingGroupsData} user={false} on:click={existingGroups}/>

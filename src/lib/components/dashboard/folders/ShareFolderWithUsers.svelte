@@ -10,12 +10,9 @@
     import { createShareCredsPayload, setbackground } from "../helper";
     import { Lens, DownArrow, RightArrow } from "../icons";
     import ListItem from '../components/ListItem.svelte';
-    import ExistingListItem from '../components/ExistingListItem.svelte';
+    import ShareToast from '../components/ShareToast.svelte';
+    import ExistingListParent from '../components/ExistingListParent.svelte';
 
-
-    import { Lens, DownArrow } from "../icons";
-    import ListItem from "../components/ListItem.svelte";
-    import ExistingListItem from "../components/ExistingListItem.svelte";
 
     export let users: User[];
     export let credentialsFields: CredentialFields[];
@@ -24,7 +21,8 @@
     let selectionIndex = null;
     let topList = false;
     let searchInput = "";
-    let existingUsersDropdown = false;
+    let existingItemDropdown = false;
+    let shareToast = false;
     let existingUserData: UserWithAccessType[] = []
  
     $: filteredUsers = searchInput
@@ -34,9 +32,8 @@
         : users;
 
     const existingUsers = async () => {
-        existingUsersDropdown = !existingUsersDropdown
+        existingItemDropdown = !existingItemDropdown
         if(existingUserData.length === 0){
-
             existingUserData = await fetchFolderUsers($selectedFolder.id);
         } else {
             existingUserData.length = 0;
@@ -52,7 +49,8 @@
             folderId: $selectedFolder.id,
             userData,
         };
-        await shareFolderWithUsers(shareFolderPayload);
+        const shareStatus =  await shareFolderWithUsers(shareFolderPayload);
+        shareToast = shareStatus.success === true;
     };
 
     function handleClick(index: number, isSelectedList: boolean) {
@@ -132,29 +130,13 @@
             on:click={shareFolderHandler}>Share</button
         >
     </div>
+    {#if shareToast}
+        <ShareToast on:close={() => (shareToast = !shareToast)} />
+    {/if}
 
 </div>
 
-<div class="p-2 my-2 border border-osvauld-bordergreen rounded-lg min-h-min max-h-[50vh] mb-2">
-    <button class="flex justify-between items-center p-1 w-full bg-osvauld-frameblack text-osvauld-sheffieldgrey text-base font-semibold  cursor-pointer  border border-osvauld-bordergreen rounded-lg" on:click={existingUsers}>
-        <span class="ml-3">Users with Access</span>
-        <span class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px]">
-            {#if existingUsersDropdown}
-               <DownArrow type={'common'} />
-               
-            {:else}
-               <RightArrow />
-            {/if}
-        </span>
-    </button>
-    {#if existingUsersDropdown}
-    <div class="border border-osvauld-bordergreen my-2 w-full"></div>
-    {/if}
-    <div class="overflow-y-auto scrollbar-thin min-h-min max-h-[30vh] bg-osvauld-frameblack w-full"
-    >
-        {#each existingUserData as user, index}
-         <ExistingListItem item={user}/>
-        {/each}
-    </div>
-    </div>
+
+<ExistingListParent {existingItemDropdown} existingItemsData={existingUserData} user={true} on:click={existingUsers}/>
+
 

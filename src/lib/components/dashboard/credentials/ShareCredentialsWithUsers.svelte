@@ -35,7 +35,6 @@
         console.log(userData, "sharecredwithusers payload");
         const payload: ShareCredentialsWithUsersPayload = { userData };
         const shareStatus = await shareCredentialsWithUsers(payload);
-        console.log("share status =>", shareStatus);
         shareToast = shareStatus.success === true;
     };
 
