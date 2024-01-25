@@ -10,8 +10,8 @@
     import { createShareCredsPayload, setbackground } from "../helper";
     import { Lens, DownArrow, RightArrow } from "../icons";
     import ListItem from '../components/ListItem.svelte';
-    import ExistingListItem from '../components/ExistingListItem.svelte';
-  import ExistingListParent from '../components/ExistingListParent.svelte';
+    import ShareToast from '../components/ShareToast.svelte';
+    import ExistingListParent from '../components/ExistingListParent.svelte';
 
 
     export let users: User[];
@@ -22,6 +22,7 @@
     let topList = false;
     let searchInput = "";
     let existingItemDropdown = false;
+    let shareToast = false;
     let existingUserData: UserWithAccessType[] = []
  
     $: filteredUsers = searchInput
@@ -48,7 +49,8 @@
             folderId: $selectedFolder.id,
             userData,
         };
-        await shareFolderWithUsers(shareFolderPayload);
+        const shareStatus =  await shareFolderWithUsers(shareFolderPayload);
+        shareToast = shareStatus.success === true;
     };
 
     function handleClick(index: number, isSelectedList: boolean) {
@@ -128,6 +130,9 @@
             on:click={shareFolderHandler}>Share</button
         >
     </div>
+    {#if shareToast}
+        <ShareToast on:close={() => (shareToast = !shareToast)} />
+    {/if}
 
 </div>
 

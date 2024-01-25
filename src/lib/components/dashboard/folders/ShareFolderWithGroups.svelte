@@ -11,8 +11,9 @@
     import { onMount } from "svelte";
     import { Lens } from "../icons";
     import ListItem from "../components/ListItem.svelte";
-  import { fetchFolderGroups } from '../../../apis/folder.api';
-  import ExistingListParent from '../components/ExistingListParent.svelte';
+    import { fetchFolderGroups } from '../../../apis/folder.api';
+    import ExistingListParent from '../components/ExistingListParent.svelte';
+    import ShareToast from '../components/ShareToast.svelte';
 
     let groups: Group[] = [];
     export let credentialsFields: CredentialFields[];
@@ -22,6 +23,7 @@
     let selectionIndex = null;
     let topList = false;
     let searchInput = "";
+    let shareToast = false;
     let existingItemDropdown = false;
     let existingGroupsData: GroupWithAccessType[] = []
 
@@ -59,10 +61,11 @@
                 userData,
             });
         }
-        await shareFolderWithGroups({
+        const shareStatus =  await shareFolderWithGroups({
             folderId: $selectedFolder.id,
             groupData: payload,
         });
+        shareToast = shareStatus.success === true;
     };
 
     function handleClick(index: number, isSelectedList: boolean) {
@@ -158,6 +161,9 @@
             on:click={shareFolderHandler}>Share</button
         >
     </div>
+    {#if shareToast}
+        <ShareToast on:close={() => (shareToast = !shareToast)} />
+    {/if}
 </div>
 
 <ExistingListParent  {existingItemDropdown} existingItemsData={existingGroupsData} user={false} on:click={existingGroups}/>
