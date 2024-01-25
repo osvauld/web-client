@@ -1,7 +1,4 @@
 <script lang="ts">
-  import CredsListed from "./components/CredsListed.svelte";
-  import CredsOpen from "./components/CredsOpen.svelte";
-  import { credOpen } from "../../store/ui.store";
   import {
     fetchAllUserUrls,
     fetchCredsByIds,

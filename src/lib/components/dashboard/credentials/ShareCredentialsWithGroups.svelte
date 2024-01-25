@@ -1,17 +1,12 @@
 <script lang="ts">
-    import {
-        Group,
-        GroupWithAccessType,
-        EncryptedCredentialFields,
-        CredentialFields,
-    } from "../dtos";
+    import { Group, GroupWithAccessType, CredentialFields } from "../dtos";
     import { writable } from "svelte/store";
     import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
     import { createShareCredsPayload, setbackground } from "../helper";
 
     import { Lens } from "../icons";
     import ListItem from "../components/ListItem.svelte";
-    import ShareToast from '../components/ShareToast.svelte';
+    import ShareToast from "../components/ShareToast.svelte";
     export let groups: Group[];
     export let credentialsFields: CredentialFields[];
     let selectedGroups = writable(new Map<string, GroupWithAccessType>());
@@ -44,10 +39,10 @@
                 userData,
             });
         }
-        const shareStatus =  await shareCredentialsWithGroups({
+        const shareStatus = await shareCredentialsWithGroups({
             groupData: payload,
         });
-       
+
         shareToast = shareStatus.success === true;
     };
 
@@ -132,7 +127,10 @@
     </div>
 
     <div class="p-2 flex justify-between items-center box-border">
-        <button class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey">Cancel</button>
+        <button
+            class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
+            >Cancel</button
+        >
 
         <button
             class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"

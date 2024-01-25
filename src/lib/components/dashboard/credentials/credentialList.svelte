@@ -6,7 +6,7 @@
 
   import { Lens, Share, Add } from "../icons";
   import { fetchFolderUsers, fetchAllUsers, fetchAllUserGroups } from "../apis";
-  import { User, CredentialDetails, Group, Credential } from "../dtos";
+  import { User, Group, Credential } from "../dtos";
 
   import {
     credentialStore,

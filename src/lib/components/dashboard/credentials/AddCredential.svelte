@@ -3,10 +3,7 @@
   import { fly } from "svelte/transition";
 
   import { ClosePanel, BinIcon } from "../icons";
-  import {
-    encryptCredentialsForUser,
-    encryptCredentialsForUserNew,
-  } from "../../../utils/helperMethods";
+  import { encryptCredentialsForUserNew } from "../../../utils/helperMethods";
 
   import { selectedFolder, showAddCredentialDrawer } from "../store";
 
@@ -16,14 +13,7 @@
     fetchCredentialsByFolder,
   } from "../apis";
 
-  import {
-    AddCredentialFieldPayload,
-    AddCredentialPayload,
-    CredentialFields,
-    Fields,
-    User,
-    DecryptedPaylod,
-  } from "../dtos";
+  import { AddCredentialPayload, Fields, User } from "../dtos";
 
   type AddCredentialField = {
     fieldName: string;
@@ -117,10 +107,9 @@
     showAddCredentialDrawer.set(false);
   }
 
-  function triggerSensitiveBubble(index: number, isEnter: boolean){
-    isEnter ? hoveredIndex = index : hoveredIndex = null
+  function triggerSensitiveBubble(index: number, isEnter: boolean) {
+    isEnter ? (hoveredIndex = index) : (hoveredIndex = null);
   }
-  
 </script>
 
 <div
@@ -165,9 +154,17 @@
             placeholder="Enter value"
             bind:value={field.fieldValue}
           />
-          <div class="flex items-center justify-center { index === hoveredIndex ? "relative": ""}" on:mouseenter={()=>triggerSensitiveBubble(index, true)} on:mouseleave={()=>triggerSensitiveBubble(index, false)}>
-            <label for={`toggle-${index}`} class="inline-flex items-center cursor-pointer">
-
+          <div
+            class="flex items-center justify-center {index === hoveredIndex
+              ? 'relative'
+              : ''}"
+            on:mouseenter={() => triggerSensitiveBubble(index, true)}
+            on:mouseleave={() => triggerSensitiveBubble(index, false)}
+          >
+            <label
+              for={`toggle-${index}`}
+              class="inline-flex items-center cursor-pointer"
+            >
               <span class="relative">
                 <span
                   class="block w-10 h-6 {field.sensitive
@@ -189,8 +186,10 @@
               </span>
             </label>
             {#if index === hoveredIndex}
-            <span class="absolute top-[-60px] left-[-25px] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle">Sensitive</span>
-
+              <span
+                class="absolute top-[-60px] left-[-25px] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle"
+                >Sensitive</span
+              >
             {/if}
           </div>
           <div class="flex items-center justify-center">

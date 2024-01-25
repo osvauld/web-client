@@ -148,8 +148,8 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       // TODO: payload change in future
       const payload: any = [];
       for (const cred of responseData.data) {
-        for (const field of cred.unencryptedFields) {
-          if (!field.isUrl) {
+        for (const field of cred.fields) {
+          if (field.fieldName === 'Username') {
             activeCredSuggetion.push({ id: cred.credentialId, username: field.fieldValue, password: cred.encryptedFields[0].fieldValue })
             payload.push({ id: cred.credentialId, username: field.fieldValue });
           }
