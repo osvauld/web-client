@@ -21,7 +21,7 @@
     let selectionIndex = null;
     let topList = false;
     let searchInput = "";
-    let existingUsersDropdown = false;
+    let existingItemDropdown = false;
     let existingUserData: UserWithAccessType[] = []
  
     $: filteredUsers = searchInput
@@ -31,7 +31,7 @@
         : users;
 
     const existingUsers = async () => {
-        existingUsersDropdown = !existingUsersDropdown
+        existingItemDropdown = !existingItemDropdown
         if(existingUserData.length === 0){
             existingUserData = await fetchFolderUsers($selectedFolder.id);
         } else {
@@ -132,6 +132,6 @@
 </div>
 
 
-<ExistingListParent {existingUsersDropdown} {existingUserData} user={true} on:click={existingUsers}/>
+<ExistingListParent {existingItemDropdown} existingItemsData={existingUserData} user={true} on:click={existingUsers}/>
 
 
