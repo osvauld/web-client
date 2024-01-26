@@ -5,7 +5,7 @@
   } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
   import { onMount } from "svelte";
-  import { Maximize, Lens, ClosePanel, RightArrow, DownArrow } from './icons';
+  import { Maximize, Lens, ClosePanel, RightArrow, DownArrow, CopyIcon } from './icons';
   import PasswordNotFound from './components/PasswordNotFound.svelte';
 
 
@@ -111,15 +111,37 @@
       <div class="h-auto p-0">
         <div class="border-b border-osvauld-iconblack w-[calc(100%+1.55rem)] -translate-x-[0.8rem] mb-3"></div>
         {#each credentials as credential, index}
-        <button class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex justify-between items-center w-full mb-3" on:click={()=>{credentialClicked = !credentialClicked; updatedIndex = index}}>
-          <span class="text-base font-semibold tracking-wide">{credential}</span>
-          <span class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px]">
-            {#if credentialClicked && updatedIndex === index}
-               <DownArrow type={'common'} />
-            {:else}
-               <RightArrow />
-            {/if}
-        </span>
+        <button class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex flex-col justify-center w-full mb-3" on:click={()=>{credentialClicked = !credentialClicked; updatedIndex = index}}>
+             <div class="w-full flex justify-between items-center mb-2">
+                  <span class="text-base font-semibold tracking-wide">{credential}</span>
+                  <span class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px]">
+                    {#if credentialClicked && updatedIndex === index}
+                      <DownArrow type={'common'} />
+                    {:else}
+                      <RightArrow />
+                    {/if}
+                  </span>
+            </div>
+        {#if credentialClicked && updatedIndex === index}
+          <div class="rounded-lg h-[10rem] bg-osvauld-bordergreen">
+            <div class="mb-4">
+              <label
+                  class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
+                  for={`input-`}>Username</label
+              >
+              <div class="relative">
+                  <div class="input py-1 pr-10 w-[95%] rounded-lg items-center text-base bg-osvauld-bordergreen border-osvauld-iconblack text-osvauld-sheffieldgrey"
+                 > tonyantony300@gmail.com
+                    </div>
+
+                  <button
+                      class="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  ><CopyIcon />
+                  </button>
+              </div>
+           </div>
+          </div>
+        {/if}
         </button>
         {/each}
       </div>
