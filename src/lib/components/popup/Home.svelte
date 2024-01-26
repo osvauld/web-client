@@ -87,15 +87,15 @@
             placeholder="Find what you need faster.."
         />
     </div>
-    <div class="bg-osvauld-bordergreen rounded-lg">
+    <div class="bg-osvauld-bordergreen rounded-lg h-[10rem] flex flex-col justify-between p-3">
       <div>
-        <span class="text-lg text-osvauld-quarzowhite">No passwords found!</span>
-        <p>Current page doesn't have a password in osvauld.</p>
+        <span class="text-base text-osvauld-quarzowhite">No passwords found!</span>
+        <p class="text-osvauld-sheffieldgrey text-sm">Current page doesn't have a password in osvauld.</p>
       </div>
       <button
-      class="bg rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap"
+      class="w-2/3 rounded-md py-2 px-4 mr-2 bg-osvauld-carolinablue text-osvauld-ninjablack text-base font-normal flex justify-center items-center whitespace-nowrap"
       >
-       <span class="mr-1"> Add Credential</span>
+       <span class="mr-1"> Add credential</span>
         <Add />
       </button>
 
