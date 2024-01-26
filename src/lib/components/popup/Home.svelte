@@ -12,6 +12,7 @@
   let passwordFound = true;
   let  credentials = ['username', 'username', 'username'];
   let credentialClicked = false;
+  let updatedIndex
 
   const openFullscreenTab = async () => {
     // Send a message to the background sdaash
@@ -83,6 +84,16 @@
   </div>
 
   <div class="rounded-lg border border-osvauld-iconblack w-full min-h-[15rem] max-h-[33rem] p-3">
+    {#if passwordFound}
+      <div class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm">
+          <span class="text-base">
+            google.com
+          </span>
+          <span class="text-osvauld-sheffieldgrey">
+            4
+          </span>
+      </div>
+    {/if}
     <div
         class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-4"
     >
@@ -100,10 +111,10 @@
       <div class="h-auto p-0">
         <div class="border-b border-osvauld-iconblack w-[calc(100%+1.55rem)] -translate-x-[0.8rem] mb-3"></div>
         {#each credentials as credential, index}
-        <button class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex justify-between items-center w-full mb-3" on:click={()=> credentialClicked = !credentialClicked}>
+        <button class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex justify-between items-center w-full mb-3" on:click={()=>{credentialClicked = !credentialClicked; updatedIndex = index}}>
           <span class="text-base font-semibold tracking-wide">{credential}</span>
           <span class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px]">
-            {#if credentialClicked}
+            {#if credentialClicked && updatedIndex === index}
                <DownArrow type={'common'} />
             {:else}
                <RightArrow />
