@@ -8,7 +8,7 @@
   import Signup from "./components/popup/Signup.svelte";
 
   let devType = "popup";
-  let loggedIn = false;
+  let loggedIn = true;
   onMount(async () => {
     if (devType != "popup") openFullscreenTab();
     const response = await browser.runtime.sendMessage({
@@ -40,11 +40,11 @@
 </script>
 
 <main>
-  <div class="w-[380px] h-[520px] bg-[#262C44] overflow-hidden">
-    {#if !$isSignedUp}
+  <div class=" w-[22.5rem] h-[37.78rem] p-5 overflow-hidden bg-osvauld-frameblack">
+    <Home />
+    <!-- {#if !$isSignedUp}
       <Signup />
     {:else if loggedIn}
-      <Home />
     {:else}
       <div>
         <div class="h-[200px] w-full flex justify-center items-center pl-7">
@@ -52,6 +52,6 @@
         </div>
         <Welcome on:authenticated={checkAuth} />
       </div>
-    {/if}
+    {/if} -->
   </div>
 </main>

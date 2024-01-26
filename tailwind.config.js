@@ -91,6 +91,7 @@ export default {
           '"Segoe UI Emoji"',
           '"Segoe UI Symbol"',
           '"Noto Color Emoji"',
+          '"Plus Jakarta Sans"',
         ],
       },
     },

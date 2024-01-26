@@ -5,6 +5,7 @@
   } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
   import { onMount } from "svelte";
+  import { Maximize, Lens, ClosePanel, Add } from './icons';
 
   const openFullscreenTab = async () => {
     // Send a message to the background sdaash
@@ -62,17 +63,48 @@
   });
 </script>
 
-<div class="flex justify-center flex-col items-center">
-  <button class="bg-red-400 p-4" on:click={openFullscreenTab}
-    >Open full screen</button
-  >
-  <div class="h-[490px] w-11/12 bg-[#2E3654] my-3 overflow-hidden">
-    {#each Object.values(credMap) as { username }}
+<div class="w-full h-full">
+  <div class="flex justify-between items-center mb-3">
+    <h6 class="text-2xl font-medium text-osvauld-highlightwhite tracking-wide">osvauld</h6>
+    <div>
+      <button class="" on:click={openFullscreenTab}>
+        <Maximize />
+      </button>
+      <button class="ml-5"> 
+        <ClosePanel/>
+      </button>
+    </div>
+  </div>
+
+  <div class="rounded-lg border border-osvauld-iconblack w-full min-h-[15rem] max-h-[33rem] p-4">
+    <div
+        class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-4"
+    >
+        <Lens />
+        <input
+            type="text"
+            class="h-7 w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-sm font-light focus:border-transparent focus:ring-0 cursor-pointer"
+            placeholder="Find what you need faster.."
+        />
+    </div>
+    <div class="bg-osvauld-bordergreen rounded-lg">
+      <div>
+        <span class="text-lg text-osvauld-quarzowhite">No passwords found!</span>
+        <p>Current page doesn't have a password in osvauld.</p>
+      </div>
+      <button
+      class="bg rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap"
+      >
+       <span class="mr-1"> Add Credential</span>
+        <Add />
+      </button>
+
+    </div>
+    <!-- {#each Object.values(credMap) as { username }}
       <div class="p-2 text-lg">
         {username}
       </div>
-    {/each}
-
+    {/each} -->
     <!-- {#if $credOpen}
       <CredsOpen />
     {:else}
