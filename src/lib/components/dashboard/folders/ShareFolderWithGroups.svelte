@@ -1,9 +1,15 @@
 <script lang="ts">
-    import { Group, GroupWithAccessType, CredentialFields } from "../dtos";
+    import {
+        Group,
+        GroupWithAccessType,
+        CredentialFields,
+        ShareFolderWithGroupsPayload,
+    } from "../dtos";
     import {
         fetchUsersByGroupIds,
         shareFolderWithGroups,
-        getGroupsWithoutAccess,
+        fetchGroupsWithoutAccess,
+        fetchFolderGroups,
     } from "../apis";
     import { createShareCredsPayload, setbackground } from "../helper";
     import { writable } from "svelte/store";
@@ -11,9 +17,8 @@
     import { onMount } from "svelte";
     import { Lens } from "../icons";
     import ListItem from "../components/ListItem.svelte";
-    import { fetchFolderGroups } from '../../../apis/folder.api';
-    import ExistingListParent from '../components/ExistingListParent.svelte';
-    import ShareToast from '../components/ShareToast.svelte';
+    import ExistingListParent from "../components/ExistingListParent.svelte";
+    import ShareToast from "../components/ShareToast.svelte";
 
     let groups: Group[] = [];
     export let credentialsFields: CredentialFields[];
@@ -25,7 +30,7 @@
     let searchInput = "";
     let shareToast = false;
     let existingItemDropdown = false;
-    let existingGroupsData: GroupWithAccessType[] = []
+    let existingGroupsData: GroupWithAccessType[] = [];
 
     $: filteredGroups = searchInput
         ? groups.filter((group) =>
@@ -33,12 +38,12 @@
           )
         : groups;
 
-
     const existingGroups = async () => {
-        existingItemDropdown = !existingItemDropdown
-        if(existingGroupsData.length === 0){
-            console.log('inside existingGroups')
-            existingGroupsData = await fetchFolderGroups($selectedFolder.id);
+        existingItemDropdown = !existingItemDropdown;
+        if (existingGroupsData.length === 0) {
+            console.log("inside existingGroups");
+            const reponseJson = await fetchFolderGroups($selectedFolder.id);
+            existingGroupsData = reponseJson.data;
         } else {
             existingGroupsData.length = 0;
         }
@@ -48,23 +53,25 @@
         const groupIds = Array.from($selectedGroups.keys());
         const response = await fetchUsersByGroupIds(groupIds);
         const groupUsersList = response.data;
-        const payload = [];
+        console.log(groupUsersList, "GroupUsersList");
+        const payload: ShareFolderWithGroupsPayload = {
+            folderId: $selectedFolder.id,
+            groupData: [],
+        };
         for (const groupUsers of groupUsersList) {
             const group = $selectedGroups.get(groupUsers.groupId);
             const userData = await createShareCredsPayload(
                 credentialsFields,
+                // @ts-ignore
                 groupUsers.userDetails,
             );
-            payload.push({
+            payload.groupData.push({
                 groupId: group.groupId,
                 accessType: group.accessType,
                 userData,
             });
         }
-        const shareStatus =  await shareFolderWithGroups({
-            folderId: $selectedFolder.id,
-            groupData: payload,
-        });
+        const shareStatus = await shareFolderWithGroups(payload);
         shareToast = shareStatus.success === true;
     };
 
@@ -106,7 +113,8 @@
 
     onMount(async () => {
         // TODO: change fetch all groups to fetch groups where folder not shared.
-        groups = await getGroupsWithoutAccess($selectedFolder.id);
+        const responseJson = await fetchGroupsWithoutAccess($selectedFolder.id);
+        groups = responseJson.data;
     });
 </script>
 
@@ -154,7 +162,10 @@
     </div>
 
     <div class="p-2 flex justify-between items-center box-border">
-        <button class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey">Cancel</button>
+        <button
+            class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
+            >Cancel</button
+        >
 
         <button
             class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
@@ -166,4 +177,9 @@
     {/if}
 </div>
 
-<ExistingListParent  {existingItemDropdown} existingItemsData={existingGroupsData} user={false} on:click={existingGroups}/>
+<ExistingListParent
+    {existingItemDropdown}
+    existingItemsData={existingGroupsData}
+    user={false}
+    on:click={existingGroups}
+/>

@@ -9,10 +9,9 @@
     import { selectedFolder, showFolderShareDrawer } from "../store";
     import { createShareCredsPayload, setbackground } from "../helper";
     import { Lens, DownArrow, RightArrow } from "../icons";
-    import ListItem from '../components/ListItem.svelte';
-    import ShareToast from '../components/ShareToast.svelte';
-    import ExistingListParent from '../components/ExistingListParent.svelte';
-
+    import ListItem from "../components/ListItem.svelte";
+    import ShareToast from "../components/ShareToast.svelte";
+    import ExistingListParent from "../components/ExistingListParent.svelte";
 
     export let users: User[];
     export let credentialsFields: CredentialFields[];
@@ -23,8 +22,8 @@
     let searchInput = "";
     let existingItemDropdown = false;
     let shareToast = false;
-    let existingUserData: UserWithAccessType[] = []
- 
+    let existingUserData: UserWithAccessType[] = [];
+
     $: filteredUsers = searchInput
         ? users.filter((user) =>
               user.name.toLowerCase().includes(searchInput.toLowerCase()),
@@ -32,9 +31,10 @@
         : users;
 
     const existingUsers = async () => {
-        existingItemDropdown = !existingItemDropdown
-        if(existingUserData.length === 0){
-            existingUserData = await fetchFolderUsers($selectedFolder.id);
+        existingItemDropdown = !existingItemDropdown;
+        if (existingUserData.length === 0) {
+            const responseJson = await fetchFolderUsers($selectedFolder.id);
+            existingUserData = responseJson.data;
         } else {
             existingUserData.length = 0;
         }
@@ -47,9 +47,10 @@
         );
         const shareFolderPayload: ShareFolderWithUsersPayload = {
             folderId: $selectedFolder.id,
+            // @ts-ignore
             userData,
         };
-        const shareStatus =  await shareFolderWithUsers(shareFolderPayload);
+        const shareStatus = await shareFolderWithUsers(shareFolderPayload);
         shareToast = shareStatus.success === true;
     };
 
@@ -81,22 +82,24 @@
     }
 </script>
 
-
-
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[50vh]">
-
-    <div class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-2">
-        <Lens/>
-        <input type="text" bind:value={searchInput} class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search for users">
+    <div
+        class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-2"
+    >
+        <Lens />
+        <input
+            type="text"
+            bind:value={searchInput}
+            class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+            placeholder="Search for users"
+        />
     </div>
 
     <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
 
- 
-
-    <div class="overflow-y-auto scrollbar-thin h-[35vh] bg-osvauld-frameblack w-full">
-
-
+    <div
+        class="overflow-y-auto scrollbar-thin h-[35vh] bg-osvauld-frameblack w-full"
+    >
         {#each selectedUsers as user, index}
             <ListItem
                 item={user}
@@ -123,7 +126,10 @@
     </div>
 
     <div class="p-2 flex justify-between items-center box-border">
-        <button class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey">Cancel</button>
+        <button
+            class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
+            >Cancel</button
+        >
 
         <button
             class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
@@ -133,10 +139,11 @@
     {#if shareToast}
         <ShareToast on:close={() => (shareToast = !shareToast)} />
     {/if}
-
 </div>
 
-
-<ExistingListParent {existingItemDropdown} existingItemsData={existingUserData} user={true} on:click={existingUsers}/>
-
-
+<ExistingListParent
+    {existingItemDropdown}
+    existingItemsData={existingUserData}
+    user={true}
+    on:click={existingUsers}
+/>

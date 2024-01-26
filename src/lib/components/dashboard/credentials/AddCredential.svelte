@@ -1,11 +1,15 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
-
+  import browser from "webextension-polyfill";
   import { ClosePanel, BinIcon } from "../icons";
   import { encryptCredentialsForUserNew } from "../../../utils/helperMethods";
 
-  import { selectedFolder, showAddCredentialDrawer } from "../store";
+  import {
+    selectedFolder,
+    showAddCredentialDrawer,
+    credentialStore,
+  } from "../store";
 
   import {
     fetchFolderUsers,
@@ -89,7 +93,12 @@
     }
     await addCredential(addCredentialPaylod);
     if ($selectedFolder === null) throw new Error("folder not selected");
-    await fetchCredentialsByFolder($selectedFolder.id);
+    const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
+    const response = await browser.runtime.sendMessage({
+      action: "decryptMeta",
+      data: responseJson.data,
+    });
+    credentialStore.set(response.data);
     showAddCredentialDrawer.set(false);
   };
 
@@ -100,7 +109,8 @@
       { fieldName: "URL", fieldValue: "https://", sensitive: false },
     ];
     if ($selectedFolder === null) throw new Error("folder not selected");
-    folderUsers = await fetchFolderUsers($selectedFolder.id);
+    const responseJson = await fetchFolderUsers($selectedFolder.id);
+    folderUsers = responseJson.data;
   });
 
   function closeDialog() {

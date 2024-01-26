@@ -4,16 +4,18 @@
   import { selectedFolder } from "../../store/folder.store";
   import { fetchAllFolders } from "../../apis/folder.api";
   import { fetchAllUserGroups } from "../../apis/group.api";
-  function select(choice: string) {
+  import { folderStore } from "../../store/folder.store";
+  const select = async (choice: string) => {
     if (choice === "Credentials") {
-      fetchAllFolders();
+      const responseJson = await fetchAllFolders();
+      folderStore.set(responseJson.data);
     } else {
       fetchAllUserGroups();
     }
     selectedPage.set(choice);
     selectedGroup.set(null);
     selectedFolder.set(null);
-  }
+  };
 </script>
 
 <div class="flex justify-center">
@@ -22,7 +24,8 @@
   >
     {#each ["Credentials", "Groups"] as item}
       <button
-        class="w-1/2 px-6 py-2 text-lg flex justify-center items-center rounded-lg focus:outline-none {$selectedPage === item
+        class="w-1/2 px-6 py-2 text-lg flex justify-center items-center rounded-lg focus:outline-none {$selectedPage ===
+        item
           ? 'bg-osvauld-lilacpink text-osvauld-ninjablack'
           : 'text-osvauld-quarzowhite'} "
         on:click={() => select(item)}

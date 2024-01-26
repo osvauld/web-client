@@ -1,6 +1,7 @@
 import { baseUrl } from "./temp";
+import { ChallengeResponse, AuthResponse } from "../dtos/response.dto";
 
-export const initiateAuth = async (signedText: string, publicKey: string) => {
+export const initiateAuth = async (signedText: string, publicKey: string): Promise<AuthResponse> => {
 
     return await fetch(`${baseUrl}/user/verify`, {
         method: "POST",
@@ -16,7 +17,7 @@ export const createChallenge = async (publicKey: string) => {
     }).then(res => res.json())
 };
 
-export const verifyNewUser = async (username: string, password: string, rsaKey: string, eccKey: string) => {
+export const verifyNewUser = async (username: string, password: string, rsaKey: string, eccKey: string): Promise<ChallengeResponse> => {
     return await fetch(`${baseUrl}/user/register`, {
 
         method: "POST",

@@ -11,19 +11,11 @@ export type Fields = {
   fieldType?: FieldType;
 }
 
-
-export type AddCredentialPayload = {
-  name: string;
-  description: string;
-  folderId: string;
-  credentialType: string;
-  userFields: UserEncryptedFields[];
-}
-
 export type UserEncryptedFields = {
   userId: string;
   fields: Fields[];
 }
+
 
 export type CredentialBasic = {
   credentialId?: string,
@@ -49,4 +41,9 @@ export type BasicFields = {
   fieldId: string;
   fieldValue: string;
 
+}
+
+export type UserEncryptedCredentials = {
+  userId: string;
+  credentials: CredentialFields[];
 }

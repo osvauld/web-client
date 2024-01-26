@@ -1,6 +1,6 @@
 import { createChallenge, initiateAuth, verifyNewUser } from "../apis/auth.api"
 import { signTextWithPrivateKey, derivePublicKeyFromECCPrivateKey, importRSAPublicKey, encryptWithPublicKey } from "./crypto"
-import { CredentialBasic } from "../dtos/credential.dto"
+import { CredentialFields } from "../dtos/credential.dto"
 
 
 export const intiateAuth = async (privateKey: CryptoKey): Promise<string> => {
@@ -19,11 +19,12 @@ export const verifyUser = async (username: string, password: string, rsaKey: str
 
 
 
-export const encryptCredentialsForUserNew = async (credentials: CredentialBasic[], publicKeyStr: string): Promise<CredentialBasic[]> => {
+export const encryptCredentialsForUserNew = async (credentials: CredentialFields[], publicKeyStr: string): Promise<CredentialFields[]> => {
     const publicKey = await importRSAPublicKey(publicKeyStr)
-    const encryptedCredsForUser: CredentialBasic[] = []
+    const encryptedCredsForUser: CredentialFields[] = []
     for (const credential of credentials) {
-        const encryptedCred: CredentialBasic = {
+        // @ts-ignore
+        const encryptedCred: CredentialFields = {
             fields: []
         }
         if (credential.credentialId) {

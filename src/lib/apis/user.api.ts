@@ -1,27 +1,20 @@
 import { baseUrl, } from "./temp";
-import { User } from "../dtos/user.dto";
 import browser from "webextension-polyfill";
+import { FetchAllUsersResponse } from "../dtos/response.dto";
 
-export const fetchAllUsers = async (): Promise<User[]> => {
+export const fetchAllUsers = async (): Promise<FetchAllUsersResponse> => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
 
-  const response = await fetch(`${baseUrl}/users`, {
+  return await fetch(`${baseUrl}/users`, {
     method: "GET",
     headers,
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const responseJson = await response.json();
-  const users: User[] = responseJson.data;
-  return users;
+  }).then(response => response.json());
 };
 
+// TODO: types for request and response
 export const createUser = async (payload: any) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
