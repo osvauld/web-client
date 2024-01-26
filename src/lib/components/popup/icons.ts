@@ -5,4 +5,4 @@ export { default as ClosePanel } from "../basic/closePanel.svelte";
 export { default as Add } from "../basic/add.svelte";
 export { default as DownArrow } from "../basic/downArrow.svelte";
 export { default as RightArrow } from "../basic/rightArrow.svelte";
-export { default as CopyIcon } from "../basic/copyIcon.svelte";
+export { default as ActiveCopy } from "../basic/activeCopy.svelte";
