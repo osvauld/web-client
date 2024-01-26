@@ -1,19 +1,15 @@
 <script lang="ts">
-    import CopyIcon from "../../basic/copyIcon.svelte";
     import { onMount } from "svelte";
     import { createEventDispatcher } from "svelte";
     import { fly } from "svelte/transition";
     import { fetchSensitiveFieldsByCredentialId } from "../apis";
-    import browser from "webextension-polyfill";
+    import EncryptedField from "./EncryptedField.svelte";
     import {
         More,
-        Locked,
-        Eye,
-        Unlocked,
         SensitiveEye,
         SensitiveEyeBlue,
         ActiveCopy,
-        ClosedEye,
+        CopyIcon,
     } from "../icons";
 
     const dispatch = createEventDispatcher();
@@ -21,7 +17,6 @@
     export let credential;
     export let index;
 
-    let visibility = false;
     let encryptedFields = [];
     let decrypted = false;
     let checked = false;
@@ -40,14 +35,11 @@
                 const response = await fetchSensitiveFieldsByCredentialId(
                     credential.credentialId,
                 );
+
                 encryptedFields = response.data;
                 encryptedFields.length >= 1
                     ? (sensitiveCard = true)
                     : (sensitiveCard = false);
-                encryptedFields = encryptedFields.map((item) => ({
-                    ...item,
-                    lockIcon: true,
-                }));
             }, 300);
         }
     }
@@ -59,22 +51,6 @@
         sensitiveCard = false;
     }
 
-    function makeVisible() {
-        visibility = !visibility;
-        setTimeout(() => {
-            visibility = false;
-        }, 3000);
-    }
-
-    const decrypt = async (encryptedFieldValue: string, index: number) => {
-        const response = await browser.runtime.sendMessage({
-            action: "decryptField",
-            data: encryptedFieldValue,
-        });
-        encryptedFields[index].fieldValue = response.data;
-        encryptedFields[index].lockIcon = false;
-        decrypted = true;
-    };
     onMount(async () => {
         checked = false;
     });
@@ -146,60 +122,12 @@
                 </div>
             {/each}
             {#if encryptedFields}
-                {#each encryptedFields as field, index}
-                    <div class="mb-4" in:fly out:fly>
-                        <label
-                            class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
-                            for={`input-${index}`}>{field.fieldName}</label
-                        >
-                        <div
-                            class="relative pr-2 input w-[95%] rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border border-osvauld-iconblack"
-                        >
-                            <input
-                                class={`text-osvauld-sheffieldgrey bg-osvauld-frameblack border-0 rounded-lg py-1 w-2/3`}
-                                type={`${
-                                    !field.lockIcon && visibility
-                                        ? "text"
-                                        : "password"
-                                }`}
-                                value={field.fieldValue}
-                            />
-                            <!-- If decrypt in not clicked yet -->
-                            {#if field.lockIcon}
-                                <button
-                                    on:click={() =>
-                                        decrypt(field.fieldValue, index)}
-                                >
-                                    <Locked />
-                                </button>
-                            {:else}
-                                <div class="flex justify-center items-center">
-                                    <!-- Unlocked Button -->
-                                    <button>
-                                        <Unlocked />
-                                    </button>
-
-                                    <!-- Visibility Toggle Button -->
-                                    <button on:click={makeVisible}>
-                                        {#if visibility}
-                                            <ClosedEye />
-                                        {:else}
-                                            <Eye />
-                                        {/if}
-                                    </button>
-
-                                    <!-- Copy Button -->
-                                    <button>
-                                        {#if hoverEffect}
-                                            <ActiveCopy />
-                                        {:else}
-                                            <CopyIcon />
-                                        {/if}
-                                    </button>
-                                </div>
-                            {/if}
-                        </div>
-                    </div>
+                {#each encryptedFields as field}
+                    <EncryptedField
+                        fieldName={field.fieldName}
+                        fieldValue={field.fieldValue}
+                        {hoverEffect}
+                    />
                 {/each}
             {/if}
         </div>
