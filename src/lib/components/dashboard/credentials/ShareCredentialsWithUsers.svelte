@@ -1,5 +1,10 @@
 <script lang="ts">
-    import { User, UserWithAccessType, CredentialFields } from "../dtos";
+    import {
+        User,
+        UserWithAccessType,
+        CredentialFields,
+        ShareCredentialsWithUsersPayload,
+    } from "../dtos";
     import { shareCredentialsWithUsers } from "../apis";
     import { createShareCredsPayload, setbackground } from "../helper";
     import { Lens } from "../icons";
@@ -26,8 +31,8 @@
             credentialsFields,
             selectedUsers,
         );
-        console.log(userData, "sharecredwithusers payload");
-        const payload: any = { userData };
+        // @ts-ignore
+        const payload: ShareCredentialsWithUsersPayload = { userData };
         const shareStatus = await shareCredentialsWithUsers(payload);
         shareToast = shareStatus.success === true;
     };

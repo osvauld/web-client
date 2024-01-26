@@ -1,7 +1,9 @@
 import browser from "webextension-polyfill";
 import { baseUrl, } from "./temp";
+import { BaseResponse, FetchAllUserUrlsResponse, FetchCredentialsByFolderResponse, FetchCredentialsFieldsByFolderIdResponse, FetchCredentialsFieldsByIdsResponse, FetchCredsByIdsResponse, FetchSensitiveFieldsByCredenitalIdResponse } from "../dtos/response.dto";
+import { AddCredentialPayload, ShareCredentialsWithUsersPayload } from "../dtos/request.dto";
 
-export const fetchCredentialsByFolder = async (folderId: string) => {
+export const fetchCredentialsByFolder = async (folderId: string): Promise<FetchCredentialsByFolderResponse> => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -25,7 +27,7 @@ export const fetchCredentialById = async (credentialId: string) => {
   }).then((response) => response.json());
 };
 
-export const addCredential = async (payload: any) => {
+export const addCredential = async (payload: AddCredentialPayload) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -41,7 +43,7 @@ export const addCredential = async (payload: any) => {
   return response;
 };
 
-export const fetchCredentialsFieldsByFolderId = async (folderId: string) => {
+export const fetchCredentialsFieldsByFolderId = async (folderId: string): Promise<FetchCredentialsFieldsByFolderIdResponse> => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -60,7 +62,7 @@ export const fetchCredentialsFieldsByFolderId = async (folderId: string) => {
   return response.json();
 };
 
-export const shareCredentialsWithUsers = async (shareCredential: any) => {
+export const shareCredentialsWithUsers = async (shareCredential: ShareCredentialsWithUsersPayload): Promise<BaseResponse> => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -80,7 +82,7 @@ export const shareCredentialsWithUsers = async (shareCredential: any) => {
   return response.json();
 };
 
-export const fetchCredentialsFieldsByIds = async (credentialIds: string[]) => {
+export const fetchCredentialsFieldsByIds = async (credentialIds: string[]): Promise<FetchCredentialsFieldsByIdsResponse> => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -100,7 +102,7 @@ export const fetchCredentialsFieldsByIds = async (credentialIds: string[]) => {
   return response.json();
 };
 
-export const fetchCredsByIds = async (credentialIds: string[]) => {
+export const fetchCredsByIds = async (credentialIds: string[]): Promise<FetchCredsByIdsResponse> => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -119,7 +121,7 @@ export const fetchCredsByIds = async (credentialIds: string[]) => {
   return response.json();
 }
 
-export const fetchAllUserUrls = async () => {
+export const fetchAllUserUrls = async (): Promise<FetchAllUserUrlsResponse> => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -137,7 +139,7 @@ export const fetchAllUserUrls = async () => {
   return response.json();
 }
 
-export const fetchSensitiveFieldsByCredentialId = async (credentialId: string) => {
+export const fetchSensitiveFieldsByCredentialId = async (credentialId: string): Promise<FetchSensitiveFieldsByCredenitalIdResponse> => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;

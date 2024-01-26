@@ -13,8 +13,9 @@
             allUsersPromise,
         ]);
         // TODO: API to fetch non group members.
-        users = allUsers.filter(
-            (user) => !userGroup.some((groupUser) => groupUser.id === user.id),
+        users = allUsers.data.filter(
+            (user) =>
+                !userGroup.data.some((groupUser) => groupUser.id === user.id),
         );
     });
 

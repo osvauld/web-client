@@ -1,8 +1,13 @@
 
 import browser from 'webextension-polyfill';
-import { CredentialFields, CredentialsForUsersPayload, UserWithAccessType } from './dtos';
+import { CredentialFields, UserWithAccessType } from './dtos';
 import { encryptCredentialsForUserNew } from "../../utils/helperMethods";
 
+type CredentialsForUsersPayload = {
+    accessType?: string;
+    userId: string;
+    credentials: CredentialFields[];
+}
 export const createShareCredsPayload = async (creds: CredentialFields[], selectedUsers: UserWithAccessType[]): Promise<CredentialsForUsersPayload[]> => {
 
 
@@ -11,7 +16,7 @@ export const createShareCredsPayload = async (creds: CredentialFields[], selecte
         data: creds,
     });
 
-    const userData: any = [];
+    const userData: CredentialsForUsersPayload[] = [];
     for (const user of selectedUsers) {
         const userEncryptedFields = await encryptCredentialsForUserNew(
             response.data,

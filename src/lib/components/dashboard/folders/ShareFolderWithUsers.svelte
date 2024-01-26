@@ -47,6 +47,7 @@
         );
         const shareFolderPayload: ShareFolderWithUsersPayload = {
             folderId: $selectedFolder.id,
+            // @ts-ignore
             userData,
         };
         const shareStatus = await shareFolderWithUsers(shareFolderPayload);

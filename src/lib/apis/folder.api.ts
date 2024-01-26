@@ -1,6 +1,6 @@
 import { baseUrl } from "./temp";
 import browser from "webextension-polyfill";
-import { ShareFolderWithUsersPayload } from "../dtos/folder.dto";
+import { ShareFolderWithUsersPayload, ShareFolderWithGroupsPayload } from "../dtos/request.dto";
 import { FolderGroupResponse, FolderUserResponse, BaseResponse, FetchAllFoldersResponse } from "../dtos/response.dto";
 
 export const fetchAllFolders = async (): Promise<FetchAllFoldersResponse> => {
@@ -83,7 +83,7 @@ export const shareFolderWithUsers = async (payload: ShareFolderWithUsersPayload)
   return response.json();
 };
 
-export const shareFolderWithGroups = async (payload: any) => {
+export const shareFolderWithGroups = async (payload: ShareFolderWithGroupsPayload) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;

@@ -1,9 +1,14 @@
 <script lang="ts">
-    import { Group, GroupWithAccessType, CredentialFields } from "../dtos";
+    import {
+        Group,
+        GroupWithAccessType,
+        CredentialFields,
+        ShareFolderWithGroupsPayload,
+    } from "../dtos";
     import {
         fetchUsersByGroupIds,
         shareFolderWithGroups,
-        getGroupsWithoutAccess,
+        fetchGroupsWithoutAccess,
         fetchFolderGroups,
     } from "../apis";
     import { createShareCredsPayload, setbackground } from "../helper";
@@ -48,23 +53,25 @@
         const groupIds = Array.from($selectedGroups.keys());
         const response = await fetchUsersByGroupIds(groupIds);
         const groupUsersList = response.data;
-        const payload = [];
+        console.log(groupUsersList, "GroupUsersList");
+        const payload: ShareFolderWithGroupsPayload = {
+            folderId: $selectedFolder.id,
+            groupData: [],
+        };
         for (const groupUsers of groupUsersList) {
             const group = $selectedGroups.get(groupUsers.groupId);
             const userData = await createShareCredsPayload(
                 credentialsFields,
+                // @ts-ignore
                 groupUsers.userDetails,
             );
-            payload.push({
+            payload.groupData.push({
                 groupId: group.groupId,
                 accessType: group.accessType,
                 userData,
             });
         }
-        const shareStatus = await shareFolderWithGroups({
-            folderId: $selectedFolder.id,
-            groupData: payload,
-        });
+        const shareStatus = await shareFolderWithGroups(payload);
         shareToast = shareStatus.success === true;
     };
 
@@ -106,7 +113,8 @@
 
     onMount(async () => {
         // TODO: change fetch all groups to fetch groups where folder not shared.
-        groups = await getGroupsWithoutAccess($selectedFolder.id);
+        const responseJson = await fetchGroupsWithoutAccess($selectedFolder.id);
+        groups = responseJson.data;
     });
 </script>
 

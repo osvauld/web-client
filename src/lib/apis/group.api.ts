@@ -1,9 +1,10 @@
 import { groupStore } from "../store/group.store";
 import { baseUrl, } from "./temp";
-import { User } from "../dtos/user.dto";
 import browser from "webextension-polyfill";
+import { FetchAllUserGroupsResponse, FetchGroupUsersResponse, FetchGroupsWithoutAccessResponse, fetchUsersByGroupIdsResponse } from "../dtos/response.dto";
+import { CreateGroupPayload, ShareCredentialsWithGroupsPayload } from "../dtos/request.dto";
 
-export const fetchAllUserGroups = async () => {
+export const fetchAllUserGroups = async (): Promise<FetchAllUserGroupsResponse> => {
   // TODO: change store setting from here.
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -19,19 +20,19 @@ export const fetchAllUserGroups = async () => {
     });
 };
 
-export const fetchGroupUsers = async (id: string): Promise<User[]> => {
+export const fetchGroupUsers = async (id: string): Promise<FetchGroupUsersResponse> => {
 
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
-  const response = await fetch(`${baseUrl}/group/${id}`, {
+  return await fetch(`${baseUrl}/group/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   }).then((response) => response.json());
-  return response.data;
+
 };
 
-export const createGroup = async (payload: any) => {
+export const createGroup = async (payload: CreateGroupPayload) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -51,7 +52,7 @@ export const createGroup = async (payload: any) => {
   return response.json();
 };
 
-
+// TODO: add type for payload
 export const addUserToGroup = async (payload: any) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
@@ -73,7 +74,7 @@ export const addUserToGroup = async (payload: any) => {
 }
 
 
-export const fetchUsersByGroupIds = async (ids: string[]) => {
+export const fetchUsersByGroupIds = async (ids: string[]): Promise<fetchUsersByGroupIdsResponse> => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -87,7 +88,7 @@ export const fetchUsersByGroupIds = async (ids: string[]) => {
   return responseJson;
 }
 
-export const shareCredentialsWithGroups = async (payload: any) => {
+export const shareCredentialsWithGroups = async (payload: ShareCredentialsWithGroupsPayload) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
@@ -106,13 +107,13 @@ export const shareCredentialsWithGroups = async (payload: any) => {
   return response.json();
 }
 
-export const getGroupsWithoutAccess = async (folderId: string) => {
+export const fetchGroupsWithoutAccess = async (folderId: string): Promise<FetchGroupsWithoutAccessResponse> => {
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
-  const response = await fetch(`${baseUrl}/groups/without-access/${folderId}`, {
+  return await fetch(`${baseUrl}/groups/without-access/${folderId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   }).then((response) => response.json());
-  return response.data;
+
 }

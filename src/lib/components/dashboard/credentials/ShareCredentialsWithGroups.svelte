@@ -1,5 +1,10 @@
 <script lang="ts">
-    import { Group, GroupWithAccessType, CredentialFields } from "../dtos";
+    import {
+        Group,
+        GroupWithAccessType,
+        CredentialFields,
+        ShareCredentialsWithGroupsPayload,
+    } from "../dtos";
     import { writable } from "svelte/store";
     import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
     import { createShareCredsPayload, setbackground } from "../helper";
@@ -26,22 +31,22 @@
         const groupIds = Array.from($selectedGroups.keys());
         const response = await fetchUsersByGroupIds(groupIds);
         const groupUsersList = response.data;
-        const payload = [];
+        const payload: ShareCredentialsWithGroupsPayload = {
+            groupData: [],
+        };
         for (const groupUsers of groupUsersList) {
             const group = $selectedGroups.get(groupUsers.groupId);
             const userData = await createShareCredsPayload(
                 credentialsFields,
                 groupUsers.userDetails,
             );
-            payload.push({
+            payload.groupData.push({
                 groupId: group.groupId,
                 accessType: group.accessType,
                 userData,
             });
         }
-        const shareStatus = await shareCredentialsWithGroups({
-            groupData: payload,
-        });
+        const shareStatus = await shareCredentialsWithGroups(payload);
 
         shareToast = shareStatus.success === true;
     };
