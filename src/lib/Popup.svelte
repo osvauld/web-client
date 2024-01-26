@@ -40,7 +40,7 @@
 </script>
 
 <main>
-  <div class=" w-[22.5rem] h-[37.78rem] p-5 overflow-hidden bg-osvauld-frameblack">
+  <div class=" w-[22.5rem] h-[37.78rem] p-2 pt-3 overflow-hidden bg-osvauld-frameblack">
     <Home />
     <!-- {#if !$isSignedUp}
       <Signup />

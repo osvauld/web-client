@@ -5,7 +5,13 @@
   } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
   import { onMount } from "svelte";
-  import { Maximize, Lens, ClosePanel, Add } from './icons';
+  import { Maximize, Lens, ClosePanel, RightArrow, DownArrow } from './icons';
+  import PasswordNotFound from './components/PasswordNotFound.svelte';
+
+
+  let passwordFound = true;
+  let  credentials = ['username', 'username', 'username'];
+  let credentialClicked = false;
 
   const openFullscreenTab = async () => {
     // Send a message to the background sdaash
@@ -64,7 +70,7 @@
 </script>
 
 <div class="w-full h-full">
-  <div class="flex justify-between items-center mb-3">
+  <div class="flex justify-between items-center mb-3 px-4 py-0">
     <h6 class="text-2xl font-medium text-osvauld-highlightwhite tracking-wide">osvauld</h6>
     <div>
       <button class="" on:click={openFullscreenTab}>
@@ -76,7 +82,7 @@
     </div>
   </div>
 
-  <div class="rounded-lg border border-osvauld-iconblack w-full min-h-[15rem] max-h-[33rem] p-4">
+  <div class="rounded-lg border border-osvauld-iconblack w-full min-h-[15rem] max-h-[33rem] p-3">
     <div
         class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-4"
     >
@@ -87,19 +93,26 @@
             placeholder="Find what you need faster.."
         />
     </div>
-    <div class="bg-osvauld-bordergreen rounded-lg h-[10rem] flex flex-col justify-between p-3">
-      <div>
-        <span class="text-base text-osvauld-quarzowhite">No passwords found!</span>
-        <p class="text-osvauld-sheffieldgrey text-sm">Current page doesn't have a password in osvauld.</p>
+   
+    {#if !passwordFound}
+      <PasswordNotFound/>
+    {:else}
+      <div class="h-auto p-0">
+        <div class="border-b border-osvauld-iconblack w-[calc(100%+1.55rem)] -translate-x-[0.8rem] mb-3"></div>
+        {#each credentials as credential, index}
+        <button class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex justify-between items-center w-full mb-3" on:click={()=> credentialClicked = !credentialClicked}>
+          <span class="text-base font-semibold tracking-wide">{credential}</span>
+          <span class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px]">
+            {#if credentialClicked}
+               <DownArrow type={'common'} />
+            {:else}
+               <RightArrow />
+            {/if}
+        </span>
+        </button>
+        {/each}
       </div>
-      <button
-      class="w-2/3 rounded-md py-2 px-4 mr-2 bg-osvauld-carolinablue text-osvauld-ninjablack text-base font-normal flex justify-center items-center whitespace-nowrap"
-      >
-       <span class="mr-1"> Add credential</span>
-        <Add />
-      </button>
-
-    </div>
+    {/if}
     <!-- {#each Object.values(credMap) as { username }}
       <div class="p-2 text-lg">
         {username}
