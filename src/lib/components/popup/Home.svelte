@@ -5,7 +5,7 @@
   } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
   import { onMount } from "svelte";
-  import { Maximize, Lens, RightArrow, DownArrow } from './icons';
+  import { Maximize, Lens, RightArrow, DownArrow, ActiveCopy } from './icons';
   import PasswordNotFound from './components/PasswordNotFound.svelte';
   import EncryptedField from "./components/EncryptedField.svelte"
 
@@ -66,6 +66,7 @@
       }
       credMap[cred.credentialId] = { username, password };
     }
+    console.log('credmap', credMap);
   });
 
 
@@ -115,10 +116,10 @@
       <div class="h-auto p-0">
         <div class="border-b border-osvauld-iconblack w-[calc(100%+1.55rem)] -translate-x-[0.8rem] mb-3"></div>
         <div class="h-[25rem] overflow-y-scroll scrollbar-thin">
-        {#each creds as credential, index}
+        {#each Object.values(credMap) as credential, index}
         <button class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex flex-col justify-center items-center w-[98%] mb-3 cursor-default" on:click={()=>dropDownClicked(index)}>
              <div class="w-full flex justify-between items-center { updatedIndex === index ? "text-osvauld-quarzowhite mb-2":""}">
-                  <span class="text-base font-medium tracking-wide ">{credential.name}</span>
+                  <span class="text-base font-medium tracking-wide ">{credential.username}</span>
                   <button class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px] cursor-pointer">
                     {#if credentialClicked && updatedIndex === index}
                       <DownArrow type={'common'} />
@@ -128,12 +129,29 @@
                   </button>
             </div>
             {#if credentialClicked && updatedIndex === index}
-              <div class="rounded-lg h-[10rem] bg-osvauld-bordergreen p-2 w-full overflow-y-scroll">
+              <!-- <div class="rounded-lg h-[10rem] bg-osvauld-bordergreen p-2 w-full overflow-y-scroll">
               {#each credential.fields as field, index}
                 <EncryptedField fieldName={field.fieldName}
                 fieldValue={field.fieldValue}
                 />
               {/each}
+            </div> -->
+            <div class="rounded-lg h-[10rem] bg-osvauld-bordergreen p-2 w-full overflow-y-scroll">
+              <div class="mb-2">
+                <label
+                    class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
+                    for={`input-`}>Username</label
+                >
+                    <div class="w-full rounded-lg bg-osvauld-bordergreen border border-osvauld-iconblack text-osvauld-quarzowhite font-normal text-sm flex justify-between items-center px-2 py-1"
+                      > 
+                            <span>{credential.username}</span>
+                            <button class=""><ActiveCopy />
+                            </button>
+                </div>
+             </div>
+             <EncryptedField fieldName={"Password"}
+             fieldValue={credential.password}
+             />
             </div>
             {/if}
         </button>
