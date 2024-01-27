@@ -5,17 +5,18 @@
   } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
   import { onMount } from "svelte";
-  import { Maximize, Lens, ClosePanel, RightArrow, DownArrow, ActiveCopy } from './icons';
+  import { Maximize, Lens, RightArrow, DownArrow } from './icons';
   import PasswordNotFound from './components/PasswordNotFound.svelte';
+  import EncryptedField from "./components/EncryptedField.svelte"
 
 
-  let passwordFound = true;
-  let  credentials = ['username', 'username', 'username','username', 'username', 'username', 'username', 'username', 'username','username', 'username', 'username'];
+  let passwordFound = false;
   let credentialClicked = false;
   let updatedIndex
+  let domain = null;
+  let creds = [];
 
   const openFullscreenTab = async () => {
-    // Send a message to the background sdaash
     console.log("Opening fullscreen tab");
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
   };
@@ -28,9 +29,8 @@
   };
   let credMap: CredMap = {};
   onMount(async () => {
-    let creds = [];
+  
     const responseJson = await fetchAllUserUrls();
-    console.log("URLS", responseJson.data);
     const urls = responseJson.data;
 
     const tabs = await browser.tabs.query({
@@ -39,16 +39,15 @@
     });
     const activeTab = tabs[0];
     const url = new URL(activeTab.url);
-    const domain = url.hostname;
+     domain = url.hostname;
     const { credIds } = await browser.runtime.sendMessage({
       action: "updateAllUrls",
       data: { urls, domain },
     });
-    console.log(credIds, "bg-response");
     if (credIds.length > 0) {
+      passwordFound = true;
       const responseJson = await fetchCredsByIds(credIds);
       creds = responseJson.data;
-      console.log(creds, "creds");
     }
     for (let cred of creds) {
       let username = "";
@@ -87,16 +86,18 @@
   </div>
 
   <div class="rounded-lg border border-osvauld-iconblack w-full min-h-[15rem] max-h-[33rem] p-3 overflow-hidden">
+    
     {#if passwordFound}
       <div class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm">
           <span class="text-base">
-            google.com
+            {domain}
           </span>
           <span class="text-osvauld-sheffieldgrey">
-            4
+            {creds.length}
           </span>
       </div>
     {/if}
+
     <div
         class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-4"
     >
@@ -114,10 +115,10 @@
       <div class="h-auto p-0">
         <div class="border-b border-osvauld-iconblack w-[calc(100%+1.55rem)] -translate-x-[0.8rem] mb-3"></div>
         <div class="h-[25rem] overflow-y-scroll scrollbar-thin">
-        {#each credentials as credential, index}
+        {#each creds as credential, index}
         <button class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex flex-col justify-center items-center w-[98%] mb-3 cursor-default" on:click={()=>dropDownClicked(index)}>
              <div class="w-full flex justify-between items-center { updatedIndex === index ? "text-osvauld-quarzowhite mb-2":""}">
-                  <span class="text-base font-medium tracking-wide ">{credential}</span>
+                  <span class="text-base font-medium tracking-wide ">{credential.name}</span>
                   <button class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px] cursor-pointer">
                     {#if credentialClicked && updatedIndex === index}
                       <DownArrow type={'common'} />
@@ -126,36 +127,19 @@
                     {/if}
                   </button>
             </div>
-        {#if credentialClicked && updatedIndex === index}
-          <div class="rounded-lg h-[10rem] bg-osvauld-bordergreen p-2 w-full">
-            <div class="mb-4">
-              <label
-                  class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
-                  for={`input-`}>{credential}</label
-              >
-                  <div class="w-full rounded-lg bg-osvauld-bordergreen border border-osvauld-iconblack text-osvauld-quarzowhite font-normal text-sm flex justify-between items-center px-2 py-1"
-                    > 
-                          <span>tonyantony300@gmail.com</span>
-                          <button class=""><ActiveCopy />
-                          </button>
-              </div>
-           </div>
-          </div>
-        {/if}
+            {#if credentialClicked && updatedIndex === index}
+              <div class="rounded-lg h-[10rem] bg-osvauld-bordergreen p-2 w-full overflow-y-scroll">
+              {#each credential.fields as field, index}
+                <EncryptedField fieldName={field.fieldName}
+                fieldValue={field.fieldValue}
+                />
+              {/each}
+            </div>
+            {/if}
         </button>
         {/each}
       </div>
       </div>
     {/if}
-    <!-- {#each Object.values(credMap) as { username }}
-      <div class="p-2 text-lg">
-        {username}
-      </div>
-    {/each} -->
-    <!-- {#if $credOpen}
-      <CredsOpen />
-    {:else}
-      <CredsListed />
-    {/if} -->
   </div>
 </div>
