@@ -21,8 +21,8 @@
   onMount(() => {
     unsubscribe = selectedGroup.subscribe((value) => {
       if (value) {
-        fetchGroupUsers(value.groupId).then((users) => {
-          groupUsers = users;
+        fetchGroupUsers(value.groupId).then((usersResponse) => {
+          groupUsers = usersResponse.data;
         });
       }
     });
