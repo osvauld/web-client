@@ -22,7 +22,6 @@
         <span class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px]">
             {#if existingItemDropdown}
                <DownArrow type={'common'} />
-               
             {:else}
                <RightArrow />
             {/if}
