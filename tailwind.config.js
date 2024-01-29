@@ -7,6 +7,8 @@ export default {
       md: "768px",
       lg: "1024px",
       xl: "1280px",
+      "2xl": "1536px",
+      "3xl": "1920px",
     },
     extend: {
       colors: {
@@ -94,7 +96,17 @@ export default {
           '"Plus Jakarta Sans"',
         ],
       },
+      fontSize: {
+        base: "16px",
+        lg: "18px",
+        xl: "20px",
+        "2xl": "24px",
+      },
     },
   },
-  plugins: [require("@tailwindcss/forms")],
+  plugins: [
+    require("@tailwindcss/forms"),
+    require("tailwindcss"),
+    require("autoprefixer"),
+  ],
 };
