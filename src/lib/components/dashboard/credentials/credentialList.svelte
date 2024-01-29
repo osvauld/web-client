@@ -74,12 +74,12 @@
         </button>
       {/if}
       <div
-        class="h-[34px] w-1/4 px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer"
+        class="h-[34px] w-1/4 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
       >
         <Lens />
         <input
           type="text"
-          class="h-[28px] w-full bg-osvauld-ninjablack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+          class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
           placeholder="Find what you need faster.."
         />
       </div>
@@ -128,8 +128,8 @@
       </button>
     </button>
   {/if}
-  <div class="flex">
-    <div class="flex flex-wrap p-3 w-full">
+  <div class="flex overflow-y-scroll">
+    <div class="flex flex-wrap p-3 w-full h-auto overflow-y-scroll">
       {#each $credentialStore as credential, index}
         <CredentialCard
           {credential}

@@ -17,7 +17,7 @@
     <label
         class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
         for="field">{fieldName}</label>
-    <div class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base bg-osvauld-frameblack border-osvauld-iconblack {
+    <div class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base bg-osvauld-bordergreen border-osvauld-iconblack {
         hoverEffect
             ? 'text-osvauld-quarzowhite'
             : 'text-osvauld-sheffieldgrey'
