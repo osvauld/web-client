@@ -35,7 +35,7 @@
 
 <div class="mb-4" in:fly out:fly>
     <div
-        class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
+        class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
     >
         {fieldName}
     </div>
@@ -43,11 +43,11 @@
         class="relative pr-2 input w-[95%] rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border border-osvauld-iconblack"
     >
         <div
-            class="text-osvauld-sheffieldgrey bg-osvauld-frameblack border-0 rounded-lg py-1 w-2/3 text-left {hoverEffect
+            class="py-1 px-3 w-full flex justify-between items-center rounded-lg text-base  {hoverEffect
                 ? 'text-osvauld-quarzowhite'
                 : 'text-osvauld-sheffieldgrey'}"
         >
-            {decrypted && visibility ? decryptedValue : "•".repeat(8)}
+            {decrypted && visibility ? decryptedValue : "*".repeat(8)}
         </div>
         {#if !decrypted}
             <button on:click={decrypt}>

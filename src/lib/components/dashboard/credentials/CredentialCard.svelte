@@ -1,15 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { createEventDispatcher } from "svelte";
-    import { fly } from "svelte/transition";
     import { fetchSensitiveFieldsByCredentialId } from "../apis";
     import EncryptedField from "./EncryptedField.svelte";
+    import PlainField from './PlainField.svelte';
     import {
         More,
         SensitiveEye,
         SensitiveEyeBlue,
-        ActiveCopy,
-        CopyIcon,
     } from "../icons";
 
     const dispatch = createEventDispatcher();
@@ -55,16 +53,17 @@
         checked = false;
     });
 
-    /* eslint-disable */
+ 
 </script>
 
-<div
+
+<button
     class="mb-3 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
     on:mouseenter={handleMouseEnter}
     on:mouseleave={handleMouseLeave}
 >
     <button
-        class="container mx-auto p-3 relative group bg-osvauld-frameblack rounded-xl"
+        class="container mx-auto py-3 pl-3 pr-3 relative group bg-osvauld-frameblack rounded-xl"
     >
         <div
             class="flex justify-center items-center border-osvauld-iconblack pb-2"
@@ -88,38 +87,16 @@
             class="border-b border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3"
         ></div>
         <div
-            class="w-[260px] h-[240px] overflow-y-scroll scrollbar-thin {hoverEffect
+            class="w-[17rem] h-[16rem] overflow-y-scroll scrollbar-thin {hoverEffect
                 ? 'active'
                 : ''} mt-2"
         >
-            {#each credential?.fields as field, index}
-                <div class="mb-4">
-                    <label
-                        class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
-                        for={`input-${index}`}>{field.fieldName}</label
-                    >
-                    <div class="relative">
-                        <input
-                            class={`input py-1 pr-10 w-[95%] rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack ${
-                                hoverEffect
-                                    ? "text-osvauld-quarzowhite"
-                                    : "text-osvauld-sheffieldgrey"
-                            }`}
-                            type="text"
-                            value={field.fieldValue}
-                        />
-
-                        <button
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2"
-                        >
-                            {#if hoverEffect}
-                                <ActiveCopy />
-                            {:else}
-                                <CopyIcon />
-                            {/if}
-                        </button>
-                    </div>
-                </div>
+            {#each credential.fields as field, index}
+                    <PlainField
+                    fieldName={field.fieldName}
+                    fieldValue={field.fieldValue}
+                    {hoverEffect}
+                />
             {/each}
             {#if encryptedFields}
                 {#each encryptedFields as field}
@@ -133,16 +110,17 @@
         </div>
         <label
             class="text-osvauld-dusklabel block text-left text-sm font-normal"
+            for="credential-description"
         >
             Description
         </label>
-        <textarea
-            class="mt-4 w-full h-auto min-h-[4rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base
+        <div
+            class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll  bg-osvauld-frameblack rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
             {hoverEffect
                 ? 'text-osvauld-quarzowhite'
                 : 'text-osvauld-sheffieldgrey'}"
-            value={credential.description}
-        />
+            id="credential-description"
+        >{credential.description}</div>
 
         <div
             class="border-t border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3 my-2"
@@ -167,4 +145,4 @@
             </span>
         </div>
     </button>
-</div>
+</button>
