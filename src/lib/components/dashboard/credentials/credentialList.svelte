@@ -74,12 +74,12 @@
         </button>
       {/if}
       <div
-        class="h-[34px] w-1/4 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+        class="h-[2.1rem] w-1/4 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
       >
         <Lens />
         <input
           type="text"
-          class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+          class="h-[1.76rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
           placeholder="Find what you need faster.."
         />
       </div>

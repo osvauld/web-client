@@ -128,7 +128,7 @@
   out:fly
 >
   <div class="flex justify-between items-center px-12 py-9">
-    <p class="text-[28px] font-sans font-normal text-osvauld-quarzowhite">
+    <p class="text-[1.78rem] font-sans font-normal text-osvauld-quarzowhite">
       Add Credential
     </p>
     <button class="bg-osvauld-frameblack" on:click={closeDialog}
@@ -140,7 +140,7 @@
 
   <div class="mx-6">
     <input
-      class=" w-full h-[60px] my-2 ml-4 bg-osvauld-frameblack border-0 rounded-none text-2xl text-osvauld-quarzowhite font-normal focus:ring-0 focus:ring-offset-0"
+      class=" w-full h-[3.8rem] my-2 ml-4 bg-osvauld-frameblack border-0 rounded-none text-2xl text-osvauld-quarzowhite font-normal focus:ring-0 focus:ring-offset-0"
       id="name"
       type="text"
       placeholder="Enter Credential name"
@@ -151,14 +151,14 @@
       <div class="field-container rounded-sm transition relative">
         <div class="flex items-center justify-between p-4">
           <input
-            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[256px] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
+            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[16rem] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
             id={`key-${index}`}
             type="text"
             placeholder="Username"
             bind:value={field.fieldName}
           />
           <input
-            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[256px] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
+            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[16rem] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
             id={`value-${index}`}
             type="text"
             placeholder="Enter value"
@@ -197,7 +197,7 @@
             </label>
             {#if index === hoveredIndex}
               <span
-                class="absolute top-[-60px] left-[-25px] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle"
+                class="absolute top-[-3.75rem] left-[-1.5625rem] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle"
                 >Sensitive</span
               >
             {/if}
@@ -233,12 +233,12 @@
   <div class="border-b border-osvauld-iconblack w-full my-2"></div>
   <div class="flex justify-end items-center mx-10 py-2">
     <button
-      class="text-osvauld-sheffieldgrey border border-osvauld-iconblack px-[52px] w-1/3 py-2.5 rounded-lg mb-6 bg-osvauld-placeholderblack mr-3"
+      class="text-osvauld-sheffieldgrey border border-osvauld-iconblack px-[3.25rem] w-1/3 py-2.5 rounded-lg mb-6 bg-osvauld-placeholderblack mr-3"
       on:click={closeDialog}>Cancel</button
     >
 
     <button
-      class="bg-macchiato-blue px-[52px] py-2.5 rounded-lg mb-6 text-macchiato-surface0"
+      class="bg-macchiato-blue px-[3.25rem] py-2.5 rounded-lg mb-6 text-macchiato-surface0"
       on:click={saveCredential}>Add credential</button
     >
   </div>

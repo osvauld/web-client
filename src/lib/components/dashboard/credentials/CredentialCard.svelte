@@ -84,7 +84,7 @@
             <More />
         </div>
         <div
-            class="border-b border-osvauld-iconblack w-[calc(100%+24px)] -translate-x-3"
+            class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
         ></div>
         <div
             class="w-[17rem] h-[16rem] overflow-y-scroll scrollbar-thin {hoverEffect
@@ -123,7 +123,7 @@
         >{credential.description}</div>
 
         <div
-            class="border-t border-osvauld-iconblack w-[calc(100%+24px)] -translate-x-3 my-2"
+            class="border-t border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3 my-2"
         ></div>
         <div class="flex justify-start">
             <span

@@ -67,13 +67,13 @@
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">
     <div
-        class="h-[30px] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer"
+        class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer"
     >
         <Lens />
         <input
             type="text"
             bind:value={searchInput}
-            class="h-[28px] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+            class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
             placeholder="Search for users"
         />
     </div>
