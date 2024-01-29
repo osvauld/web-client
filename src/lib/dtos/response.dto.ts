@@ -107,3 +107,6 @@ export type FetchCredentialUsersResponse = BaseResponse & {
 export type FetchCredentialGroupsResponse = BaseResponse & {
     data: GroupWithAccessType[]
 }
+export type FetchUsersWithoutGroupAccess = BaseResponse & {
+    data: User[]
+}
