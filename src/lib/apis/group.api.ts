@@ -1,4 +1,3 @@
-import { groupStore } from "../store/group.store";
 import { baseUrl, } from "./temp";
 import browser from "webextension-polyfill";
 import { FetchAllUserGroupsResponse, FetchGroupUsersResponse, FetchGroupsWithoutAccessResponse, fetchUsersByGroupIdsResponse } from "../dtos/response.dto";
@@ -14,10 +13,6 @@ export const fetchAllUserGroups = async (): Promise<FetchAllUserGroupsResponse> 
     },
   })
     .then((response) => response.json())
-    .then((responseJson) => {
-      groupStore.set(responseJson.data);
-      return responseJson.data;
-    });
 };
 
 export const fetchGroupUsers = async (id: string): Promise<FetchGroupUsersResponse> => {

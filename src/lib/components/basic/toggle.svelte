@@ -1,6 +1,6 @@
 <script lang="ts">
   import { selectedPage } from "../../store/ui.store";
-  import { selectedGroup } from "../../store/group.store";
+  import { groupStore, selectedGroup } from "../../store/group.store";
   import { selectedFolder } from "../../store/folder.store";
   import { fetchAllFolders } from "../../apis/folder.api";
   import { fetchAllUserGroups } from "../../apis/group.api";
@@ -10,7 +10,8 @@
       const responseJson = await fetchAllFolders();
       folderStore.set(responseJson.data);
     } else {
-      fetchAllUserGroups();
+      const responseJson = await fetchAllUserGroups();
+      groupStore.set(responseJson.data);
     }
     selectedPage.set(choice);
     selectedGroup.set(null);
