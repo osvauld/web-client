@@ -40,7 +40,7 @@
         {fieldName}
     </div>
     <div
-        class="relative pr-2 input w-[95%] rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-frameblack border border-osvauld-iconblack"
+        class="relative pr-2 input w-[95%] rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-bordergreen border border-osvauld-iconblack"
     >
         <div
             class="py-1 px-3 w-full flex justify-between items-center rounded-lg text-base  {hoverEffect

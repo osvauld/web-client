@@ -4,13 +4,13 @@
   import SideList from "./SideList.svelte";
 </script>
 
-<div class="flex justify-center items-center h-[124px]">
+<div class="flex justify-center items-center h-[7.8rem]">
   <Logo />
 </div>
 
 
 <Toggle />
 <!-- Add scrolbar style -->
-<div class="scroll-m-0 scroll-smooth justify-center flex items-center mt-6">
+<div class="scroll-m-0 h-auto scroll-smooth justify-center flex items-center mt-6">
   <SideList />
 </div>

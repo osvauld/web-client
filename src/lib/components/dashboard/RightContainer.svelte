@@ -8,17 +8,17 @@
 </script>
 
 <div class="flex flex-col h-auto">
-  <div class="h-[124px] pr-4 flex justify-between items-center ">
-    <div class="h-[30px] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer">
+  <div class="h-[7.8rem] pr-4 flex justify-between items-center ">
+    <div class="h-[1.9rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer">
       <Lens/>
-      <input type="text" class="h-[28px] w-full bg-osvauld-ninjablack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search">
+      <input type="text" class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite  placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer" placeholder="Search">
     </div>
     <div><Profile/></div>
     <!-- Content for the top part (search bar) -->
     <!-- Horizontal line -->
   </div>
 
-  <div class="h-auto bg-osvauld-ninjablack border-2 border-osvauld-bordergreen rounded-2xl mr-4">
+  <div class="h-auto min-h-[85vh] bg-osvauld-frameblack border-2 border-osvauld-iconblack rounded-2xl mr-4">
     <!-- Content for the bottom part (dynamic content) -->
     {#if $selectedPage === "Credentials"}
       <CredentialList />

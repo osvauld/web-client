@@ -47,7 +47,7 @@
     <Home />
     {:else}
       <div>
-        <div class="h-[200px] w-full flex justify-center items-center ">
+        <div class="h-[12.5rem] w-full flex justify-center items-center ">
           <Logo />
         </div>
         <Welcome on:authenticated={checkAuth} />

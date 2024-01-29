@@ -63,7 +63,7 @@
     on:mouseleave={handleMouseLeave}
 >
     <button
-        class="container mx-auto py-3 pl-3 pr-3 relative group bg-osvauld-frameblack rounded-xl"
+        class="container mx-auto py-3 pl-3 pr-3 relative group bg-osvauld-bordergreen rounded-xl"
     >
         <div
             class="flex justify-center items-center border-osvauld-iconblack pb-2"
@@ -71,7 +71,7 @@
             <input
                 type="checkbox"
                 id="credentialChecker{index}"
-                class="bg-osvauld-frameblack mr-2 border-osvauld-iconblack checked:bg-osvauld-lilacpink active:outline-none focus:text-primary focus:ring-offset-0 focus:ring-0 cursor-pointer"
+                class="bg-osvauld-bordergreen mr-2 border-osvauld-iconblack checked:bg-osvauld-lilacpink active:outline-none focus:text-primary focus:ring-offset-0 focus:ring-0 cursor-pointer"
                 on:change={(e) => toggleCheck()}
                 {checked}
             />
@@ -84,7 +84,7 @@
             <More />
         </div>
         <div
-            class="border-b border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3"
+            class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
         ></div>
         <div
             class="w-[17rem] h-[16rem] overflow-y-scroll scrollbar-thin {hoverEffect
@@ -115,7 +115,7 @@
             Description
         </label>
         <div
-            class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll  bg-osvauld-frameblack rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
+            class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll  bg-osvauld-bordergreen rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
             {hoverEffect
                 ? 'text-osvauld-quarzowhite'
                 : 'text-osvauld-sheffieldgrey'}"
@@ -123,7 +123,7 @@
         >{credential.description}</div>
 
         <div
-            class="border-t border-osvauld-bordergreen w-[calc(100%+24px)] -translate-x-3 my-2"
+            class="border-t border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3 my-2"
         ></div>
         <div class="flex justify-start">
             <span
