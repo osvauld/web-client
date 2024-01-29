@@ -18,7 +18,7 @@
     <!-- Horizontal line -->
   </div>
 
-  <div class="h-auto min-h-[85vh] bg-osvauld-frameblack border-2 border-osvauld-iconblack rounded-2xl mr-4">
+  <div class="h-auto min-h-[85vh] bg-osvauld-frameblack border-2 border-osvauld-iconblack rounded-2xl mr-4 scrollbar-thin">
     <!-- Content for the bottom part (dynamic content) -->
     {#if $selectedPage === "Credentials"}
       <CredentialList />
