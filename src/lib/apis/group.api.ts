@@ -1,7 +1,7 @@
 import { baseUrl, } from "./temp";
 import browser from "webextension-polyfill";
-import { FetchAllUserGroupsResponse, FetchGroupUsersResponse, FetchGroupsWithoutAccessResponse, fetchUsersByGroupIdsResponse } from "../dtos/response.dto";
-import { AddUserToGroupPayload, CreateGroupPayload, FetchGroupCredentialPayload, ShareCredentialsWithGroupsPayload } from "../dtos/request.dto";
+import { FetchAllUserGroupsResponse, FetchGroupUsersResponse, FetchGroupsWithoutAccessResponse, fetchUsersByGroupIdsResponse, FetchGroupCredentialResponse } from "../dtos/response.dto";
+import { AddUserToGroupPayload, CreateGroupPayload, ShareCredentialsWithGroupsPayload } from "../dtos/request.dto";
 
 export const fetchAllUserGroups = async (): Promise<FetchAllUserGroupsResponse> => {
   // TODO: change store setting from here.
