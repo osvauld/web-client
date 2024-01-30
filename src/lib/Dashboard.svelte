@@ -21,7 +21,7 @@
       <LeftContainer />
     </div>
     <!-- Right container -->
-    <div class="w-4/5 overflow-auto scrollbar-thin">
+    <div class="w-4/5 h-full overflow-hidden">
       <RightContainer />
     </div>
   </div>

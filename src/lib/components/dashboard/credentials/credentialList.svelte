@@ -55,7 +55,7 @@
 
 <div>
   {#if $selectedFolder}
-    <div class="flex items-center px-4 py-2">
+    <div class="flex items-center px-4 py-2 !overflow-auto !scrollbar-thin">
       <h1 class="text-4xl p-4 font-normal w-1/3">{$selectedFolder.name}</h1>
       {#if checkedCards.length === 0}
         <!-- TODO: update to share credentials in the same api -->
@@ -128,15 +128,15 @@
       </button>
     </button>
   {/if}
-  <div class="flex overflow-y-scroll">
-    <div class="flex flex-wrap p-3 w-full h-auto overflow-y-scroll">
-      {#each $credentialStore as credential, index}
-        <CredentialCard
-          {credential}
-          {index}
-          on:check={(e) => handleCheck(e.detail, credential)}
-        />
-      {/each}
-    </div>
+  <div
+    class="flex flex-wrap p-3 w-full h-auto overflow-y-scroll scrollbar-thin"
+  >
+    {#each $credentialStore as credential, index}
+      <CredentialCard
+        {credential}
+        {index}
+        on:check={(e) => handleCheck(e.detail, credential)}
+      />
+    {/each}
   </div>
 </div>
