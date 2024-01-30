@@ -35,11 +35,14 @@
     if (folder === null) return;
     let folderUsersResponse;
     let allUsersResponse;
-    [allUsersResponse, folderUsersResponse, allGroups] = await Promise.all([
-      fetchAllUsers(),
-      fetchFolderUsers(folder.id),
-      fetchAllUserGroups(),
-    ]);
+    let allGroupResponse;
+    [allUsersResponse, folderUsersResponse, allGroupResponse] =
+      await Promise.all([
+        fetchAllUsers(),
+        fetchFolderUsers(folder.id),
+        fetchAllUserGroups(),
+      ]);
+    allGroups = allGroupResponse.data;
     users = allUsersResponse.data.filter((user) => {
       return !folderUsersResponse.data.some(
         (folderUser) => folderUser.id === user.id,
@@ -55,7 +58,7 @@
 
 <div>
   {#if $selectedFolder}
-    <div class="flex items-center px-4 py-2 !overflow-auto !scrollbar-thin">
+    <div class="flex items-center px-4 py-2">
       <h1 class="text-4xl p-4 font-normal w-1/3">{$selectedFolder.name}</h1>
       {#if checkedCards.length === 0}
         <!-- TODO: update to share credentials in the same api -->
@@ -129,7 +132,7 @@
     </button>
   {/if}
   <div
-    class="flex flex-wrap p-3 w-full h-auto overflow-y-scroll scrollbar-thin"
+    class="flex flex-wrap p-3 w-full max-h-[85vh] !overflow-y-scroll scrollbar-thin"
   >
     {#each $credentialStore as credential, index}
       <CredentialCard
