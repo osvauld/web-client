@@ -17,11 +17,11 @@
    w-screen h-screen text-macchiato-text text-lg"
 >
   <div class="flex h-full">
-    <div class="w-1/5 h-full overflow-hidden scrollbar-thin">
+    <div class="w-1/5 h-full overflow-auto scrollbar-thin">
       <LeftContainer />
     </div>
     <!-- Right container -->
-    <div class="w-4/5 overflow-auto scrollbar-thin">
+    <div class="w-4/5 h-full overflow-hidden">
       <RightContainer />
     </div>
   </div>

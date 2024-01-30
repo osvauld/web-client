@@ -40,14 +40,16 @@
 </script>
 
 <main>
-  <div class=" w-[22.5rem] h-[37.78rem] p-2 pt-3 overflow-hidden bg-osvauld-frameblack">
+  <div
+    class="w-[22.5rem] min-h-[37.78rem] p-2 pt-3 flex flex-col justify-center items-center bg-osvauld-frameblack"
+  >
     {#if !$isSignedUp}
-    <Signup />
+      <Signup />
     {:else if loggedIn}
-    <Home />
+      <Home />
     {:else}
-      <div>
-        <div class="h-[12.5rem] w-full flex justify-center items-center ">
+      <div class="w-full">
+        <div class="mb-12 flex justify-center items-center">
           <Logo />
         </div>
         <Welcome on:authenticated={checkAuth} />

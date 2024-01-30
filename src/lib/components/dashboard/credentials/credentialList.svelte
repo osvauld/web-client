@@ -35,11 +35,14 @@
     if (folder === null) return;
     let folderUsersResponse;
     let allUsersResponse;
-    [allUsersResponse, folderUsersResponse, allGroups] = await Promise.all([
-      fetchAllUsers(),
-      fetchFolderUsers(folder.id),
-      fetchAllUserGroups(),
-    ]);
+    let allGroupResponse;
+    [allUsersResponse, folderUsersResponse, allGroupResponse] =
+      await Promise.all([
+        fetchAllUsers(),
+        fetchFolderUsers(folder.id),
+        fetchAllUserGroups(),
+      ]);
+    allGroups = allGroupResponse.data;
     users = allUsersResponse.data.filter((user) => {
       return !folderUsersResponse.data.some(
         (folderUser) => folderUser.id === user.id,
@@ -128,15 +131,15 @@
       </button>
     </button>
   {/if}
-  <div class="flex overflow-y-scroll">
-    <div class="flex flex-wrap p-3 w-full h-auto overflow-y-scroll">
-      {#each $credentialStore as credential, index}
-        <CredentialCard
-          {credential}
-          {index}
-          on:check={(e) => handleCheck(e.detail, credential)}
-        />
-      {/each}
-    </div>
+  <div
+    class="flex flex-wrap p-3 w-full max-h-[85vh] !overflow-y-scroll scrollbar-thin"
+  >
+    {#each $credentialStore as credential, index}
+      <CredentialCard
+        {credential}
+        {index}
+        on:check={(e) => handleCheck(e.detail, credential)}
+      />
+    {/each}
   </div>
 </div>

@@ -20,7 +20,6 @@
       data: { passphrase },
     });
     if (response.isAuthenticated) {
-      console.log("dispatching event....");
       dispatch("authenticated", true);
     }
   }
@@ -30,7 +29,7 @@
 </script>
 
 <div
-  class="h-auto mt-12 flex justify-center items-center text-base font-bold text-white"
+  class="h-auto mt-10 flex justify-center items-center text-base font-bold text-white"
 >
   <form
     class="flex flex-col justify-center items-center"
@@ -60,8 +59,9 @@
         >Passphrase doesn't match</span
       >
     {/if}
-    <button class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium" type="submit"
-      >Submit</button
+    <button
+      class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium"
+      type="submit">Submit</button
     >
   </form>
 </div>
