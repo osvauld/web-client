@@ -10,7 +10,6 @@ let rsaPvtKey: CryptoKey;
 
 let urlObj = new Map<string, Set<string>>();
 
-let activeCredSuggetion: any[] = [];
 
 browser.runtime.onInstalled.addListener(async () => {
   browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
@@ -110,14 +109,39 @@ browser.runtime.onMessage.addListener(async (request) => {
     case "checkPvtLoaded":
       if (rsaPvtKey) return Promise.resolve({ isLoaded: true })
       else return Promise.resolve({ isLoaded: false })
-    case "getActiveCredSuggestion":
-      for (const cred of activeCredSuggetion) {
-        if (cred.id === request.data) {
-          const decrypted = await decryptCredentialField(rsaPvtKey, cred.password);
-          return Promise.resolve({ username: cred.username, password: decrypted })
+    case "getActiveCredSuggestion": {
+      let tabs;
+      try {
+        tabs = await browser.tabs.query({
+          active: true,
+          currentWindow: true,
+        });
+      } catch (error) {
+        console.error("Error querying tabs:", error);
+        break;
+      }
+      const activeTab = tabs[0];
+      const url = new URL(activeTab.url);
+      const domain = url.hostname;
+      // @ts-ignore
+      const credentialIds = [...urlObj.get(domain)];
+      const responseJson = await fetchCredsByIds(credentialIds);
+      let username = "";
+      let password = "";
+      for (const cred of responseJson.data) {
+        if (cred.credentialId === request.data) {
+          for (let field of cred.fields) {
+            if (field.fieldName === 'Username') {
+              username = await decryptCredentialField(rsaPvtKey, field.fieldValue);
+            } else if (field.fieldName === 'Password') {
+              password = await decryptCredentialField(rsaPvtKey, field.fieldValue);
+            }
+          }
         }
       }
-      break;
+      console.log('username', username, 'password', password)
+      return Promise.resolve({ username, password });
+    }
     case "decryptMeta":
       return decryptCredentialFieldsHandlerNew(request.data, rsaPvtKey);
 
@@ -140,18 +164,18 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       url = new URL(tab.url);
     }
     const domain = url.hostname;
-
+    console.log('URLOBJ', urlObj)
     // Check if the domain is in your list
     if (urlObj.has(domain)) {
       // @ts-ignore
-      const responseData = await fetchCredsByIds(urlObj.get(domain));
+      const responseData = await fetchCredsByIds([...urlObj.get(domain)]);
       // TODO: payload change in future
       const payload: any = [];
       for (const cred of responseData.data) {
         for (const field of cred.fields) {
           if (field.fieldName === 'Username') {
-            activeCredSuggetion.push({ id: cred.credentialId, username: field.fieldValue, password: cred.encryptedFields[0].fieldValue })
-            payload.push({ id: cred.credentialId, username: field.fieldValue });
+            const decrypted = await decryptCredentialField(rsaPvtKey, field.fieldValue);
+            payload.push({ id: cred.credentialId, username: decrypted });
           }
         }
       }

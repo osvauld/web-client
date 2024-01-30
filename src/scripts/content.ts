@@ -1,5 +1,4 @@
 import browser from "webextension-polyfill";
-import { list } from "../lib/components/content/constants";
 import { craftSaveDialouge, createIcon, createSuggestionBox, createSuggestionChildren } from "../lib/components/content/nodeGenerators";
 import { getElement } from "../lib/components/content/xpaths"
 
