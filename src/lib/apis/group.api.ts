@@ -112,3 +112,13 @@ export const fetchGroupsWithoutAccess = async (folderId: string): Promise<FetchG
   }).then((response) => response.json());
 
 }
+
+export const fetchCredentialFieldsByGroupId = async (groupId: string) => {
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  return await fetch(`${baseUrl}/group/${groupId}/credential-fields`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+}
