@@ -1,48 +1,49 @@
-export type sampleCredential = {
-  username: string;
-  password: string;
+
+// new cred definitons
+
+type UUID = string;
+type FieldType = 'meta' | 'sensitive' | 'additional';
+export type Fields = {
+
+  fieldId?: string;
+  fieldName?: string;
+  fieldValue: string;
+  fieldType?: FieldType;
+}
+
+export type UserEncryptedFields = {
+  userId: string;
+  fields: Fields[];
 }
 
 
-export type CredentialBase = {
-  id: string;
-  description: string;
-  name: string;
-  unencryptedFields: CredentialFields[];
-};
+export type CredentialBasic = {
+  credentialId?: string,
+  fields: Fields[]
+}
 
-export type CredentialDetails = CredentialBase & {
-  encryptedFields: CredentialFields[];
-};
+export type Credential = CredentialBasic & {
+  name: string;
+  description: string;
+  folderId: UUID;
+  credentialType: string;
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+}
+
 export type CredentialFields = {
-  fieldName: string;
-  fieldValue: string;
-};
-
-export type AddCredentialFieldPayload = CredentialFields & {
-  sensitive: boolean;
-};
-
-export type AddCredentialPayload = {
-  name: string;
-  description: string;
-  folderId: string;
-  unencryptedFields: CredentialFields[];
-  userAccessDetails: UserAccessPayload[];
-};
-
-export type UserAccessPayload = {
-  userId: string;
-  encryptedFields: CredentialFields[];
-};
-
-export type ShareCredentialPayload = {
   credentialId: string;
-  users: UserPayaloadForShare[];
-};
+  fields: BasicFields[];
+}
 
-type UserPayaloadForShare = {
+export type BasicFields = {
+  fieldId: string;
+  fieldValue: string;
+
+}
+
+export type UserEncryptedCredentials = {
   userId: string;
-  fields: CredentialFields[];
-  accessType: string;
-};
+  credentials: CredentialFields[];
+}

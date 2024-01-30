@@ -1,16 +1,24 @@
 <script lang="ts">
   import AddGroup from "./AddGroup.svelte";
-
-  import { groupStore, selectedGroup } from "../../store/group.store";
-  import { showAddGroupDrawer } from "../../store/ui.store";
-
-  import { Group } from "../../dtos/group.dto";
+  import {
+    groupStore,
+    selectedGroup,
+    showAddGroupDrawer,
+    showAddUserDrawer,
+  } from "../store";
+  import { Group } from "../dtos";
+  import Add from '../../basic/add.svelte';
 
   const selectGroup = (group: Group) => {
     selectedGroup.set(group);
   };
-  const openModal = () => {
-    showAddGroupDrawer.set(true);
+
+  const openModal = (type: string) => {
+    if (type === "group") {
+      showAddGroupDrawer.set(true);
+    } else if (type === "user") {
+      showAddUserDrawer.set(true);
+    }
   };
 
   const closeModal = () => {
@@ -20,8 +28,12 @@
 
 <div>
   <button
-    class=" bg-macchiato-maroon rounded-full p-2 pl-8 pr-8 text-macchiato-crust"
-    on:click={openModal}>Add Group</button
+    class="w-full bg-osvauld-activelavender rounded-lg p-2 pl-8 pr-8 text-macchiato-crust flex justify-center items-center m-2"
+    on:click={() => openModal("group")}>Add Group <Add/> </button
+  >
+  <button
+    class="w-full bg-osvauld-grapegreen rounded-lg p-2 pl-8 pr-8 text-macchiato-crust flex justify-center items-center m-2"
+    on:click={() => openModal("user")}>Add User <Add/> </button
   >
   {#if $showAddGroupDrawer}
     <button

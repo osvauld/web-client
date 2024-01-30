@@ -3,33 +3,54 @@
   import { onMount } from "svelte";
   import Welcome from "./components/popup/Welcome.svelte";
   import Home from "./components/popup/Home.svelte";
-  import Logo from "./components/basic/logo.svelte";
-  import { isLoggedIn } from "../lib/store/ui.store";
-  console.log("is logged in status", $isLoggedIn);
-  let devType = "t";
+  import { Logo } from "./components/dashboard/icons";
+  import { isLoggedIn, isSignedUp } from "../lib/store/ui.store";
+  import Signup from "./components/popup/Signup.svelte";
 
+  let devType = "popup";
+  let loggedIn = true;
   onMount(async () => {
     if (devType != "popup") openFullscreenTab();
-  });
+    const response = await browser.runtime.sendMessage({
+      action: "isSignedUp",
+    });
 
+    isSignedUp.set(response.isSignedUp);
+    const checkPvtLoad = await browser.runtime.sendMessage({
+      action: "checkPvtLoaded",
+    });
+    console.log(checkPvtLoad);
+    if (checkPvtLoad.isLoaded) {
+      loggedIn = true;
+    } else {
+      loggedIn = false;
+    }
+    // isSignedUp.set(false);
+  });
 
   const openFullscreenTab = async () => {
     // Send a message to the background sdaash
-    console.log("Opening fullscreen tab");
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
+  };
+
+  const checkAuth = (event) => {
+    console.log("check auth event...", event);
+    loggedIn = event.detail;
   };
 </script>
 
 <main>
-  <div class="w-[380px] h-[520px] bg-[#262C44] overflow-hidden">
-    {#if $isLoggedIn}
-      <Home />
+  <div class=" w-[22.5rem] h-[37.78rem] p-2 pt-3 overflow-hidden bg-osvauld-frameblack">
+    {#if !$isSignedUp}
+    <Signup />
+    {:else if loggedIn}
+    <Home />
     {:else}
       <div>
-        <div class="h-[200px] w-full flex justify-center items-center pl-7">
+        <div class="h-[12.5rem] w-full flex justify-center items-center ">
           <Logo />
         </div>
-        <Welcome />
+        <Welcome on:authenticated={checkAuth} />
       </div>
     {/if}
   </div>

@@ -1,12 +1,11 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
-  import CopyIcon from "../basic/copyIcon.svelte";
+  import { CopyIcon } from "../icons";
 
-  import { selectedCredential } from "../../store/credential.store";
-  import { fetchCredentialById } from "../../apis/credentials.api";
-  import { CredentialDetails } from "../../dtos/credential.dto";
+  import { selectedCredential } from "../store";
+  import { fetchCredentialById } from "../apis";
   let isLoading = true;
   // TODO: render selected credential when is loading true
   export function close() {
@@ -29,7 +28,6 @@
     credentialDetailsJSON = {
       ...credentialDetails.data,
     };
-    console.log(credentialDetailsJSON);
     // users = credentialDetails.data.users;
     isLoading = false;
   };
@@ -41,7 +39,7 @@
   const decryptCredential = async () => {
     const encryptedData = [...credentialDetailsJSON.encryptedFields];
     const response = await browser.runtime.sendMessage({
-      eventName: "decrypt",
+      action: "decrypt",
       data: encryptedData,
     });
 
@@ -126,4 +124,4 @@
       >
     </div>
   </div>
-</div>
+</div> -->

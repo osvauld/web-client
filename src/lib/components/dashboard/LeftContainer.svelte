@@ -1,15 +1,16 @@
 <script lang="ts">
-  import Logo from "../basic/logo.svelte";
-  import Toggle from "../basic/toggle.svelte";
+
+  import { Logo, Toggle } from "./icons"
   import SideList from "./SideList.svelte";
 </script>
 
-<div class="flex justify-center pt-10 pb-5">
+<div class="flex justify-center items-center h-[7.8rem]">
   <Logo />
 </div>
 
+
 <Toggle />
 <!-- Add scrolbar style -->
-<div class="scroll-m-0 scroll-smooth justify-center flex items-center mt-2">
+<div class="scroll-m-0 h-auto scroll-smooth justify-center flex items-center mt-6">
   <SideList />
 </div>
