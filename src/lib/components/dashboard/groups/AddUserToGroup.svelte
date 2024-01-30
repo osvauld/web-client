@@ -1,9 +1,18 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { fetchGroupUsers, fetchAllUsers, addUserToGroup } from "../apis";
+    import {
+        fetchGroupUsers,
+        fetchAllUsers,
+        addUserToGroup,
+        fetchCredentialFieldsByGroupId,
+    } from "../apis";
+    import { CredentialFields } from "../dtos";
+    import { createShareCredsPayload } from "../helper";
+
     import { User } from "../dtos";
     import { selectedGroup, showAddUserToGroupDrawer } from "../store";
     let users: User[] = [];
+    let credentialFields: CredentialFields[] = [];
     onMount(async () => {
         if (!$selectedGroup) return;
         const userGroupPromise = fetchGroupUsers($selectedGroup.groupId);
@@ -17,14 +26,24 @@
             (user) =>
                 !userGroup.data.some((groupUser) => groupUser.id === user.id),
         );
+
+        const credentialFieldsResponse = await fetchCredentialFieldsByGroupId(
+            $selectedGroup.groupId,
+        );
+        credentialFields = credentialFieldsResponse.data;
     });
 
     const addUsertoGroup = async (user: User) => {
+        const userData = await createShareCredsPayload(
+            credentialFields,
+            // @ts-ignore
+            [user],
+        );
         const payload = {
             groupId: $selectedGroup.groupId,
             memberId: user.id,
             memberRole: "member",
-            encryptedData: [],
+            credentials: userData[0].credentials,
         };
         await addUserToGroup(payload);
         users = users.filter((u) => u.id !== user.id);

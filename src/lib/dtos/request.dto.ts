@@ -1,4 +1,4 @@
-import { UserEncryptedCredentials, UserEncryptedFields } from "./credential.dto";
+import { UserEncryptedCredentials, UserEncryptedFields, CredentialFields } from "./credential.dto";
 
 
 export type AddCredentialPayload = {
@@ -38,4 +38,12 @@ export type ShareFolderWithGroupsPayload = {
 
 export type CreateGroupPayload = {
     name: string;
+}
+
+export type AddUserToGroupPayload = {
+
+    groupId: string;
+    memberId: string;
+    memberRole: string;
+    credentials: CredentialFields[];
 }
