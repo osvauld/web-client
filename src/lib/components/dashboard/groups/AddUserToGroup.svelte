@@ -45,7 +45,6 @@
             memberRole: "member",
             credentials: userData[0].credentials,
         };
-        console.log(payload);
         await addUserToGroup(payload);
         users = users.filter((u) => u.id !== user.id);
     };

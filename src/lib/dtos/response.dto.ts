@@ -95,3 +95,12 @@ export type fetchUsersByGroupIdsResponse = BaseResponse & {
 export type FetchGroupsWithoutAccessResponse = BaseResponse & {
     data: Group[];
 }
+
+export type FetchGroupCredentialResponse = BaseResponse & {
+    data: {
+        groupId: string;
+        memberId: string;
+        memberRole: string;
+        credentials: CredentialFields[];
+    }
+}
