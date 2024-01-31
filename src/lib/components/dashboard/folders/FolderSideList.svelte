@@ -38,9 +38,9 @@
 
 <div>
   <button
-    class="bg-osvauld-illutionpurple whitespace-nowrap rounded-lg py-2 px-16 mb-4 flex justify-center items-center text-macchiato-base xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
+    class="bg-osvauld-illutionpurple whitespace-nowrap rounded-lg py-2 px-11 mb-4 flex justify-center items-center text-macchiato-base xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
     on:click={openModal}
-    ><span class="mr-1">Create New </span>
+    ><span class="mr-1">Create new folder</span>
     <Add />
   </button>
   {#if $showAddFolderDrawer}

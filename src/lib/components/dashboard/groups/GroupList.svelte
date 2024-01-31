@@ -14,13 +14,19 @@
   import { User } from "../dtos";
 
   import { fetchGroupUsers } from "../apis";
+  import { fetchAllUsers } from "../apis"
 
   let groupUsers: User[] = [];
   let unsubscribe: Unsubscriber;
 
   onMount(() => {
     unsubscribe = selectedGroup.subscribe((value) => {
-      if (value) {
+      console.log('group list vaule is =>', value)
+      if (value && Number(value.groupId) === 1 ) {
+        fetchAllUsers().then((usersResponse) => {
+          groupUsers = usersResponse.data;
+        })
+      } else if (value) {
         fetchGroupUsers(value.groupId).then((usersResponse) => {
           groupUsers = usersResponse.data;
         });
@@ -64,8 +70,8 @@
   {/if}
 </div>
 
-<div class="overflow-x-auto">
-  <div class="min-w-screen min-h-screen flex overflow-hidden">
+<div class="">
+  <div class="min-w-screen min-h-screen flex overflow-auto">
     <div class="w-full">
       <div class="shadow-md rounded my-6">
         {#if $selectedGroup}
@@ -74,28 +80,32 @@
             on:click={() => showAddUserToGroupDrawer.set(true)}>Add User</button
           >
         {/if}
-        <table class="min-w-max w-full table-auto">
+        <table class="min-w-max w-full table-auto table-layout-fixed">
           <thead>
             <tr class="text-sm leading-normal">
               <th class="py-3 px-6 text-left">Name</th>
-              <th class="py-3 px-6 text-left">USERNAME</th>
+              <th class="py-3 px-6 text-left">Username</th>
             </tr>
           </thead>
-          <tbody class="text-xl font-light">
-            {#each groupUsers as user}
-              <tr
-                class="border border-transparent hover:border-macchiato-sky hover:bg-macchiato-surface1"
-              >
-                <td class="py-3 px-6 text-left whitespace-nowrap">
-                  {user.name}
-                </td>
-                <td class="py-3 px-6 text-left">
-                  {user.username}
-                </td>
-              </tr>
-            {/each}
-          </tbody>
         </table>
+        <div class="h-[42rem] overflow-y-auto">
+          <table class="min-w-max w-full table-auto table-layout-fixed">
+            <tbody class="text-xl font-light">
+              {#each groupUsers as user}
+                <tr
+                  class="border border-transparent hover:border-macchiato-sky hover:bg-macchiato-surface1"
+                >
+                  <td class="py-3 px-6 text-left whitespace-nowrap">
+                    {user.name}
+                  </td>
+                  <td class="py-3 px-6 text-left">
+                    {user.username}
+                  </td>ß
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

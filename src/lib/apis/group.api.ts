@@ -13,6 +13,7 @@ export const fetchAllUserGroups = async (): Promise<FetchAllUserGroupsResponse> 
     },
   })
     .then((response) => response.json())
+    
 };
 
 export const fetchGroupUsers = async (id: string): Promise<FetchGroupUsersResponse> => {

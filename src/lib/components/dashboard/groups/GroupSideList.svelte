@@ -10,6 +10,7 @@
   import Add from '../../basic/add.svelte';
 
   const selectGroup = (group: Group) => {
+    console.log('Group selected', group);
     selectedGroup.set(group);
   };
 
@@ -28,13 +29,13 @@
 
 <div>
   <button
-    class="w-full bg-osvauld-activelavender rounded-lg p-2 pl-8 pr-8 text-macchiato-crust flex justify-center items-center m-2"
-    on:click={() => openModal("group")}>Add Group <Add/> </button
+    class="bg-osvauld-illutionpurple whitespace-nowrap rounded-lg py-2 px-11 mb-4 flex justify-center items-center text-macchiato-base xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
+    on:click={() => openModal("group")}><span class="mr-1">Create new group</span> <Add/> </button
   >
-  <button
+  <!-- <button
     class="w-full bg-osvauld-grapegreen rounded-lg p-2 pl-8 pr-8 text-macchiato-crust flex justify-center items-center m-2"
     on:click={() => openModal("user")}>Add User <Add/> </button
-  >
+  > -->
   {#if $showAddGroupDrawer}
     <button
       class="p-6 rounded shadow-lg"
