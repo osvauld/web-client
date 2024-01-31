@@ -45,18 +45,18 @@
       <AddGroup on:close={closeModal} />
     </button>
   {/if}
-  <ul>
+  <ul class="mx-6 max-h-[40rem] overflow-y-scroll scrollbar-thin pr-3">
     {#each $groupStore as group}
       <li
-        class={` ${
+        class="{
           $selectedGroup === group
-            ? "bg-[#282828] border border-[#333746] "
-            : "hover:border hover:border-[#333746]"
-        } rounded-md`}
+            ? "bg-osvauld-bordergreen rounded-lg"
+            : "hover:bg-osvauld-bordergreen"
+        } rounded-md pl-3"
       >
         <button
           on:click={() => selectGroup(group)}
-          class={`p-2 text-lg rounded-2xl flex items-center cursor-pointer`}
+          class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer "
         >
           {group.name}
         </button>
