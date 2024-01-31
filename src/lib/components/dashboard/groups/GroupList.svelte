@@ -90,9 +90,12 @@
           />
         </div>
         <button
-            class=" rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 { !selectedAllUsers ? "invisible": ""}" on:click={() => showAddUserToGroupDrawer.set(true)}
-            ><span class="mr-1">Add new user</span> <Add />
-          </button>
+          class="rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+          on:click={selectedAllUsers ? () => showAddUserDrawer.set(true) : () => showAddUserToGroupDrawer.set(true)} >
+          <span class="mr-1">Add new user</span>
+          <Add />
+        </button>
+
         {/if}
       </div>
       {#if $groupName.length !== 0}
