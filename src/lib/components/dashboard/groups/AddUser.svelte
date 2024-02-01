@@ -1,9 +1,10 @@
 <script>
     import { showAddUserDrawer } from "../store";
     import { createUser } from "../apis";
+    import { ClosePanel } from "../icons"
     let username = "";
     let name = "";
-    let tempPassword = "";
+    let tempPassword = "test@123";
     const submit = async (event) => {
         const payload = {
             username,
@@ -13,24 +14,38 @@
         await createUser(payload);
         showAddUserDrawer.set(false);
     };
+
+    const handleClose = () => {
+        showAddUserDrawer.set(false);
+    }
 </script>
 
-<div class="bg-macchiato-base">
-    <form on:submit={submit}>
-        <label for="username">Username:</label>
-        <input id="username" bind:value={username} type="text" required />
+<div class="bg-osvauld-frameblack rounded-3xl h-[25rem] w-[23rem] p-6 pt-2">
 
-        <label for="name">Name:</label>
-        <input id="name" bind:value={name} type="text" required />
+    <div class="flex justify-between items-center px-4 py-6">
+        <p class="text-2xl font-sans font-normal text-osvauld-dusklabel">
+          Add new user
+        </p>
+        <button class="bg-osvauld-frameblack"
+          on:click|stopPropagation ={handleClose}><ClosePanel /></button
+        >
+    </div>
+    
+    <div class="border border-osvauld-iconblack w-[calc(100%+3rem)] -translate-x-6 my-10 mt-0"></div>
 
-        <label for="password">Password:</label>
-        <input
-            id="password"
-            bind:value={tempPassword}
-            type="password"
-            required
-        />
+    <form on:submit={submit} class="h-1/2 flex flex-col justify-between items-center">
 
-        <button type="submit">Submit</button>
+        <div class="mb-4 w-full">
+            <label for="username"   class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer">Username:</label>
+            <input id="username" bind:value={username} type="text"  placeholder="Enter username" class="py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0" required autocomplete="off" />
+        </div>
+
+        <div class="mb-4 w-full">
+            <label for="name"   class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer">Full Name:</label>
+            <input id="name" bind:value={name} type="text"  placeholder="Enter full name here" required class="py-1  rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack  w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0" autocomplete="off" />
+        </div>
+
+
+        <button class="w-full px-4 py-2 mt-3 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey" type="submit">Generate password</button>
     </form>
 </div>

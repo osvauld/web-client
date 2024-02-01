@@ -50,7 +50,7 @@
     };
 </script>
 
-<div class="bg-macchiato-surface0">
+<div class=" bg-red-400">
     {#each users as user}
         <li>
             <div class="p-2 flex justify-between">
