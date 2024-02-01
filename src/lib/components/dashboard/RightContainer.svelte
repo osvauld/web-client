@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CredentialList from "./credentials/credentialList.svelte";
+  import CredentialList from "./credentials/CredentialList.svelte";
   import GroupList from "./groups/GroupList.svelte";
 
   import { selectedPage } from "./store";

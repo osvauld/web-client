@@ -15,6 +15,7 @@
   export let users: User[];
   let credentialsFields: CredentialFields[];
   let infoDropdown = false;
+  let selectedTab = "Groups";
 
   onMount(async () => {
     if (!$selectedFolder) throw new Error("folder not selected");
@@ -23,7 +24,6 @@
     );
     credentialsFields = responseJson.data;
   });
-  let selectedTab = "Groups";
   const toggleSelect = (e: any) => {
     selectedTab = e.detail;
   };

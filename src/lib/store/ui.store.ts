@@ -9,3 +9,4 @@ export let showFolderShareDrawer = writable(false);
 export let showCredentialShareDrawer = writable(false)
 export let showAddUserDrawer = writable(false);
 export let showAddUserToGroupDrawer = writable(false);
+export let showCredentialDetailsDrawer = writable(false);
