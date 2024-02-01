@@ -95,7 +95,7 @@
   {/if}
   {#if $showAddCredentialDrawer}
     <button
-      class="fixed inset-0 flex items-center justify-center z-50"
+      class="fixed inset-0 flex items-center justify-center z-50 bg-[#010409ad] backdrop-filter backdrop-blur-[2px]"
       on:click={() => showAddCredentialDrawer.set(false)}
     >
       <button class="p-6 rounded bg-transparent" on:click|stopPropagation>

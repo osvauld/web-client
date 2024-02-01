@@ -45,10 +45,10 @@
   </button>
   {#if $showAddFolderDrawer}
     <button
-      class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
+      class="fixed inset-0 flex items-center justify-center z-50 bg-[#010409ad] backdrop-filter backdrop-blur-[2px]"
       on:click={closeModal}
     >
-      <button class="p-6 rounded shadow-lg" on:click|stopPropagation>
+      <button class="p-6 rounded " on:click|stopPropagation>
         <AddFolder on:close={closeModal} />
       </button>
     </button>

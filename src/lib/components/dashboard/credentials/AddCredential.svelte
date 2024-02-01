@@ -125,7 +125,6 @@
 <div
   class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack"
   in:fly
-  out:fly
 >
   <div class="flex justify-between items-center px-12 py-9">
     <p class="text-[1.78rem] font-sans font-normal text-osvauld-quarzowhite">

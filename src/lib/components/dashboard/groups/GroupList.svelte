@@ -82,7 +82,7 @@
     <div class="w-full">
       {#if adminStatus && $allUsersSelected}
           <AllUsersList {allUsers}/>
-      {:else}
+      {:else if $selectedGroup}
           <OtherGroupsList {groupUsers} {groupName}/>
       {/if}
     </div>
