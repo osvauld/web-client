@@ -43,14 +43,14 @@
         class="relative pr-2 input w-[95%] rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-bordergreen border border-osvauld-iconblack"
     >
         <div
-            class="py-1 px-3 w-full flex justify-between items-center rounded-lg text-base  {hoverEffect
+            class="py-1 px-3 w-full flex justify-between items-center rounded-lg text-base {hoverEffect
                 ? 'text-osvauld-quarzowhite'
                 : 'text-osvauld-sheffieldgrey'}"
         >
             {decrypted && visibility ? decryptedValue : "*".repeat(8)}
         </div>
         {#if !decrypted}
-            <button on:click={decrypt}>
+            <button on:click|stopPropagation={decrypt}>
                 <Locked />
             </button>
         {:else}
@@ -58,7 +58,7 @@
                 <button>
                     <Unlocked />
                 </button>
-                <button on:click={toggleVisibility}>
+                <button on:click|stopPropagation={toggleVisibility}>
                     {#if visibility}
                         <ClosedEye />
                     {:else}

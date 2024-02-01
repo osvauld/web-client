@@ -99,3 +99,11 @@ export type FetchGroupsWithoutAccessResponse = BaseResponse & {
 export type FetchGroupCredentialResponse = BaseResponse & {
     data: CredentialFields[];
 }
+
+export type FetchCredentialUsersResponse = BaseResponse & {
+    data: UserWithAccessType[]
+}
+
+export type FetchCredentialGroupsResponse = BaseResponse & {
+    data: GroupWithAccessType[]
+}

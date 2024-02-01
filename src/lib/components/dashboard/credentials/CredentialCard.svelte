@@ -3,19 +3,17 @@
     import { createEventDispatcher } from "svelte";
     import { fetchSensitiveFieldsByCredentialId } from "../apis";
     import EncryptedField from "./EncryptedField.svelte";
-    import PlainField from './PlainField.svelte';
-    import {
-        More,
-        SensitiveEye,
-        SensitiveEyeBlue,
-    } from "../icons";
+    import PlainField from "./PlainField.svelte";
+    import { More, SensitiveEye, SensitiveEyeBlue } from "../icons";
+    import { showCredentialDetailsDrawer } from "../store";
+    import CredentialDetails from "./CredentialDetails.svelte";
 
     const dispatch = createEventDispatcher();
 
     export let credential;
     export let index;
 
-    let encryptedFields = [];
+    let sensitiveFields = [];
     let decrypted = false;
     let checked = false;
     let hoverEffect = false;
@@ -34,15 +32,17 @@
                     credential.credentialId,
                 );
 
-                encryptedFields = response.data;
-                encryptedFields.length >= 1
+                sensitiveFields = response.data;
+                sensitiveFields.length >= 1
                     ? (sensitiveCard = true)
                     : (sensitiveCard = false);
             }, 300);
         }
     }
     function handleMouseLeave() {
-        encryptedFields = [];
+        if (!$showCredentialDetailsDrawer) {
+            sensitiveFields = [];
+        }
         clearTimeout(hoverTimeout);
         decrypted = false;
         hoverEffect = false;
@@ -53,14 +53,38 @@
         checked = false;
     });
 
- 
+    const handleClick = async () => {
+        if (sensitiveFields.length) {
+            clearTimeout(hoverTimeout);
+            const response = await fetchSensitiveFieldsByCredentialId(
+                credential.credentialId,
+            );
+
+            sensitiveFields = response.data;
+        }
+        showCredentialDetailsDrawer.set(true);
+    };
 </script>
 
-
+{#if $showCredentialDetailsDrawer}
+    <button
+        class="fixed inset-0 flex items-center justify-center z-50"
+        on:click={() => showCredentialDetailsDrawer.set(false)}
+    >
+        <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
+            <CredentialDetails
+                {credential}
+                sensitiveFields={[...sensitiveFields]}
+                on:close={() => showCredentialDetailsDrawer.set(false)}
+            />
+        </button>
+    </button>
+{/if}
 <button
     class="mb-3 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
     on:mouseenter={handleMouseEnter}
     on:mouseleave={handleMouseLeave}
+    on:click={handleClick}
 >
     <button
         class="container mx-auto py-3 pl-3 pr-3 relative group bg-osvauld-bordergreen rounded-xl"
@@ -72,7 +96,7 @@
                 type="checkbox"
                 id="credentialChecker{index}"
                 class="bg-osvauld-bordergreen mr-2 border-osvauld-iconblack checked:bg-osvauld-lilacpink active:outline-none focus:text-primary focus:ring-offset-0 focus:ring-0 cursor-pointer"
-                on:change={(e) => toggleCheck()}
+                on:change|stopPropagation={(e) => toggleCheck()}
                 {checked}
             />
             <label
@@ -92,14 +116,14 @@
                 : ''} mt-2"
         >
             {#each credential.fields as field, index}
-                    <PlainField
+                <PlainField
                     fieldName={field.fieldName}
                     fieldValue={field.fieldValue}
                     {hoverEffect}
                 />
             {/each}
-            {#if encryptedFields}
-                {#each encryptedFields as field}
+            {#if sensitiveFields}
+                {#each sensitiveFields as field}
                     <EncryptedField
                         fieldName={field.fieldName}
                         fieldValue={field.fieldValue}
@@ -115,12 +139,14 @@
             Description
         </label>
         <div
-            class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll  bg-osvauld-bordergreen rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
+            class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-bordergreen rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
             {hoverEffect
                 ? 'text-osvauld-quarzowhite'
                 : 'text-osvauld-sheffieldgrey'}"
             id="credential-description"
-        >{credential.description}</div>
+        >
+            {credential.description}
+        </div>
 
         <div
             class="border-t border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3 my-2"

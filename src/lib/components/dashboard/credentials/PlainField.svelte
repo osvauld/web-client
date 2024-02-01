@@ -8,7 +8,7 @@
         try {
             await navigator.clipboard.writeText(fieldValue);
         } catch (err) {
-            console.error('Failed to copy: ', err);
+            console.error("Failed to copy: ", err);
         }
     };
 </script>
@@ -16,12 +16,13 @@
 <div class="mb-4 mr-1">
     <label
         class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
-        for="field">{fieldName}</label>
-    <div class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base bg-osvauld-bordergreen border-osvauld-iconblack {
-        hoverEffect
+        for="field">{fieldName}</label
+    >
+    <div
+        class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base bg-osvauld-bordergreen border-osvauld-iconblack {hoverEffect
             ? 'text-osvauld-quarzowhite'
-            : 'text-osvauld-sheffieldgrey'
-    }">
+            : 'text-osvauld-sheffieldgrey'}"
+    >
         <span>{fieldValue}</span>
         <button on:click={copyToClipboard}>
             {#if hoverEffect}
