@@ -5,6 +5,8 @@
     let username = "";
     let name = "";
     let tempPassword = "test@123";
+    $: activeButton = username.length >= 3 && name.length >= 3
+    
     const submit = async (event) => {
         const payload = {
             username,
@@ -46,6 +48,9 @@
         </div>
 
 
-        <button class="w-full px-4 py-2 mt-3 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey" type="submit">Generate password</button>
+        <button class="w-full px-4 py-2 mt-3 border border-osvauld-placeholderblack rounded-md  { activeButton ? "bg-osvauld-carolinablue text-osvauld-ninjablack" : "bg-osvauld-iconblack text-osvauld-sheffieldgrey" }"
+
+         type="submit">Generate password</button>
     </form>
 </div>
+
