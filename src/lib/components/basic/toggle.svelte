@@ -11,7 +11,7 @@
       folderStore.set(responseJson.data);
     } else {
       const responseJson = await fetchAllUserGroups();
-      groupStore.set([{ groupId: "1", name: "All Users" } , ...responseJson.data]);
+      groupStore.set(responseJson.data);
     }
     selectedPage.set(choice);
     selectedGroup.set(null);

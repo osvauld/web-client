@@ -5,12 +5,15 @@
     selectedGroup,
     showAddGroupDrawer,
     showAddUserDrawer,
+    allUsersSelected,
+    adminStatus
   } from "../store";
   import { Group } from "../dtos";
   import Add from '../../basic/add.svelte';
 
+
   const selectGroup = (group: Group) => {
-    console.log('Group selected', group);
+    allUsersSelected.set(false);
     selectedGroup.set(group);
   };
 
@@ -25,6 +28,10 @@
   const closeModal = () => {
     showAddGroupDrawer.set(false);
   };
+
+  const selectingAllUsers = () => {
+    allUsersSelected.set(true);
+  }
 </script>
 
 <div>
@@ -42,6 +49,22 @@
     </button>
   {/if}
   <ul class="mx-6 max-h-[40rem] overflow-y-scroll scrollbar-thin pr-3">
+    {#if adminStatus}
+      <li
+      class="{
+        $allUsersSelected
+          ? "bg-osvauld-bordergreen rounded-lg"
+          : "hover:bg-osvauld-bordergreen"
+      } rounded-md pl-3"
+    >
+      <button
+        on:click={()=> selectingAllUsers()}
+        class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer "
+      >
+        All users
+      </button>
+    </li>
+    {/if}
     {#each $groupStore as group}
       <li
         class="{

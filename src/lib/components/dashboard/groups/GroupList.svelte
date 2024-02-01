@@ -6,6 +6,8 @@
     selectedGroup,
     showAddUserDrawer,
     showAddUserToGroupDrawer,
+    allUsersSelected,
+    adminStatus
   } from "../store";
 
   import AddUser from "./AddUser.svelte";
@@ -20,17 +22,13 @@
   let groupUsers: User[] = [];
   let unsubscribe: Unsubscriber;
   let selectedAllUsers = false;
-  let groupName = writable("")
+  let groupName = writable("");
+  let allUsers: User[] = [];
 
   onMount(() => {
     unsubscribe = selectedGroup.subscribe((value) => {
-      $groupName = value ? value.name : ""
-      if (value && Number(value.groupId) === 1 ) {
-        selectedAllUsers = !selectedAllUsers
-        fetchAllUsers().then((usersResponse) => {
-          groupUsers = usersResponse.data;
-        })
-      } else if (value) {
+      if (value) {
+        $groupName = value.name
         selectedAllUsers = false;
         fetchGroupUsers(value.groupId).then((usersResponse) => {
           groupUsers = usersResponse.data;
@@ -43,6 +41,13 @@
     unsubscribe();
     groupUsers = [];
   });
+
+  if(adminStatus && allUsersSelected){
+      fetchAllUsers().then((usersResponse) => {
+        allUsers = usersResponse.data
+      });
+  }
+
 </script>
 
 <div class="z-50 ">
@@ -77,8 +82,7 @@
   <div class="min-w-screen h-[48rem] flex overflow-hidden ">
     <div class="w-full">
       <div class="flex items-center justify-between px-4 py-5 pb-0">
-        {#if $groupName.length !== 0}
-        <h1 class="text-4xl p-4 font-normal w-1/3 ml-3">{$groupName}</h1>
+        <h1 class="text-4xl p-4 font-normal w-1/3 ml-3">{ adminStatus && $allUsersSelected ? 'All Users' : $groupName}</h1>
         <div
           class="h-[2.1rem] w-1/3 px-2 flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
         >
@@ -91,19 +95,16 @@
         </div>
         <button
           class="rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
-          on:click={selectedAllUsers ? () => showAddUserDrawer.set(true) : () => showAddUserToGroupDrawer.set(true)} >
+        on:click={$allUsersSelected ? () => showAddUserDrawer.set(true) : () => showAddUserToGroupDrawer.set(true)} > 
           <span class="mr-1">Add new user</span>
           <Add />
         </button>
-
-        {/if}
       </div>
-      {#if $groupName.length !== 0}
         <div class="rounded my-6 px-10">
           <table class="min-w-max w-full table-auto table-layout-fixed">
             <thead>
               <tr class="leading-normal text-lg">
-                <th class="py-3 px-3 text-left whitespace-nowrap w-1/4  pl-6">Name</th>
+                <th class="py-3 px-3 text-left whitespace-nowrap w-1/4 pl-6">Name</th>
                 <th class="py-3 px-3 text-left whitespace-nowrap w-1/3 ">Username</th>
               </tr>
             </thead>
@@ -111,7 +112,7 @@
           <div class="h-[40rem] overflow-y-auto scrollbar-thin px-2">
             <table class="min-w-max w-full table-auto table-layout-fixed">
               <tbody class="text-xl text-osvauld-dusklabel font-normal text-sm">
-                {#each groupUsers as user}
+                {#each $allUsersSelected ? allUsers : groupUsers as user}
                   <tr
                     class="border border-transparent hover:bg-osvauld-bordergreen"
                   >
@@ -131,6 +132,5 @@
             </table>
           </div>
         </div>
-      {/if}
     </div>
   </div>
