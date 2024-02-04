@@ -1,6 +1,6 @@
 import { baseUrl, } from "./temp";
 import browser from "webextension-polyfill";
-import { FetchAllUserGroupsResponse, FetchGroupUsersResponse, FetchGroupsWithoutAccessResponse, fetchUsersByGroupIdsResponse, FetchGroupCredentialResponse, FetchCredentialGroupsResponse } from "../dtos/response.dto";
+import { FetchAllUserGroupsResponse, FetchGroupUsersResponse, FetchGroupsWithoutAccessResponse, fetchUsersByGroupIdsResponse, FetchUsersWithoutGroupAccess, FetchGroupCredentialResponse, FetchCredentialGroupsResponse } from "../dtos/response.dto";
 import { AddUserToGroupPayload, CreateGroupPayload, ShareCredentialsWithGroupsPayload } from "../dtos/request.dto";
 
 export const fetchAllUserGroups = async (): Promise<FetchAllUserGroupsResponse> => {
@@ -117,6 +117,16 @@ export const fetchCredentialFieldsByGroupId = async (groupId: string): Promise<F
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   return await fetch(`${baseUrl}/group/${groupId}/credential-fields`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+}
+
+export const fetchUsersWithoutGroupAccess = async (groupId: string): Promise<FetchUsersWithoutGroupAccess> => {
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  return await fetch(`${baseUrl}/groups/${groupId}/users/without-access`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

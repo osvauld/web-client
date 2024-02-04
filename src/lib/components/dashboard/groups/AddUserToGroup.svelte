@@ -5,28 +5,22 @@
         fetchAllUsers,
         addUserToGroup,
         fetchCredentialFieldsByGroupId,
+        fetchUsersWithoutGroupAccess,
     } from "../apis";
     import { CredentialFields } from "../dtos";
     import { createShareCredsPayload } from "../helper";
 
     import { User } from "../dtos";
     import { selectedGroup, showAddUserToGroupDrawer } from "../store";
+
     let users: User[] = [];
     let credentialFields: CredentialFields[] = [];
     onMount(async () => {
         if (!$selectedGroup) return;
-        const userGroupPromise = fetchGroupUsers($selectedGroup.groupId);
-        const allUsersPromise = fetchAllUsers();
-        const [userGroup, allUsers] = await Promise.all([
-            userGroupPromise,
-            allUsersPromise,
-        ]);
-        // TODO: API to fetch non group members.
-        users = allUsers.data.filter(
-            (user) =>
-                !userGroup.data.some((groupUser) => groupUser.id === user.id),
+        const userGroup = await fetchUsersWithoutGroupAccess(
+            $selectedGroup.groupId,
         );
-
+        users = userGroup.data;
         const credentialFieldsResponse = await fetchCredentialFieldsByGroupId(
             $selectedGroup.groupId,
         );
