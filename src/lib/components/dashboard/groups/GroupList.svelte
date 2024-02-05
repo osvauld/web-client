@@ -15,8 +15,7 @@
 
   import { User } from "../dtos";
 
-  import { fetchGroupUsers } from "../apis";
-  import { fetchAllUsers } from "../apis"
+  import { fetchGroupUsers, fetchAllUsers } from "../apis";
   import AllUsersList from './AllUsersList.svelte';
   import OtherGroupsList from './OtherGroupsList.svelte';
 

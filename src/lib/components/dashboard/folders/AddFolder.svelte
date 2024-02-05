@@ -1,10 +1,8 @@
 <script lang="ts">
   import { createFolder, fetchAllFolders } from "../apis";
   import { showAddFolderDrawer, folderStore } from "../store";
-  import { createEventDispatcher } from "svelte";
-  import {ClosePanel} from "../icons"
-  
-  const dispatch = createEventDispatcher();
+  import { ClosePanel } from "../icons";
+
   let name = "";
   let description = "";
 
@@ -22,29 +20,30 @@
   const handleClose = () => {
     showAddFolderDrawer.set(false);
   };
-
 </script>
 
-<div class="flex flex-col p-6 border border-osvauld-iconblack bg-osvauld-frameblack rounded-lg">
-
-  <button on:click={handleClose} class="ml-auto"><ClosePanel/></button>
+<div
+  class="flex flex-col p-6 border border-osvauld-iconblack bg-osvauld-frameblack rounded-lg"
+>
+  <button on:click={handleClose} class="ml-auto"><ClosePanel /></button>
   <label for="name" class="mb-2 font-bold text-lg">Name:</label>
   <input
     id="name"
     type="text"
     bind:value={name}
-    class=" py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0" 
-   autocomplete="off" 
+    class=" py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
+    autocomplete="off"
   />
 
   <label for="description" class="mb-2 font-bold text-lg">Description:</label>
   <textarea
     id="description"
     bind:value={description}
-    class=" py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-20 mx-2 focus:border-osvauld-iconblack focus:ring-0" 
+    class=" py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-20 mx-2 focus:border-osvauld-iconblack focus:ring-0"
   ></textarea>
 
-  <button class="bg-osvauld-carolinablue rounded-full p-2 mt-4 text-osvauld-ninjablack" on:click={addFolderFunc}
-    >Submit</button
+  <button
+    class="bg-osvauld-carolinablue rounded-full p-2 mt-4 text-osvauld-ninjablack"
+    on:click={addFolderFunc}>Submit</button
   >
 </div>
