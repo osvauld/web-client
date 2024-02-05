@@ -49,7 +49,7 @@
       on:click={closeModal}
     >
       <button class="p-6 rounded " on:click|stopPropagation>
-        <AddFolder on:close={closeModal} />
+        <AddFolder />
       </button>
     </button>
   {/if}

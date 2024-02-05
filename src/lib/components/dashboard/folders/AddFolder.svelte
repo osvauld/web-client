@@ -20,7 +20,7 @@
   };
 
   const handleClose = () => {
-      dispatch("close");
+    showAddFolderDrawer.set(false);
   };
 
 </script>

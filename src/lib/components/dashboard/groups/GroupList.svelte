@@ -34,18 +34,18 @@
         });
       }
     });
+    if(adminStatus){
+      fetchAllUsers().then((usersResponse) => {
+        allUsers = usersResponse.data
+      });
+    }
   });
-
   onDestroy(() => {
     unsubscribe();
     groupUsers = [];
   });
 
-  if(adminStatus){
-      fetchAllUsers().then((usersResponse) => {
-        allUsers = usersResponse.data
-      });
-  }
+
 
 </script>
 
