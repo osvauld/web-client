@@ -8,12 +8,14 @@
   import { fetchFolderUsers, fetchAllUsers, fetchAllUserGroups } from "../apis";
   import { User, Group, Credential } from "../dtos";
 
+  import CredentialDetails from "./CredentialDetails.svelte";
   import {
     credentialStore,
     showAddCredentialDrawer,
     showFolderShareDrawer,
     showCredentialShareDrawer,
     selectedFolder,
+    showCredentialDetailsDrawer,
   } from "../store";
   import { onDestroy } from "svelte";
 
@@ -135,11 +137,13 @@
     class="flex flex-wrap p-3 w-full max-h-[85vh] !overflow-y-scroll scrollbar-thin"
   >
     {#each $credentialStore as credential, index}
-      <CredentialCard
-        {credential}
-        {index}
-        on:check={(e) => handleCheck(e.detail, credential)}
-      />
+      <div class="px-1 pb-1">
+        <CredentialCard
+          {credential}
+          {index}
+          on:check={(e) => handleCheck(e.detail, credential)}
+        />
+      </div>
     {/each}
   </div>
 </div>
