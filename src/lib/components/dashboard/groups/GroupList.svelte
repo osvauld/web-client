@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { Unsubscriber, writable } from "svelte/store";
+  import { Unsubscriber} from "svelte/store";
 
   import {
     selectedGroup,
@@ -22,15 +22,13 @@
 
   let groupUsers: User[] = [];
   let unsubscribe: Unsubscriber;
-  let selectedAllUsers = false;
-  let groupName = writable("");
+  let groupName =""
   let allUsers: User[] = [];
 
   onMount(() => {
     unsubscribe = selectedGroup.subscribe((value) => {
       if (value) {
-        $groupName = value.name
-        selectedAllUsers = false;
+        groupName = value.name
         fetchGroupUsers(value.groupId).then((usersResponse) => {
           groupUsers = usersResponse.data;
         });
@@ -43,7 +41,7 @@
     groupUsers = [];
   });
 
-  if(adminStatus && allUsersSelected){
+  if(adminStatus){
       fetchAllUsers().then((usersResponse) => {
         allUsers = usersResponse.data
       });
@@ -80,116 +78,12 @@
   {/if}
 </div>
 
-<<<<<<< HEAD
   <div class="min-w-screen h-[48rem] flex overflow-hidden ">
     <div class="w-full">
-<<<<<<< HEAD
       {#if adminStatus && $allUsersSelected}
           <AllUsersList {allUsers}/>
       {:else if $selectedGroup}
           <OtherGroupsList {groupUsers} {groupName}/>
       {/if}
-=======
-  <div class="min-w-screen min-h-screen flex overflow-auto border rounded-2xl border-osvauld-iconblack">
-    <div class="w-full">
-      <div class="flex items-center px-4 py-2">
-        <h1 class="text-4xl p-4 font-normal w-1/3">{$groupName}</h1>
-=======
-      <div class="flex items-center justify-between px-4 py-5 pb-0">
-        <h1 class="text-4xl p-4 font-normal w-1/3 ml-3">{ adminStatus && $allUsersSelected ? 'All Users' : $groupName}</h1>
->>>>>>> 0c93d6b (Abrus changes accepted)
-        <div
-          class="h-[2.1rem] w-1/4 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
-        >
-          <Lens />
-          <input
-            type="text"
-            class="h-[1.76rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-            placeholder="Search for group members.."
-          />
-        </div>
-        {#if !selectedAllUsers}
-        <button
-<<<<<<< HEAD
-            class="bg rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"  on:click={() => showAddUserToGroupDrawer.set(true)}
-            ><span class="mr-1">Add new user</span> <Add />
-          </button>
-        {/if}
-      </div>
-      <div class="rounded my-6">
-        <!-- {#if $selectedGroup}
-          <button
-            class="bg-macchiato-lavender text-macchiato-base p-2 rounded-md"
-            on:click={() => showAddUserToGroupDrawer.set(true)}>Add User</button
-          >
-        {/if} -->
-        <table class="min-w-max w-full table-auto table-layout-fixed">
-          <thead>
-            <tr class="text-sm leading-normal">
-              <th class="py-3 px-3 text-left whitespace-nowrap w-1/2  pl-6">Name</th>
-              <th class="py-3 px-3 text-left whitespace-nowrap w-1/2  pl-6">Username</th>
-            </tr>
-          </thead>
-        </table>
-        <div class="h-[42rem] overflow-y-auto">
-          <table class="min-w-max w-full table-auto table-layout-fixed">
-            <tbody class="text-xl font-light">
-              {#each groupUsers as user}
-                <tr
-                  class="border border-transparent hover:border-macchiato-sky hover:bg-macchiato-surface1"
-                >
-                  <td class="py-3 px-6 text-left whitespace-nowrap">
-                    {user.name}
-                  </td>
-                  <td class="py-3 px-6 text-left">
-                    {user.username}
-                  </td>
-                </tr>
-              {/each}
-            </tbody>
-          </table>
-        </div>
-      </div>
->>>>>>> f0817b9 (working list top search and btns progress)
-=======
-          class="rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
-        on:click={$allUsersSelected ? () => showAddUserDrawer.set(true) : () => showAddUserToGroupDrawer.set(true)} > 
-          <span class="mr-1">Add new user</span>
-          <Add />
-        </button>
-      </div>
-        <div class="rounded my-6 px-10">
-          <table class="min-w-max w-full table-auto table-layout-fixed">
-            <thead>
-              <tr class="leading-normal text-lg">
-                <th class="py-3 px-3 text-left whitespace-nowrap w-1/4 pl-6">Name</th>
-                <th class="py-3 px-3 text-left whitespace-nowrap w-1/3 ">Username</th>
-              </tr>
-            </thead>
-          </table>
-          <div class="h-[40rem] overflow-y-auto scrollbar-thin px-2">
-            <table class="min-w-max w-full table-auto table-layout-fixed">
-              <tbody class="text-xl text-osvauld-dusklabel font-normal text-sm">
-                {#each $allUsersSelected ? allUsers : groupUsers as user}
-                  <tr
-                    class="border border-transparent hover:bg-osvauld-bordergreen"
-                  >
-                    <td class="py-6 px-6 text-left whitespace-nowrap">
-                      {user.name}
-                    </td>
-                    <td class="py-6 px-6 text-left">
-                      {user.username}
-                    </td>
-                    <td class="flex justify-between items-center py-6 w-[4rem]">
-                      <BinIcon/>
-                      <EditIcon/>
-                    </td>
-                  </tr>
-                {/each}
-              </tbody>
-            </table>
-          </div>
-        </div>
->>>>>>> 0c93d6b (Abrus changes accepted)
     </div>
   </div>
