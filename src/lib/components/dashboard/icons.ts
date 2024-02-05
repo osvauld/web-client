@@ -22,3 +22,4 @@ export { default as Toggle } from "../basic/toggle.svelte";
 export { default as GroupIcon } from "../basic/groupIcon.svelte";
 export { default as UserIcon } from "../basic/userIcon.svelte";
 export { default as BlueClose } from "../basic/blueClose.svelte";
+export { default as EditIcon } from "../basic/editIcon.svelte";

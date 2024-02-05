@@ -44,20 +44,23 @@
     };
 </script>
 
-<div class="bg-macchiato-surface0">
+<div class="bg-osvauld-frameblack border border-osvauld-iconblack w-[40vw] h-[70vh] overflow-y-scroll scrollbar-thin p-4">
+
+    <button
+    class="bg-osvauld-carolinablue w-full text-macchiato-crust px-10 py-2"
+    on:click={() => showAddUserToGroupDrawer.set(false)}>Close</button
+>
+
     {#each users as user}
-        <li>
+        <li class="list-none">
             <div class="p-2 flex justify-between">
                 {user.name}
                 <button
-                    class="bg-macchiato-teal text-macchiato-base p-2"
+                    class="bg-osvauld-cretangreen text-macchiato-base p-2"
                     on:click={() => addUsertoGroup(user)}>Add user</button
                 >
             </div>
         </li>
     {/each}
-    <button
-        class="bg-macchiato-rosewater text-macchiato-crust p-2"
-        on:click={() => showAddUserToGroupDrawer.set(false)}>CLOSE</button
-    >
+
 </div>

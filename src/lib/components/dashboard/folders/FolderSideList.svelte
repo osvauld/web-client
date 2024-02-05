@@ -38,18 +38,18 @@
 
 <div>
   <button
-    class="bg-osvauld-illutionpurple whitespace-nowrap rounded-lg py-2 px-16 mb-4 flex justify-center items-center text-macchiato-base xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
+    class="bg-osvauld-illutionpurple whitespace-nowrap rounded-lg py-2 px-11 mb-4 flex justify-center items-center text-macchiato-base xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
     on:click={openModal}
-    ><span class="mr-1">Create New </span>
+    ><span class="mr-1">Create new folder</span>
     <Add />
   </button>
   {#if $showAddFolderDrawer}
     <button
-      class="bg-[#182034] fixed inset-0 flex items-center justify-center z-50"
+      class="fixed inset-0 flex items-center justify-center z-50 bg-[#010409ad] backdrop-filter backdrop-blur-[2px]"
       on:click={closeModal}
     >
-      <button class="p-6 rounded shadow-lg" on:click|stopPropagation>
-        <AddFolder on:close={closeModal} />
+      <button class="p-6 rounded " on:click|stopPropagation>
+        <AddFolder />
       </button>
     </button>
   {/if}
