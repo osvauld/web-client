@@ -41,17 +41,20 @@
 
 <main>
   <div
-    class="w-[22.5rem] min-h-[37.78rem] p-2 pt-3 flex flex-col  {$isSignedUp && !loggedIn ? "justify-center": "justify-start"} items-center bg-osvauld-frameblack"
+    class="w-[22.5rem] min-h-[37.78rem] p-2 pt-3 flex flex-col {$isSignedUp &&
+    !loggedIn
+      ? 'justify-center'
+      : 'justify-start'} items-center bg-osvauld-frameblack"
   >
     {#if !$isSignedUp}
       <Signup />
     {:else if loggedIn}
       <Home />
     {:else}
-        <div class="mb-12 flex justify-center items-center">
-          <Logo />
-        </div>
-        <Welcome on:authenticated={checkAuth} />
+      <div class="mb-12 flex justify-center items-center">
+        <Logo />
+      </div>
+      <Welcome on:authenticated={checkAuth} />
     {/if}
   </div>
 </main>
