@@ -50,7 +50,7 @@
         ><ClosePanel /></button
       >
     </div>
-    {#each credential.fields as field, index}
+    {#each credential.fields as field}
       <PlainField
         fieldName={field.fieldName}
         fieldValue={field.fieldValue}
