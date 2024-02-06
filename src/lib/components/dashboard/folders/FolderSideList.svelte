@@ -48,23 +48,25 @@
       class="fixed inset-0 flex items-center justify-center z-50 bg-[#010409ad] backdrop-filter backdrop-blur-[2px]"
       on:click={closeModal}
     >
-      <button class="p-6 rounded " on:click|stopPropagation>
+      <button class="p-6 rounded" on:click|stopPropagation>
         <AddFolder />
       </button>
     </button>
   {/if}
   <ul>
     {#each $folderStore as folder}
-      <button
-        on:click={() => selectFolder(folder)}
-        class={`p-2 w-full text-lg rounded-2xl flex items-center cursor-pointer ${
-          $selectedFolder === folder
-            ? "bg-osvauld-cretangreen border border-osvauld-cretangreen text-macchiato-crust"
-            : "hover:border hover:border-macchiato-teal text-macchiato-subtext1 "
-        } rounded-md`}
+      <li
+        class="{$selectedFolder === folder
+          ? 'bg-osvauld-bordergreen rounded-lg'
+          : 'hover:bg-osvauld-bordergreen'} rounded-md pl-3"
       >
-        {folder.name}
-      </button>
+        <button
+          on:click={() => selectFolder(folder)}
+          class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
+        >
+          {folder.name}
+        </button>
+      </li>
     {/each}
   </ul>
 </div>
