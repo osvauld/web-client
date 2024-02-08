@@ -6,7 +6,6 @@
   import PlainField from "./PlainField.svelte";
   import { More, SensitiveEye, SensitiveEyeBlue } from "../icons";
   import { showCredentialDetailsDrawer } from "../store";
-  import CredentialDetails from "./CredentialDetails.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -19,7 +18,6 @@
   let hoverEffect = false;
   let sensitiveCard = false;
   let hoverTimeout;
-  let selectedCredential = null;
 
   function toggleCheck() {
     checked = !checked;
@@ -62,32 +60,11 @@
       );
       sensitiveFields = response.data;
     }
-    selectedCredential = credential;
-    showCredentialDetailsDrawer.set(true);
-  };
-
-  const withdrawDetailDrawer = () => {
-    selectedCredential = null;
-    showCredentialDetailsDrawer.set(false);
+    dispatch("select", sensitiveFields);
   };
 
   /* eslint-disable */
 </script>
-
-{#if $showCredentialDetailsDrawer && selectedCredential}
-  <button
-    class="fixed inset-0 flex items-center justify-center z-50"
-    on:click={withdrawDetailDrawer}
-  >
-    <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
-      <CredentialDetails
-        credential={selectedCredential}
-        sensitiveFields={[...sensitiveFields]}
-        on:close={withdrawDetailDrawer}
-      />
-    </button>
-  </button>
-{/if}
 
 <button
   class="mb-3 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
