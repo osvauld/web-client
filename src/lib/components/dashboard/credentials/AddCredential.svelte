@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
-  import { ClosePanel, BinIcon, Add } from "../icons";
+  import { ClosePanel, Add } from "../icons";
   import { encryptCredentialsForUserNew } from "../../../utils/helperMethods";
 
   import {
@@ -34,8 +34,7 @@
   let addCredentialPaylod: AddCredentialPayload;
   let hoveredIndex = null;
   let credentialType = "Login";
-
-  credentialFields = [
+  let loginFields = [
     { fieldName: "Username", fieldValue: "", sensitive: false },
     { fieldName: "Password", fieldValue: "", sensitive: true },
     { fieldName: "URL", fieldValue: "https://", sensitive: false },
@@ -112,18 +111,13 @@
 
   const credentialTypeSelection = (isLogin: boolean) => {
     loginSelected = isLogin;
-    if (loginSelected) {
-      credentialFields = [
-        { fieldName: "Username", fieldValue: "", sensitive: false },
-        { fieldName: "Password", fieldValue: "", sensitive: true },
-        { fieldName: "URL", fieldValue: "https://", sensitive: false },
-      ];
-    } else {
-      credentialFields = [{ fieldName: "", fieldValue: "", sensitive: false }];
-    }
+    credentialFields = isLogin
+      ? loginFields
+      : [{ fieldName: "", fieldValue: "", sensitive: false }];
   };
 
   onMount(async () => {
+    credentialFields = loginFields;
     if ($selectedFolder === null) throw new Error("folder not selected");
     const responseJson = await fetchFolderUsers($selectedFolder.id);
     folderUsers = responseJson.data;
@@ -149,15 +143,15 @@
       <button
         class="text-[1.4rem] font-sans font-normal {loginSelected
           ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
-          : 'text-osvauld-iconblack'}"
+          : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(true)}
       >
         Add Login credential
       </button>
       <button
-        class="text-[1.4rem] font-sans font-normal text-osvauld-quarzowhite ml-2 {!loginSelected
+        class="text-[1.4rem] font-sans font-normal ml-2 {!loginSelected
           ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
-          : 'text-osvauld-iconblack'}"
+          : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(false)}
       >
         Add other credential
