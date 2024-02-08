@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
-  import { ClosePanel, BinIcon } from "../icons";
+  import { ClosePanel, BinIcon, Add } from "../icons";
   import { encryptCredentialsForUserNew } from "../../../utils/helperMethods";
 
   import {
@@ -18,6 +18,7 @@
   } from "../apis";
 
   import { AddCredentialPayload, Fields, User } from "../dtos";
+  import AddLoginFields from "./AddLoginFields.svelte";
 
   type AddCredentialField = {
     fieldName: string;
@@ -28,10 +29,17 @@
   let credentialFields: AddCredentialField[] = [];
   let description = "";
   let name = "";
+  let loginSelected = true;
   let folderUsers: User[] = [];
   let addCredentialPaylod: AddCredentialPayload;
   let hoveredIndex = null;
   let credentialType = "Login";
+
+  credentialFields = [
+    { fieldName: "Username", fieldValue: "", sensitive: false },
+    { fieldName: "Password", fieldValue: "", sensitive: true },
+    { fieldName: "URL", fieldValue: "https://", sensitive: false },
+  ];
 
   const addField = () => {
     let newField: AddCredentialField = {
@@ -84,7 +92,7 @@
     for (const user of folderUsers) {
       const encryptedData = await encryptCredentialsForUserNew(
         [{ fields: addCredentialFields }],
-        user.publicKey,
+        user.publicKey
       );
       addCredentialPaylod.userFields.push({
         userId: user.id,
@@ -102,12 +110,20 @@
     showAddCredentialDrawer.set(false);
   };
 
+  const credentialTypeSelection = (isLogin: boolean) => {
+    loginSelected = isLogin;
+    if (loginSelected) {
+      credentialFields = [
+        { fieldName: "Username", fieldValue: "", sensitive: false },
+        { fieldName: "Password", fieldValue: "", sensitive: true },
+        { fieldName: "URL", fieldValue: "https://", sensitive: false },
+      ];
+    } else {
+      credentialFields = [{ fieldName: "", fieldValue: "", sensitive: false }];
+    }
+  };
+
   onMount(async () => {
-    credentialFields = [
-      { fieldName: "Username", fieldValue: "", sensitive: false },
-      { fieldName: "Password", fieldValue: "", sensitive: true },
-      { fieldName: "URL", fieldValue: "https://", sensitive: false },
-    ];
     if ($selectedFolder === null) throw new Error("folder not selected");
     const responseJson = await fetchFolderUsers($selectedFolder.id);
     folderUsers = responseJson.data;
@@ -120,16 +136,33 @@
   function triggerSensitiveBubble(index: number, isEnter: boolean) {
     isEnter ? (hoveredIndex = index) : (hoveredIndex = null);
   }
+
+  /* eslint-disable */
 </script>
 
 <div
   class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack"
   in:fly
 >
-  <div class="flex justify-between items-center px-12 py-9">
-    <p class="text-[1.78rem] font-sans font-normal text-osvauld-quarzowhite">
-      Add Credential
-    </p>
+  <div class="flex justify-between items-center px-12 py-6">
+    <div>
+      <button
+        class="text-[1.4rem] font-sans font-normal {loginSelected
+          ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
+          : 'text-osvauld-iconblack'}"
+        on:click={() => credentialTypeSelection(true)}
+      >
+        Add Login credential
+      </button>
+      <button
+        class="text-[1.4rem] font-sans font-normal text-osvauld-quarzowhite ml-2 {!loginSelected
+          ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
+          : 'text-osvauld-iconblack'}"
+        on:click={() => credentialTypeSelection(false)}
+      >
+        Add other credential
+      </button>
+    </div>
     <button class="bg-osvauld-frameblack" on:click={closeDialog}
       ><ClosePanel /></button
     >
@@ -139,85 +172,30 @@
 
   <div class="mx-6">
     <input
-      class=" w-full h-[3.8rem] my-2 ml-4 bg-osvauld-frameblack border-0 rounded-none text-2xl text-osvauld-quarzowhite font-normal focus:ring-0 focus:ring-offset-0"
+      class=" w-full h-[3.8rem] my-2 ml-4 bg-osvauld-frameblack border-0 rounded-none text-3xl text-osvauld-quarzowhite font-normal focus:ring-0 focus:ring-offset-0"
       id="name"
       type="text"
       placeholder="Enter Credential name"
+      autocomplete="off"
       bind:value={name}
     />
 
     {#each credentialFields as field, index}
-      <div class="field-container rounded-sm transition relative">
-        <div class="flex items-center justify-between p-4">
-          <input
-            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[16rem] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
-            id={`key-${index}`}
-            type="text"
-            placeholder="Username"
-            bind:value={field.fieldName}
-          />
-          <input
-            class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[16rem] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
-            id={`value-${index}`}
-            type="text"
-            placeholder="Enter value"
-            bind:value={field.fieldValue}
-          />
-          <div
-            class="flex items-center justify-center {index === hoveredIndex
-              ? 'relative'
-              : ''}"
-            on:mouseenter={() => triggerSensitiveBubble(index, true)}
-            on:mouseleave={() => triggerSensitiveBubble(index, false)}
-          >
-            <label
-              for={`toggle-${index}`}
-              class="inline-flex items-center cursor-pointer"
-            >
-              <span class="relative">
-                <span
-                  class="block w-10 h-6 {field.sensitive
-                    ? 'bg-osvauld-carolinablue'
-                    : 'bg-osvauld-placeholderblack'} rounded-full shadow-inner"
-                ></span>
-                <span
-                  class="absolute block w-4 h-4 mt-1 ml-1 rounded-full shadow inset-y-0 left-0 focus-within:shadow-outline transform transition-transform duration-300 ease-in-out {field.sensitive
-                    ? 'bg-osvauld-plainwhite translate-x-full'
-                    : 'bg-osvauld-chalkwhite'}"
-                >
-                  <input
-                    type="checkbox"
-                    id={`toggle-${index}`}
-                    class="absolute opacity-0 w-0 h-0"
-                    bind:checked={field.sensitive}
-                  />
-                </span>
-              </span>
-            </label>
-            {#if index === hoveredIndex}
-              <span
-                class="absolute top-[-3.75rem] left-[-1.5625rem] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle"
-                >Sensitive</span
-              >
-            {/if}
-          </div>
-          <div class="flex items-center justify-center">
-            <button
-              class="rounded-md pr-2 pl-2 bg-osvauld-frameblack text-osvauld-quarzowhite flex justify-center items-center ml-5"
-              on:click={() => removeField(index)}
-            >
-              <BinIcon />
-            </button>
-          </div>
-        </div>
-      </div>
+      <AddLoginFields
+        {field}
+        {index}
+        {hoveredIndex}
+        on:select={(e) =>
+          triggerSensitiveBubble(e.detail.index, e.detail.identifier)}
+        on:remove={(e) => removeField(e.detail)}
+      />
     {/each}
     <div class="flex mr-24">
       <button
-        class="py-2 m-4 bg-macchiato-blue flex-1 flex justify-center items-center rounded-md text-macchiato-surface0"
+        class="py-2 m-4 bg-osvauld-addfieldgrey flex-1 flex justify-center items-center rounded-md text-osvauld-chalkwhite border-2 border-dashed border-osvauld-iconblack"
         on:click={addField}
       >
-        Add Field
+        <Add color={"#6E7681"} />
       </button>
     </div>
   </div>
@@ -232,26 +210,13 @@
   <div class="border-b border-osvauld-iconblack w-full my-2"></div>
   <div class="flex justify-end items-center mx-10 py-2">
     <button
-      class="text-osvauld-sheffieldgrey border border-osvauld-iconblack px-[3.25rem] w-1/3 py-2.5 rounded-lg mb-6 bg-osvauld-placeholderblack mr-3"
+      class="border border-osvauld-iconblack bg-osvauld-addfieldgrey px-[3.25rem] w-1/3 py-2.5 rounded-lg mb-6 text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack mr-3"
       on:click={closeDialog}>Cancel</button
     >
 
     <button
-      class="bg-macchiato-blue px-[3.25rem] py-2.5 rounded-lg mb-6 text-macchiato-surface0"
+      class="bg-osvauld-addfieldgrey px-[3.25rem] py-2.5 rounded-lg mb-6 text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue border border-osvauld-iconblack hover:text-osvauld-ninjablack"
       on:click={saveCredential}>Add credential</button
     >
   </div>
 </div>
-
-<style>
-  .triangle::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    border-width: 10px;
-    border-style: solid;
-    border-color: transparent transparent #21262d transparent;
-    transform: translateX(-50%) rotate(180deg);
-  }
-</style>
