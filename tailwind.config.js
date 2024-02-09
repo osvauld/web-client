@@ -47,6 +47,7 @@ export default {
           ninjablack: "#010409",
           sheffieldgrey: "#6E7681",
           placeholderblack: "#30363D",
+          addfieldgrey: "#12161C",
           quarzowhite: "#C9D1D9",
           lilacpink: "#CBA6F7",
           carolinablue: "#89B4FA",

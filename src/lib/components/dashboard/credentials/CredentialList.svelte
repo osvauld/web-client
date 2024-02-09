@@ -3,12 +3,12 @@
   import ShareFolderModal from "../folders/ShareFolderModal.svelte";
   import ShareCredentialModal from "./ShareCredentialModal.svelte";
   import CredentialCard from "./CredentialCard.svelte";
+  import CredentialDetails from "./CredentialDetails.svelte";
 
   import { Lens, Share, Add } from "../icons";
   import { fetchFolderUsers, fetchAllUsers, fetchAllUserGroups } from "../apis";
   import { User, Group, Credential } from "../dtos";
 
-  import CredentialDetails from "./CredentialDetails.svelte";
   import {
     credentialStore,
     showAddCredentialDrawer,
@@ -22,13 +22,15 @@
   let checkedCards: Credential[] = [];
   let users: User[] = [];
   let allGroups: Group[] = [];
+  let selectedCard: any;
+  let sensitiveFields = [];
 
   function handleCheck(isChecked: boolean, card: Credential) {
     if (isChecked) {
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId,
+        (c) => c.credentialId !== card.credentialId
       );
     }
   }
@@ -47,16 +49,41 @@
     allGroups = allGroupResponse.data;
     users = allUsersResponse.data.filter((user) => {
       return !folderUsersResponse.data.some(
-        (folderUser) => folderUser.id === user.id,
+        (folderUser) => folderUser.id === user.id
       );
     });
     checkedCards = [];
   });
 
+  const withdrawDetailDrawer = () => {
+    showCredentialDetailsDrawer.set(false);
+  };
+
+  const onSelectingCard = (sensitiveFieldsfromCard, credential) => {
+    sensitiveFields = [...sensitiveFieldsfromCard];
+    selectedCard = credential;
+    showCredentialDetailsDrawer.set(true);
+  };
+
   onDestroy(() => {
     subscribe();
   });
 </script>
+
+{#if $showCredentialDetailsDrawer}
+  <button
+    class="fixed inset-0 flex items-center justify-center z-50"
+    on:click={withdrawDetailDrawer}
+  >
+    <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
+      <CredentialDetails
+        credential={selectedCard}
+        {sensitiveFields}
+        on:close={withdrawDetailDrawer}
+      />
+    </button>
+  </button>
+{/if}
 
 <div>
   {#if $selectedFolder}
@@ -142,6 +169,7 @@
           {credential}
           {index}
           on:check={(e) => handleCheck(e.detail, credential)}
+          on:select={(e) => onSelectingCard(e.detail, credential)}
         />
       </div>
     {/each}
