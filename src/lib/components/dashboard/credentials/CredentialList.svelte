@@ -24,6 +24,7 @@
   let allGroups: Group[] = [];
   let selectedCard: any;
   let sensitiveFields = [];
+  $: addIconColor = checkedCards.length === 0 ? "#000" : "#6E7681";
 
   function handleCheck(isChecked: boolean, card: Credential) {
     if (isChecked) {
@@ -40,6 +41,7 @@
     let folderUsersResponse;
     let allUsersResponse;
     let allGroupResponse;
+
     [allUsersResponse, folderUsersResponse, allGroupResponse] =
       await Promise.all([
         fetchAllUsers(),
@@ -116,9 +118,12 @@
         />
       </div>
       <button
-        class="bg rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+        class="bg rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 {checkedCards.length ===
+        0
+          ? 'bg-osvauld-carolinablue text-osvauld-ninjablack'
+          : 'bg-osvauld-iconblack text-osvauld-sheffieldgrey'}"
         on:click={() => showAddCredentialDrawer.set(true)}
-        ><span class="mr-1"> Add Credential</span> <Add />
+        ><span class="mr-1"> Add Credential</span> <Add color={addIconColor} />
       </button>
     </div>
   {/if}
