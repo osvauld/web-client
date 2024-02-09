@@ -94,14 +94,14 @@
       {#if checkedCards.length === 0}
         <!-- TODO: update to share credentials in the same api -->
         <button
-          class="bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+          class="w-[12rem] bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-macchiato-surface0 flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
           on:click={() => showFolderShareDrawer.set(true)}
         >
           <Share /> <span class="ml-1"> Manage Access</span>
         </button>
       {:else}
         <button
-          class="bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+          class="w-[12rem] bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-macchiato-surface0 flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
           on:click={() => showCredentialShareDrawer.set(true)}
         >
           <Share /><span class="ml-1"> Share Secrets </span>
@@ -123,6 +123,7 @@
           ? 'bg-osvauld-carolinablue text-osvauld-ninjablack'
           : 'bg-osvauld-iconblack text-osvauld-sheffieldgrey'}"
         on:click={() => showAddCredentialDrawer.set(true)}
+        disabled={checkedCards.length !== 0}
         ><span class="mr-1"> Add Credential</span> <Add color={addIconColor} />
       </button>
     </div>
