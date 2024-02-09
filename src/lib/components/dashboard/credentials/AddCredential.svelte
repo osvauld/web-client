@@ -174,16 +174,18 @@
       bind:value={name}
     />
 
-    {#each credentialFields as field, index}
-      <AddLoginFields
-        {field}
-        {index}
-        {hoveredIndex}
-        on:select={(e) =>
-          triggerSensitiveBubble(e.detail.index, e.detail.identifier)}
-        on:remove={(e) => removeField(e.detail)}
-      />
-    {/each}
+    <div class="min-h-[25vh]">
+      {#each credentialFields as field, index}
+        <AddLoginFields
+          {field}
+          {index}
+          {hoveredIndex}
+          on:select={(e) =>
+            triggerSensitiveBubble(e.detail.index, e.detail.identifier)}
+          on:remove={(e) => removeField(e.detail)}
+        />
+      {/each}
+    </div>
     <div class="flex mr-24">
       <button
         class="py-2 m-4 bg-osvauld-addfieldgrey flex-1 flex justify-center items-center rounded-md text-osvauld-chalkwhite border-2 border-dashed border-osvauld-iconblack"
