@@ -74,7 +74,7 @@
 
 {#if $showCredentialDetailsDrawer}
   <button
-    class="fixed inset-0 flex items-center justify-center z-50"
+    class="fixed inset-0 flex items-center justify-center z-50 bg-[#010409ad] backdrop-filter backdrop-blur-[2px]"
     on:click={withdrawDetailDrawer}
   >
     <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
@@ -140,7 +140,7 @@
   {/if}
   {#if $showFolderShareDrawer}
     <button
-      class="bg-transparent fixed inset-0 flex items-center justify-center z-50"
+      class="fixed inset-0 bg-[#010409ad] backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50"
       on:click={() => showFolderShareDrawer.set(false)}
     >
       <button class="p-6 rounded shadow-lg" on:click|stopPropagation>
@@ -153,7 +153,7 @@
   {/if}
   {#if $showCredentialShareDrawer}
     <button
-      class="bg-transparent fixed inset-0 flex items-center justify-center z-50"
+      class="fixed inset-0 bg-[#010409ad] backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50"
       on:click={() => showCredentialShareDrawer.set(false)}
     >
       <button class="p-6 rounded shadow-lg" on:click|stopPropagation>
