@@ -157,7 +157,7 @@
         Add other credential
       </button>
     </div>
-    <button class="bg-osvauld-frameblack" on:click={closeDialog}
+    <button class="bg-osvauld-frameblack p-4" on:click={closeDialog}
       ><ClosePanel /></button
     >
   </div>
@@ -174,16 +174,18 @@
       bind:value={name}
     />
 
-    {#each credentialFields as field, index}
-      <AddLoginFields
-        {field}
-        {index}
-        {hoveredIndex}
-        on:select={(e) =>
-          triggerSensitiveBubble(e.detail.index, e.detail.identifier)}
-        on:remove={(e) => removeField(e.detail)}
-      />
-    {/each}
+    <div class="min-h-[25vh] max-h-[30vh] overflow-y-scroll scrollbar-thin">
+      {#each credentialFields as field, index}
+        <AddLoginFields
+          {field}
+          {index}
+          {hoveredIndex}
+          on:select={(e) =>
+            triggerSensitiveBubble(e.detail.index, e.detail.identifier)}
+          on:remove={(e) => removeField(e.detail)}
+        />
+      {/each}
+    </div>
     <div class="flex mr-24">
       <button
         class="py-2 m-4 bg-osvauld-addfieldgrey flex-1 flex justify-center items-center rounded-md text-osvauld-chalkwhite border-2 border-dashed border-osvauld-iconblack"
@@ -204,12 +206,11 @@
   <div class="border-b border-osvauld-iconblack w-full my-2"></div>
   <div class="flex justify-end items-center mx-10 py-2">
     <button
-      class="border border-osvauld-iconblack bg-osvauld-addfieldgrey px-[3.25rem] w-1/3 py-2.5 rounded-lg mb-6 text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack mr-3"
+      class="primary-btn px-[3.25rem] w-1/3 py-2.5 mb-6 mr-3"
       on:click={closeDialog}>Cancel</button
     >
-
     <button
-      class="bg-osvauld-addfieldgrey px-[3.25rem] py-2.5 rounded-lg mb-6 text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue border border-osvauld-iconblack hover:text-osvauld-ninjablack"
+      class="primary-btn px-[3.25rem] py-2.5 mb-6"
       on:click={saveCredential}>Add credential</button
     >
   </div>
