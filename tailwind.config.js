@@ -76,6 +76,7 @@ export default {
           managerText: "#F5C2E7",
           plainwhite: "#FFF",
           toastCloseBlue: "#2D3A4D",
+          backgroundBlur: "#010409ad",
         },
       },
       fontFamily: {
