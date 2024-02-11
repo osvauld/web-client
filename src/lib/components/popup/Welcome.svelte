@@ -23,7 +23,7 @@
       dispatch("authenticated", true);
     }
   }
-  const onInput = (event) => {
+  const onInput = (event: any) => {
     passphrase = event.target.value;
   };
 </script>

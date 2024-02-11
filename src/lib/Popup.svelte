@@ -33,7 +33,7 @@
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
   };
 
-  const checkAuth = (event) => {
+  const checkAuth = (event: CustomEvent) => {
     console.log("check auth event...", event);
     loggedIn = event.detail;
   };

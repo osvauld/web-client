@@ -1,5 +1,5 @@
 
-export type { Credential, CredentialFields } from '../../dtos/credential.dto';
+export type { Credential, CredentialFields, AddCredentialField } from '../../dtos/credential.dto';
 export type { Folder } from '../../dtos/folder.dto';
 export type { Group, GroupWithAccessType } from '../../dtos/group.dto';
 export type { User, UserWithAccessType } from '../../dtos/user.dto';

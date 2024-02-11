@@ -2,8 +2,8 @@
     import Eye from "../basic/eye.svelte";
     import browser from "webextension-polyfill";
     import { isSignedUp } from "../../store/ui.store";
-    export let rsaKey;
-    export let eccKey;
+    export let rsaKey: CryptoKeyPair;
+    export let eccKey: CryptoKeyPair;
 
     let passphrase = "";
     let confirmPassphrase = "";
@@ -23,7 +23,7 @@
             }
         } else showPassphraseMismatchError = true;
     };
-    function onInput(event, type) {
+    function onInput(event: any, type: string) {
         if (type === "passphrase") passphrase = event.target.value;
         else confirmPassphrase = event.target.value;
     }

@@ -9,8 +9,8 @@
     let password = "";
     let showPassword = false;
     let showVerificationError = false;
-    let rsaKey = {};
-    let eccKey = {};
+    let rsaKey: CryptoKeyPair;
+    let eccKey: CryptoKeyPair;
 
     $: type = showPassword ? "text" : "password";
 
@@ -27,7 +27,7 @@
             dispatch("login", { rsaKey, eccKey });
         } else showVerificationError = true;
     }
-    function onInput(event) {
+    function onInput(event: any) {
         password = event.target.value;
     }
     const togglePassword = () => {

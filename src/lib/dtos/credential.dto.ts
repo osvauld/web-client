@@ -18,7 +18,7 @@ export type UserEncryptedFields = {
 
 
 export type CredentialBasic = {
-  credentialId?: string,
+  credentialId: string,
   fields: Fields[]
 }
 
@@ -46,4 +46,20 @@ export type BasicFields = {
 export type UserEncryptedCredentials = {
   userId: string;
   credentials: CredentialFields[];
+}
+
+
+
+
+
+export type AddCredentialField = {
+  fieldName: string;
+  fieldValue: string;
+  sensitive: boolean;
+};
+
+
+export type InjectionPayload = {
+  id: string | undefined;
+  username: string;
 }

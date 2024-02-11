@@ -33,6 +33,9 @@
             // @ts-ignore
             [user],
         );
+        if ($selectedGroup === null) {
+            throw new Error("Group not selected");
+        }
         const payload = {
             groupId: $selectedGroup.groupId,
             memberId: user.id,
@@ -44,12 +47,13 @@
     };
 </script>
 
-<div class="bg-osvauld-frameblack border border-osvauld-iconblack w-[40vw] h-[70vh] overflow-y-scroll scrollbar-thin p-4">
-
-    <button
-    class="bg-osvauld-carolinablue w-full text-macchiato-crust px-10 py-2"
-    on:click={() => showAddUserToGroupDrawer.set(false)}>Close</button
+<div
+    class="bg-osvauld-frameblack border border-osvauld-iconblack w-[40vw] h-[70vh] overflow-y-scroll scrollbar-thin p-4"
 >
+    <button
+        class="bg-osvauld-carolinablue w-full text-macchiato-crust px-10 py-2"
+        on:click={() => showAddUserToGroupDrawer.set(false)}>Close</button
+    >
 
     {#each users as user}
         <li class="list-none">
@@ -62,5 +66,4 @@
             </div>
         </li>
     {/each}
-
 </div>

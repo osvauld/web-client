@@ -3,7 +3,7 @@
   import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
   import { ClosePanel, Add } from "../icons";
-  import { encryptCredentialsForUserNew } from "../../../utils/helperMethods";
+  import { encryptCredentialFields } from "../../../utils/helperMethods";
 
   import {
     selectedFolder,
@@ -17,14 +17,13 @@
     fetchCredentialsByFolder,
   } from "../apis";
 
-  import { AddCredentialPayload, Fields, User } from "../dtos";
+  import {
+    AddCredentialPayload,
+    Fields,
+    User,
+    AddCredentialField,
+  } from "../dtos";
   import AddLoginFields from "./AddLoginFields.svelte";
-
-  type AddCredentialField = {
-    fieldName: string;
-    fieldValue: string;
-    sensitive: boolean;
-  };
 
   let credentialFields: AddCredentialField[] = [];
   let description = "";
@@ -32,7 +31,7 @@
   let loginSelected = true;
   let folderUsers: User[] = [];
   let addCredentialPaylod: AddCredentialPayload;
-  let hoveredIndex = null;
+  let hoveredIndex: Number | null = null;
   let credentialType = "Login";
   let loginFields = [
     { fieldName: "Username", fieldValue: "", sensitive: false },
@@ -89,13 +88,14 @@
     };
     // TODO: validate url if there is url field
     for (const user of folderUsers) {
-      const encryptedData = await encryptCredentialsForUserNew(
-        [{ fields: addCredentialFields }],
-        user.publicKey
+      const fields = await encryptCredentialFields(
+        // @ts-ignore
+        addCredentialFields,
+        user.publicKey,
       );
       addCredentialPaylod.userFields.push({
         userId: user.id,
-        fields: encryptedData[0].fields,
+        fields: fields,
       });
     }
     await addCredential(addCredentialPaylod);
