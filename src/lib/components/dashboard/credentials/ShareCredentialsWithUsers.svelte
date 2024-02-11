@@ -15,7 +15,7 @@
     export let credentialsFields: CredentialFields[] = [];
     let selectedUsers: UserWithAccessType[] = [];
     let showOptions = false;
-    let selectionIndex = null;
+    let selectionIndex: number | null = null;
     let topList = false;
     let shareToast = false;
     let searchInput = "";

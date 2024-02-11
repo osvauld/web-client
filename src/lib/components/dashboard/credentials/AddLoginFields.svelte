@@ -1,9 +1,10 @@
 <script lang="ts">
   import { BinIcon } from "../icons";
+  import { AddCredentialField } from "../dtos";
 
-  export let field;
-  export let index;
-  export let hoveredIndex;
+  export let field: AddCredentialField;
+  export let index: Number;
+  export let hoveredIndex: Number | null;
 
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();

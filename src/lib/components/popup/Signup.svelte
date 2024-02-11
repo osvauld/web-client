@@ -1,10 +1,10 @@
 <script lang="ts">
     import TempLogin from "./TempLogin.svelte";
     import SetPassPhrase from "./SetPassPhrase.svelte";
-    let rsaKey = {};
-    let eccKey = {};
+    let rsaKey: CryptoKeyPair;
+    let eccKey: CryptoKeyPair;
     let isPasswordVerfied = false;
-    const handleTempLogin = (event) => {
+    const handleTempLogin = (event: CustomEvent) => {
         rsaKey = event.detail.rsaKey;
         eccKey = event.detail.eccKey;
         isPasswordVerfied = true;

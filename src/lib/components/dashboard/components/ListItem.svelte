@@ -1,9 +1,9 @@
 <script lang="ts">
-    export let item;
-    export let isSelected;
-    export let isTopList;
-    export let setbackground;
-    export let showOptions;
+    export let item: any;
+    export let isSelected: boolean;
+    export let isTopList: boolean;
+    export let setbackground: any;
+    export let showOptions: boolean;
 
     import { BinIcon, DownArrow } from "../icons";
     import AccessSelector from "./AccessSelector.svelte";

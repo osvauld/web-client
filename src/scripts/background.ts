@@ -4,6 +4,7 @@ import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptC
 import { verifyUser } from "../lib/utils/helperMethods";
 import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew } from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
+import { InjectionPayload } from "../lib/dtos/credential.dto";
 
 let rsaPvtKey: CryptoKey;
 
@@ -110,19 +111,16 @@ browser.runtime.onMessage.addListener(async (request) => {
       if (rsaPvtKey) return Promise.resolve({ isLoaded: true })
       else return Promise.resolve({ isLoaded: false })
     case "getActiveCredSuggestion": {
-      let tabs;
-      try {
-        tabs = await browser.tabs.query({
-          active: true,
-          currentWindow: true,
-        });
-      } catch (error) {
-        console.error("Error querying tabs:", error);
-        break;
-      }
+      let tabs = await browser.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
       const activeTab = tabs[0];
-      const url = new URL(activeTab.url);
-      const domain = url.hostname;
+      let url: URL | undefined;
+      if (activeTab && activeTab.url) {
+        url = new URL(activeTab.url);
+      }
+      const domain = url?.hostname;
       // @ts-ignore
       const credentialIds = [...urlObj.get(domain)];
       const responseJson = await fetchCredsByIds(credentialIds);
@@ -139,7 +137,6 @@ browser.runtime.onMessage.addListener(async (request) => {
           }
         }
       }
-      console.log('username', username, 'password', password)
       return Promise.resolve({ username, password });
     }
     case "decryptMeta":
@@ -159,18 +156,18 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   // Check if the tab status is 'complete'
   if (changeInfo.status === 'complete') {
     // Get the current tab URL directly from the tab object
-    let url;
+    let url: URL;
+    let domain: string = '';
     if (tab.url) {
       url = new URL(tab.url);
+      domain = url.hostname;
     }
-    const domain = url.hostname;
-    console.log('URLOBJ', urlObj)
     // Check if the domain is in your list
     if (urlObj.has(domain)) {
       // @ts-ignore
       const responseData = await fetchCredsByIds([...urlObj.get(domain)]);
       // TODO: payload change in future
-      const payload: any = [];
+      const payload: InjectionPayload[] = [];
       for (const cred of responseData.data) {
         for (const field of cred.fields) {
           if (field.fieldName === 'Username') {

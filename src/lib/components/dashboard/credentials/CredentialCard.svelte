@@ -6,18 +6,19 @@
   import PlainField from "./PlainField.svelte";
   import { More, SensitiveEye, SensitiveEyeBlue } from "../icons";
   import { showCredentialDetailsDrawer } from "../store";
+  import { Credential, Fields } from "../dtos";
 
   const dispatch = createEventDispatcher();
 
-  export let credential;
-  export let index;
+  export let credential: Credential;
+  export let index: number;
 
-  let sensitiveFields = [];
+  let sensitiveFields: Fields[] = [];
   let decrypted = false;
   let checked = false;
   let hoverEffect = false;
   let sensitiveCard = false;
-  let hoverTimeout;
+  let hoverTimeout: any;
 
   function toggleCheck() {
     checked = !checked;
@@ -28,7 +29,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId
+          credential.credentialId,
         );
 
         sensitiveFields = response.data;
@@ -56,7 +57,7 @@
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId
+        credential.credentialId,
       );
       sensitiveFields = response.data;
     }

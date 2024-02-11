@@ -7,7 +7,7 @@
 
   import { Lens, Share, Add } from "../icons";
   import { fetchFolderUsers, fetchAllUsers, fetchAllUserGroups } from "../apis";
-  import { User, Group, Credential } from "../dtos";
+  import { User, Group, Credential, Fields } from "../dtos";
 
   import {
     credentialStore,
@@ -23,7 +23,7 @@
   let users: User[] = [];
   let allGroups: Group[] = [];
   let selectedCard: any;
-  let sensitiveFields = [];
+  let sensitiveFields: Fields[] = [];
   $: addIconColor = checkedCards.length === 0 ? "#000" : "#6E7681";
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -31,18 +31,15 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId
+        (c) => c.credentialId !== card.credentialId,
       );
     }
   }
   const subscribe = selectedFolder.subscribe(async (folder) => {
     //TODO: fetch shared groups.
     if (folder === null) return;
-    let folderUsersResponse;
-    let allUsersResponse;
-    let allGroupResponse;
 
-    [allUsersResponse, folderUsersResponse, allGroupResponse] =
+    let [allUsersResponse, folderUsersResponse, allGroupResponse] =
       await Promise.all([
         fetchAllUsers(),
         fetchFolderUsers(folder.id),
@@ -51,7 +48,7 @@
     allGroups = allGroupResponse.data;
     users = allUsersResponse.data.filter((user) => {
       return !folderUsersResponse.data.some(
-        (folderUser) => folderUser.id === user.id
+        (folderUser) => folderUser.id === user.id,
       );
     });
     checkedCards = [];
@@ -61,7 +58,10 @@
     showCredentialDetailsDrawer.set(false);
   };
 
-  const onSelectingCard = (sensitiveFieldsfromCard, credential) => {
+  const onSelectingCard = (
+    sensitiveFieldsfromCard: Fields[],
+    credential: Credential,
+  ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
     showCredentialDetailsDrawer.set(true);

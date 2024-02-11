@@ -1,6 +1,6 @@
 import { createChallenge, initiateAuth, verifyNewUser } from "../apis/auth.api"
 import { signTextWithPrivateKey, derivePublicKeyFromECCPrivateKey, importRSAPublicKey, encryptWithPublicKey } from "./crypto"
-import { CredentialFields } from "../dtos/credential.dto"
+import { CredentialFields, Fields } from "../dtos/credential.dto"
 
 
 export const intiateAuth = async (privateKey: CryptoKey): Promise<string> => {
@@ -23,13 +23,11 @@ export const encryptCredentialsForUserNew = async (credentials: CredentialFields
     const publicKey = await importRSAPublicKey(publicKeyStr)
     const encryptedCredsForUser: CredentialFields[] = []
     for (const credential of credentials) {
-        // @ts-ignore
         const encryptedCred: CredentialFields = {
+            credentialId: credential.credentialId,
             fields: []
         }
-        if (credential.credentialId) {
-            encryptedCred.credentialId = credential.credentialId
-        }
+        encryptedCred.credentialId = credential.credentialId
         for (const field of credential.fields) {
             const encryptedValue = await encryptWithPublicKey(field.fieldValue, publicKey)
             encryptedCred.fields.push({ ...field, fieldValue: encryptedValue })
@@ -37,6 +35,16 @@ export const encryptCredentialsForUserNew = async (credentials: CredentialFields
         encryptedCredsForUser.push(encryptedCred)
     }
     return encryptedCredsForUser;
+}
+
+export const encryptCredentialFields = async (fields: Fields[], publicKey: string): Promise<Fields[]> => {
+    const publicKeyObj = await importRSAPublicKey(publicKey)
+    const encryptedFields: Fields[] = []
+    for (const field of fields) {
+        const encryptedValue = await encryptWithPublicKey(field.fieldValue, publicKeyObj)
+        encryptedFields.push({ ...field, fieldValue: encryptedValue })
+    }
+    return encryptedFields
 }
 
 

@@ -1,9 +1,10 @@
 import browser from "webextension-polyfill";
 import { craftSaveDialouge, createIcon, createSuggestionBox, createSuggestionChildren } from "../lib/components/content/nodeGenerators";
 import { getElement } from "../lib/components/content/xpaths"
+import { InjectionPayload } from "../lib/dtos/credential.dto";
 
 let count = 0;
-let creds: any = [];
+let creds: InjectionPayload[] = [];
 
 function showSavePopup(username: string, password: string) {
   let popup = document.createElement("div");
@@ -13,7 +14,6 @@ function showSavePopup(username: string, password: string) {
 
   let saveButton = document.getElementById("saveOsvauld");
   saveButton?.addEventListener("click", function () {
-    console.log("User chose to save credentials to osvauld.");
     popup.remove();
   });
 
@@ -71,7 +71,7 @@ function suggestionsDialouge(element: HTMLInputElement, count: number) {
         });
         return mappedDiv;
       })
-      .forEach((div) => suggestionBox.appendChild(div));
+      .forEach((div: any) => suggestionBox.appendChild(div));
   }
 }
 

@@ -220,7 +220,8 @@ export const generateECCKeyPairForSigning = async (): Promise<CryptoKeyPair> => 
 
 export const exportKey = async (key: CryptoKey, format: "pkcs8" | "spki"): Promise<string> => {
   const exported = await window.crypto.subtle.exportKey(format, key);
-  const exportedAsBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(exported)));
+  const exportedAsArray = Array.from(new Uint8Array(exported));
+  const exportedAsBase64 = btoa(String.fromCharCode.apply(null, exportedAsArray));
   return exportedAsBase64;
 }
 

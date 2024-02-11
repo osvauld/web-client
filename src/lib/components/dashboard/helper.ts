@@ -1,6 +1,6 @@
 
 import browser from 'webextension-polyfill';
-import { CredentialFields, UserWithAccessType } from './dtos';
+import { CredentialFields } from './dtos';
 import { encryptCredentialsForUserNew } from "../../utils/helperMethods";
 
 type CredentialsForUsersPayload = {
@@ -8,7 +8,8 @@ type CredentialsForUsersPayload = {
     userId: string;
     credentials: CredentialFields[];
 }
-export const createShareCredsPayload = async (creds: CredentialFields[], selectedUsers: UserWithAccessType[]): Promise<CredentialsForUsersPayload[]> => {
+type UserListForEncryption = { id: string, publicKey: string, accessType?: string };
+export const createShareCredsPayload = async (creds: CredentialFields[], selectedUsers: UserListForEncryption[]): Promise<CredentialsForUsersPayload[]> => {
 
 
     const response = await browser.runtime.sendMessage({
@@ -38,9 +39,10 @@ export const createShareCredsPayload = async (creds: CredentialFields[], selecte
     return userData;
 }
 
-export const setbackground = (type: string): string => {
+type TypeToClassKey = "read" | "write" | "owner";
+export const setbackground = (type: TypeToClassKey): string => {
 
-    const typeToClassMap = {
+    const typeToClassMap: Record<TypeToClassKey, string> = {
         read: "bg-osvauld-readerOrange text-osvauld-readerText",
         write: "bg-osvauld-managerPurple text-osvauld-managerText",
         owner: "bg-osvauld-ownerGreen text-osvauld-ownerText"

@@ -8,11 +8,17 @@
   import { ClosePanel } from "../icons";
   import { onMount } from "svelte";
   import ExistingListItem from "../components/ExistingListItem.svelte";
-  export let credential;
-  export let sensitiveFields;
+  import {
+    Credential,
+    Fields,
+    GroupWithAccessType,
+    UserWithAccessType,
+  } from "../dtos";
+  export let credential: Credential;
+  export let sensitiveFields: Fields[];
   let selectedTab = "Groups";
-  let users = [];
-  let groups = [];
+  let users: UserWithAccessType[] = [];
+  let groups: GroupWithAccessType[] = [];
 
   const toggleSelect = async (e: any) => {
     selectedTab = e.detail;
@@ -21,12 +27,13 @@
       users = usersResponse.data;
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
-        credential.credentialId
+        credential.credentialId,
       );
       groups = groupsResponse.data;
     }
   };
   onMount(async () => {
+    // @ts-ignore
     const groupsResponse = await fetchCredentialGroups(credential.credentialId);
     groups = groupsResponse.data;
   });

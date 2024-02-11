@@ -17,7 +17,7 @@
     export let credentialsFields: CredentialFields[];
     let selectedUsers: UserWithAccessType[] = [];
     let showOptions = false;
-    let selectionIndex = null;
+    let selectionIndex: number | null = null;
     let topList = false;
     let searchInput = "";
     let existingItemDropdown = false;
@@ -32,7 +32,7 @@
 
     const existingUsers = async () => {
         existingItemDropdown = !existingItemDropdown;
-        if (existingUserData.length === 0) {
+        if (existingUserData.length === 0 && $selectedFolder !== null) {
             const responseJson = await fetchFolderUsers($selectedFolder.id);
             existingUserData = responseJson.data;
         } else {
@@ -41,6 +41,9 @@
     };
 
     const shareFolderHandler = async () => {
+        if ($selectedFolder === null) {
+            throw new Error("Folder not selected");
+        }
         const userData = await createShareCredsPayload(
             credentialsFields,
             selectedUsers,
