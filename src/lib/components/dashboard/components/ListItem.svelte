@@ -27,14 +27,14 @@
 </script>
 
 <div
-  class="relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg overflow-x-scroll cursor-pointer flex items-center justify-between {isSelected
+  class="relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {isSelected
     ? 'bg-osvauld-bordergreen'
     : ''}"
   on:click={handleClick}
 >
-  <div class="flex items-center space-x-4">
+  <div class="flex items-center space-x-4 max-w-full">
     <p
-      class="p-2 w-3/4 whitespace-nowrap text-base {isTopList
+      class="p-2 max-w-full overflow-x-scroll whitespace-nowrap text-base {isTopList
         ? 'text-osvauld-quarzowhite'
         : 'text-osvauld-sheffieldgrey'}"
     >
