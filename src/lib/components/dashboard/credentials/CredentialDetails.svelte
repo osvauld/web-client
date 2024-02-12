@@ -25,13 +25,11 @@
     if (selectedTab == "Users") {
       const usersResponse = await fetchCredentialUsers(credential.credentialId);
       users = usersResponse.data;
-      console.log("Credential detail users is selected", users);
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
         credential.credentialId
       );
       groups = groupsResponse.data;
-      console.log("Credential detail groups is selected", groups);
     }
   };
   onMount(async () => {
