@@ -5,6 +5,7 @@ import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymm
 import { intiateAuth, } from "../lib/utils/helperMethods";
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
 
+import './wasm_exec.js'
 
 
 export const decryptCredentialFieldsHandler = async (credentials: CredentialFields[], rsaPvtKey: CryptoKey) => {
@@ -78,3 +79,36 @@ export const decryptCredentialFieldsHandlerNew = async (credentials: Credential[
     }
     return { data: returnPayload };
 }
+
+
+
+
+
+export const loadWasmModule = async () => {
+    // @ts-ignore
+    const go = new Go(); // `Go` is defined in wasm_exec.js
+
+    let wasmModuleInstance;
+
+    async function loadWasm(filename) {
+        if (!wasmModuleInstance) {
+            const resp = await WebAssembly.instantiateStreaming(fetch(filename), go.importObject);
+            wasmModuleInstance = resp.instance;
+            go.run(wasmModuleInstance);
+        }
+    }
+
+    async function init() {
+        await loadWasm('main.wasm'); // Load and initialize the WASM module
+    }
+
+    init().then(() => {
+        console.log('WASM Module Loaded');
+        // Now you can call the Go functions that have been exposed to JavaScript
+        // Example usage:
+        // Assuming the add function has been made globally available by the Go code
+        // @ts-ignore
+        const result = window.add(8, 3);
+        console.log(`Result from Go: ${result}`); // This might need adjustment based on how the function is actually exposed
+    });
+};

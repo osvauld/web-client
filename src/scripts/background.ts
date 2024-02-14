@@ -2,10 +2,9 @@ import browser from "webextension-polyfill";
 
 import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptCredentialField, } from "../lib/utils/crypto";
 import { verifyUser } from "../lib/utils/helperMethods";
-import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew } from "./backgroundService";
+import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew, loadWasmModule } from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
-
 let rsaPvtKey: CryptoKey;
 
 
@@ -61,6 +60,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
     case "initiateAuth": {
       const passphrase = request.data.passphrase;
+      await loadWasmModule();
       const response = await initiateAuthHandler(passphrase)
       rsaPvtKey = response.rsaPvtKey;
       if (response.token) return { isAuthenticated: true }
