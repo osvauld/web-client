@@ -108,7 +108,11 @@ export const loadWasmModule = async () => {
         // Example usage:
         // Assuming the add function has been made globally available by the Go code
         // @ts-ignore
-        const result = window.add(8, 3);
-        console.log(`Result from Go: ${result}`); // This might need adjustment based on how the function is actually exposed
+        const result = window.generateKeys('abraham', 'abrahamgeore');
+        console.log(`Result from Go: ${JSON.stringify(result)}`); // This might need adjustment based on how the function is actually exposed
+        // @ts-ignore
+        const result2 = window.generateKeys('abraham', 'abrahamgeore');
+
+        console.log(`Result from Go: ${JSON.stringify(result2)}`); // This might need adjustment based on how the function is actually exposed
     });
 };
