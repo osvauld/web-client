@@ -27,7 +27,7 @@
       users = usersResponse.data;
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
-        credential.credentialId,
+        credential.credentialId
       );
       groups = groupsResponse.data;
     }

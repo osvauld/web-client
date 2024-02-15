@@ -29,7 +29,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId,
+          credential.credentialId
         );
 
         sensitiveFields = response.data;
@@ -57,7 +57,7 @@
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       sensitiveFields = response.data;
     }
@@ -68,7 +68,7 @@
 </script>
 
 <button
-  class="mb-3 flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
+  class="mb-3 max-w-[19rem] overflow-x-hidden flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
   on:click={handleClick}
@@ -90,7 +90,7 @@
         {checked}
       />
       <label
-        class="text-xl font-medium w-full text-left ml-2 cursor-pointer"
+        class="text-xl font-medium w-full text-left ml-2 cursor-pointer max-w-full overflow-x-hidden"
         for="credentialChecker{index}"
       >
         {credential.name}

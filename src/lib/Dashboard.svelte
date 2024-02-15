@@ -17,7 +17,9 @@
    w-screen h-screen text-macchiato-text text-lg"
 >
   <div class="flex h-full">
-    <div class="w-1/5 h-full overflow-auto scrollbar-thin">
+    <div
+      class="w-1/5 h-full overflow-y-scroll overflow-x-hidden scrollbar-thin"
+    >
       <LeftContainer />
     </div>
     <!-- Right container -->

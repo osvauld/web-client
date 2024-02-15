@@ -1,64 +1,64 @@
 <script lang="ts">
-    export let item: any;
-    export let isSelected: boolean;
-    export let isTopList: boolean;
-    export let setbackground: any;
-    export let showOptions: boolean;
+  export let item: any;
+  export let isSelected: boolean;
+  export let isTopList: boolean;
+  export let setbackground: any;
+  export let showOptions: boolean;
 
-    import { BinIcon, DownArrow } from "../icons";
-    import AccessSelector from "./AccessSelector.svelte";
+  import { BinIcon, DownArrow } from "../icons";
+  import AccessSelector from "./AccessSelector.svelte";
 
-    import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
 
-    const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher();
 
-    const handleRemove = () => {
-        dispatch("remove", item);
-    };
-    const eventPasser = (e: any) => {
-        dispatch("select", e.detail);
-    };
+  const handleRemove = () => {
+    dispatch("remove", item);
+  };
+  const eventPasser = (e: any) => {
+    dispatch("select", e.detail);
+  };
 
-    const handleClick = () => {
-        dispatch("click");
-    };
+  const handleClick = () => {
+    dispatch("click");
+  };
 
-    /* eslint-disable */
+  /* eslint-disable */
 </script>
 
 <div
-    class="relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {isSelected
-        ? 'bg-osvauld-bordergreen'
-        : ''}"
-    on:click={handleClick}
+  class="relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {isSelected
+    ? 'bg-osvauld-bordergreen'
+    : ''}"
+  on:click={handleClick}
 >
-    <div class="flex items-center space-x-4">
-        <p
-            class="p-2 w-3/4 whitespace-nowrap text-base {isTopList
-                ? 'text-osvauld-quarzowhite'
-                : 'text-osvauld-sheffieldgrey'}"
-        >
-            {item.name}
-        </p>
-    </div>
-    {#if isTopList}
-        <div class="flex justify-center items-center">
-            <button
-                class="w-[6.25rem] rounded-md cursor-pointer px-2 py-1 pl-2 flex justify-between items-center {setbackground(
-                    item.accessType,
-                )}"
-                >{item.accessType}
-                <span> <DownArrow type={item.accessType} /></span>
-            </button>
-            {#if showOptions && isSelected}
-                <AccessSelector {item} on:select={(e) => eventPasser(e)} />
-            {/if}
-            <button class="ml-2" on:click|stopPropagation={handleRemove}
-                ><BinIcon /></button
-            >
-        </div>
-    {/if}
-    {#if !isTopList && showOptions && isSelected}
+  <div class="flex items-center space-x-4 max-w-full">
+    <p
+      class="p-2 max-w-full overflow-x-scroll whitespace-nowrap text-base {isTopList
+        ? 'text-osvauld-quarzowhite'
+        : 'text-osvauld-sheffieldgrey'}"
+    >
+      {item.name}
+    </p>
+  </div>
+  {#if isTopList}
+    <div class="flex justify-center items-center">
+      <button
+        class="w-[6.25rem] rounded-md cursor-pointer px-2 py-1 pl-2 flex justify-between items-center {setbackground(
+          item.accessType
+        )}"
+        >{item.accessType}
+        <span> <DownArrow type={item.accessType} /></span>
+      </button>
+      {#if showOptions && isSelected}
         <AccessSelector {item} on:select={(e) => eventPasser(e)} />
-    {/if}
+      {/if}
+      <button class="ml-2" on:click|stopPropagation={handleRemove}
+        ><BinIcon /></button
+      >
+    </div>
+  {/if}
+  {#if !isTopList && showOptions && isSelected}
+    <AccessSelector {item} on:select={(e) => eventPasser(e)} />
+  {/if}
 </div>

@@ -33,22 +33,21 @@
   };
 </script>
 
-<div class="mb-4" in:fly out:fly>
+<div class="mb-4 max-w-full" in:fly out:fly>
   <div
     class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
   >
     {fieldName}
   </div>
+
   <div
-    class="relative pr-2 input w-[95%] rounded-lg flex justify-between items-center text-base text-osvauld-sheffieldgrey bg-osvauld-bordergreen border border-osvauld-iconblack"
+    class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base bg-osvauld-bordergreen border-osvauld-iconblack {hoverEffect
+      ? 'text-osvauld-quarzowhite'
+      : 'text-osvauld-sheffieldgrey'}"
   >
-    <div
-      class="py-1 px-3 w-full flex justify-between items-center rounded-lg text-base {hoverEffect
-        ? 'text-osvauld-quarzowhite'
-        : 'text-osvauld-sheffieldgrey'}"
+    <span class="max-w-[70%] overflow-x-hidden"
+      >{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
     >
-      {decrypted && visibility ? decryptedValue : "*".repeat(8)}
-    </div>
     {#if !decrypted}
       <button on:click|stopPropagation={decrypt}>
         <Locked />
