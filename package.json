@@ -11,7 +11,6 @@
     "build:background": "browserify public/background.js -p [ lavamoat-browserify --writeAutoPolicy   --policy lavamoat/browserify/background-policy.json] -o public/background.js",
     "build:dashboard": "browserify public/build/dashboard.js -p [ lavamoat-browserify --writeAutoPolicy --policy lavamoat/browserify/dashboard-policy.json ] -o public/build/dashboard.js",
     "check": "svelte-check --tsconfig ./tsconfig.app.json",
-
     "watch": "svelte-check --tsconfig ./tsconfig.app.json --watch",
     "build": "npm run build:rollup && npm run build:popup && npm run build:background && npm run build:dashboard",
     "lint": "eslint --ext .svelte,.ts src/",
@@ -26,6 +25,7 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.5",
+    "@rollup/plugin-wasm": "^6.2.2",
     "@tailwindcss/forms": "^0.5.7",
     "@types/node": "^20.10.4",
     "@types/webextension-polyfill": "^0.10.7",

@@ -19,11 +19,12 @@
 
     },
     "include": [
-        "src/scripts/**/*.ts"
+        "src/scripts/*.ts"
     ],
     "exclude": [
         "node_modules/*",
         "src/**/*.svelte",
-        "public/*"
+        "public/*",
+        "src/scripts/*.wasm"
     ]
 }

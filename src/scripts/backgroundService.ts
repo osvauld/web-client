@@ -4,9 +4,8 @@ import browser from "webextension-polyfill";
 import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateRandomString, decryptPvtKeys } from "../lib/utils/crypto";
 import { intiateAuth, } from "../lib/utils/helperMethods";
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
-
-import './wasm_exec.js'
-
+// @ts-ignore
+import init, { generate_openpgp_keypair, encrypt_messages, decrypt_messages } from './rust_openpgp_wasm.js';
 
 export const decryptCredentialFieldsHandler = async (credentials: CredentialFields[], rsaPvtKey: CryptoKey) => {
 
@@ -84,35 +83,35 @@ export const decryptCredentialFieldsHandlerNew = async (credentials: Credential[
 
 
 
+
+
 export const loadWasmModule = async () => {
-    // @ts-ignore
-    const go = new Go(); // `Go` is defined in wasm_exec.js
+    try {
+        await init();
+        const keyPair = await generate_openpgp_keypair();
+        const publicKey = keyPair.get('publicKey');
+        const privateKey = keyPair.get('privateKey');
 
-    let wasmModuleInstance;
+        // Function to generate a random text string
+        const generateRandomText = (length) => {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        };
+        const plaintexts = Array.from({ length: 10000 }, () => generateRandomText(100)); // Generate 100 random texts
+        // Call the Rust function to print encryption times
+        const start = performance.now();
+        const response = await encrypt_messages(publicKey, plaintexts);
+        console.log("Time to generate 10000 encrypted texts:", performance.now() - start, "ms");
 
-    async function loadWasm(filename) {
-        if (!wasmModuleInstance) {
-            const resp = await WebAssembly.instantiateStreaming(fetch(filename), go.importObject);
-            wasmModuleInstance = resp.instance;
-            go.run(wasmModuleInstance);
-        }
+        const start2 = performance.now();
+        await decrypt_messages(privateKey, response);
+        console.log("Time to decrypt 10000 encrypted texts:", performance.now() - start2, "ms");
+
+    } catch (error) {
+        console.error("Error loading WASM module or processing encryption/decryption:", error);
     }
-
-    async function init() {
-        await loadWasm('main.wasm'); // Load and initialize the WASM module
-    }
-
-    init().then(() => {
-        console.log('WASM Module Loaded');
-        // Now you can call the Go functions that have been exposed to JavaScript
-        // Example usage:
-        // Assuming the add function has been made globally available by the Go code
-        // @ts-ignore
-        const result = window.generateKeys('abraham', 'abrahamgeore');
-        console.log(`Result from Go: ${JSON.stringify(result)}`); // This might need adjustment based on how the function is actually exposed
-        // @ts-ignore
-        const result2 = window.generateKeys('abraham', 'abrahamgeore');
-
-        console.log(`Result from Go: ${JSON.stringify(result2)}`); // This might need adjustment based on how the function is actually exposed
-    });
 };
