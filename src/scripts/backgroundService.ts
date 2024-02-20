@@ -47,21 +47,32 @@ export const initiateAuthHandler = async (passphrase: string) => {
 }
 
 
-export const savePassphraseHandler = async (passphrase: string, rsaPvtKey: string, eccPvtKey: string) => {
+export const savePassphraseHandler = async (passphrase: string) => {
 
-    const saltString = generateRandomString()
-    await browser.storage.local.set({ passphraseSalt: saltString });
-    const symmetricKey = await deriveKeyFromPassphrase(passphrase, saltString)
-    const ivString = generateRandomString()
-    await browser.storage.local.set({ passphraseIv: ivString });
-    if (rsaPvtKey) {
-        const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, rsaPvtKey, ivString)
-        await browser.storage.local.set({ encryptionPvtKey: pvtKeyCipher });
-    }
-    if (eccPvtKey) {
-        const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, eccPvtKey, ivString)
-        await browser.storage.local.set({ signPvtKey: pvtKeyCipher });
-    }
+    // Need to send this passphrase to wasm and generate pvt key and public key.
+
+
+    // return public key
+
+    // Call the newly written API with public key to handle it in the backend.
+
+
+
+
+    // const saltString = generateRandomString()
+    // await browser.storage.local.set({ passphraseSalt: saltString });
+    // const symmetricKey = await deriveKeyFromPassphrase(passphrase, saltString)
+    // const ivString = generateRandomString()
+    // await browser.storage.local.set({ passphraseIv: ivString });
+    // if (rsaPvtKey) {
+    //     const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, rsaPvtKey, ivString)
+    //     await browser.storage.local.set({ encryptionPvtKey: pvtKeyCipher });
+    // }
+    // if (eccPvtKey) {
+    //     const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, eccPvtKey, ivString)
+    //     await browser.storage.local.set({ signPvtKey: pvtKeyCipher });
+    // }
+
     return { isSaved: true }
 }
 

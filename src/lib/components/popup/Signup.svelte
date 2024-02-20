@@ -1,22 +1,18 @@
 <script lang="ts">
-    import TempLogin from "./TempLogin.svelte";
-    import SetPassPhrase from "./SetPassPhrase.svelte";
-    let rsaKey: CryptoKeyPair;
-    let eccKey: CryptoKeyPair;
-    let isPasswordVerfied = false;
-    const handleTempLogin = (event: CustomEvent) => {
-        rsaKey = event.detail.rsaKey;
-        eccKey = event.detail.eccKey;
-        isPasswordVerfied = true;
-    };
+  import TempLogin from "./TempLogin.svelte";
+  import SetPassPhrase from "./SetPassPhrase.svelte";
+  let isTempLoginVerified = false;
+  const handleTempLogin = () => {
+    isTempLoginVerified = true;
+  };
 </script>
 
 <div
-    class="h-auto mt-12 flex justify-center items-center text-base font-bold text-white"
+  class="h-auto mt-12 flex justify-center items-center text-base font-bold text-white"
 >
-    {#if isPasswordVerfied}
-        <SetPassPhrase {rsaKey} {eccKey} />
-    {:else}
-        <TempLogin on:login={handleTempLogin} />
-    {/if}
+  {#if isTempLoginVerified}
+    <SetPassPhrase />
+  {:else}
+    <TempLogin on:setPassPhrase={handleTempLogin} />
+  {/if}
 </div>
