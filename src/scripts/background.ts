@@ -73,21 +73,10 @@ browser.runtime.onMessage.addListener(async (request) => {
       else return { isSignedUp: false }
     }
 
-    case "signUp": {
-      if (request.username && request.password) {
-        const rsaKeyPair = await generateRSAKeyPairForEncryption()
-        const eccKeyPair = await generateECCKeyPairForSigning()
-        const isValidCreds = await verifyUser(request.username, request.password, rsaKeyPair.publicKey || "", eccKeyPair.publicKey || "")
-        if (isValidCreds) {
-          return Promise.resolve({ isAuthenticated: true, rsaKey: rsaKeyPair, eccKey: eccKeyPair })
-        }
-      }
-    }
-      break;
 
     case "savePassphrase":
       if (request.passphrase) {
-        return savePassphraseHandler(request.passphrase, request.rsaKey.privateKey, request.eccKey.privateKey);
+        return savePassphraseHandler(request.passphrase)
       }
       break;
     case "updateAllUrls":
