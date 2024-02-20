@@ -11,11 +11,6 @@ export const intiateAuth = async (privateKey: CryptoKey): Promise<string> => {
     return response.data.token
 }
 
-export const verifyUser = async (username: string, password: string, rsaKey: string, eccKey: string): Promise<boolean> => {
-    const response = await verifyNewUser(username, password, rsaKey, eccKey)
-    return response.success
-}
-
 
 
 

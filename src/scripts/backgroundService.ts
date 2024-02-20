@@ -51,12 +51,9 @@ export const savePassphraseHandler = async (passphrase: string) => {
 
     // Need to send this passphrase to wasm and generate pvt key and public key.
 
-
     // return public key
 
     // Call the newly written API with public key to handle it in the backend.
-
-
 
 
     // const saltString = generateRandomString()
