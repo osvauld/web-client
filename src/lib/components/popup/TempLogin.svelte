@@ -15,11 +15,12 @@
 
   async function handleSubmit() {
     if (username && password) {
-      const isValidCreds = await verifyNewUser(username, password);
-      if (isValidCreds) {
-        // first api call temp login
-        //will get a new challenge
-        dispatch("setPassPhrase", {});
+      const challengeResponse = await verifyNewUser(username, password);
+      if (challengeResponse.data.challenge) {
+        dispatch("setPassPhrase", {
+          challenge: challengeResponse.data.challenge,
+          username,
+        });
       } else showVerificationError = true;
     }
   }

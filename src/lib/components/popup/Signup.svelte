@@ -2,7 +2,11 @@
   import TempLogin from "./TempLogin.svelte";
   import SetPassPhrase from "./SetPassPhrase.svelte";
   let isTempLoginVerified = false;
-  const handleTempLogin = () => {
+  let challenge = "";
+  let username = "";
+  const handleTempLogin = (e: any) => {
+    challenge = e.detail.challenge;
+    username = e.detail.username;
     isTempLoginVerified = true;
   };
 </script>
@@ -11,7 +15,7 @@
   class="h-auto mt-12 flex justify-center items-center text-base font-bold text-white"
 >
   {#if isTempLoginVerified}
-    <SetPassPhrase />
+    <SetPassPhrase {challenge} {username} />
   {:else}
     <TempLogin on:setPassPhrase={handleTempLogin} />
   {/if}
