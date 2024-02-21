@@ -51,12 +51,11 @@ export const initiateAuthHandler = async (passphrase: string) => {
 export const savePassphraseHandler = async (passphrase: string, challenge: string, username: string) => {
 
     // Need to send this passphrase to wasm and generate pvt key and signed challenge, device key and encryption key.
-    // return public key
-    
-    // Call finalRegistration
-
+    // return signed challenge, device key and encryption key
     // let finalResponse = await finalRegistration(username, signature, deviceKey, encryptionKey)
 
+
+    
     // const saltString = generateRandomString()
     // await browser.storage.local.set({ passphraseSalt: saltString });
     // const symmetricKey = await deriveKeyFromPassphrase(passphrase, saltString)
