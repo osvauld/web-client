@@ -1,6 +1,6 @@
 <script lang="ts">
   import browser from "webextension-polyfill";
-  import { getChallenge } from "../../apis/auth.api";
+  import { getRegsitrationChallenge } from "../../apis/auth.api";
   import Eye from "../basic/eye.svelte";
   import { createEventDispatcher } from "svelte";
 
@@ -15,7 +15,10 @@
 
   async function handleSubmit() {
     if (username && password) {
-      const challengeResponse = await getChallenge(username, password);
+      const challengeResponse = await getRegsitrationChallenge(
+        username,
+        password
+      );
       if (challengeResponse.data.challenge) {
         dispatch("setPassPhrase", {
           challenge: challengeResponse.data.challenge,

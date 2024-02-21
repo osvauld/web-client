@@ -17,8 +17,8 @@ export const createChallenge = async (publicKey: string) => {
     }).then(res => res.json())
 };
 
-export const getChallenge = async (username: string, tempPassword: string): Promise<ChallengeResponse> => {
-    return await fetch(`${baseUrl}/temp/login`, {
+export const getRegsitrationChallenge = async (username: string, tempPassword: string): Promise<ChallengeResponse> => {
+    return await fetch(`${baseUrl}/user/temp-login`, {
         method: "POST",
         body: JSON.stringify({ username, tempPassword})
     }).then(res => res.json())
