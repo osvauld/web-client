@@ -6,7 +6,7 @@ import { intiateAuth, } from "../lib/utils/helperMethods";
 import { finalRegistration } from '../lib/apis/auth.api.js';
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
 // @ts-ignore
-import init, { generate_openpgp_keypair, encrypt_messages, decrypt_messages } from './rust_openpgp_wasm.js';
+import init, { generate_and_encrypt_keys, encrypt_messages, decrypt_messages, sign_message } from './rust_openpgp_wasm.js';
 
 export const decryptCredentialFieldsHandler = async (credentials: CredentialFields[], rsaPvtKey: CryptoKey) => {
 
@@ -98,9 +98,9 @@ export const decryptCredentialFieldsHandlerNew = async (credentials: Credential[
 export const loadWasmModule = async () => {
     try {
         await init();
-        const keyPair = await generate_openpgp_keypair();
-        const publicKey = keyPair.get('publicKey');
-        const privateKey = keyPair.get('privateKey');
+        const keyPair = await generate_and_encrypt_keys('test');
+
+        console.log(keyPair.get('enc_public_key'))
 
         // Function to generate a random text string
         const generateRandomText = (length) => {
@@ -111,15 +111,17 @@ export const loadWasmModule = async () => {
             }
             return result;
         };
-        const plaintexts = Array.from({ length: 10000 }, () => generateRandomText(100)); // Generate 100 random texts
-        // Call the Rust function to print encryption times
-        const start = performance.now();
-        const response = await encrypt_messages(publicKey, plaintexts);
-        console.log("Time to generate 10000 encrypted texts:", performance.now() - start, "ms");
+        const resposne2 = await sign_message(keyPair.get('sign_private_key'), 'test', 'test22')
+        console.log(resposne2, 'challenge')
+        // const plaintexts = Array.from({ length: 1 }, () => generateRandomText(100)); // Generate 100 random texts
+        // // Call the Rust function to print encryption times
+        // const start = performance.now();
+        // const response = await encrypt_messages(keyPair.get('enc_public_key'), plaintexts);
+        // console.log("Time to generate 10000 encrypted texts:", performance.now() - start, "ms");
 
-        const start2 = performance.now();
-        await decrypt_messages(privateKey, response);
-        console.log("Time to decrypt 10000 encrypted texts:", performance.now() - start2, "ms");
+        // const start2 = performance.now();
+        // await decrypt_messages(keyPair.get('enc_private_key'), response, 'test');
+        // console.log("Time to decrypt 10000 encrypted texts:", performance.now() - start2, "ms");
 
     } catch (error) {
         console.error("Error loading WASM module or processing encryption/decryption:", error);
