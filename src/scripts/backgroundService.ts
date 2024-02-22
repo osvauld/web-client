@@ -49,13 +49,15 @@ export const initiateAuthHandler = async (passphrase: string) => {
 
 
 export const savePassphraseHandler = async (passphrase: string, challenge: string, username: string) => {
-
+    await init();
+    const keyPair = await generate_openpgp_keypair();
+    await browser.storage.local.set({ encryptionPvtKey: keyPair.get('enc_private_key'), signPvtKey: keyPair.get('sign_private_key') });
     // Need to send this passphrase to wasm and generate pvt key and signed challenge, device key and encryption key.
     // return signed challenge, device key and encryption key
     // let finalResponse = await finalRegistration(username, signature, deviceKey, encryptionKey)
 
 
-    
+
     // const saltString = generateRandomString()
     // await browser.storage.local.set({ passphraseSalt: saltString });
     // const symmetricKey = await deriveKeyFromPassphrase(passphrase, saltString)
