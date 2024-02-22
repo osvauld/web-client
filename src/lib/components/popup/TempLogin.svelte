@@ -1,6 +1,6 @@
 <script lang="ts">
   import browser from "webextension-polyfill";
-  import { verifyNewUser } from "../../apis/auth.api";
+  import { getRegsitrationChallenge } from "../../apis/auth.api";
   import Eye from "../basic/eye.svelte";
   import { createEventDispatcher } from "svelte";
 
@@ -15,11 +15,15 @@
 
   async function handleSubmit() {
     if (username && password) {
-      const isValidCreds = await verifyNewUser(username, password);
-      if (isValidCreds) {
-        // first api call temp login
-        //will get a new challenge
-        dispatch("setPassPhrase", {});
+      const challengeResponse = await getRegsitrationChallenge(
+        username,
+        password
+      );
+      if (challengeResponse.data.challenge) {
+        dispatch("setPassPhrase", {
+          challenge: challengeResponse.data.challenge,
+          username,
+        });
       } else showVerificationError = true;
     }
   }

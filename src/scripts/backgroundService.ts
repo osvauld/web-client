@@ -3,6 +3,7 @@ import browser from "webextension-polyfill";
 
 import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateRandomString, decryptPvtKeys } from "../lib/utils/crypto";
 import { intiateAuth, } from "../lib/utils/helperMethods";
+import { finalRegistration } from '../lib/apis/auth.api.js';
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
 // @ts-ignore
 import init, { generate_openpgp_keypair, encrypt_messages, decrypt_messages } from './rust_openpgp_wasm.js';
@@ -47,15 +48,14 @@ export const initiateAuthHandler = async (passphrase: string) => {
 }
 
 
-export const savePassphraseHandler = async (passphrase: string) => {
+export const savePassphraseHandler = async (passphrase: string, challenge: string, username: string) => {
 
-    // Need to send this passphrase to wasm and generate pvt key and public key.
-
-    // return public key
-
-    // Call the newly written API with public key to handle it in the backend.
+    // Need to send this passphrase to wasm and generate pvt key and signed challenge, device key and encryption key.
+    // return signed challenge, device key and encryption key
+    // let finalResponse = await finalRegistration(username, signature, deviceKey, encryptionKey)
 
 
+    
     // const saltString = generateRandomString()
     // await browser.storage.local.set({ passphraseSalt: saltString });
     // const symmetricKey = await deriveKeyFromPassphrase(passphrase, saltString)

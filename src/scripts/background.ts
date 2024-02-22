@@ -76,7 +76,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
     case "savePassphrase":
       if (request.passphrase) {
-        return savePassphraseHandler(request.passphrase)
+        return savePassphraseHandler(request.passphrase, request.challenge, request.username)
       }
       break;
     case "updateAllUrls":
