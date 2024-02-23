@@ -6,6 +6,7 @@ import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHand
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
 let rsaPvtKey: CryptoKey;
+import init, { is_global_context_set } from "./rust_openpgp_wasm";
 
 
 let urlObj = new Map<string, Set<string>>();
@@ -61,14 +62,13 @@ browser.runtime.onMessage.addListener(async (request) => {
     case "initiateAuth": {
       const passphrase = request.data.passphrase;
       await loadWasmModule();
-      const response = await initiateAuthHandler(passphrase)
-      rsaPvtKey = response.rsaPvtKey;
-      if (response.token) return { isAuthenticated: true }
-      else return { isAuthenticated: false }
+      await initiateAuthHandler(passphrase)
+      return { isAuthenticated: true }
     }
 
     case "isSignedUp": {
       const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+      await init();
       if (signPvtKeyObj.signPvtKey) return { isSignedUp: true }
       else return { isSignedUp: false }
     }
@@ -97,8 +97,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 
     case "checkPvtLoaded":
-      if (rsaPvtKey) return Promise.resolve({ isLoaded: true })
-      else return Promise.resolve({ isLoaded: false })
+      return is_global_context_set()
     case "getActiveCredSuggestion": {
       let tabs = await browser.tabs.query({
         active: true,
