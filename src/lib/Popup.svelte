@@ -15,17 +15,16 @@
       action: "isSignedUp",
     });
 
-    isSignedUp.set(response.isSignedUp);
+    // isSignedUp.set(response.isSignedUp);
     const checkPvtLoad = await browser.runtime.sendMessage({
       action: "checkPvtLoaded",
     });
-    console.log(checkPvtLoad);
-    if (checkPvtLoad.isLoaded) {
-      loggedIn = true;
-    } else {
-      loggedIn = false;
-    }
-    // isSignedUp.set(false);
+    // if (checkPvtLoad.isLoaded) {
+    //   loggedIn = true;
+    // } else {
+    //   loggedIn = false;
+    // }
+    isSignedUp.set(false);
   });
 
   const openFullscreenTab = async () => {

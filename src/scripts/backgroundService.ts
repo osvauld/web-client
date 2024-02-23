@@ -50,28 +50,10 @@ export const initiateAuthHandler = async (passphrase: string) => {
 
 export const savePassphraseHandler = async (passphrase: string, challenge: string, username: string) => {
     await init();
-    const keyPair = await generate_openpgp_keypair();
+    const keyPair = await generate_and_encrypt_keys(passphrase);
     await browser.storage.local.set({ encryptionPvtKey: keyPair.get('enc_private_key'), signPvtKey: keyPair.get('sign_private_key') });
-    // Need to send this passphrase to wasm and generate pvt key and signed challenge, device key and encryption key.
-    // return signed challenge, device key and encryption key
-    // let finalResponse = await finalRegistration(username, signature, deviceKey, encryptionKey)
-
-
-
-    // const saltString = generateRandomString()
-    // await browser.storage.local.set({ passphraseSalt: saltString });
-    // const symmetricKey = await deriveKeyFromPassphrase(passphrase, saltString)
-    // const ivString = generateRandomString()
-    // await browser.storage.local.set({ passphraseIv: ivString });
-    // if (rsaPvtKey) {
-    //     const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, rsaPvtKey, ivString)
-    //     await browser.storage.local.set({ encryptionPvtKey: pvtKeyCipher });
-    // }
-    // if (eccPvtKey) {
-    //     const pvtKeyCipher = await encryptPvtKeyWithSymmerticKey(symmetricKey, eccPvtKey, ivString)
-    //     await browser.storage.local.set({ signPvtKey: pvtKeyCipher });
-    // }
-
+    const signature = await sign_message(keyPair.get('sign_private_key'), passphrase, challenge)
+    await finalRegistration(username, signature, keyPair.get('sign_public_key'), keyPair.get('enc_public_key'))
     return { isSaved: true }
 }
 
