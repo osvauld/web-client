@@ -86,26 +86,32 @@
       credentialType,
       userFields: [],
     };
-    // TODO: validate url if there is url field
-    for (const user of folderUsers) {
-      const fields = await encryptCredentialFields(
-        // @ts-ignore
-        addCredentialFields,
-        user.publicKey,
-      );
-      addCredentialPaylod.userFields.push({
-        userId: user.id,
-        fields: fields,
-      });
-    }
-    await addCredential(addCredentialPaylod);
-    if ($selectedFolder === null) throw new Error("folder not selected");
-    const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
     const response = await browser.runtime.sendMessage({
-      action: "decryptMeta",
-      data: responseJson.data,
+      action: "addCredential",
+      data: { users: folderUsers, addCredentialFields },
     });
-    credentialStore.set(response.data);
+    addCredentialPaylod.userFields = response;
+    await addCredential(addCredentialPaylod);
+    // TODO: validate url if there is url field
+    // for (const user of folderUsers) {
+    //   const fields = await encryptCredentialFields(
+    //     // @ts-ignore
+    //     addCredentialFields,
+    //     user.publicKey,
+    //   );
+    //   addCredentialPaylod.userFields.push({
+    //     userId: user.id,
+    //     fields: fields,
+    //   });
+    // }
+    // await addCredential(addCredentialPaylod);
+    // if ($selectedFolder === null) throw new Error("folder not selected");
+    // const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
+    // const response = await browser.runtime.sendMessage({
+    //   action: "decryptMeta",
+    //   data: responseJson.data,
+    // });
+    // credentialStore.set(response.data);
     showAddCredentialDrawer.set(false);
   };
 
