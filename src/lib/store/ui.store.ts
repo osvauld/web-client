@@ -12,3 +12,4 @@ export let allUsersSelected = writable(false);
 export let adminStatus = writable(true);
 export let showAddUserToGroupDrawer = writable(false);
 export let showCredentialDetailsDrawer = writable(false);
+export let showEditCredentialDialog = writable(false);

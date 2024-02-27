@@ -4,8 +4,12 @@
   import PlainField from "./PlainField.svelte";
   import UserGroupToggle from "../UserGroupToggle.svelte";
   import { fetchCredentialUsers, fetchCredentialGroups } from "../apis";
-  import { showCredentialDetailsDrawer } from "../store";
-  import { ClosePanel } from "../icons";
+  import {
+    showCredentialDetailsDrawer,
+    showEditCredentialDialog,
+    showAddCredentialDrawer,
+  } from "../store";
+  import { ClosePanel, EditIcon } from "../icons";
   import { onMount } from "svelte";
   import ExistingListItem from "../components/ExistingListItem.svelte";
   import {
@@ -51,6 +55,18 @@
       <div class="text-3xl font-semibold w-full text-left ml-2">
         {credential.name}
       </div>
+      <button
+        class="p-2 mr-3 rounded-lg {$showEditCredentialDialog
+          ? 'bg-osvauld-sensitivebgblue'
+          : ''}"
+        on:click={() => {
+          showEditCredentialDialog.set(true);
+          showAddCredentialDrawer.set(true);
+          showCredentialDetailsDrawer.set(false);
+        }}
+      >
+        <EditIcon />
+      </button>
       <button
         class="p-2"
         on:click={() => showCredentialDetailsDrawer.set(false)}

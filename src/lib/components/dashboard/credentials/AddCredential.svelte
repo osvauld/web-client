@@ -2,13 +2,14 @@
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
-  import { ClosePanel, Add } from "../icons";
+  import { ClosePanel, Add, BinIcon } from "../icons";
   import { encryptCredentialFields } from "../../../utils/helperMethods";
 
   import {
     selectedFolder,
     showAddCredentialDrawer,
     credentialStore,
+    showEditCredentialDialog,
   } from "../store";
 
   import {
@@ -127,6 +128,10 @@
     showAddCredentialDrawer.set(false);
   }
 
+  function deleteCredential() {
+    console.log("Delete credential");
+  }
+
   function triggerSensitiveBubble(index: number, isEnter: boolean) {
     isEnter ? (hoveredIndex = index) : (hoveredIndex = null);
   }
@@ -146,7 +151,9 @@
           : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(true)}
       >
-        Add Login credential
+        {showEditCredentialDialog
+          ? "Edit login credential"
+          : "Add Login credential"}
       </button>
       <button
         class="text-[1.4rem] font-sans font-normal ml-2 {!loginSelected
@@ -154,12 +161,22 @@
           : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(false)}
       >
-        Add other credential
+        {showEditCredentialDialog
+          ? "Change to other credential"
+          : "Add other credential"}
       </button>
     </div>
-    <button class="bg-osvauld-frameblack p-4" on:click={closeDialog}
-      ><ClosePanel /></button
-    >
+    <div>
+      {#if showEditCredentialDialog}
+        <button class="bg-osvauld-frameblack p-4" on:click={deleteCredential}
+          ><BinIcon /></button
+        >
+      {/if}
+
+      <button class="bg-osvauld-frameblack p-4" on:click={closeDialog}
+        ><ClosePanel /></button
+      >
+    </div>
   </div>
 
   <div class="border-b border-osvauld-iconblack w-full"></div>
@@ -212,7 +229,8 @@
     >
     <button
       class="primary-btn px-[3.25rem] py-2.5 mb-6"
-      on:click={saveCredential}>Add credential</button
+      on:click={saveCredential}
+      >{showEditCredentialDialog ? "Save Changes" : "Add credential"}</button
     >
   </div>
 </div>
