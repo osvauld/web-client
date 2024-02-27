@@ -1,7 +1,7 @@
 <script lang="ts">
   import browser from "webextension-polyfill";
   import { isLoggedIn } from "../../store/ui.store";
-  import Eye from "../basic/eye.svelte";
+  import Eye from "../basic/icons/eye.svelte";
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 

@@ -91,7 +91,7 @@
       const fields = await encryptCredentialFields(
         // @ts-ignore
         addCredentialFields,
-        user.publicKey,
+        user.publicKey
       );
       addCredentialPaylod.userFields.push({
         userId: user.id,
@@ -171,6 +171,7 @@
       type="text"
       placeholder="Enter Credential name"
       autocomplete="off"
+      autofocus
       bind:value={name}
     />
 
