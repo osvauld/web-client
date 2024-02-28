@@ -10,12 +10,14 @@
     showAddCredentialDrawer,
     credentialStore,
     showEditCredentialDialog,
+    credentialIdForEdit,
   } from "../store";
 
   import {
     fetchFolderUsers,
     addCredential,
     fetchCredentialsByFolder,
+    fetchCredentialById,
   } from "../apis";
 
   import {
@@ -23,10 +25,11 @@
     Fields,
     User,
     AddCredentialField,
+    CredentialResponse,
   } from "../dtos";
   import AddLoginFields from "./AddLoginFields.svelte";
 
-  let credentialFields: AddCredentialField[] = [];
+  let credentialFields: AddCredentialField[] | CredentialResponse[] = [];
   let description = "";
   let name = "";
   let loginSelected = true;
@@ -34,7 +37,7 @@
   let addCredentialPaylod: AddCredentialPayload;
   let hoveredIndex: Number | null = null;
   let credentialType = "Login";
-  let loginFields = [
+  $: loginFields = [
     { fieldName: "Username", fieldValue: "", sensitive: false },
     { fieldName: "Password", fieldValue: "", sensitive: true },
     { fieldName: "URL", fieldValue: "https://", sensitive: false },
@@ -119,6 +122,24 @@
 
   onMount(async () => {
     credentialFields = loginFields;
+    if (showEditCredentialDialog) {
+      const credentialFieldsForEdit =
+        await fetchCredentialById($credentialIdForEdit);
+      loginFields = credentialFieldsForEdit.data.fields;
+      let decryptedFields = [];
+      for (let { id, fieldName, fieldValue } of loginFields) {
+        let decryptedVal = await browser.runtime.sendMessage({
+          action: "decryptField",
+          data: fieldValue,
+        });
+        decryptedFields = [
+          ...decryptedFields,
+          { id, fieldName, fieldValue: decryptedVal.data },
+        ];
+      }
+      credentialFields = decryptedFields;
+    }
+
     if ($selectedFolder === null) throw new Error("folder not selected");
     const responseJson = await fetchFolderUsers($selectedFolder.id);
     folderUsers = responseJson.data;
@@ -126,6 +147,7 @@
 
   function closeDialog() {
     showAddCredentialDrawer.set(false);
+    showEditCredentialDialog.set(false);
   }
 
   function deleteCredential() {

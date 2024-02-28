@@ -8,6 +8,7 @@
     showCredentialDetailsDrawer,
     showEditCredentialDialog,
     showAddCredentialDrawer,
+    credentialIdForEdit,
   } from "../store";
   import { ClosePanel, EditIcon } from "../icons";
   import { onMount } from "svelte";
@@ -38,6 +39,7 @@
   };
   onMount(async () => {
     // @ts-ignore
+    credentialIdForEdit.set(credential.credentialId);
     const groupsResponse = await fetchCredentialGroups(credential.credentialId);
     groups = groupsResponse.data;
   });

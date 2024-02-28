@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 import { baseUrl, } from "./temp";
 import { BaseResponse, FetchAllUserUrlsResponse, FetchCredentialsByFolderResponse, FetchCredentialsFieldsByFolderIdResponse, FetchCredentialsFieldsByIdsResponse, FetchCredsByIdsResponse, FetchSensitiveFieldsByCredenitalIdResponse } from "../dtos/response.dto";
-import { AddCredentialPayload, ShareCredentialsWithUsersPayload } from "../dtos/request.dto";
+import { AddCredentialPayload, ShareCredentialsWithUsersPayload,  } from "../dtos/request.dto";
 
 export const fetchCredentialsByFolder = async (folderId: string): Promise<FetchCredentialsByFolderResponse> => {
   const headers = new Headers();
@@ -28,6 +28,23 @@ export const fetchCredentialById = async (credentialId: string) => {
 };
 
 export const addCredential = async (payload: AddCredentialPayload) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/credential/`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  }).then((response) => response.json());
+
+  return response;
+};
+
+
+export const updateCredential = async (payload: AddCredentialPayload) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;

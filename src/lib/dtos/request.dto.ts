@@ -8,6 +8,12 @@ export type AddCredentialPayload = {
     credentialType: string;
     userFields: UserEncryptedFields[];
 }
+
+export type editCredentialPayload = AddCredentialPayload & {
+    
+}
+
+
 export type UserEncryptedDataForShareCredentials = UserEncryptedCredentials & {
     accessType: string;
 }
