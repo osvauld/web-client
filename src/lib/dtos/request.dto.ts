@@ -1,6 +1,26 @@
 import { UserEncryptedCredentials, UserEncryptedFields, CredentialFields } from "./credential.dto";
 
 
+
+type CommonFields = {
+    name: string;
+    description: string;
+    credentialType: string;
+};
+
+type EditFieldsPayload = {
+    editFields: UserEncryptedFields[];
+};
+
+type UserFieldsPayload = { // or add fields payload
+    folderId: string;
+    userFields: UserEncryptedFields[];
+};
+
+export type EditCredentialPayload = CommonFields & (EditFieldsPayload | UserFieldsPayload);
+
+
+
 export type AddCredentialPayload = {
     name: string;
     description: string;
@@ -9,9 +29,13 @@ export type AddCredentialPayload = {
     userFields: UserEncryptedFields[];
 }
 
-export type editCredentialPayload = AddCredentialPayload & {
-    
+export type editCredentialPayload = {
+    name: string;
+    description: string;
+    credentialType: string;
+    editFields: UserEncryptedFields[];
 }
+
 
 
 export type UserEncryptedDataForShareCredentials = UserEncryptedCredentials & {

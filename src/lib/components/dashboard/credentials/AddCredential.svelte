@@ -16,6 +16,7 @@
   import {
     fetchFolderUsers,
     addCredential,
+    updateCredential,
     fetchCredentialsByFolder,
     fetchCredentialById,
   } from "../apis";
@@ -30,8 +31,8 @@
   import AddLoginFields from "./AddLoginFields.svelte";
 
   let credentialFields: AddCredentialField[] | CredentialResponse[] = [];
-  let description = "";
-  let name = "";
+  $: description = "";
+  $: name = "";
   let loginSelected = true;
   let folderUsers: User[] = [];
   let addCredentialPaylod: AddCredentialPayload;
@@ -59,36 +60,37 @@
 
   const saveCredential = async () => {
     if ($selectedFolder === null) throw new Error("folder not selected");
-    const addCredentialFields: Fields[] = [];
+    let addCredentialFields: Fields[] = [];
     for (const field of credentialFields) {
-      if (!field.sensitive) {
-        addCredentialFields.push({
-          fieldName: field.fieldName,
-          fieldValue: field.fieldValue,
-          fieldType: "meta",
-        });
-      } else {
-        addCredentialFields.push({
-          fieldName: field.fieldName,
-          fieldValue: field.fieldValue,
-          fieldType: "sensitive",
-        });
-      }
       if (field.fieldName === "URL") {
         const domain = new URL(field.fieldValue).hostname;
         addCredentialFields.push({
-          fieldName: "Domain",
+          fieldName: "URL",
           fieldValue: domain,
           fieldType: "additional",
+          // @ts-ignore
+          ...(field.id && { id: field.id }),
         });
+      } else {
+        const baseField = {
+          fieldName: field.fieldName,
+          fieldValue: field.fieldValue,
+          fieldType: field.sensitive ? "sensitive" : "meta",
+          // @ts-ignore
+          ...(field.id && { id: field.id }), // Conditionally include fieldId if it exists
+        };
+        // @ts-ignore
+        addCredentialFields.push(baseField);
       }
     }
+
+    // @ts-ignore
     addCredentialPaylod = {
       name: name,
       description: description,
       folderId: $selectedFolder.id,
       credentialType,
-      userFields: [],
+      ...($showEditCredentialDialog ? { editFields: [] } : { userFields: [] }),
     };
     // TODO: validate url if there is url field
     for (const user of folderUsers) {
@@ -97,19 +99,33 @@
         addCredentialFields,
         user.publicKey
       );
-      addCredentialPaylod.userFields.push({
-        userId: user.id,
-        fields: fields,
-      });
+      if ($showEditCredentialDialog) {
+        // @ts-ignore
+        addCredentialPaylod.editFields.push({
+          userId: user.id,
+          fields: fields,
+        });
+      } else {
+        addCredentialPaylod.userFields.push({
+          userId: user.id,
+          fields: fields,
+        });
+      }
     }
-    await addCredential(addCredentialPaylod);
+    if ($showEditCredentialDialog) {
+      await updateCredential(addCredentialPaylod, $credentialIdForEdit);
+    } else {
+      await addCredential(addCredentialPaylod);
+    }
     if ($selectedFolder === null) throw new Error("folder not selected");
+    // console.log("Whats happening below?")
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
     const response = await browser.runtime.sendMessage({
       action: "decryptMeta",
       data: responseJson.data,
     });
     credentialStore.set(response.data);
+    showEditCredentialDialog.set(false);
     showAddCredentialDrawer.set(false);
   };
 
@@ -122,11 +138,14 @@
 
   onMount(async () => {
     credentialFields = loginFields;
-    if (showEditCredentialDialog) {
-      const credentialFieldsForEdit =
+    if ($showEditCredentialDialog) {
+      const credentialDataForEdit =
         await fetchCredentialById($credentialIdForEdit);
-      loginFields = credentialFieldsForEdit.data.fields;
+      name = credentialDataForEdit.data.name;
+      description = credentialDataForEdit.data.description;
+      loginFields = credentialDataForEdit.data.fields;
       let decryptedFields = [];
+      // @ts-ignore
       for (let { id, fieldName, fieldValue } of loginFields) {
         let decryptedVal = await browser.runtime.sendMessage({
           action: "decryptField",
@@ -173,7 +192,7 @@
           : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(true)}
       >
-        {showEditCredentialDialog
+        {$showEditCredentialDialog
           ? "Edit login credential"
           : "Add Login credential"}
       </button>
@@ -183,7 +202,7 @@
           : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(false)}
       >
-        {showEditCredentialDialog
+        {$showEditCredentialDialog
           ? "Change to other credential"
           : "Add other credential"}
       </button>
@@ -252,7 +271,7 @@
     <button
       class="primary-btn px-[3.25rem] py-2.5 mb-6"
       on:click={saveCredential}
-      >{showEditCredentialDialog ? "Save Changes" : "Add credential"}</button
+      >{$showEditCredentialDialog ? "Save Changes" : "Add credential"}</button
     >
   </div>
 </div>

@@ -44,15 +44,15 @@ export const addCredential = async (payload: AddCredentialPayload) => {
 };
 
 
-export const updateCredential = async (payload: AddCredentialPayload) => {
+export const updateCredential = async (payload: AddCredentialPayload, credentialId: string) => {
   const headers = new Headers();
   const tokenObj = await browser.storage.local.get("token");
   const token = tokenObj.token;
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
-  const response = await fetch(`${baseUrl}/credential/`, {
-    method: "POST",
+  const response = await fetch(`${baseUrl}/credential/${credentialId}`, {
+    method: "PUT",
     headers,
     body: JSON.stringify(payload),
   }).then((response) => response.json());
