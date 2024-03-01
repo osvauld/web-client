@@ -2,7 +2,7 @@ import browser from "webextension-polyfill";
 
 import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptCredentialField, } from "../lib/utils/crypto";
 import { verifyUser } from "../lib/utils/helperMethods";
-import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler } from "./backgroundService";
+import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler, decryptFieldHandler } from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
 let rsaPvtKey: CryptoKey;
@@ -24,8 +24,7 @@ browser.runtime.onMessage.addListener(async (request) => {
       return decryptCredentialFieldsHandler(request.data, rsaPvtKey);
     }
     case "decryptField": {
-      const decrypted = await decryptCredentialField(rsaPvtKey, request.data);
-      return { data: decrypted };
+      return decryptFieldHandler(request.data)
     }
 
     case "fillingSignal":
@@ -68,6 +67,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
     case "isSignedUp": {
       const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+      console.log(signPvtKeyObj.signPvtKey)
       await init();
       if (signPvtKeyObj.signPvtKey) return { isSignedUp: true }
       else return { isSignedUp: false }
@@ -128,6 +128,7 @@ browser.runtime.onMessage.addListener(async (request) => {
       return Promise.resolve({ username, password });
     }
     case "decryptMeta":
+      console.log('decrypting meta', request.data);
       return decryptCredentialFieldsHandlerNew(request.data, rsaPvtKey);
     case "addCredential":
       return addCredentialHandler(request.data);
