@@ -18,7 +18,6 @@
     addCredential,
     updateCredential,
     fetchCredentialsByFolder,
-    fetchCredentialById,
   } from "../apis";
 
   import {
@@ -31,8 +30,8 @@
   import AddLoginFields from "./AddLoginFields.svelte";
 
   let credentialFields: AddCredentialField[] | CredentialResponse[] = [];
-  $: description = "";
-  $: name = "";
+  let description = "";
+  let name = "";
   let loginSelected = true;
   let folderUsers: User[] = [];
   let addCredentialPaylod: AddCredentialPayload;
@@ -65,7 +64,7 @@
       if (field.fieldName === "URL") {
         const domain = new URL(field.fieldValue).hostname;
         addCredentialFields.push({
-          fieldName: "URL",
+          fieldName: field.fieldName,
           fieldValue: domain,
           fieldType: "additional",
           // @ts-ignore
@@ -139,24 +138,13 @@
   onMount(async () => {
     credentialFields = loginFields;
     if ($showEditCredentialDialog) {
-      const credentialDataForEdit =
-        await fetchCredentialById($credentialIdForEdit);
-      name = credentialDataForEdit.data.name;
-      description = credentialDataForEdit.data.description;
-      loginFields = credentialDataForEdit.data.fields;
-      let decryptedFields = [];
+      const [credentialDataForEdit] = $credentialStore.filter(
+        (credentials) => credentials.credentialId === $credentialIdForEdit
+      );
+      name = credentialDataForEdit.name;
+      description = credentialDataForEdit.description;
       // @ts-ignore
-      for (let { id, fieldName, fieldValue } of loginFields) {
-        let decryptedVal = await browser.runtime.sendMessage({
-          action: "decryptField",
-          data: fieldValue,
-        });
-        decryptedFields = [
-          ...decryptedFields,
-          { id, fieldName, fieldValue: decryptedVal.data },
-        ];
-      }
-      credentialFields = decryptedFields;
+      credentialFields = credentialDataForEdit.fields;
     }
 
     if ($selectedFolder === null) throw new Error("folder not selected");
@@ -265,7 +253,7 @@
   <div class="border-b border-osvauld-iconblack w-full my-2"></div>
   <div class="flex justify-end items-center mx-10 py-2">
     <button
-      class="primary-btn px-[3.25rem] w-1/3 py-2.5 mb-6 mr-3"
+      class="secondary-btn px-[3.25rem] w-1/3 py-2.5 mb-6 mr-3"
       on:click={closeDialog}>Cancel</button
     >
     <button
