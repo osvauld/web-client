@@ -6,22 +6,18 @@ import { intiateAuth, } from "../lib/utils/helperMethods";
 import { createChallenge, finalRegistration, initiateAuth } from '../lib/apis/auth.api.js';
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
 // @ts-ignore
-import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text } from './rust_openpgp_wasm.js';
+import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields } from './rust_openpgp_wasm.js';
 
 export const decryptCredentialFieldsHandler = async (credentials: CredentialFields[], rsaPvtKey: CryptoKey) => {
 
-    const returnPayload: CredentialFields[] = [];
-    for (const credential of credentials) {
-        const decryptedFields: any = await decryptCredentialFields(credential.fields, rsaPvtKey);
-
-        console.log(decryptedFields)
-        const payload: CredentialFields = {
-            credentialId: credential.credentialId,
-            fields: [...decryptedFields]
-        }
-        returnPayload.push(payload)
+    try {
+        const response = await decrypt_fields(credentials)
+        console.log(response)
+        return { data: response };
+    } catch (error) {
+        console.error("Error decrypting credentials:", error);
     }
-    return { data: returnPayload };
+
 
 }
 
@@ -94,6 +90,16 @@ export const decryptFieldHandler = async (text: string) => {
 }
 
 
+export const encryptFieldHandler = async (fields: any, publicKey: string) => {
+    try {
+
+        console.log(fields)
+        const response = await encrypt_fields(fields, publicKey);
+        return { data: response };
+    } catch (error) {
+        console.error("Error encrypting fields:", error);
+    }
+}
 
 
 export const loadWasmModule = async () => {
