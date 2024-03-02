@@ -2,7 +2,7 @@ import browser from "webextension-polyfill";
 
 import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptCredentialField, } from "../lib/utils/crypto";
 import { verifyUser } from "../lib/utils/helperMethods";
-import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler, decryptFieldHandler } from "./backgroundService";
+import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler, decryptFieldHandler, e, encryptFieldHandler } from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
 let rsaPvtKey: CryptoKey;
@@ -25,6 +25,10 @@ browser.runtime.onMessage.addListener(async (request) => {
     }
     case "decryptField": {
       return decryptFieldHandler(request.data)
+    }
+
+    case "encryptFields": {
+      return encryptFieldHandler(request.data.fields, request.data.publicKey)
     }
 
     case "fillingSignal":
