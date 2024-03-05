@@ -1,13 +1,7 @@
 <script>
     import { fly } from "svelte/transition";
     import browser from "webextension-polyfill";
-    import {
-        Locked,
-        Eye,
-        Unlocked,
-        ActiveCopy,
-        ClosedEye,
-    } from "../icons";
+    import { Locked, Eye, Unlocked, ActiveCopy, ClosedEye } from "../icons";
     export let fieldName;
     export let fieldValue;
     let visibility = false;
@@ -19,6 +13,7 @@
             action: "decryptField",
             data: fieldValue,
         });
+        console.log(response, "RESPONJSE");
         decryptedValue = response.data;
         decrypted = true;
     };
@@ -62,7 +57,7 @@
                     {/if}
                 </button>
                 <button>
-                        <ActiveCopy />
+                    <ActiveCopy />
                 </button>
             </div>
         {/if}

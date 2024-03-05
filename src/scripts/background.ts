@@ -24,7 +24,8 @@ browser.runtime.onMessage.addListener(async (request) => {
       return decryptCredentialFieldsHandler(request.data, rsaPvtKey);
     }
     case "decryptField": {
-      return decryptFieldHandler(request.data)
+      const field = await decryptFieldHandler(request.data)
+      return { data: field }
     }
 
     case "encryptFields": {
@@ -84,8 +85,9 @@ browser.runtime.onMessage.addListener(async (request) => {
       }
       break;
     case "updateAllUrls":
+      console.log(request.data.urls)
       for (let i = 0; i < request.data.urls.length; i++) {
-        const decrypted = await decryptCredentialField(rsaPvtKey, request.data.urls[i].value);
+        const decrypted = await decryptFieldHandler(request.data.urls[i].value);
         if (urlObj.has(decrypted)) {
           // @ts-ignore
           urlObj.get(decrypted).add(request.data.urls[i].credentialId)
@@ -115,6 +117,7 @@ browser.runtime.onMessage.addListener(async (request) => {
       const domain = url?.hostname;
       // @ts-ignore
       const credentialIds = [...urlObj.get(domain)];
+      console.log(credentialIds, 'fetching credential ids')
       const responseJson = await fetchCredsByIds(credentialIds);
       let username = "";
       let password = "";
@@ -122,9 +125,9 @@ browser.runtime.onMessage.addListener(async (request) => {
         if (cred.credentialId === request.data) {
           for (let field of cred.fields) {
             if (field.fieldName === 'Username') {
-              username = await decryptCredentialField(rsaPvtKey, field.fieldValue);
+              username = await decryptFieldHandler(field.fieldValue);
             } else if (field.fieldName === 'Password') {
-              password = await decryptCredentialField(rsaPvtKey, field.fieldValue);
+              password = await decryptFieldHandler(field.fieldValue);
             }
           }
         }
@@ -167,7 +170,7 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       for (const cred of responseData.data) {
         for (const field of cred.fields) {
           if (field.fieldName === 'Username') {
-            const decrypted = await decryptCredentialField(rsaPvtKey, field.fieldValue);
+            const decrypted = await decryptFieldHandler(field.fieldValue);
             payload.push({ id: cred.credentialId, username: decrypted });
           }
         }
