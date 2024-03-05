@@ -25,7 +25,6 @@ export const getRegsitrationChallenge = async (username: string, tempPassword: s
 }
 
 export const finalRegistration = async (username: string, signature: string, deviceKey: string, encryptionKey: string) => {
-    console.log(username, signature, deviceKey, encryptionKey)
     return await fetch(`${baseUrl}/user/register`, {
         method: "POST",
         body: JSON.stringify({ username, signature, deviceKey, encryptionKey })

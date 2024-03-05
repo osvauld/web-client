@@ -27,7 +27,6 @@ export const encryptCredentialsForUserNew = async (credentials: CredentialFields
             action: "encryptFields",
             data: { fields: credential.fields, publicKey: publicKeyStr },
         });
-        console.log(response, "response in helper");
         encryptedCred.fields = response.data
         encryptedCredsForUser.push(encryptedCred)
     }

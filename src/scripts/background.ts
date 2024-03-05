@@ -85,7 +85,6 @@ browser.runtime.onMessage.addListener(async (request) => {
       }
       break;
     case "updateAllUrls":
-      console.log(request.data.urls)
       for (let i = 0; i < request.data.urls.length; i++) {
         const decrypted = await decryptFieldHandler(request.data.urls[i].value);
         if (urlObj.has(decrypted)) {

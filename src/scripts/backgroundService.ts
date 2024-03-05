@@ -12,7 +12,6 @@ export const decryptCredentialFieldsHandler = async (credentials: CredentialFiel
 
     try {
         const response = await decrypt_fields(credentials)
-        console.log(response)
         return { data: response };
     } catch (error) {
         console.error("Error decrypting credentials:", error);
@@ -34,11 +33,8 @@ export const initiateAuthHandler = async (passphrase: string) => {
     console.log("Time taken to decrypt and store keys:", performance.now() - startTime);
     const challengeResponse = await createChallenge(pubKeyObj.signPublicKey);
     await cacheObj;
-    console.log(challengeResponse);
     const signedMessage = await sign_message_with_stored_key(challengeResponse.data.challenge);
-    console.log(signedMessage);
     const verificationResponse = await initiateAuth(signedMessage, pubKeyObj.signPublicKey);
-    console.log(verificationResponse);
     const token = verificationResponse.data.token;
     if (token) {
         await browser.storage.local.set({ token: token });
@@ -51,7 +47,6 @@ export const initiateAuthHandler = async (passphrase: string) => {
 export const savePassphraseHandler = async (passphrase: string, challenge: string, username: string) => {
     await init();
     const keyPair = await generate_and_encrypt_keys(passphrase);
-    console.log(keyPair)
     await browser.storage.local.set({ encryptionPvtKey: keyPair.get('enc_private_key'), signPvtKey: keyPair.get('sign_private_key'), encPublicKey: keyPair.get('enc_public_key'), signPublicKey: keyPair.get('sign_public_key') });
     const signature = await sign_message(keyPair.get('sign_private_key'), passphrase, challenge)
     await finalRegistration(username, signature, keyPair.get('sign_public_key'), keyPair.get('enc_public_key'))
@@ -62,7 +57,6 @@ export const decryptCredentialFieldsHandlerNew = async (credentials: Credential[
     try {
 
         const response = await decrypt_credentials(credentials);
-        console.log(response)
         return { data: response };
     } catch (error) {
         console.error("Error decrypting credentials:", error);
@@ -72,8 +66,6 @@ export const decryptCredentialFieldsHandlerNew = async (credentials: Credential[
 export const addCredentialHandler = async (payload) => {
     try {
 
-        console.log(payload.users)
-        console.log(payload.addCredentialFields)
         return await encrypt_new_credential(payload.users, payload.addCredentialFields)
 
     } catch (error) {
@@ -86,7 +78,6 @@ export const addCredentialHandler = async (payload) => {
 
 export const decryptFieldHandler = async (text: string) => {
     const decrypted = await decrypt_text(text);
-    console.log(decrypted, 'decrypted field')
     return decrypted;
 }
 
@@ -94,7 +85,6 @@ export const decryptFieldHandler = async (text: string) => {
 export const encryptFieldHandler = async (fields: any, publicKey: string) => {
     try {
 
-        console.log(fields)
         const response = await encrypt_fields(fields, publicKey);
         return { data: response };
     } catch (error) {

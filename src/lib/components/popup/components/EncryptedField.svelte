@@ -13,7 +13,6 @@
             action: "decryptField",
             data: fieldValue,
         });
-        console.log(response, "RESPONJSE");
         decryptedValue = response.data;
         decrypted = true;
     };
