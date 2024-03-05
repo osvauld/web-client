@@ -72,7 +72,6 @@ browser.runtime.onMessage.addListener(async (request) => {
 
     case "isSignedUp": {
       const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
-      console.log(signPvtKeyObj.signPvtKey)
       await init();
       if (signPvtKeyObj.signPvtKey) return { isSignedUp: true }
       else return { isSignedUp: false }
@@ -116,7 +115,6 @@ browser.runtime.onMessage.addListener(async (request) => {
       const domain = url?.hostname;
       // @ts-ignore
       const credentialIds = [...urlObj.get(domain)];
-      console.log(credentialIds, 'fetching credential ids')
       const responseJson = await fetchCredsByIds(credentialIds);
       let username = "";
       let password = "";
@@ -134,7 +132,6 @@ browser.runtime.onMessage.addListener(async (request) => {
       return Promise.resolve({ username, password });
     }
     case "decryptMeta":
-      console.log('decrypting meta', request.data);
       return decryptCredentialFieldsHandlerNew(request.data, rsaPvtKey);
     case "addCredential":
       return addCredentialHandler(request.data);
