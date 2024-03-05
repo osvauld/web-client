@@ -86,7 +86,8 @@ export const addCredentialHandler = async (payload) => {
 
 export const decryptFieldHandler = async (text: string) => {
     const decrypted = await decrypt_text(text);
-    return { data: decrypted };
+    console.log(decrypted, 'decrypted field')
+    return decrypted;
 }
 
 
