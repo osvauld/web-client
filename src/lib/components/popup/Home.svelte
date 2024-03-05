@@ -17,7 +17,6 @@
   let creds: Credential[] = [];
 
   const openFullscreenTab = async () => {
-    console.log("Opening fullscreen tab");
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
   };
 

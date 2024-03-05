@@ -8,6 +8,7 @@ import postcss from "rollup-plugin-postcss";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import os from "os";
+import { wasm } from '@rollup/plugin-wasm';
 
 
 
@@ -85,6 +86,7 @@ export default [
       file: "public/background.js",
     },
     plugins: [
+      wasm(),
       typescript({
         tsconfig: "./tsconfig.background.json",
       }),

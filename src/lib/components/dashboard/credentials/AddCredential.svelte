@@ -86,26 +86,19 @@
       credentialType,
       userFields: [],
     };
-    // TODO: validate url if there is url field
-    for (const user of folderUsers) {
-      const fields = await encryptCredentialFields(
-        // @ts-ignore
-        addCredentialFields,
-        user.publicKey,
-      );
-      addCredentialPaylod.userFields.push({
-        userId: user.id,
-        fields: fields,
-      });
-    }
+    const response = await browser.runtime.sendMessage({
+      action: "addCredential",
+      data: { users: folderUsers, addCredentialFields },
+    });
+    addCredentialPaylod.userFields = response;
     await addCredential(addCredentialPaylod);
     if ($selectedFolder === null) throw new Error("folder not selected");
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const response = await browser.runtime.sendMessage({
+    const decryptedData = await browser.runtime.sendMessage({
       action: "decryptMeta",
       data: responseJson.data,
     });
-    credentialStore.set(response.data);
+    credentialStore.set(decryptedData.data);
     showAddCredentialDrawer.set(false);
   };
 
