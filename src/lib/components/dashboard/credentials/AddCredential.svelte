@@ -64,7 +64,7 @@
       if (field.fieldName === "URL") {
         const domain = new URL(field.fieldValue).hostname;
         addCredentialFields.push({
-          fieldName: field.fieldName,
+          fieldName: "Domain",
           fieldValue: domain,
           fieldType: "additional",
           // @ts-ignore
@@ -89,7 +89,7 @@
       description: description,
       folderId: $selectedFolder.id,
       credentialType,
-      ...($showEditCredentialDialog ? { editFields: [] } : { userFields: [] }),
+      userFields: [],
     };
     // TODO: validate url if there is url field
     for (const user of folderUsers) {
@@ -98,18 +98,10 @@
         addCredentialFields,
         user.publicKey
       );
-      if ($showEditCredentialDialog) {
-        // @ts-ignore
-        addCredentialPaylod.editFields.push({
-          userId: user.id,
-          fields: fields,
-        });
-      } else {
-        addCredentialPaylod.userFields.push({
-          userId: user.id,
-          fields: fields,
-        });
-      }
+      addCredentialPaylod.userFields.push({
+        userId: user.id,
+        fields: fields,
+      });
     }
     if ($showEditCredentialDialog) {
       await updateCredential(addCredentialPaylod, $credentialIdForEdit);
