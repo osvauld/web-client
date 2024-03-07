@@ -111,11 +111,11 @@
     if ($selectedFolder === null) throw new Error("folder not selected");
     // console.log("Whats happening below?")
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const response = await browser.runtime.sendMessage({
+    const decryptedData = await browser.runtime.sendMessage({
       action: "decryptMeta",
       data: responseJson.data,
     });
-    credentialStore.set(response.data);
+    credentialStore.set(decryptedData.data);
     showEditCredentialDialog.set(false);
     showAddCredentialDrawer.set(false);
   };

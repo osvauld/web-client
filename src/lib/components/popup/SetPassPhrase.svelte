@@ -2,8 +2,8 @@
   import Eye from "../basic/icons/eye.svelte";
   import browser from "webextension-polyfill";
   import { isSignedUp } from "../../store/ui.store";
-  export let rsaKey: CryptoKeyPair;
-  export let eccKey: CryptoKeyPair;
+  export let challenge;
+  export let username;
 
   let passphrase = "";
   let confirmPassphrase = "";
@@ -14,9 +14,9 @@
     if (passphrase === confirmPassphrase) {
       const response = await browser.runtime.sendMessage({
         action: "savePassphrase",
-        passphrase: passphrase,
-        rsaKey,
-        eccKey,
+        passphrase,
+        challenge,
+        username,
       });
       if (response.isSaved) {
         isSignedUp.set(true);

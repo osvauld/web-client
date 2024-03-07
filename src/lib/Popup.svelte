@@ -19,8 +19,7 @@
     const checkPvtLoad = await browser.runtime.sendMessage({
       action: "checkPvtLoaded",
     });
-    console.log(checkPvtLoad);
-    if (checkPvtLoad.isLoaded) {
+    if (checkPvtLoad) {
       loggedIn = true;
     } else {
       loggedIn = false;

@@ -1,5 +1,6 @@
 <script lang="ts">
   import browser from "webextension-polyfill";
+  import { getRegsitrationChallenge } from "../../apis/auth.api";
   import Eye from "../basic/icons/eye.svelte";
   import { createEventDispatcher } from "svelte";
 
@@ -9,23 +10,22 @@
   let password = "";
   let showPassword = false;
   let showVerificationError = false;
-  let rsaKey: CryptoKeyPair;
-  let eccKey: CryptoKeyPair;
 
   $: type = showPassword ? "text" : "password";
 
   async function handleSubmit() {
-    // verify
-    const response = await browser.runtime.sendMessage({
-      action: "signUp",
-      username: username,
-      password: password,
-    });
-    if (response.isAuthenticated) {
-      rsaKey = response.rsaKey;
-      eccKey = response.eccKey;
-      dispatch("login", { rsaKey, eccKey });
-    } else showVerificationError = true;
+    if (username && password) {
+      const challengeResponse = await getRegsitrationChallenge(
+        username,
+        password
+      );
+      if (challengeResponse.data.challenge) {
+        dispatch("setPassPhrase", {
+          challenge: challengeResponse.data.challenge,
+          username,
+        });
+      } else showVerificationError = true;
+    }
   }
   function onInput(event: any) {
     password = event.target.value;

@@ -2,11 +2,11 @@ import browser from "webextension-polyfill";
 
 import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptCredentialField, } from "../lib/utils/crypto";
 import { verifyUser } from "../lib/utils/helperMethods";
-import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew } from "./backgroundService";
+import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler, decryptFieldHandler, e, encryptFieldHandler } from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
-
 let rsaPvtKey: CryptoKey;
+import init, { is_global_context_set } from "./rust_openpgp_wasm";
 
 
 let urlObj = new Map<string, Set<string>>();
@@ -24,8 +24,12 @@ browser.runtime.onMessage.addListener(async (request) => {
       return decryptCredentialFieldsHandler(request.data, rsaPvtKey);
     }
     case "decryptField": {
-      const decrypted = await decryptCredentialField(rsaPvtKey, request.data);
-      return { data: decrypted };
+      const field = await decryptFieldHandler(request.data)
+      return { data: field }
+    }
+
+    case "encryptFields": {
+      return encryptFieldHandler(request.data.fields, request.data.publicKey)
     }
 
     case "fillingSignal":
@@ -61,38 +65,27 @@ browser.runtime.onMessage.addListener(async (request) => {
 
     case "initiateAuth": {
       const passphrase = request.data.passphrase;
-      const response = await initiateAuthHandler(passphrase)
-      rsaPvtKey = response.rsaPvtKey;
-      if (response.token) return { isAuthenticated: true }
-      else return { isAuthenticated: false }
+      await loadWasmModule();
+      await initiateAuthHandler(passphrase)
+      return { isAuthenticated: true }
     }
 
     case "isSignedUp": {
       const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+      await init();
       if (signPvtKeyObj.signPvtKey) return { isSignedUp: true }
       else return { isSignedUp: false }
     }
 
-    case "signUp": {
-      if (request.username && request.password) {
-        const rsaKeyPair = await generateRSAKeyPairForEncryption()
-        const eccKeyPair = await generateECCKeyPairForSigning()
-        const isValidCreds = await verifyUser(request.username, request.password, rsaKeyPair.publicKey || "", eccKeyPair.publicKey || "")
-        if (isValidCreds) {
-          return Promise.resolve({ isAuthenticated: true, rsaKey: rsaKeyPair, eccKey: eccKeyPair })
-        }
-      }
-    }
-      break;
 
     case "savePassphrase":
       if (request.passphrase) {
-        return savePassphraseHandler(request.passphrase, request.rsaKey.privateKey, request.eccKey.privateKey);
+        return savePassphraseHandler(request.passphrase, request.challenge, request.username)
       }
       break;
     case "updateAllUrls":
       for (let i = 0; i < request.data.urls.length; i++) {
-        const decrypted = await decryptCredentialField(rsaPvtKey, request.data.urls[i].value);
+        const decrypted = await decryptFieldHandler(request.data.urls[i].value);
         if (urlObj.has(decrypted)) {
           // @ts-ignore
           urlObj.get(decrypted).add(request.data.urls[i].credentialId)
@@ -108,8 +101,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 
     case "checkPvtLoaded":
-      if (rsaPvtKey) return Promise.resolve({ isLoaded: true })
-      else return Promise.resolve({ isLoaded: false })
+      return is_global_context_set()
     case "getActiveCredSuggestion": {
       let tabs = await browser.tabs.query({
         active: true,
@@ -130,9 +122,9 @@ browser.runtime.onMessage.addListener(async (request) => {
         if (cred.credentialId === request.data) {
           for (let field of cred.fields) {
             if (field.fieldName === 'Username') {
-              username = await decryptCredentialField(rsaPvtKey, field.fieldValue);
+              username = await decryptFieldHandler(field.fieldValue);
             } else if (field.fieldName === 'Password') {
-              password = await decryptCredentialField(rsaPvtKey, field.fieldValue);
+              password = await decryptFieldHandler(field.fieldValue);
             }
           }
         }
@@ -141,6 +133,9 @@ browser.runtime.onMessage.addListener(async (request) => {
     }
     case "decryptMeta":
       return decryptCredentialFieldsHandlerNew(request.data, rsaPvtKey);
+    case "addCredential":
+      return addCredentialHandler(request.data);
+
 
     default:
       console.log(request.action)
@@ -171,7 +166,7 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       for (const cred of responseData.data) {
         for (const field of cred.fields) {
           if (field.fieldName === 'Username') {
-            const decrypted = await decryptCredentialField(rsaPvtKey, field.fieldValue);
+            const decrypted = await decryptFieldHandler(field.fieldValue);
             payload.push({ id: cred.credentialId, username: decrypted });
           }
         }
