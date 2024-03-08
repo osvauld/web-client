@@ -8,9 +8,6 @@ import postcss from "rollup-plugin-postcss";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import os from "os";
-import { wasm } from '@rollup/plugin-wasm';
-
-
 
 const production = !process.env.ROLLUP_WATCH;
 function serve() {
@@ -20,7 +17,7 @@ function serve() {
       if (os.platform() === "linux") {
         command = "brave -g http://reload.extensions";
       } else {
-        command = 
+        command =
           '/usr/bin/open -g -a "/Applications/Brave Browser.app" "http://reload.extensions"';
       }
 
@@ -41,7 +38,6 @@ function buildConfig(inputFileName, outputFileName) {
       file: `public/build/${outputFileName}.js`,
       format: "iife",
       name: "app",
-      
     },
     plugins: [
       svelte({
@@ -86,7 +82,6 @@ export default [
       file: "public/background.js",
     },
     plugins: [
-      wasm(),
       typescript({
         tsconfig: "./tsconfig.background.json",
       }),
@@ -114,5 +109,5 @@ export default [
     watch: {
       clearScreen: false,
     },
-  }
+  },
 ];
