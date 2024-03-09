@@ -3,7 +3,6 @@
   import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
   import { ClosePanel, Add, BinIcon } from "../icons";
-  import { encryptCredentialFields } from "../../../utils/helperMethods";
 
   import {
     selectedFolder,
@@ -91,18 +90,11 @@
       credentialType,
       userFields: [],
     };
-    // TODO: validate url if there is url field
-    for (const user of folderUsers) {
-      const fields = await encryptCredentialFields(
-        // @ts-ignore
-        addCredentialFields,
-        user.publicKey
-      );
-      addCredentialPaylod.userFields.push({
-        userId: user.id,
-        fields: fields,
-      });
-    }
+    const response = await browser.runtime.sendMessage({
+      action: "addCredential",
+      data: { users: folderUsers, addCredentialFields },
+    });
+    addCredentialPaylod.userFields = response;
     if ($showEditCredentialDialog) {
       await updateCredential(addCredentialPaylod, $credentialIdForEdit);
     } else {
