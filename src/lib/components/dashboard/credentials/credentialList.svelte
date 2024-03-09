@@ -6,7 +6,7 @@
 
   import { Lens, Share, Add } from "../icons";
   import { fetchFolderUsers, fetchAllUsers, fetchAllUserGroups } from "../apis";
-  import { User, CredentialDetails, Group, Credential } from "../dtos";
+  import { User, Group, Credential } from "../dtos";
 
   import {
     credentialStore,
@@ -28,7 +28,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId,
+        (c) => c.credentialId !== card.credentialId
       );
     }
   }
@@ -40,9 +40,11 @@
       fetchFolderUsers(folder.id),
       fetchAllUserGroups(),
     ]);
-    users = allUsers.filter((user) => {
-      return !folderUsers.some((folderUser) => folderUser.id === user.id);
-    });
+    if (allUsers.length > 0) {
+      users = allUsers.filter((user) => {
+        return !folderUsers.some((folderUser) => folderUser.id === user.id);
+      });
+    }
     checkedCards = [];
   });
 
@@ -84,7 +86,7 @@
       <button
         class="bg rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
         on:click={() => showAddCredentialDrawer.set(true)}
-        ><span class="mr-1"> Add Credential</span> <Add />
+        ><span class="mr-1"> Add Credential</span> <Add color={"#010409"} />
       </button>
     </div>
   {/if}
@@ -128,8 +130,9 @@
   {/if}
   <div class="flex">
     <div class="flex flex-wrap p-3 w-full">
-      {#each $credentialStore as credential}
+      {#each $credentialStore as credential, index}
         <CredentialCard
+          {index}
           {credential}
           on:check={(e) => handleCheck(e.detail, credential)}
         />
