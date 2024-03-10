@@ -31,7 +31,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId
+        (c) => c.credentialId !== card.credentialId,
       );
     }
   }
@@ -48,7 +48,7 @@
     allGroups = allGroupResponse.data;
     users = allUsersResponse.data.filter((user) => {
       return !folderUsersResponse.data.some(
-        (folderUser) => folderUser.id === user.id
+        (folderUser) => folderUser.id === user.id,
       );
     });
     checkedCards = [];
@@ -60,7 +60,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential
+    credential: Credential,
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;

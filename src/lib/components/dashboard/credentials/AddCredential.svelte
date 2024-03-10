@@ -17,6 +17,7 @@
     addCredential,
     updateCredential,
     fetchCredentialsByFolder,
+    fetchSensitiveFieldsByCredentialId,
   } from "../apis";
 
   import {
@@ -54,6 +55,25 @@
   const removeField = (index: number) => {
     credentialFields.splice(index, 1);
     credentialFields = [...credentialFields];
+  };
+
+  const FetchSensitiveFieldsAndDecrypt = async (credentialId: string) => {
+    let sensitiveFieldsForEdit = [];
+    const response = await fetchSensitiveFieldsByCredentialId(credentialId);
+    let sensitiveFields = response.data;
+    for (let field of sensitiveFields) {
+      const response = await browser.runtime.sendMessage({
+        action: "decryptField",
+        data: field.fieldValue,
+      });
+      let decryptedValue = response.data;
+      sensitiveFieldsForEdit.push({
+        fieldName: field.fieldName,
+        fieldValue: decryptedValue,
+        sensitive: true,
+      });
+    }
+    return sensitiveFieldsForEdit;
   };
 
   const saveCredential = async () => {
@@ -101,7 +121,6 @@
       await addCredential(addCredentialPaylod);
     }
     if ($selectedFolder === null) throw new Error("folder not selected");
-    // console.log("Whats happening below?")
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
     const decryptedData = await browser.runtime.sendMessage({
       action: "decryptMeta",
@@ -127,8 +146,10 @@
       );
       name = credentialDataForEdit.name;
       description = credentialDataForEdit.description;
+      let sensitiveFields =
+        await FetchSensitiveFieldsAndDecrypt($credentialIdForEdit);
       // @ts-ignore
-      credentialFields = credentialDataForEdit.fields;
+      credentialFields = [...sensitiveFields, ...credentialDataForEdit.fields];
     }
 
     if ($selectedFolder === null) throw new Error("folder not selected");
