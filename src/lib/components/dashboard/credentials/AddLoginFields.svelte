@@ -1,6 +1,7 @@
 <script lang="ts">
   import { BinIcon } from "../icons";
   import { AddCredentialField } from "../dtos";
+  import { showEditCredentialDialog } from "../store";
 
   export let field: AddCredentialField;
   export let index: Number;
@@ -26,6 +27,7 @@
       id={`key-${index}`}
       type="text"
       placeholder="Enter field name"
+      autofocus={$showEditCredentialDialog}
       bind:value={field.fieldName}
     />
     <input
@@ -68,7 +70,7 @@
       </label>
       {#if index === hoveredIndex}
         <span
-          class="absolute top-[-3.75rem] left-[-1.5625rem] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle"
+          class=" absolute top-[-3.75rem] left-[-1.5625rem] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle"
           >Sensitive</span
         >
       {/if}

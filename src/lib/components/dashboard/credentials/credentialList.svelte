@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AddCredential from "./AddCredential.svelte";
+  import CredentialEditor from "./CredentialEditor.svelte";
   import ShareFolderModal from "../folders/ShareFolderModal.svelte";
   import ShareCredentialModal from "./ShareCredentialModal.svelte";
   import CredentialCard from "./CredentialCard.svelte";
@@ -11,7 +11,7 @@
 
   import {
     credentialStore,
-    showAddCredentialDrawer,
+    showCredentialEditor,
     showFolderShareDrawer,
     showCredentialShareDrawer,
     selectedFolder,
@@ -31,7 +31,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId,
+        (c) => c.credentialId !== card.credentialId
       );
     }
   }
@@ -48,7 +48,7 @@
     allGroups = allGroupResponse.data;
     users = allUsersResponse.data.filter((user) => {
       return !folderUsersResponse.data.some(
-        (folderUser) => folderUser.id === user.id,
+        (folderUser) => folderUser.id === user.id
       );
     });
     checkedCards = [];
@@ -60,7 +60,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential,
+    credential: Credential
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -122,19 +122,19 @@
         0
           ? 'bg-osvauld-carolinablue text-osvauld-ninjablack'
           : 'bg-osvauld-iconblack text-osvauld-sheffieldgrey'}"
-        on:click={() => showAddCredentialDrawer.set(true)}
+        on:click={() => showCredentialEditor.set(true)}
         disabled={checkedCards.length !== 0}
         ><span class="mr-1"> Add Credential</span> <Add color={addIconColor} />
       </button>
     </div>
   {/if}
-  {#if $showAddCredentialDrawer}
+  {#if $showCredentialEditor}
     <button
       class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-      on:click={() => showAddCredentialDrawer.set(false)}
+      on:click={() => showCredentialEditor.set(false)}
     >
       <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
-        <AddCredential on:close={() => showAddCredentialDrawer.set(false)} />
+        <CredentialEditor on:close={() => showCredentialEditor.set(false)} />
       </button>
     </button>
   {/if}

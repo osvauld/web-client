@@ -2,38 +2,12 @@ import { UserEncryptedCredentials, UserEncryptedFields, CredentialFields } from 
 
 
 
-type CommonFields = {
-    name: string;
-    description: string;
-    credentialType: string;
-};
-
-type EditFieldsPayload = {
-    editFields: UserEncryptedFields[];
-};
-
-type UserFieldsPayload = { // or add fields payload
-    folderId: string;
-    userFields: UserEncryptedFields[];
-};
-
-export type EditCredentialPayload = CommonFields & (EditFieldsPayload | UserFieldsPayload);
-
-
-
 export type AddCredentialPayload = {
     name: string;
     description: string;
     folderId: string;
     credentialType: string;
     userFields: UserEncryptedFields[];
-}
-
-export type editCredentialPayload = {
-    name: string;
-    description: string;
-    credentialType: string;
-    editFields: UserEncryptedFields[];
 }
 
 

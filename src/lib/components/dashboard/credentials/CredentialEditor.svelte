@@ -6,7 +6,7 @@
 
   import {
     selectedFolder,
-    showAddCredentialDrawer,
+    showCredentialEditor,
     credentialStore,
     showEditCredentialDialog,
     credentialIdForEdit,
@@ -37,7 +37,7 @@
   let addCredentialPaylod: AddCredentialPayload;
   let hoveredIndex: Number | null = null;
   let credentialType = "Login";
-  $: loginFields = [
+  let loginFields = [
     { fieldName: "Username", fieldValue: "", sensitive: false },
     { fieldName: "Password", fieldValue: "", sensitive: true },
     { fieldName: "URL", fieldValue: "https://", sensitive: false },
@@ -47,7 +47,7 @@
     let newField: AddCredentialField = {
       fieldName: "",
       fieldValue: "",
-      sensitive: false,
+      sensitive: true,
     };
     credentialFields = [...credentialFields, newField];
   };
@@ -86,23 +86,17 @@
           fieldName: "Domain",
           fieldValue: domain,
           fieldType: "additional",
-          // @ts-ignore
-          ...(field.id && { id: field.id }),
         });
       } else {
-        const baseField = {
+        const baseField: Fields = {
           fieldName: field.fieldName,
           fieldValue: field.fieldValue,
           fieldType: field.sensitive ? "sensitive" : "meta",
-          // @ts-ignore
-          ...(field.id && { id: field.id }), // Conditionally include fieldId if it exists
         };
-        // @ts-ignore
         addCredentialFields.push(baseField);
       }
     }
 
-    // @ts-ignore
     addCredentialPaylod = {
       name: name,
       description: description,
@@ -128,7 +122,7 @@
     });
     credentialStore.set(decryptedData.data);
     showEditCredentialDialog.set(false);
-    showAddCredentialDrawer.set(false);
+    showCredentialEditor.set(false);
   };
 
   const credentialTypeSelection = (isLogin: boolean) => {
@@ -148,8 +142,7 @@
       description = credentialDataForEdit.description;
       let sensitiveFields =
         await FetchSensitiveFieldsAndDecrypt($credentialIdForEdit);
-      // @ts-ignore
-      credentialFields = [...sensitiveFields, ...credentialDataForEdit.fields];
+      credentialFields = [...credentialDataForEdit.fields, ...sensitiveFields];
     }
 
     if ($selectedFolder === null) throw new Error("folder not selected");
@@ -158,7 +151,7 @@
   });
 
   function closeDialog() {
-    showAddCredentialDrawer.set(false);
+    showCredentialEditor.set(false);
     showEditCredentialDialog.set(false);
   }
 
@@ -226,7 +219,9 @@
       bind:value={name}
     />
 
-    <div class="min-h-[25vh] max-h-[30vh] overflow-y-scroll scrollbar-thin">
+    <div
+      class="min-h-[25vh] max-h-[30vh] overflow-y-scroll scrollbar-thin z-50"
+    >
       {#each credentialFields as field, index}
         <AddLoginFields
           {field}

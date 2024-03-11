@@ -7,7 +7,7 @@
   import {
     showCredentialDetailsDrawer,
     showEditCredentialDialog,
-    showAddCredentialDrawer,
+    showCredentialEditor,
     credentialIdForEdit,
   } from "../store";
   import { ClosePanel, EditIcon } from "../icons";
@@ -63,7 +63,7 @@
           : ''}"
         on:click={() => {
           showEditCredentialDialog.set(true);
-          showAddCredentialDrawer.set(true);
+          showCredentialEditor.set(true);
           showCredentialDetailsDrawer.set(false);
         }}
       >
