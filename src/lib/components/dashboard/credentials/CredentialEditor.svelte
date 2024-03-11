@@ -2,19 +2,22 @@
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
-  import { ClosePanel, Add } from "../icons";
-  import { encryptCredentialFields } from "../../../utils/helperMethods";
+  import { ClosePanel, Add, BinIcon } from "../icons";
 
   import {
     selectedFolder,
-    showAddCredentialDrawer,
+    showCredentialEditor,
     credentialStore,
+    showEditCredentialDialog,
+    credentialIdForEdit,
   } from "../store";
 
   import {
     fetchFolderUsers,
     addCredential,
+    updateCredential,
     fetchCredentialsByFolder,
+    fetchSensitiveFieldsByCredentialId,
   } from "../apis";
 
   import {
@@ -22,10 +25,11 @@
     Fields,
     User,
     AddCredentialField,
+    CredentialFieldWithId,
   } from "../dtos";
   import AddLoginFields from "./AddLoginFields.svelte";
 
-  let credentialFields: AddCredentialField[] = [];
+  let credentialFields: AddCredentialField[] | CredentialFieldWithId[] = [];
   let description = "";
   let name = "";
   let loginSelected = true;
@@ -53,23 +57,29 @@
     credentialFields = [...credentialFields];
   };
 
+  const FetchSensitiveFieldsAndDecrypt = async (credentialId: string) => {
+    let sensitiveFieldsForEdit = [];
+    const response = await fetchSensitiveFieldsByCredentialId(credentialId);
+    let sensitiveFields = response.data;
+    for (let field of sensitiveFields) {
+      const response = await browser.runtime.sendMessage({
+        action: "decryptField",
+        data: field.fieldValue,
+      });
+      let decryptedValue = response.data;
+      sensitiveFieldsForEdit.push({
+        fieldName: field.fieldName,
+        fieldValue: decryptedValue,
+        sensitive: true,
+      });
+    }
+    return sensitiveFieldsForEdit;
+  };
+
   const saveCredential = async () => {
     if ($selectedFolder === null) throw new Error("folder not selected");
-    const addCredentialFields: Fields[] = [];
+    let addCredentialFields: Fields[] = [];
     for (const field of credentialFields) {
-      if (!field.sensitive) {
-        addCredentialFields.push({
-          fieldName: field.fieldName,
-          fieldValue: field.fieldValue,
-          fieldType: "meta",
-        });
-      } else {
-        addCredentialFields.push({
-          fieldName: field.fieldName,
-          fieldValue: field.fieldValue,
-          fieldType: "sensitive",
-        });
-      }
       if (field.fieldName === "URL") {
         const domain = new URL(field.fieldValue).hostname;
         addCredentialFields.push({
@@ -77,8 +87,16 @@
           fieldValue: domain,
           fieldType: "additional",
         });
+      } else {
+        const baseField: Fields = {
+          fieldName: field.fieldName,
+          fieldValue: field.fieldValue,
+          fieldType: field.sensitive ? "sensitive" : "meta",
+        };
+        addCredentialFields.push(baseField);
       }
     }
+
     addCredentialPaylod = {
       name: name,
       description: description,
@@ -91,7 +109,11 @@
       data: { users: folderUsers, addCredentialFields },
     });
     addCredentialPaylod.userFields = response;
-    await addCredential(addCredentialPaylod);
+    if ($showEditCredentialDialog) {
+      await updateCredential(addCredentialPaylod, $credentialIdForEdit);
+    } else {
+      await addCredential(addCredentialPaylod);
+    }
     if ($selectedFolder === null) throw new Error("folder not selected");
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
     const decryptedData = await browser.runtime.sendMessage({
@@ -99,7 +121,8 @@
       data: responseJson.data,
     });
     credentialStore.set(decryptedData.data);
-    showAddCredentialDrawer.set(false);
+    showEditCredentialDialog.set(false);
+    showCredentialEditor.set(false);
   };
 
   const credentialTypeSelection = (isLogin: boolean) => {
@@ -111,13 +134,29 @@
 
   onMount(async () => {
     credentialFields = loginFields;
+    if ($showEditCredentialDialog) {
+      const [credentialDataForEdit] = $credentialStore.filter(
+        (credentials) => credentials.credentialId === $credentialIdForEdit,
+      );
+      name = credentialDataForEdit.name;
+      description = credentialDataForEdit.description;
+      let sensitiveFields =
+        await FetchSensitiveFieldsAndDecrypt($credentialIdForEdit);
+      credentialFields = [...credentialDataForEdit.fields, ...sensitiveFields];
+    }
+
     if ($selectedFolder === null) throw new Error("folder not selected");
     const responseJson = await fetchFolderUsers($selectedFolder.id);
     folderUsers = responseJson.data;
   });
 
   function closeDialog() {
-    showAddCredentialDrawer.set(false);
+    showCredentialEditor.set(false);
+    showEditCredentialDialog.set(false);
+  }
+
+  function deleteCredential() {
+    console.log("Delete credential");
   }
 
   function triggerSensitiveBubble(index: number, isEnter: boolean) {
@@ -139,7 +178,9 @@
           : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(true)}
       >
-        Add Login credential
+        {$showEditCredentialDialog
+          ? "Edit login credential"
+          : "Add Login credential"}
       </button>
       <button
         class="text-[1.4rem] font-sans font-normal ml-2 {!loginSelected
@@ -147,12 +188,22 @@
           : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(false)}
       >
-        Add other credential
+        {$showEditCredentialDialog
+          ? "Change to other credential"
+          : "Add other credential"}
       </button>
     </div>
-    <button class="bg-osvauld-frameblack p-4" on:click={closeDialog}
-      ><ClosePanel /></button
-    >
+    <div>
+      {#if showEditCredentialDialog}
+        <button class="bg-osvauld-frameblack p-4" on:click={deleteCredential}
+          ><BinIcon /></button
+        >
+      {/if}
+
+      <button class="bg-osvauld-frameblack p-4" on:click={closeDialog}
+        ><ClosePanel /></button
+      >
+    </div>
   </div>
 
   <div class="border-b border-osvauld-iconblack w-full"></div>
@@ -164,10 +215,13 @@
       type="text"
       placeholder="Enter Credential name"
       autocomplete="off"
+      autofocus
       bind:value={name}
     />
 
-    <div class="min-h-[25vh] max-h-[30vh] overflow-y-scroll scrollbar-thin">
+    <div
+      class="min-h-[25vh] max-h-[30vh] overflow-y-scroll scrollbar-thin z-50"
+    >
       {#each credentialFields as field, index}
         <AddLoginFields
           {field}
@@ -199,12 +253,13 @@
   <div class="border-b border-osvauld-iconblack w-full my-2"></div>
   <div class="flex justify-end items-center mx-10 py-2">
     <button
-      class="primary-btn px-[3.25rem] w-1/3 py-2.5 mb-6 mr-3"
+      class="secondary-btn px-[3.25rem] w-1/3 py-2.5 mb-6 mr-3"
       on:click={closeDialog}>Cancel</button
     >
     <button
       class="primary-btn px-[3.25rem] py-2.5 mb-6"
-      on:click={saveCredential}>Add credential</button
+      on:click={saveCredential}
+      >{$showEditCredentialDialog ? "Save Changes" : "Add credential"}</button
     >
   </div>
 </div>

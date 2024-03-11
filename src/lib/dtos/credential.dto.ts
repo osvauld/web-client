@@ -4,7 +4,6 @@
 type UUID = string;
 type FieldType = 'meta' | 'sensitive' | 'additional';
 export type Fields = {
-
   fieldId?: string;
   fieldName?: string;
   fieldValue: string;
@@ -57,6 +56,12 @@ export type AddCredentialField = {
   fieldValue: string;
   sensitive: boolean;
 };
+
+
+
+export type CredentialFieldWithId = AddCredentialField & {
+  id: string;
+}
 
 
 export type InjectionPayload = {

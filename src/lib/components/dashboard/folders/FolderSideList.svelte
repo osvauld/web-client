@@ -13,7 +13,7 @@
   import { fetchCredentialsByFolder } from "../apis";
 
   import { Folder } from "../dtos";
-  import Add from "../../basic/add.svelte";
+  import Add from "../../basic/icons/add.svelte";
 
   let iconColor = "#6E7681"; //sheffieldgrey:
 

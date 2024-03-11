@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Eye from "../basic/eye.svelte";
+  import Eye from "../basic/icons/eye.svelte";
   import browser from "webextension-polyfill";
   import { isSignedUp } from "../../store/ui.store";
   export let challenge;

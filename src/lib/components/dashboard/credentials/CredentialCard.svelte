@@ -31,7 +31,6 @@
         const response = await fetchSensitiveFieldsByCredentialId(
           credential.credentialId
         );
-
         sensitiveFields = response.data;
         sensitiveFields.length >= 1
           ? (sensitiveCard = true)

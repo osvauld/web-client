@@ -1,6 +1,7 @@
 import { UserEncryptedCredentials, UserEncryptedFields, CredentialFields } from "./credential.dto";
 
 
+
 export type AddCredentialPayload = {
     name: string;
     description: string;
@@ -8,6 +9,9 @@ export type AddCredentialPayload = {
     credentialType: string;
     userFields: UserEncryptedFields[];
 }
+
+
+
 export type UserEncryptedDataForShareCredentials = UserEncryptedCredentials & {
     accessType: string;
 }
