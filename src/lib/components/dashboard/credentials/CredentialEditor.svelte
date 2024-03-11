@@ -47,7 +47,7 @@
     let newField: AddCredentialField = {
       fieldName: "",
       fieldValue: "",
-      sensitive: true,
+      sensitive: false,
     };
     credentialFields = [...credentialFields, newField];
   };
@@ -136,7 +136,7 @@
     credentialFields = loginFields;
     if ($showEditCredentialDialog) {
       const [credentialDataForEdit] = $credentialStore.filter(
-        (credentials) => credentials.credentialId === $credentialIdForEdit
+        (credentials) => credentials.credentialId === $credentialIdForEdit,
       );
       name = credentialDataForEdit.name;
       description = credentialDataForEdit.description;
