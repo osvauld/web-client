@@ -25,11 +25,11 @@
     Fields,
     User,
     AddCredentialField,
-    CredentialResponse,
+    CredentialFieldWithId,
   } from "../dtos";
   import AddLoginFields from "./AddLoginFields.svelte";
 
-  let credentialFields: AddCredentialField[] | CredentialResponse[] = [];
+  let credentialFields: AddCredentialField[] | CredentialFieldWithId[] = [];
   let description = "";
   let name = "";
   let loginSelected = true;

@@ -59,7 +59,7 @@ export type AddCredentialField = {
 
 
 
-export type CredentialResponse = AddCredentialField & {
+export type CredentialFieldWithId = AddCredentialField & {
   id: string;
 }
 
