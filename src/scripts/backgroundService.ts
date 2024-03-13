@@ -53,10 +53,11 @@ export const savePassphraseHandler = async (passphrase: string, challenge: strin
     return { isSaved: true }
 }
 
-export const decryptCredentialFieldsHandlerNew = async (credentials: Credential[], rsaPvtKey: CryptoKey) => {
+export const decryptCredentialFieldsHandlerNew = async (credentials: Credential[]) => {
     try {
 
         const response = await decrypt_credentials(credentials);
+        console.log('responsebh', response)
         return { data: response };
     } catch (error) {
         console.error("Error decrypting credentials:", error);

@@ -13,7 +13,7 @@ export const fetchAllUserGroups = async (): Promise<FetchAllUserGroupsResponse> 
     },
   })
     .then((response) => response.json())
-    
+
 };
 
 export const fetchGroupUsers = async (id: string): Promise<FetchGroupUsersResponse> => {
@@ -144,5 +144,32 @@ export const fetchCredentialGroups = async (credentialId: string): Promise<Fetch
   return await fetch(`${baseUrl}/credential/${credentialId}/groups`, {
     method: "GET",
     headers,
+  }).then(response => response.json());
+}
+
+
+export const removeGroupFromFolder = async (folderId: string, groupId: string) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/folder/${folderId}/remove-group-access`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ groupIds: [groupId] }),
+  }).then(response => response.json());
+}
+
+export const removeGroupFromCredential = async (credentialId: string, groupId: string) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/credential/${credentialId}/remove-group-access`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ groupIds: [groupId] }),
   }).then(response => response.json());
 }

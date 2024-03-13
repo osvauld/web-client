@@ -3,7 +3,12 @@
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
   import UserGroupToggle from "../UserGroupToggle.svelte";
-  import { fetchCredentialUsers, fetchCredentialGroups } from "../apis";
+  import {
+    fetchCredentialUsers,
+    fetchCredentialGroups,
+    removeGroupFromCredential,
+    removeUserFromCredential,
+  } from "../apis";
   import {
     showCredentialDetailsDrawer,
     showEditCredentialDialog,
@@ -32,10 +37,23 @@
       users = usersResponse.data;
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
-        credential.credentialId
+        credential.credentialId,
       );
       groups = groupsResponse.data;
     }
+  };
+
+  const removeGroupFromCredentialHandler = async (
+    group: GroupWithAccessType,
+  ) => {
+    await removeGroupFromCredential(credential.credentialId, group.groupId);
+    await toggleSelect({ detail: "Groups" });
+    console.log(group);
+  };
+  const removeUserFromCredentialHandler = async (user: UserWithAccessType) => {
+    await removeUserFromCredential(credential.credentialId, user.id);
+    await toggleSelect({ detail: "Users" });
+    console.log(user);
   };
   onMount(async () => {
     // @ts-ignore
@@ -107,11 +125,17 @@
     <div class="items-left">
       {#if selectedTab == "Groups"}
         {#each groups as group}
-          <ExistingListItem item={group} />
+          <ExistingListItem
+            item={group}
+            on:remove={() => removeGroupFromCredentialHandler(group)}
+          />
         {/each}
       {:else if selectedTab == "Users"}
         {#each users as user}
-          <ExistingListItem item={user} />
+          <ExistingListItem
+            item={user}
+            on:remove={() => removeUserFromCredentialHandler(user)}
+          />
         {/each}
       {/if}
     </div>
