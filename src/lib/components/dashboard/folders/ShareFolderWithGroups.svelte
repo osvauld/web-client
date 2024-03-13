@@ -10,6 +10,7 @@
         shareFolderWithGroups,
         fetchGroupsWithoutAccess,
         fetchFolderGroups,
+        removeGroupFromFolder,
     } from "../apis";
     import { createShareCredsPayload, setbackground } from "../helper";
     import { writable } from "svelte/store";
@@ -38,9 +39,11 @@
           )
         : groups;
 
-    const existingGroups = async () => {
-        existingItemDropdown = !existingItemDropdown;
-        if (existingGroupsData.length === 0 && $selectedFolder !== null) {
+    const existingGroups = async (toggle = true) => {
+        if (toggle) {
+            existingItemDropdown = !existingItemDropdown;
+        }
+        if ($selectedFolder !== null) {
             const reponseJson = await fetchFolderGroups($selectedFolder.id);
             existingGroupsData = reponseJson.data;
         } else {
@@ -113,6 +116,12 @@
         }
     }
 
+    const removeExistingGroup = async (e: any) => {
+        console.log(e.detail, "grp");
+        await removeGroupFromFolder($selectedFolder.id, e.detail.id);
+        await existingGroups(false);
+    };
+
     onMount(async () => {
         // TODO: change fetch all groups to fetch groups where folder not shared.
         if ($selectedFolder === null) throw new Error("Folder not selected");
@@ -184,5 +193,6 @@
     {existingItemDropdown}
     existingItemsData={existingGroupsData}
     user={false}
-    on:click={existingGroups}
+    on:click={() => existingGroups()}
+    on:remove={(e) => removeExistingGroup(e)}
 />

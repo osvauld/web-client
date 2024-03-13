@@ -1,7 +1,9 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
   import ExistingListItem from "./ExistingListItem.svelte";
   import { DownArrow, RightArrow } from "../icons";
+  import { log } from "console";
+
   export let existingItemDropdown;
   export let existingItemsData;
   export let user;
@@ -10,6 +12,10 @@
 
   const dispatchClick = () => {
     dispatch("click");
+  };
+
+  const handleRemoval = (item) => {
+    dispatch("remove", item);
   };
 </script>
 
@@ -36,7 +42,8 @@
     class="overflow-y-scroll scrollbar-thin h-[18vh] bg-osvauld-frameblack w-full"
   >
     {#each existingItemsData as item, index}
-      <ExistingListItem {item} />
+      <!-- TODO: user should not be able to remove themselves -->
+      <ExistingListItem {item} on:remove={() => handleRemoval(item)} />
     {/each}
   </div>
 </div>

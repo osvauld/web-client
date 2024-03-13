@@ -132,7 +132,7 @@ browser.runtime.onMessage.addListener(async (request) => {
       return Promise.resolve({ username, password });
     }
     case "decryptMeta":
-      return decryptCredentialFieldsHandlerNew(request.data, rsaPvtKey);
+      return decryptCredentialFieldsHandlerNew(request.data);
     case "addCredential":
       return addCredentialHandler(request.data);
 

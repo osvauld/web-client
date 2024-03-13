@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { shareFolderWithUsers, fetchFolderUsers } from "../apis";
+  import {
+    shareFolderWithUsers,
+    fetchFolderUsers,
+    removeUserFromFolder,
+  } from "../apis";
   import {
     User,
     UserWithAccessType,
@@ -26,13 +30,15 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase())
+        user.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : users;
 
-  const existingUsers = async () => {
-    existingItemDropdown = !existingItemDropdown;
-    if (existingUserData.length === 0 && $selectedFolder !== null) {
+  const existingUsers = async (toggle = true) => {
+    if (toggle) {
+      existingItemDropdown = !existingItemDropdown;
+    }
+    if ($selectedFolder !== null) {
       const responseJson = await fetchFolderUsers($selectedFolder.id);
       existingUserData = responseJson.data;
     } else {
@@ -46,7 +52,7 @@
     }
     const userData = await createShareCredsPayload(
       credentialsFields,
-      selectedUsers
+      selectedUsers,
     );
     const shareFolderPayload: ShareFolderWithUsersPayload = {
       folderId: $selectedFolder.id,
@@ -83,6 +89,12 @@
       users = users.filter((u) => u.id !== user.id);
     }
   }
+
+  const removeExistingUser = async (e: any) => {
+    console.log("removing user...");
+    await removeUserFromFolder($selectedFolder.id, e.detail.id);
+    await existingUsers(false);
+  };
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[50vh]">
@@ -148,5 +160,6 @@
   {existingItemDropdown}
   existingItemsData={existingUserData}
   user={true}
-  on:click={existingUsers}
+  on:click={() => existingUsers()}
+  on:remove={(e) => removeExistingUser(e)}
 />
