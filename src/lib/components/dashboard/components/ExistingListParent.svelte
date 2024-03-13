@@ -41,9 +41,11 @@
   <div
     class="overflow-y-scroll scrollbar-thin h-[18vh] bg-osvauld-frameblack w-full"
   >
-    {#each existingItemsData as item, index}
-      <!-- TODO: user should not be able to remove themselves -->
-      <ExistingListItem {item} on:remove={() => handleRemoval(item)} />
-    {/each}
+    {#if existingItemDropdown}
+      {#each existingItemsData as item, index}
+        <!-- TODO: user should not be able to remove themselves -->
+        <ExistingListItem {item} on:remove={() => handleRemoval(item)} />
+      {/each}
+    {/if}
   </div>
 </div>
