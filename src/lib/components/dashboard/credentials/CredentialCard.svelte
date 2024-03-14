@@ -7,20 +7,26 @@
   import { More, SensitiveEye, SensitiveEyeBlue } from "../icons";
   import { showCredentialDetailsDrawer, searchedCredential } from "../store";
   import { Credential, Fields } from "../dtos";
-
+  import { tweened } from "svelte/motion";
   const dispatch = createEventDispatcher();
-
   export let credential: Credential;
   export let index: number;
-
   let sensitiveFields: Fields[] = [];
   let decrypted = false;
   let checked = false;
   let hoverEffect = false;
   let sensitiveCard = false;
   let hoverTimeout: any;
-  $: borderHighLight = $searchedCredential?.id === credential.credentialId;
-
+  let borderHighLight = tweened(0, { duration: 700 });
+  $: {
+    if ($searchedCredential?.id === credential.credentialId) {
+      borderHighLight.set(1);
+      setTimeout(() => {
+        borderHighLight.set(0);
+        searchedCredential.set(null);
+      }, 500);
+    }
+  }
   function toggleCheck() {
     checked = !checked;
     dispatch("check", checked);
@@ -48,17 +54,9 @@
     hoverEffect = false;
     sensitiveCard = false;
   }
-
   onMount(async () => {
     checked = false;
-    if (borderHighLight) {
-      setTimeout(() => {
-        borderHighLight = !borderHighLight;
-        searchedCredential.set(null);
-      }, 500);
-    }
   });
-
   const handleClick = async () => {
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
@@ -68,14 +66,12 @@
       sensitiveFields = response.data;
     }
     dispatch("select", sensitiveFields);
-  };
-
-  /* eslint-disable */
+  }; /* eslint-disable */
 </script>
 
 <button
-  class="mb-3 max-w-[19rem] overflow-x-hidden {borderHighLight &&
-    'border border-green-500'} flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
+  class="mb-3 max-w-[19rem] overflow-x-hidden flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
+  style="border: {$borderHighLight ? '1px solid #48bb78' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
   on:click={handleClick}
