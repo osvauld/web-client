@@ -3,6 +3,7 @@
   import { fly } from "svelte/transition";
   import browser from "webextension-polyfill";
   import { ClosePanel, Add, BinIcon } from "../icons";
+  import Loader from "../components/Loader.svelte";
 
   import {
     selectedFolder,
@@ -32,6 +33,7 @@
   let credentialFields: AddCredentialField[] | CredentialFieldWithId[] = [];
   let description = "";
   let name = "";
+  let isLoaderActive: boolean = false;
   let loginSelected = true;
   let folderUsers: User[] = [];
   let addCredentialPaylod: AddCredentialPayload;
@@ -77,6 +79,8 @@
   };
 
   const saveCredential = async () => {
+    console.log("Trigger Loader");
+    isLoaderActive = true;
     if ($selectedFolder === null) throw new Error("folder not selected");
     let domain = "";
     let addCredentialFields: Fields[] = [];
@@ -124,6 +128,7 @@
     credentialStore.set(decryptedData.data);
     showEditCredentialDialog.set(false);
     showCredentialEditor.set(false);
+    isLoaderActive = false;
   };
 
   const credentialTypeSelection = (isLogin: boolean) => {
@@ -137,7 +142,7 @@
     credentialFields = loginFields;
     if ($showEditCredentialDialog) {
       const [credentialDataForEdit] = $credentialStore.filter(
-        (credentials) => credentials.credentialId === $credentialIdForEdit,
+        (credentials) => credentials.credentialId === $credentialIdForEdit
       );
       name = credentialDataForEdit.name;
       description = credentialDataForEdit.description;
@@ -260,7 +265,14 @@
     <button
       class="primary-btn px-[3.25rem] py-2.5 mb-6"
       on:click={saveCredential}
-      >{$showEditCredentialDialog ? "Save Changes" : "Add credential"}</button
     >
+      {#if isLoaderActive}
+        <Loader size={24} color="#1F242A" duration={1} />
+      {:else}
+        <span
+          >{$showEditCredentialDialog ? "Save Changes" : "Add credential"}</span
+        >
+      {/if}
+    </button>
   </div>
 </div>
