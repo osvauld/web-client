@@ -47,7 +47,7 @@
   >
   {#if $showAddGroupDrawer}
     <button
-      class="p-6 rounded shadow-lg"
+      class="fixed inset-0 flex items-center justify-center z-50 bg- backdrop-filter backdrop-blur-[2px]"
       on:click|stopPropagation
       on:keydown|stopPropagation
     >

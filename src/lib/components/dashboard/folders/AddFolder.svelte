@@ -43,7 +43,7 @@
   ></textarea>
 
   <button
-    class="bg-osvauld-carolinablue rounded-full p-2 mt-4 text-osvauld-ninjablack"
+    class="bg-osvauld-carolinablue rounded-md p-2 mt-4 text-osvauld-ninjablack"
     on:click={addFolderFunc}>Submit</button
   >
 </div>

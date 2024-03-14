@@ -79,7 +79,6 @@
   };
 
   const saveCredential = async () => {
-    console.log("Trigger Loader");
     isLoaderActive = true;
     if ($selectedFolder === null) throw new Error("folder not selected");
     let domain = "";
@@ -259,11 +258,11 @@
   <div class="border-b border-osvauld-iconblack w-full my-2"></div>
   <div class="flex justify-end items-center mx-10 py-2">
     <button
-      class="secondary-btn px-[3.25rem] w-1/3 py-2.5 mb-6 mr-3"
+      class="secondary-btn px-[3.25rem] py-2.5 mb-6 mr-3 w-[200px] whitespace-nowrap"
       on:click={closeDialog}>Cancel</button
     >
     <button
-      class="primary-btn px-[3.25rem] py-2.5 mb-6"
+      class="primary-btn px-[3.25rem] py-2.5 mb-6 w-[200px] whitespace-nowrap flex justify-center items-center"
       on:click={saveCredential}
     >
       {#if isLoaderActive}
