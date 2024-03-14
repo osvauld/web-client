@@ -79,7 +79,6 @@
   };
 
   const saveCredential = async () => {
-    console.log("Trigger Loader");
     isLoaderActive = true;
     if ($selectedFolder === null) throw new Error("folder not selected");
     let addCredentialFields: Fields[] = [];
