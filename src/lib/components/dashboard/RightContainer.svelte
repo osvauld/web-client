@@ -3,6 +3,8 @@
   import GroupList from "./groups/GroupList.svelte";
   import { getSearchFields } from "./apis";
   import Highlight from "./components/Highlight.svelte";
+  import ClosePanel from "../basic/icons/closePanel.svelte";
+  import Key from "../basic/icons/key.svelte";
 
   import { Profile, Lens } from "./icons";
   import {
@@ -74,19 +76,21 @@
 
 <div class="flex flex-col h-auto">
   <div class="h-[7.8rem] pr-4 flex justify-between items-center">
-    <div
-      class="h-[1.9rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
-    >
-      <Lens />
-      <input
-        type="text"
-        class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-        placeholder="Search"
-        on:click={getSearchData}
-        on:input={handleInputChange}
-        bind:value={query}
-      />
-    </div>
+    {#if !showModal}
+      <div
+        class="h-[1.9rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+      >
+        <Lens />
+        <input
+          type="text"
+          class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+          placeholder="Search"
+          on:click={getSearchData}
+          on:input={handleInputChange}
+          bind:value={query}
+        />
+      </div>
+    {/if}
     <div><Profile /></div>
     <!-- Content for the top part (search bar) -->
     <!-- Horizontal line -->
@@ -95,33 +99,65 @@
   {#if showModal}
     <div class="fixed z-10 inset-0 overflow-y-auto">
       <div class="flex items-center justify-center min-h-screen">
+        <button class="fixed inset-0 bg-black opacity-50" on:click={closeModal}>
+        </button>
         <div
-          class="fixed inset-0 bg-black opacity-50"
-          on:click={closeModal}
-        ></div>
-        <div
-          class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
+          class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
         >
-          <div class="p-4">
-            <div class="max-h-64 overflow-y-auto">
+          <div
+            class="h-[3rem] w-[90%] px-2 mx-auto mt-4 flex justify-start items-center border-2 border-osvauld-carolinablue rounded-lg cursor-pointer"
+          >
+            <Lens />
+            <input
+              type="text"
+              class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+              placeholder="Search"
+              autofocus
+              on:click={getSearchData}
+              on:input={handleInputChange}
+              bind:value={query}
+            />
+          </div>
+          <div class="p-4 bg-osvauld-frameblack">
+            <div
+              class="max-h-64 min-h-32 overflow-y-auto flex justify-start items-center flex-col"
+            >
               {#each searchResults as result}
-                <button on:click={() => handleSearchClick(result)}>
-                  <Highlight text={result.folderName} {query} />
-                  <div class="ml-4">
-                    <Highlight text={result.name} {query} />
-                    <Highlight text={result.description} {query} />
-                    {#if result.domain}
-                      <Highlight text={result.domain} {query} />
-                    {/if}
+                <button
+                  on:click={() => handleSearchClick(result)}
+                  class="p-3 border border-osvauld-iconblack hover:bg-osvauld-iconblack w-full border-b-0 flex justify-start items-center"
+                >
+                  <div
+                    class="h-full flex justify-center items-center scale-150 px-2"
+                  >
+                    <Key />
+                  </div>
+                  <div>
+                    <div
+                      class="ml-4 flex justify-start items-center text-base font-semibold"
+                    >
+                      <Highlight text={result.folderName} {query} />
+                    </div>
+                    <div
+                      class="ml-4 flex justify-start items-center text-sm font-light"
+                    >
+                      <Highlight text={result.name} {query} />
+                      <Highlight text={result.description} {query} />
+                      {#if result.domain}
+                        <Highlight text={result.domain} {query} />
+                      {/if}
+                    </div>
                   </div>
                 </button>
               {/each}
             </div>
           </div>
-          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <div
+            class="bg-osvauld-frameblack px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+          >
             <button
               type="button"
-              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-osvauld-carolinablue text-base font-medium text-osvauld-frameblack focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
               on:click={closeModal}
             >
               Close
