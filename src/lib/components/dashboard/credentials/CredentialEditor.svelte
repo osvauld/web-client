@@ -78,23 +78,23 @@
 
   const saveCredential = async () => {
     if ($selectedFolder === null) throw new Error("folder not selected");
+    let domain = "";
     let addCredentialFields: Fields[] = [];
     for (const field of credentialFields) {
       if (field.fieldName === "URL") {
-        const domain = new URL(field.fieldValue).hostname;
+        domain = new URL(field.fieldValue).hostname;
         addCredentialFields.push({
           fieldName: "Domain",
           fieldValue: domain,
           fieldType: "additional",
         });
-      } else {
-        const baseField: Fields = {
-          fieldName: field.fieldName,
-          fieldValue: field.fieldValue,
-          fieldType: field.sensitive ? "sensitive" : "meta",
-        };
-        addCredentialFields.push(baseField);
       }
+      const baseField: Fields = {
+        fieldName: field.fieldName,
+        fieldValue: field.fieldValue,
+        fieldType: field.sensitive ? "sensitive" : "meta",
+      };
+      addCredentialFields.push(baseField);
     }
 
     addCredentialPaylod = {
@@ -103,6 +103,7 @@
       folderId: $selectedFolder.id,
       credentialType,
       userFields: [],
+      domain,
     };
     const response = await browser.runtime.sendMessage({
       action: "addCredential",

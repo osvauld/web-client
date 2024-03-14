@@ -8,6 +8,7 @@ export type AddCredentialPayload = {
     folderId: string;
     credentialType: string;
     userFields: UserEncryptedFields[];
+    domain: string;
 }
 
 

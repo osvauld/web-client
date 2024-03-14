@@ -60,7 +60,7 @@
   <ul>
     {#each $folderStore as folder}
       <li
-        class="{$selectedFolder === folder
+        class="{$selectedFolder?.id == folder.id
           ? 'bg-osvauld-bordergreen rounded-lg'
           : 'hover:bg-osvauld-bordergreen'} rounded-md pl-3"
       >
