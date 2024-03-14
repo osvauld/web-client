@@ -49,7 +49,7 @@
   </button>
   {#if $showAddFolderDrawer}
     <button
-      class="fixed inset-0 flex items-center justify-center z-50 bg- backdrop-filter backdrop-blur-[2px]"
+      class="fixed inset-0 flex items-center justify-center z-50 backdrop-filter backdrop-blur-[2px]"
       on:click={closeModal}
     >
       <button class="p-6 rounded" on:click|stopPropagation>
@@ -60,7 +60,7 @@
   <ul>
     {#each $folderStore as folder}
       <li
-        class="{$selectedFolder === folder
+        class="{$selectedFolder?.id == folder.id
           ? 'bg-osvauld-bordergreen rounded-lg'
           : 'hover:bg-osvauld-bordergreen'} rounded-md pl-3"
       >

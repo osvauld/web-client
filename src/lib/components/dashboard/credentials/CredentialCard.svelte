@@ -5,7 +5,7 @@
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
   import { More, SensitiveEye, SensitiveEyeBlue } from "../icons";
-  import { showCredentialDetailsDrawer } from "../store";
+  import { showCredentialDetailsDrawer, searchedCredential } from "../store";
   import { Credential, Fields } from "../dtos";
 
   const dispatch = createEventDispatcher();
@@ -19,6 +19,7 @@
   let hoverEffect = false;
   let sensitiveCard = false;
   let hoverTimeout: any;
+  $: borderHighLight = $searchedCredential?.id === credential.credentialId;
 
   function toggleCheck() {
     checked = !checked;
@@ -50,6 +51,12 @@
 
   onMount(async () => {
     checked = false;
+    if (borderHighLight) {
+      setTimeout(() => {
+        borderHighLight = !borderHighLight;
+        searchedCredential.set(null);
+      }, 500);
+    }
   });
 
   const handleClick = async () => {
@@ -67,7 +74,8 @@
 </script>
 
 <button
-  class="mb-3 max-w-[19rem] overflow-x-hidden flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
+  class="mb-3 max-w-[19rem] overflow-x-hidden {borderHighLight &&
+    'border border-green-500'} flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
   on:click={handleClick}

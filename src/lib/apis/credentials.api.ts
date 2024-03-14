@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 import { baseUrl, } from "./temp";
 import { BaseResponse, FetchAllUserUrlsResponse, FetchCredentialsByFolderResponse, FetchCredentialsFieldsByFolderIdResponse, FetchCredentialsFieldsByIdsResponse, FetchCredsByIdsResponse, FetchSensitiveFieldsByCredenitalIdResponse } from "../dtos/response.dto";
-import { AddCredentialPayload, ShareCredentialsWithUsersPayload,  } from "../dtos/request.dto";
+import { AddCredentialPayload, ShareCredentialsWithUsersPayload, } from "../dtos/request.dto";
 
 export const fetchCredentialsByFolder = async (folderId: string): Promise<FetchCredentialsByFolderResponse> => {
   const headers = new Headers();
@@ -163,6 +163,24 @@ export const fetchSensitiveFieldsByCredentialId = async (credentialId: string): 
   headers.append("Authorization", `Bearer ${token}`);
 
   const response = await fetch(`${baseUrl}/credential/${credentialId}/sensitive`, {
+    method: "GET",
+    headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export const getSearchFields = async () => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+
+  const response = await fetch(`${baseUrl}/credentials/search`, {
     method: "GET",
     headers,
   });
