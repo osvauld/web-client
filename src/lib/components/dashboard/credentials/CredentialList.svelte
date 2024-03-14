@@ -25,20 +25,22 @@
   let selectedCard: any;
   let sensitiveFields: Fields[] = [];
   $: addIconColor = checkedCards.length === 0 ? "#000" : "#6E7681";
+  $: sortedCredentials = $credentialStore.sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
 
   function handleCheck(isChecked: boolean, card: Credential) {
     if (isChecked) {
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId,
+        (c) => c.credentialId !== card.credentialId
       );
     }
   }
   const subscribe = selectedFolder.subscribe(async (folder) => {
     //TODO: fetch shared groups.
     if (folder === null) return;
-
     let [allUsersResponse, folderUsersResponse, allGroupResponse] =
       await Promise.all([
         fetchAllUsers(),
@@ -48,7 +50,7 @@
     allGroups = allGroupResponse.data;
     users = allUsersResponse.data.filter((user) => {
       return !folderUsersResponse.data.some(
-        (folderUser) => folderUser.id === user.id,
+        (folderUser) => folderUser.id === user.id
       );
     });
     checkedCards = [];
@@ -60,7 +62,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential,
+    credential: Credential
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -169,7 +171,7 @@
   <div
     class="flex flex-wrap p-3 w-full max-h-[85vh] !overflow-y-scroll scrollbar-thin"
   >
-    {#each $credentialStore as credential, index}
+    {#each sortedCredentials as credential, index}
       <div class="px-1 pb-1">
         <CredentialCard
           {credential}
