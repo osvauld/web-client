@@ -31,6 +31,16 @@ export type Credential = CredentialBasic & {
   updatedAt: string;
 }
 
+export type SearchResponse = {
+  description: string;
+  domain: string;
+  folderId: UUID;
+  folderName: string;
+  id: UUID;
+  name: string;
+}
+
+
 export type CredentialFields = {
   credentialId: string;
   fields: BasicFields[];

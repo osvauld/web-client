@@ -3,7 +3,6 @@
   import GroupList from "./groups/GroupList.svelte";
   import { getSearchFields } from "./apis";
   import Highlight from "./components/Highlight.svelte";
-  import ClosePanel from "../basic/icons/closePanel.svelte";
   import Key from "../basic/icons/key.svelte";
 
   import { Profile, Lens } from "./icons";
@@ -12,6 +11,7 @@
     selectedFolder,
     selectedPage,
     credentialStore,
+    searchedCredential,
   } from "./store";
 
   import browser from "webextension-polyfill";
@@ -67,7 +67,7 @@
     credentialStore.set(response.data);
   };
   const handleSearchClick = (result) => {
-    console.log(result);
+    searchedCredential.set(result);
     selectedPage.set("Credentials");
     selectFolder({ id: result.folderId, name: result.folderName });
     closeModal();
@@ -97,7 +97,9 @@
   </div>
 
   {#if showModal}
-    <div class="fixed z-10 inset-0 overflow-y-auto">
+    <div
+      class="fixed z-10 inset-0 overflow-y-auto backdrop-filter backdrop-blur-[2px]"
+    >
       <div class="flex items-center justify-center min-h-screen">
         <button class="fixed inset-0 bg-black opacity-50" on:click={closeModal}>
         </button>
@@ -125,7 +127,7 @@
               {#each searchResults as result}
                 <button
                   on:click={() => handleSearchClick(result)}
-                  class="p-3 border border-osvauld-iconblack hover:bg-osvauld-iconblack w-full border-b-0 flex justify-start items-center"
+                  class="p-3 border border-osvauld-iconblack hover:bg-osvauld-iconblack w-full my-1 flex justify-start items-center"
                 >
                   <div
                     class="h-full flex justify-center items-center scale-150 px-2"
@@ -139,12 +141,18 @@
                       <Highlight text={result.folderName} {query} />
                     </div>
                     <div
-                      class="ml-4 flex justify-start items-center text-sm font-light"
+                      class="ml-4 flex flex-col justify-center items-start text-sm font-light"
                     >
-                      <Highlight text={result.name} {query} />
-                      <Highlight text={result.description} {query} />
+                      <div>
+                        <Highlight text={result.name} {query} />
+                      </div>
+                      <div>
+                        <Highlight text={result.description} {query} />
+                      </div>
                       {#if result.domain}
-                        <Highlight text={result.domain} {query} />
+                        <div class="">
+                          <Highlight text={result.domain} {query} />
+                        </div>
                       {/if}
                     </div>
                   </div>
