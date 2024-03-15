@@ -45,7 +45,7 @@
     <div class="flex justify-center items-center">
       <button
         class="w-[6.25rem] rounded-md cursor-pointer px-2 py-1 pl-2 flex justify-between items-center {setbackground(
-          item.accessType
+          item.accessType,
         )}"
         >{item.accessType}
         <span> <DownArrow type={item.accessType} /></span>
