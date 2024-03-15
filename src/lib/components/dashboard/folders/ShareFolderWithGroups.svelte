@@ -13,7 +13,7 @@
         removeGroupFromFolder,
         editFolderPermissionForGroup,
     } from "../apis";
-    import { createShareCredsPayload, setbackground } from "../helper";
+    import { setbackground } from "../helper";
     import { writable } from "svelte/store";
     import { selectedFolder } from "../store";
     import { onMount } from "svelte";
@@ -21,6 +21,7 @@
     import ListItem from "../components/ListItem.svelte";
     import ExistingListParent from "../components/ExistingListParent.svelte";
     import ShareToast from "../components/ShareToast.svelte";
+    import browser from "webextension-polyfill";
 
     let groups: Group[] = [];
     export let credentialsFields: CredentialFields[];
@@ -64,11 +65,13 @@
         for (const groupUsers of groupUsersList) {
             const group = $selectedGroups.get(groupUsers.groupId);
             if (group === undefined) continue;
-            const userData = await createShareCredsPayload(
-                credentialsFields,
-                // @ts-ignore
-                groupUsers.userDetails,
-            );
+            const userData = await browser.runtime.sendMessage({
+                action: "createShareCredPayload",
+                data: {
+                    creds: credentialsFields,
+                    users: groupUsers.userDetails,
+                },
+            });
             payload.groupData.push({
                 groupId: group.groupId,
                 accessType: group.accessType,

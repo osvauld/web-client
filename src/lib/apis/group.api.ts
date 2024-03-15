@@ -1,12 +1,10 @@
-import { baseUrl, } from "./temp";
-import browser from "webextension-polyfill";
 import { FetchAllUserGroupsResponse, FetchGroupUsersResponse, FetchGroupsWithoutAccessResponse, fetchUsersByGroupIdsResponse, FetchUsersWithoutGroupAccess, FetchGroupCredentialResponse, FetchCredentialGroupsResponse } from "../dtos/response.dto";
 import { AddUserToGroupPayload, CreateGroupPayload, ShareCredentialsWithGroupsPayload } from "../dtos/request.dto";
+import { getTokenAndBaseUrl } from "../components/dashboard/helper";
 
 export const fetchAllUserGroups = async (): Promise<FetchAllUserGroupsResponse> => {
   // TODO: change store setting from here.
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   return fetch(`${baseUrl}/groups`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -18,8 +16,7 @@ export const fetchAllUserGroups = async (): Promise<FetchAllUserGroupsResponse> 
 
 export const fetchGroupUsers = async (id: string): Promise<FetchGroupUsersResponse> => {
 
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   return await fetch(`${baseUrl}/group/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -30,8 +27,7 @@ export const fetchGroupUsers = async (id: string): Promise<FetchGroupUsersRespon
 
 export const createGroup = async (payload: CreateGroupPayload) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -51,8 +47,7 @@ export const createGroup = async (payload: CreateGroupPayload) => {
 // TODO: add type for payload
 export const addUserToGroup = async (payload: AddUserToGroupPayload) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -72,8 +67,7 @@ export const addUserToGroup = async (payload: AddUserToGroupPayload) => {
 
 export const fetchUsersByGroupIds = async (ids: string[]): Promise<fetchUsersByGroupIdsResponse> => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
   const responseJson = fetch(`${baseUrl}/groups/members`, {
@@ -86,8 +80,7 @@ export const fetchUsersByGroupIds = async (ids: string[]): Promise<fetchUsersByG
 
 export const shareCredentialsWithGroups = async (payload: ShareCredentialsWithGroupsPayload) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -104,8 +97,7 @@ export const shareCredentialsWithGroups = async (payload: ShareCredentialsWithGr
 }
 
 export const fetchGroupsWithoutAccess = async (folderId: string): Promise<FetchGroupsWithoutAccessResponse> => {
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   return await fetch(`${baseUrl}/groups/without-access/${folderId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -115,8 +107,7 @@ export const fetchGroupsWithoutAccess = async (folderId: string): Promise<FetchG
 }
 
 export const fetchCredentialFieldsByGroupId = async (groupId: string): Promise<FetchGroupCredentialResponse> => {
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   return await fetch(`${baseUrl}/group/${groupId}/credential-fields`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -125,8 +116,7 @@ export const fetchCredentialFieldsByGroupId = async (groupId: string): Promise<F
 }
 
 export const fetchUsersWithoutGroupAccess = async (groupId: string): Promise<FetchUsersWithoutGroupAccess> => {
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   return await fetch(`${baseUrl}/groups/${groupId}/users/without-access`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -137,8 +127,7 @@ export const fetchUsersWithoutGroupAccess = async (groupId: string): Promise<Fet
 export const fetchCredentialGroups = async (credentialId: string): Promise<FetchCredentialGroupsResponse> => {
 
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   return await fetch(`${baseUrl}/credential/${credentialId}/groups`, {
@@ -150,8 +139,7 @@ export const fetchCredentialGroups = async (credentialId: string): Promise<Fetch
 
 export const removeGroupFromFolder = async (folderId: string, groupId: string) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   return await fetch(`${baseUrl}/folder/${folderId}/remove-group-access`, {
@@ -163,8 +151,7 @@ export const removeGroupFromFolder = async (folderId: string, groupId: string) =
 
 export const removeGroupFromCredential = async (credentialId: string, groupId: string) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   return await fetch(`${baseUrl}/credential/${credentialId}/remove-group-access`, {

@@ -7,7 +7,8 @@
   } from "../dtos";
   import { writable } from "svelte/store";
   import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
-  import { createShareCredsPayload, setbackground } from "../helper";
+  import { setbackground } from "../helper";
+  import browser from "webextension-polyfill";
 
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
@@ -37,10 +38,14 @@
     for (const groupUsers of groupUsersList) {
       const group = $selectedGroups.get(groupUsers.groupId);
       if (group == undefined) continue;
-      const userData = await createShareCredsPayload(
-        credentialsFields,
-        groupUsers.userDetails
-      );
+      const userData = await browser.runtime.sendMessage({
+        action: "createShareCredPayload",
+        data: {
+          creds: credentialsFields,
+          users: groupUsers.userDetails,
+        },
+      });
+
       payload.groupData.push({
         groupId: group.groupId,
         accessType: group.accessType,
@@ -148,6 +153,6 @@
     >
   </div>
   {#if shareToast}
-    <ShareToast on:close={() => (shareToast = !shareToast)} />
+    <ShareToast message={null} on:close={() => (shareToast = !shareToast)} />
   {/if}
 </div>

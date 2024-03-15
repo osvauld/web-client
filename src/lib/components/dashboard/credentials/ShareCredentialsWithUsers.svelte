@@ -6,7 +6,9 @@
         ShareCredentialsWithUsersPayload,
     } from "../dtos";
     import { shareCredentialsWithUsers } from "../apis";
-    import { createShareCredsPayload, setbackground } from "../helper";
+    import { setbackground } from "../helper";
+    import browser from "webextension-polyfill";
+
     import { Lens } from "../icons";
     import ListItem from "../components/ListItem.svelte";
     import ShareToast from "../components/ShareToast.svelte";
@@ -27,11 +29,14 @@
         : users;
 
     const shareCredentialHandler = async () => {
-        const userData = await createShareCredsPayload(
-            credentialsFields,
-            selectedUsers,
-        );
-        // @ts-ignore
+        const userData = await browser.runtime.sendMessage({
+            action: "createShareCredPayload",
+            data: {
+                creds: credentialsFields,
+                users: selectedUsers,
+            },
+        });
+
         const payload: ShareCredentialsWithUsersPayload = { userData };
         const shareStatus = await shareCredentialsWithUsers(payload);
         shareToast = shareStatus.success === true;
