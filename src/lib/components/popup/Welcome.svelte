@@ -1,6 +1,5 @@
 <script lang="ts">
   import browser from "webextension-polyfill";
-  import { isLoggedIn } from "../../store/ui.store";
   import Eye from "../basic/icons/eye.svelte";
   import Loader from "../dashboard/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";

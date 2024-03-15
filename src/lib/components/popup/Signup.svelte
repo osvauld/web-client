@@ -12,7 +12,7 @@
 </script>
 
 <div
-  class="h-auto mt-12 flex justify-center items-center text-base font-bold text-white"
+  class="h-full flex justify-center items-center text-base font-bold text-white"
 >
   {#if isTempLoginVerified}
     <SetPassPhrase {challenge} {username} />
