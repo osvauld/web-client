@@ -45,30 +45,10 @@
   background: #c0a0b9;
 }
 
-@layer base {
+.primary-btn {
+  @apply rounded-lg bg-osvauld-carolinablue text-osvauld-ninjablack 
+}
 
-  html {
-    @apply text-base; 
-  }
-  
-  @media (min-width: 1536px) { 
-    html {
-      @apply text-base;
-    }
-  }
-  @media (min-width: 1920px) { 
-    html {
-      @apply text-base;
-    }
-  }
-  @media (min-width: 2560px) { 
-    html {
-      @apply text-lg;
-    }
-  }
-  @media (min-width: 3840px) { 
-    html {
-      @apply text-lg;
-    }
-  }
+.secondary-btn {
+  @apply border border-osvauld-iconblack bg-osvauld-addfieldgrey  rounded-lg text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack 
 }

@@ -1,13 +1,15 @@
 <script lang="ts">
   import browser from "webextension-polyfill";
   import { isLoggedIn } from "../../store/ui.store";
-  import Eye from "../basic/eye.svelte";
+  import Eye from "../basic/icons/eye.svelte";
+  import Loader from "../dashboard/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
   let passphrase = "";
   let showPassword = false;
   let errorMessage = false;
+  let isLoaderActive = false;
 
   function toggleShowPassword() {
     showPassword = !showPassword;
@@ -15,22 +17,23 @@
 
   $: type = showPassword ? "text" : "password";
   async function handleSubmit() {
+    isLoaderActive = true;
     const response = await browser.runtime.sendMessage({
       action: "initiateAuth",
       data: { passphrase },
     });
     if (response.isAuthenticated) {
-      console.log("dispatching event....");
       dispatch("authenticated", true);
     }
+    isLoaderActive = false;
   }
-  const onInput = (event) => {
+  const onInput = (event: any) => {
     passphrase = event.target.value;
   };
 </script>
 
 <div
-  class="h-auto mt-12 flex justify-center items-center text-base font-bold text-white"
+  class="h-auto mt-10 flex justify-center items-center text-base font-bold text-white"
 >
   <form
     class="flex flex-col justify-center items-center"
@@ -60,8 +63,15 @@
         >Passphrase doesn't match</span
       >
     {/if}
-    <button class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium" type="submit"
-      >Submit</button
+    <button
+      class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
+      type="submit"
+    >
+      {#if isLoaderActive}
+        <Loader size={24} color="#1F242A" duration={1} />
+      {:else}
+        <span>Submit</span>
+      {/if}</button
     >
   </form>
 </div>

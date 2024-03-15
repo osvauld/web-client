@@ -10,6 +10,7 @@
         shareFolderWithGroups,
         fetchGroupsWithoutAccess,
         fetchFolderGroups,
+        removeGroupFromFolder,
     } from "../apis";
     import { createShareCredsPayload, setbackground } from "../helper";
     import { writable } from "svelte/store";
@@ -25,7 +26,7 @@
 
     let selectedGroups = writable(new Map<string, GroupWithAccessType>());
     let showOptions = false;
-    let selectionIndex = null;
+    let selectionIndex: number | null = null;
     let topList = false;
     let searchInput = "";
     let shareToast = false;
@@ -38,10 +39,11 @@
           )
         : groups;
 
-    const existingGroups = async () => {
-        existingItemDropdown = !existingItemDropdown;
-        if (existingGroupsData.length === 0) {
-            console.log("inside existingGroups");
+    const existingGroups = async (toggle = true) => {
+        if (toggle) {
+            existingItemDropdown = !existingItemDropdown;
+        }
+        if ($selectedFolder !== null) {
             const reponseJson = await fetchFolderGroups($selectedFolder.id);
             existingGroupsData = reponseJson.data;
         } else {
@@ -53,13 +55,14 @@
         const groupIds = Array.from($selectedGroups.keys());
         const response = await fetchUsersByGroupIds(groupIds);
         const groupUsersList = response.data;
-        console.log(groupUsersList, "GroupUsersList");
+        if ($selectedFolder === null) throw new Error("Folder not selected");
         const payload: ShareFolderWithGroupsPayload = {
             folderId: $selectedFolder.id,
             groupData: [],
         };
         for (const groupUsers of groupUsersList) {
             const group = $selectedGroups.get(groupUsers.groupId);
+            if (group === undefined) continue;
             const userData = await createShareCredsPayload(
                 credentialsFields,
                 // @ts-ignore
@@ -82,13 +85,15 @@
     }
 
     function handleItemRemove(id: string) {
-        let removedUser;
+        let removedGroup: GroupWithAccessType | undefined;
         selectedGroups.update((currentGroups) => {
-            removedUser = currentGroups.get(id);
+            removedGroup = currentGroups.get(id);
             currentGroups.delete(id);
             return currentGroups;
         });
-        groups = [...groups, { ...removedUser }];
+        if (removedGroup) {
+            groups = [...groups, { ...removedGroup }];
+        }
     }
 
     function handleRoleChange(e: any, index: number, type: string) {
@@ -111,8 +116,15 @@
         }
     }
 
+    const removeExistingGroup = async (e: any) => {
+        console.log(e.detail, "grp");
+        await removeGroupFromFolder($selectedFolder.id, e.detail.id);
+        await existingGroups(false);
+    };
+
     onMount(async () => {
         // TODO: change fetch all groups to fetch groups where folder not shared.
+        if ($selectedFolder === null) throw new Error("Folder not selected");
         const responseJson = await fetchGroupsWithoutAccess($selectedFolder.id);
         groups = responseJson.data;
     });
@@ -181,5 +193,6 @@
     {existingItemDropdown}
     existingItemsData={existingGroupsData}
     user={false}
-    on:click={existingGroups}
+    on:click={() => existingGroups()}
+    on:remove={(e) => removeExistingGroup(e)}
 />

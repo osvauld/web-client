@@ -2,15 +2,15 @@ import browser from "webextension-polyfill";
 
 import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptCredentialField, } from "../lib/utils/crypto";
 import { verifyUser } from "../lib/utils/helperMethods";
-import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew } from "./backgroundService";
+import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler, decryptFieldHandler, e, encryptFieldHandler } from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
-
+import { InjectionPayload } from "../lib/dtos/credential.dto";
 let rsaPvtKey: CryptoKey;
+import init, { is_global_context_set } from "./rust_openpgp_wasm";
 
 
 let urlObj = new Map<string, Set<string>>();
 
-let activeCredSuggetion: any[] = [];
 
 browser.runtime.onInstalled.addListener(async () => {
   browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
@@ -24,8 +24,12 @@ browser.runtime.onMessage.addListener(async (request) => {
       return decryptCredentialFieldsHandler(request.data, rsaPvtKey);
     }
     case "decryptField": {
-      const decrypted = await decryptCredentialField(rsaPvtKey, request.data);
-      return { data: decrypted };
+      const field = await decryptFieldHandler(request.data)
+      return { data: field }
+    }
+
+    case "encryptFields": {
+      return encryptFieldHandler(request.data.fields, request.data.publicKey)
     }
 
     case "fillingSignal":
@@ -61,38 +65,27 @@ browser.runtime.onMessage.addListener(async (request) => {
 
     case "initiateAuth": {
       const passphrase = request.data.passphrase;
-      const response = await initiateAuthHandler(passphrase)
-      rsaPvtKey = response.rsaPvtKey;
-      if (response.token) return { isAuthenticated: true }
-      else return { isAuthenticated: false }
+      await loadWasmModule();
+      await initiateAuthHandler(passphrase)
+      return { isAuthenticated: true }
     }
 
     case "isSignedUp": {
       const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+      await init();
       if (signPvtKeyObj.signPvtKey) return { isSignedUp: true }
       else return { isSignedUp: false }
     }
 
-    case "signUp": {
-      if (request.username && request.password) {
-        const rsaKeyPair = await generateRSAKeyPairForEncryption()
-        const eccKeyPair = await generateECCKeyPairForSigning()
-        const isValidCreds = await verifyUser(request.username, request.password, rsaKeyPair.publicKey || "", eccKeyPair.publicKey || "")
-        if (isValidCreds) {
-          return Promise.resolve({ isAuthenticated: true, rsaKey: rsaKeyPair, eccKey: eccKeyPair })
-        }
-      }
-    }
-      break;
 
     case "savePassphrase":
       if (request.passphrase) {
-        return savePassphraseHandler(request.passphrase, request.rsaKey.privateKey, request.eccKey.privateKey);
+        return savePassphraseHandler(request.passphrase, request.challenge, request.username)
       }
       break;
     case "updateAllUrls":
       for (let i = 0; i < request.data.urls.length; i++) {
-        const decrypted = await decryptCredentialField(rsaPvtKey, request.data.urls[i].value);
+        const decrypted = await decryptFieldHandler(request.data.urls[i].value);
         if (urlObj.has(decrypted)) {
           // @ts-ignore
           urlObj.get(decrypted).add(request.data.urls[i].credentialId)
@@ -108,18 +101,41 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 
     case "checkPvtLoaded":
-      if (rsaPvtKey) return Promise.resolve({ isLoaded: true })
-      else return Promise.resolve({ isLoaded: false })
-    case "getActiveCredSuggestion":
-      for (const cred of activeCredSuggetion) {
-        if (cred.id === request.data) {
-          const decrypted = await decryptCredentialField(rsaPvtKey, cred.password);
-          return Promise.resolve({ username: cred.username, password: decrypted })
+      return is_global_context_set()
+    case "getActiveCredSuggestion": {
+      let tabs = await browser.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      const activeTab = tabs[0];
+      let url: URL | undefined;
+      if (activeTab && activeTab.url) {
+        url = new URL(activeTab.url);
+      }
+      const domain = url?.hostname;
+      // @ts-ignore
+      const credentialIds = [...urlObj.get(domain)];
+      const responseJson = await fetchCredsByIds(credentialIds);
+      let username = "";
+      let password = "";
+      for (const cred of responseJson.data) {
+        if (cred.credentialId === request.data) {
+          for (let field of cred.fields) {
+            if (field.fieldName === 'Username') {
+              username = await decryptFieldHandler(field.fieldValue);
+            } else if (field.fieldName === 'Password') {
+              password = await decryptFieldHandler(field.fieldValue);
+            }
+          }
         }
       }
-      break;
+      return Promise.resolve({ username, password });
+    }
     case "decryptMeta":
-      return decryptCredentialFieldsHandlerNew(request.data, rsaPvtKey);
+      return decryptCredentialFieldsHandlerNew(request.data);
+    case "addCredential":
+      return addCredentialHandler(request.data);
+
 
     default:
       console.log(request.action)
@@ -135,23 +151,23 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   // Check if the tab status is 'complete'
   if (changeInfo.status === 'complete') {
     // Get the current tab URL directly from the tab object
-    let url;
+    let url: URL;
+    let domain: string = '';
     if (tab.url) {
       url = new URL(tab.url);
+      domain = url.hostname;
     }
-    const domain = url.hostname;
-
     // Check if the domain is in your list
     if (urlObj.has(domain)) {
       // @ts-ignore
-      const responseData = await fetchCredsByIds(urlObj.get(domain));
+      const responseData = await fetchCredsByIds([...urlObj.get(domain)]);
       // TODO: payload change in future
-      const payload: any = [];
+      const payload: InjectionPayload[] = [];
       for (const cred of responseData.data) {
         for (const field of cred.fields) {
           if (field.fieldName === 'Username') {
-            activeCredSuggetion.push({ id: cred.credentialId, username: field.fieldValue, password: cred.encryptedFields[0].fieldValue })
-            payload.push({ id: cred.credentialId, username: field.fieldValue });
+            const decrypted = await decryptFieldHandler(field.fieldValue);
+            payload.push({ id: cred.credentialId, username: decrypted });
           }
         }
       }

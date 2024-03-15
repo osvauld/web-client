@@ -10,9 +10,9 @@
   import UserGroupToggle from "../UserGroupToggle.svelte";
   import ShareCredentialsWithUser from "./ShareCredentialsWithUsers.svelte";
   import ShareCredentialsWithGroups from "./ShareCredentialsWithGroups.svelte";
-  import InfoIcon from "../../basic/infoIcon.svelte";
+  import InfoIcon from "../../basic/icons/infoIcon.svelte";
   import InfoOverlay from "../components/Info.svelte";
-  import ClosePanel from "../../basic/closePanel.svelte";
+  import ClosePanel from "../../basic/icons/closePanel.svelte";
   export let credentials: Credential[];
   export let users: User[];
   export let groups: Group[];

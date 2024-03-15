@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createFolder, fetchAllFolders } from "../apis";
   import { showAddFolderDrawer, folderStore } from "../store";
+  import { ClosePanel } from "../icons";
 
   let name = "";
   let description = "";
@@ -15,25 +16,34 @@
     folderStore.set(responseJson.data);
     showAddFolderDrawer.set(false);
   };
+
+  const handleClose = () => {
+    showAddFolderDrawer.set(false);
+  };
 </script>
 
-<div class="flex flex-col p-6 rounded shadow-lg">
+<div
+  class="flex flex-col p-6 border border-osvauld-iconblack bg-osvauld-frameblack rounded-lg"
+>
+  <button on:click={handleClose} class="ml-auto"><ClosePanel /></button>
   <label for="name" class="mb-2 font-bold text-lg">Name:</label>
   <input
     id="name"
     type="text"
     bind:value={name}
-    class="mb-4 p-2 border rounded bg-[#2E3654]"
+    class=" py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
+    autocomplete="off"
   />
 
   <label for="description" class="mb-2 font-bold text-lg">Description:</label>
   <textarea
     id="description"
     bind:value={description}
-    class="p-2 border rounded bg-[#2E3654]"
+    class=" py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-20 mx-2 focus:border-osvauld-iconblack focus:ring-0"
   ></textarea>
 
-  <button class="bg-[#4E46DC] rounded-full p-2" on:click={addFolderFunc}
-    >Submit</button
+  <button
+    class="bg-osvauld-carolinablue rounded-md p-2 mt-4 text-osvauld-ninjablack"
+    on:click={addFolderFunc}>Submit</button
   >
 </div>

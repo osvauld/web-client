@@ -4,7 +4,6 @@
 type UUID = string;
 type FieldType = 'meta' | 'sensitive' | 'additional';
 export type Fields = {
-
   fieldId?: string;
   fieldName?: string;
   fieldValue: string;
@@ -18,7 +17,7 @@ export type UserEncryptedFields = {
 
 
 export type CredentialBasic = {
-  credentialId?: string,
+  credentialId: string,
   fields: Fields[]
 }
 
@@ -31,6 +30,16 @@ export type Credential = CredentialBasic & {
   createdBy: string;
   updatedAt: string;
 }
+
+export type SearchResponse = {
+  description: string;
+  domain: string;
+  folderId: UUID;
+  folderName: string;
+  id: UUID;
+  name: string;
+}
+
 
 export type CredentialFields = {
   credentialId: string;
@@ -46,4 +55,26 @@ export type BasicFields = {
 export type UserEncryptedCredentials = {
   userId: string;
   credentials: CredentialFields[];
+}
+
+
+
+
+
+export type AddCredentialField = {
+  fieldName: string;
+  fieldValue: string;
+  sensitive: boolean;
+};
+
+
+
+export type CredentialFieldWithId = AddCredentialField & {
+  id: string;
+}
+
+
+export type InjectionPayload = {
+  id: string | undefined;
+  username: string;
 }

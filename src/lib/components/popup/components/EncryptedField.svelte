@@ -1,13 +1,7 @@
 <script>
     import { fly } from "svelte/transition";
     import browser from "webextension-polyfill";
-    import {
-        Locked,
-        Eye,
-        Unlocked,
-        ActiveCopy,
-        ClosedEye,
-    } from "../icons";
+    import { Locked, Eye, Unlocked, ActiveCopy, ClosedEye } from "../icons";
     export let fieldName;
     export let fieldValue;
     let visibility = false;
@@ -62,7 +56,7 @@
                     {/if}
                 </button>
                 <button>
-                        <ActiveCopy />
+                    <ActiveCopy />
                 </button>
             </div>
         {/if}

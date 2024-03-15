@@ -19,8 +19,7 @@
     const checkPvtLoad = await browser.runtime.sendMessage({
       action: "checkPvtLoaded",
     });
-    console.log(checkPvtLoad);
-    if (checkPvtLoad.isLoaded) {
+    if (checkPvtLoad) {
       loggedIn = true;
     } else {
       loggedIn = false;
@@ -33,25 +32,28 @@
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
   };
 
-  const checkAuth = (event) => {
+  const checkAuth = (event: CustomEvent) => {
     console.log("check auth event...", event);
     loggedIn = event.detail;
   };
 </script>
 
 <main>
-  <div class=" w-[22.5rem] h-[37.78rem] p-2 pt-3 overflow-hidden bg-osvauld-frameblack">
+  <div
+    class="w-[22.5rem] h-[37.78rem] p-2 pt-3 flex flex-col {$isSignedUp &&
+    !loggedIn
+      ? 'justify-center'
+      : 'justify-start'} items-center bg-osvauld-frameblack"
+  >
     {#if !$isSignedUp}
-    <Signup />
+      <Signup />
     {:else if loggedIn}
-    <Home />
+      <Home />
     {:else}
-      <div>
-        <div class="h-[12.5rem] w-full flex justify-center items-center ">
-          <Logo />
-        </div>
-        <Welcome on:authenticated={checkAuth} />
+      <div class="mb-12 flex justify-center items-center">
+        <Logo />
       </div>
+      <Welcome on:authenticated={checkAuth} />
     {/if}
   </div>
 </main>

@@ -16,7 +16,7 @@
     export let credentialsFields: CredentialFields[];
     let selectedGroups = writable(new Map<string, GroupWithAccessType>());
     let showOptions = false;
-    let selectionIndex = null;
+    let selectionIndex: number | null = null;
     let topList = false;
     let searchInput = "";
     let shareToast = false;
@@ -36,6 +36,7 @@
         };
         for (const groupUsers of groupUsersList) {
             const group = $selectedGroups.get(groupUsers.groupId);
+            if (group == undefined) continue;
             const userData = await createShareCredsPayload(
                 credentialsFields,
                 groupUsers.userDetails,
@@ -58,13 +59,17 @@
     }
 
     function handleItemRemove(id: string) {
-        let removedUser;
+        let removedGroup: GroupWithAccessType | undefined;
         selectedGroups.update((currentGroups) => {
-            removedUser = currentGroups.get(id);
-            currentGroups.delete(id);
+            if (currentGroups.has(id)) {
+                removedGroup = currentGroups.get(id);
+                currentGroups.delete(id);
+            }
             return currentGroups;
         });
-        groups = [...groups, { ...removedUser }];
+        if (removedGroup) {
+            groups = [...groups, { ...removedGroup }];
+        }
     }
 
     function handleRoleChange(e: any, index: number, type: string) {
