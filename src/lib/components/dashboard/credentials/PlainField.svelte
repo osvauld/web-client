@@ -26,7 +26,7 @@
       ? 'text-osvauld-quarzowhite'
       : 'text-osvauld-sheffieldgrey'}"
   >
-    <span class="max-w-[90%] overflow-x-hidden">{fieldValue}</span>
+    <span class="w-full text-left overflow-x-hidden">{fieldValue}</span>
     <button on:click={copyToClipboard}>
       {#if hoverEffect}
         <ActiveCopy />

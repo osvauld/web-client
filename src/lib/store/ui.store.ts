@@ -14,3 +14,5 @@ export let showAddUserToGroupDrawer = writable(false);
 export let showCredentialDetailsDrawer = writable(false);
 export let showEditCredentialDialog = writable(false);
 export let credentialIdForEdit = writable(null);
+export const editPermissionTrigger = writable(false);
+export const isPermissionChanged = writable(false);

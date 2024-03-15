@@ -16,6 +16,8 @@
     showEditCredentialDialog,
     showCredentialEditor,
     credentialIdForEdit,
+    editPermissionTrigger,
+    isPermissionChanged,
   } from "../store";
   import { ClosePanel, EditIcon } from "../icons";
   import { onMount } from "svelte";
@@ -30,7 +32,6 @@
   export let sensitiveFields: Fields[];
   let selectedTab = "Groups";
   let accessListSelected = false;
-  let accessEdit = false;
   let users: UserWithAccessType[] = [];
   let groups: GroupWithAccessType[] = [];
 
@@ -115,7 +116,7 @@
         ><ClosePanel /></button
       >
     </div>
-    <div class="flex justify-start items-center mb-12">
+    <div class="flex justify-start items-center mb-6">
       <button
         on:click={() => (accessListSelected = false)}
         class="p-2 font-medium border-transparent text-osvauld-chalkwhite mr-2 {!accessListSelected &&
@@ -156,7 +157,7 @@
           Description
         </label>
         <div
-          class="mt-4 w-full h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-frameblack rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-basetext-osvauld-quarzowhite"
+          class="mt-4 w-full h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-frameblack rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base text-osvauld-quarzowhite"
           id="credential-description"
         >
           {credential.description}
@@ -165,11 +166,12 @@
         <div class="flex justify-between items-center">
           <UserGroupToggle on:select={toggleSelect} />
           <button
-            class="p-2 mr-3 rounded-lg {accessEdit
+            class="p-2 mr-3 rounded-lg {$editPermissionTrigger
               ? 'bg-osvauld-sensitivebgblue'
               : ''}"
             on:click={() => {
-              accessEdit = !accessEdit;
+              editPermissionTrigger.set(!$editPermissionTrigger);
+              isPermissionChanged.set(false);
             }}
           >
             <EditIcon />

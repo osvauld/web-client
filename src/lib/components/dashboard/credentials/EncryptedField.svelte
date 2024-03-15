@@ -48,7 +48,7 @@
       ? 'text-osvauld-quarzowhite'
       : 'text-osvauld-sheffieldgrey'}"
   >
-    <span class="max-w-[70%] overflow-x-hidden"
+    <span class="w-full text-left overflow-x-hidden"
       >{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
     >
     {#if !decrypted}
