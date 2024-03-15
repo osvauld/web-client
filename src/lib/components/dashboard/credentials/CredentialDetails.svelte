@@ -29,6 +29,8 @@
   export let credential: Credential;
   export let sensitiveFields: Fields[];
   let selectedTab = "Groups";
+  let accessListSelected = false;
+  let accessEdit = false;
   let users: UserWithAccessType[] = [];
   let groups: GroupWithAccessType[] = [];
 
@@ -39,14 +41,14 @@
       users = usersResponse.data;
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
-        credential.credentialId,
+        credential.credentialId
       );
       groups = groupsResponse.data;
     }
   };
 
   const removeGroupFromCredentialHandler = async (
-    group: GroupWithAccessType,
+    group: GroupWithAccessType
   ) => {
     await removeGroupFromCredential(credential.credentialId, group.groupId);
     await toggleSelect({ detail: "Groups" });
@@ -62,14 +64,14 @@
       await editUserPermissionForCredential(
         credential.credentialId,
         id,
-        e.detail,
+        e.detail
       );
       await toggleSelect({ detail: "Users" });
     } else {
       await editGroupPermissionForCredential(
         credential.credentialId,
         id,
-        e.detail,
+        e.detail
       );
       await toggleSelect({ detail: "Groups" });
     }
@@ -113,54 +115,87 @@
         ><ClosePanel /></button
       >
     </div>
-    {#each credential.fields as field}
-      <PlainField
-        fieldName={field.fieldName}
-        fieldValue={field.fieldValue}
-        hoverEffect={true}
-      />
-    {/each}
-    {#if sensitiveFields}
-      {#each sensitiveFields as field}
-        <EncryptedField
-          fieldName={field.fieldName}
-          fieldValue={field.fieldValue}
-          hoverEffect={true}
-        />
-      {/each}
-    {/if}
-    <label
-      class="text-osvauld-dusklabel block text-left text-sm font-normal"
-      for="credential-description"
-    >
-      Description
-    </label>
-    <div
-      class="mt-4 w-full h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-bordergreen rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-basetext-osvauld-quarzowhite"
-      id="credential-description"
-    >
-      {credential.description}
+    <div class="flex justify-start items-center mb-12">
+      <button
+        on:click={() => (accessListSelected = false)}
+        class="p-2 font-medium border-transparent text-osvauld-chalkwhite mr-2 {!accessListSelected &&
+          'border-2 border-b-osvauld-carolinablue text-osvauld-plainwhite'}"
+        >Details</button
+      >
+      <button
+        on:click={() => (accessListSelected = true)}
+        class="p-2 font-medium border-transparent text-osvauld-chalkwhite {accessListSelected &&
+          'border-2 border-b-osvauld-carolinablue text-osvauld-plainwhite'}"
+        >Access List</button
+      >
     </div>
-    <UserGroupToggle on:select={toggleSelect} />
-    <div class="items-left">
-      {#if selectedTab == "Groups"}
-        {#each groups as group}
-          <ExistingListItem
-            item={group}
-            on:remove={() => removeGroupFromCredentialHandler(group)}
-            on:permissonChange={(e) =>
-              permissionChangeHandler(e, group.groupId, "group")}
+    <div class="border border-osvauld-iconblack rounded-xl p-3">
+      {#if !accessListSelected}
+        {#each credential.fields as field}
+          <PlainField
+            fieldName={field.fieldName}
+            fieldValue={field.fieldValue}
+            hoverEffect={true}
+            bgColor={"#0D1117"}
           />
         {/each}
-      {:else if selectedTab == "Users"}
-        {#each users as user}
-          <ExistingListItem
-            item={user}
-            on:remove={() => removeUserFromCredentialHandler(user)}
-            on:permissonChange={(e) =>
-              permissionChangeHandler(e, user.id, "user")}
-          />
-        {/each}
+        {#if sensitiveFields}
+          {#each sensitiveFields as field}
+            <EncryptedField
+              fieldName={field.fieldName}
+              fieldValue={field.fieldValue}
+              hoverEffect={true}
+              bgColor={"#0D1117"}
+            />
+          {/each}
+        {/if}
+        <label
+          class="text-osvauld-dusklabel block text-left text-sm font-normal"
+          for="credential-description"
+        >
+          Description
+        </label>
+        <div
+          class="mt-4 w-full h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-frameblack rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-basetext-osvauld-quarzowhite"
+          id="credential-description"
+        >
+          {credential.description}
+        </div>
+      {:else}
+        <div class="flex justify-between items-center">
+          <UserGroupToggle on:select={toggleSelect} />
+          <button
+            class="p-2 mr-3 rounded-lg {accessEdit
+              ? 'bg-osvauld-sensitivebgblue'
+              : ''}"
+            on:click={() => {
+              accessEdit = !accessEdit;
+            }}
+          >
+            <EditIcon />
+          </button>
+        </div>
+        <div class="items-left">
+          {#if selectedTab == "Groups"}
+            {#each groups as group}
+              <ExistingListItem
+                item={group}
+                on:remove={() => removeGroupFromCredentialHandler(group)}
+                on:permissonChange={(e) =>
+                  permissionChangeHandler(e, group.groupId, "group")}
+              />
+            {/each}
+          {:else if selectedTab == "Users"}
+            {#each users as user}
+              <ExistingListItem
+                item={user}
+                on:remove={() => removeUserFromCredentialHandler(user)}
+                on:permissonChange={(e) =>
+                  permissionChangeHandler(e, user.id, "user")}
+              />
+            {/each}
+          {/if}
+        </div>
       {/if}
     </div>
   </div>
