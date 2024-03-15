@@ -14,12 +14,11 @@
   import AddUserToGroup from "./AddUserToGroup.svelte";
 
   import { User } from "../dtos";
-
+  import { groupUsers } from "../store";
   import { fetchGroupUsers, fetchAllUsers } from "../apis";
   import AllUsersList from "./AllUsersList.svelte";
   import OtherGroupsList from "./OtherGroupsList.svelte";
 
-  let groupUsers: User[] = [];
   let unsubscribe: Unsubscriber;
   let groupName = "";
   let allUsers: User[] = [];
@@ -29,7 +28,7 @@
       if (value) {
         groupName = value.name;
         fetchGroupUsers(value.groupId).then((usersResponse) => {
-          groupUsers = usersResponse.data;
+          groupUsers.set(usersResponse.data);
         });
       }
     });
@@ -41,7 +40,7 @@
   });
   onDestroy(() => {
     unsubscribe();
-    groupUsers = [];
+    groupUsers.set([]);
   });
 </script>
 
@@ -81,7 +80,7 @@
     {#if adminStatus && $allUsersSelected}
       <AllUsersList {allUsers} />
     {:else if $selectedGroup}
-      <OtherGroupsList {groupUsers} {groupName} />
+      <OtherGroupsList {groupName} />
     {/if}
   </div>
 </div>

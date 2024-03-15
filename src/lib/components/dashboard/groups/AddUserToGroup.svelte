@@ -11,7 +11,11 @@
     import { createShareCredsPayload } from "../helper";
 
     import { User } from "../dtos";
-    import { selectedGroup, showAddUserToGroupDrawer } from "../store";
+    import {
+        selectedGroup,
+        showAddUserToGroupDrawer,
+        groupUsers,
+    } from "../store";
 
     let users: User[] = [];
     let credentialFields: CredentialFields[] = [];
@@ -43,7 +47,15 @@
             credentials: userData[0].credentials,
         };
         await addUserToGroup(payload);
+
         users = users.filter((u) => u.id !== user.id);
+    };
+
+    const closeDrawer = () => {
+        showAddUserToGroupDrawer.set(false);
+        fetchGroupUsers($selectedGroup.groupId).then((usersResponse) => {
+            groupUsers.set(usersResponse.data);
+        });
     };
 </script>
 
@@ -52,7 +64,7 @@
 >
     <button
         class="bg-osvauld-carolinablue w-full text-macchiato-crust px-10 py-2"
-        on:click={() => showAddUserToGroupDrawer.set(false)}>Close</button
+        on:click={closeDrawer}>Close</button
     >
 
     {#each users as user}
