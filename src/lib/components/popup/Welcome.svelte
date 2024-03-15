@@ -35,7 +35,7 @@
   class="h-auto mt-10 flex justify-center items-center text-base font-bold text-white"
 >
   <form
-    class="flex flex-col justify-center items-center mt-20"
+    class="flex flex-col justify-center items-center"
     on:submit|preventDefault={handleSubmit}
   >
     <label for="passphrase">Enter Passphrase</label>
