@@ -1,12 +1,10 @@
-import { baseUrl } from "./temp";
-import browser from "webextension-polyfill";
 import { ShareFolderWithUsersPayload, ShareFolderWithGroupsPayload } from "../dtos/request.dto";
 import { FolderGroupResponse, FolderUserResponse, BaseResponse, FetchAllFoldersResponse } from "../dtos/response.dto";
+import { getTokenAndBaseUrl } from "../components/dashboard/helper";
 
 export const fetchAllFolders = async (): Promise<FetchAllFoldersResponse> => {
 
-  const tokenObj = await await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   const options = {
     method: "GET",
     headers: {
@@ -21,8 +19,7 @@ export const fetchAllFolders = async (): Promise<FetchAllFoldersResponse> => {
 
 export const fetchFolderUsers = async (folderId: string): Promise<FolderUserResponse> => {
   const headers = new Headers();
-  const tokenObj = await await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -33,8 +30,7 @@ export const fetchFolderUsers = async (folderId: string): Promise<FolderUserResp
 
 export const fetchFolderGroups = async (folderId: string): Promise<FolderGroupResponse> => {
   const headers = new Headers();
-  const tokenObj = await await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -45,8 +41,7 @@ export const fetchFolderGroups = async (folderId: string): Promise<FolderGroupRe
 
 export const createFolder = async (payload: any): Promise<BaseResponse> => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -65,8 +60,7 @@ export const createFolder = async (payload: any): Promise<BaseResponse> => {
 
 export const shareFolderWithUsers = async (payload: ShareFolderWithUsersPayload) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -85,8 +79,7 @@ export const shareFolderWithUsers = async (payload: ShareFolderWithUsersPayload)
 
 export const shareFolderWithGroups = async (payload: ShareFolderWithGroupsPayload) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
