@@ -2,14 +2,15 @@
   import { fetchAllUserGroups, createGroup } from "../apis";
   import { showAddGroupDrawer } from "../store";
   import ClosePanel from "../../basic/icons/closePanel.svelte";
-
+  import { groupStore } from "../store";
   let name = "";
   const addGroupFunc = async () => {
     const payload = {
       name: name,
     };
     await createGroup(payload);
-    await fetchAllUserGroups();
+    const responseJson = await fetchAllUserGroups();
+    groupStore.set(responseJson.data);
     showAddGroupDrawer.set(false);
   };
 
