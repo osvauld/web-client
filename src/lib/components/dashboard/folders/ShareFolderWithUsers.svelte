@@ -11,11 +11,12 @@
     CredentialFields,
   } from "../dtos";
   import { selectedFolder, showFolderShareDrawer } from "../store";
-  import { createShareCredsPayload, setbackground } from "../helper";
+  import { setbackground } from "../helper";
   import { Lens, DownArrow, RightArrow } from "../icons";
   import ListItem from "../components/ListItem.svelte";
   import ShareToast from "../components/ShareToast.svelte";
   import ExistingListParent from "../components/ExistingListParent.svelte";
+  import browser from "webextension-polyfill";
 
   export let users: User[];
   export let credentialsFields: CredentialFields[];
@@ -50,10 +51,14 @@
     if ($selectedFolder === null) {
       throw new Error("Folder not selected");
     }
-    const userData = await createShareCredsPayload(
-      credentialsFields,
-      selectedUsers,
-    );
+    const userData = await browser.runtime.sendMessage({
+      action: "createShareCredPayload",
+      data: {
+        creds: credentialsFields,
+        users: selectedUsers,
+      },
+    });
+
     const shareFolderPayload: ShareFolderWithUsersPayload = {
       folderId: $selectedFolder.id,
       // @ts-ignore

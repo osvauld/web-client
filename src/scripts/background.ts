@@ -1,11 +1,12 @@
 import browser from "webextension-polyfill";
 
-import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptCredentialField, } from "../lib/utils/crypto";
-import { verifyUser } from "../lib/utils/helperMethods";
-import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler, decryptFieldHandler, e, encryptFieldHandler } from "./backgroundService";
+import {
+  decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler,
+  decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler,
+  decryptFieldHandler, encryptFieldHandler, createShareCredsPayload
+} from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
-let rsaPvtKey: CryptoKey;
 import init, { is_global_context_set } from "./rust_openpgp_wasm";
 
 
@@ -21,7 +22,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
   switch (request.action) {
     case "decrypt": {
-      return decryptCredentialFieldsHandler(request.data, rsaPvtKey);
+      return decryptCredentialFieldsHandler(request.data);
     }
     case "decryptField": {
       const field = await decryptFieldHandler(request.data)
@@ -135,7 +136,12 @@ browser.runtime.onMessage.addListener(async (request) => {
       return decryptCredentialFieldsHandlerNew(request.data);
     case "addCredential":
       return addCredentialHandler(request.data);
-
+    case "createShareCredPayload":
+      console.log('createShareCredPayload', request.data);
+      //@ts-ignore
+      const response = await createShareCredsPayload(request.data.creds, request.data.users);
+      console.log(response)
+      return response;
 
     default:
       console.log(request.action)

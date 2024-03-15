@@ -8,7 +8,8 @@
         fetchUsersWithoutGroupAccess,
     } from "../apis";
     import { CredentialFields } from "../dtos";
-    import { createShareCredsPayload } from "../helper";
+
+    import browser from "webextension-polyfill";
 
     import { User } from "../dtos";
     import {
@@ -32,11 +33,14 @@
     });
 
     const addUsertoGroup = async (user: User) => {
-        const userData = await createShareCredsPayload(
-            credentialFields,
-            // @ts-ignore
-            [user],
-        );
+        const userData = await browser.runtime.sendMessage({
+            action: "createShareCredPayload",
+            data: {
+                creds: credentialFields,
+                users: [user],
+            },
+        });
+
         if ($selectedGroup === null) {
             throw new Error("Group not selected");
         }

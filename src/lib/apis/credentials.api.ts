@@ -1,12 +1,10 @@
-import browser from "webextension-polyfill";
-import { baseUrl, } from "./temp";
 import { BaseResponse, FetchAllUserUrlsResponse, FetchCredentialsByFolderResponse, FetchCredentialsFieldsByFolderIdResponse, FetchCredentialsFieldsByIdsResponse, FetchCredsByIdsResponse, FetchSensitiveFieldsByCredenitalIdResponse } from "../dtos/response.dto";
 import { AddCredentialPayload, ShareCredentialsWithUsersPayload, } from "../dtos/request.dto";
+import { getTokenAndBaseUrl } from "../components/dashboard/helper";
 
 export const fetchCredentialsByFolder = async (folderId: string): Promise<FetchCredentialsByFolderResponse> => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -17,8 +15,7 @@ export const fetchCredentialsByFolder = async (folderId: string): Promise<FetchC
 
 export const fetchCredentialById = async (credentialId: string) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -29,8 +26,7 @@ export const fetchCredentialById = async (credentialId: string) => {
 
 export const addCredential = async (payload: AddCredentialPayload) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -46,8 +42,7 @@ export const addCredential = async (payload: AddCredentialPayload) => {
 
 export const updateCredential = async (payload: AddCredentialPayload, credentialId: string) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -62,8 +57,7 @@ export const updateCredential = async (payload: AddCredentialPayload, credential
 
 export const fetchCredentialsFieldsByFolderId = async (folderId: string): Promise<FetchCredentialsFieldsByFolderIdResponse> => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("User-Agent", "Insomnia/2023.5.7");
 
@@ -81,8 +75,7 @@ export const fetchCredentialsFieldsByFolderId = async (folderId: string): Promis
 
 export const shareCredentialsWithUsers = async (shareCredential: ShareCredentialsWithUsersPayload): Promise<BaseResponse> => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -101,8 +94,7 @@ export const shareCredentialsWithUsers = async (shareCredential: ShareCredential
 
 export const fetchCredentialsFieldsByIds = async (credentialIds: string[]): Promise<FetchCredentialsFieldsByIdsResponse> => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -121,8 +113,7 @@ export const fetchCredentialsFieldsByIds = async (credentialIds: string[]): Prom
 
 export const fetchCredsByIds = async (credentialIds: string[]): Promise<FetchCredsByIdsResponse> => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   const response = await fetch(`${baseUrl}/credentials/by-ids`, {
@@ -140,8 +131,7 @@ export const fetchCredsByIds = async (credentialIds: string[]): Promise<FetchCre
 
 export const fetchAllUserUrls = async (): Promise<FetchAllUserUrlsResponse> => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   const response = await fetch(`${baseUrl}/urls`, {
@@ -158,8 +148,7 @@ export const fetchAllUserUrls = async (): Promise<FetchAllUserUrlsResponse> => {
 
 export const fetchSensitiveFieldsByCredentialId = async (credentialId: string): Promise<FetchSensitiveFieldsByCredenitalIdResponse> => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   const response = await fetch(`${baseUrl}/credential/${credentialId}/sensitive`, {
@@ -176,8 +165,7 @@ export const fetchSensitiveFieldsByCredentialId = async (credentialId: string): 
 
 export const getSearchFields = async () => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   const response = await fetch(`${baseUrl}/credentials/search`, {
