@@ -3,12 +3,12 @@
 export {
     fetchCredentialsByFolder, fetchCredentialById, addCredential, updateCredential, fetchCredentialsFieldsByFolderId,
     shareCredentialsWithUsers, fetchCredentialsFieldsByIds, fetchAllUserUrls, fetchSensitiveFieldsByCredentialId,
-    getSearchFields
+    getSearchFields, editGroupPermissionForCredential, editUserPermissionForCredential
 } from '../../apis/credentials.api';
 
 export {
     fetchAllFolders, fetchFolderUsers, createFolder, shareFolderWithUsers,
-    shareFolderWithGroups, fetchFolderGroups
+    shareFolderWithGroups, fetchFolderGroups, editFolderPermissionForGroup, editFolderPermissionForUser
 } from '../../apis/folder.api';
 
 export {

@@ -8,6 +8,8 @@
     fetchCredentialGroups,
     removeGroupFromCredential,
     removeUserFromCredential,
+    editGroupPermissionForCredential,
+    editUserPermissionForCredential,
   } from "../apis";
   import {
     showCredentialDetailsDrawer,
@@ -48,13 +50,31 @@
   ) => {
     await removeGroupFromCredential(credential.credentialId, group.groupId);
     await toggleSelect({ detail: "Groups" });
-    console.log(group);
   };
   const removeUserFromCredentialHandler = async (user: UserWithAccessType) => {
     await removeUserFromCredential(credential.credentialId, user.id);
     await toggleSelect({ detail: "Users" });
-    console.log(user);
   };
+
+  const permissionChangeHandler = async (e: any, id: string, type: string) => {
+    console.log(e.detail, "cred details");
+    if (type == "user") {
+      await editUserPermissionForCredential(
+        credential.credentialId,
+        id,
+        e.detail,
+      );
+      await toggleSelect({ detail: "Users" });
+    } else {
+      await editGroupPermissionForCredential(
+        credential.credentialId,
+        id,
+        e.detail,
+      );
+      await toggleSelect({ detail: "Groups" });
+    }
+  };
+
   onMount(async () => {
     // @ts-ignore
     credentialIdForEdit.set(credential.credentialId);
@@ -128,6 +148,8 @@
           <ExistingListItem
             item={group}
             on:remove={() => removeGroupFromCredentialHandler(group)}
+            on:permissonChange={(e) =>
+              permissionChangeHandler(e, group.groupId, "group")}
           />
         {/each}
       {:else if selectedTab == "Users"}
@@ -135,6 +157,8 @@
           <ExistingListItem
             item={user}
             on:remove={() => removeUserFromCredentialHandler(user)}
+            on:permissonChange={(e) =>
+              permissionChangeHandler(e, user.id, "user")}
           />
         {/each}
       {/if}

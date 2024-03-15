@@ -1,11 +1,9 @@
 <script>
-  export let item;
-
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
-  const select = (permission, item) => {
-    dispatch("select", { permission, item });
+  const select = (permission) => {
+    dispatch("select", { permission });
   };
 </script>
 
@@ -14,14 +12,14 @@
 >
   <button
     class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-readerOrange text-osvauld-readerText m-1"
-    on:click|stopPropagation={() => select("read", item)}>Read</button
+    on:click|stopPropagation={() => select("read")}>Read</button
   >
   <button
     class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-managerPurple text-osvauld-managerText m-1"
-    on:click|stopPropagation={() => select("write", item)}>Write</button
+    on:click|stopPropagation={() => select("write")}>Write</button
   >
   <button
     class="w-full rounded-md cursor-pointer px-2 py-1 bg-osvauld-ownerGreen text-osvauld-ownerText m-1"
-    on:click|stopPropagation={() => select("owner", item)}>Owner</button
+    on:click|stopPropagation={() => select("owner")}>Owner</button
   >
 </div>

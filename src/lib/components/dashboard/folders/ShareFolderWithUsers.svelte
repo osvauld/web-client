@@ -3,6 +3,7 @@
     shareFolderWithUsers,
     fetchFolderUsers,
     removeUserFromFolder,
+    editFolderPermissionForUser,
   } from "../apis";
   import {
     User,
@@ -91,8 +92,15 @@
   }
 
   const removeExistingUser = async (e: any) => {
-    console.log("removing user...");
     await removeUserFromFolder($selectedFolder.id, e.detail.id);
+    await existingUsers(false);
+  };
+  const handlePermissionChange = async (e: any) => {
+    await editFolderPermissionForUser(
+      $selectedFolder.id,
+      e.detail.item.id,
+      e.detail.permission,
+    );
     await existingUsers(false);
   };
 </script>
@@ -162,4 +170,5 @@
   user={true}
   on:click={() => existingUsers()}
   on:remove={(e) => removeExistingUser(e)}
+  on:permissionChange={(e) => handlePermissionChange(e)}
 />

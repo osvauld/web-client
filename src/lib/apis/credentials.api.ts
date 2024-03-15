@@ -191,3 +191,36 @@ export const getSearchFields = async () => {
 
   return response.json();
 }
+
+
+export const editUserPermissionForCredential = async (credentialId: string, userId: string, accessType: string) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/credential/${credentialId}/edit-user-access`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ userId, accessType }),
+  }).then((response) => response.json());
+
+  return response;
+}
+
+export const editGroupPermissionForCredential = async (credentialId: string, groupId: string, accessType: string) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/credential/${credentialId}/edit-group-access`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ groupId, accessType }),
+  }).then((response) => response.json());
+
+  return response;
+} 
