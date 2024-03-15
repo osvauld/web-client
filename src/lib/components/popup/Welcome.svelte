@@ -1,6 +1,5 @@
 <script lang="ts">
   import browser from "webextension-polyfill";
-  import { isLoggedIn } from "../../store/ui.store";
   import Eye from "../basic/icons/eye.svelte";
   import Loader from "../dashboard/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
@@ -36,7 +35,7 @@
   class="h-auto mt-10 flex justify-center items-center text-base font-bold text-white"
 >
   <form
-    class="flex flex-col justify-center items-center"
+    class="flex flex-col justify-center items-center mt-20"
     on:submit|preventDefault={handleSubmit}
   >
     <label for="passphrase">Enter Passphrase</label>
