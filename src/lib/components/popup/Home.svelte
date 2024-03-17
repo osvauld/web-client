@@ -70,6 +70,10 @@
     credentialClicked = !credentialClicked;
     selectedCredentialIndex = index;
   };
+
+  const copyToClipboard = (username: string) => {
+    navigator.clipboard.writeText(username);
+  };
 </script>
 
 <div class="w-full h-full">
@@ -145,7 +149,7 @@
               </div>
               {#if credentialClicked && selectedCredentialIndex === index}
                 <div
-                  class="rounded-lg h-[10rem] bg-osvauld-bordergreen p-2 w-full overflow-y-scroll"
+                  class="rounded-lg h-[10rem] bg-osvauld-bordergreen p-2 w-full overflow-y-scroll scrollbar-thin"
                 >
                   <div class="mb-2">
                     <label
@@ -156,7 +160,12 @@
                       class="w-full rounded-lg bg-osvauld-bordergreen border border-osvauld-iconblack text-osvauld-quarzowhite font-normal text-sm flex justify-between items-center px-2 py-1"
                     >
                       <span>{credential.username}</span>
-                      <button class=""><ActiveCopy /> </button>
+                      <button
+                        class=""
+                        on:click|stopPropagation={() =>
+                          copyToClipboard(credential.username)}
+                        ><ActiveCopy />
+                      </button>
                     </div>
                   </div>
                   <EncryptedField
