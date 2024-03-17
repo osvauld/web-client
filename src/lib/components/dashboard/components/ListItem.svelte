@@ -34,7 +34,7 @@
 >
   <div class="flex items-center space-x-4 max-w-full">
     <p
-      class="p-2 max-w-full overflow-x-scroll whitespace-nowrap text-base {isTopList
+      class="p-2 max-w-full whitespace-nowrap text-base {isTopList
         ? 'text-osvauld-quarzowhite'
         : 'text-osvauld-sheffieldgrey'}"
     >
@@ -45,7 +45,7 @@
     <div class="flex justify-center items-center">
       <button
         class="w-[6.25rem] rounded-md cursor-pointer px-2 py-1 pl-2 flex justify-between items-center {setbackground(
-          item.accessType,
+          item.accessType
         )}"
         >{item.accessType}
         <span> <DownArrow type={item.accessType} /></span>
