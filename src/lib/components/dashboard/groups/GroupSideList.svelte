@@ -10,6 +10,7 @@
   } from "../store";
   import { Group } from "../dtos";
   import Add from "../../basic/icons/add.svelte";
+  import { GroupIcon } from "../icons";
 
   let iconColor = "#6E7681"; //sheffieldgrey:
 
@@ -42,9 +43,10 @@
     on:mouseenter={() => (iconColor = "#000")}
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={() => openModal("group")}
-    ><span class="mr-1">Create new group</span>
-    <Add color={iconColor} /></button
   >
+    <Add color={iconColor} />
+    <span class="ml-1">Create new group</span>
+  </button>
   {#if $showAddGroupDrawer}
     <button
       class="fixed inset-0 flex items-center justify-center z-50 bg- backdrop-filter backdrop-blur-[2px]"
@@ -54,7 +56,7 @@
       <AddGroup on:close={closeModal} />
     </button>
   {/if}
-  <ul class="mx-6 max-h-[40rem] overflow-y-scroll scrollbar-thin pr-3">
+  <ul class=" max-h-[40rem] overflow-y-scroll scrollbar-thin -pl-3">
     {#if adminStatus}
       <li
         class="{$allUsersSelected
@@ -65,7 +67,8 @@
           on:click={() => selectingAllUsers()}
           class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
         >
-          All users
+          <GroupIcon color={$allUsersSelected ? "white" : "#85889C"} />
+          <span class="ml-2">All users</span>
         </button>
       </li>
     {/if}
@@ -73,13 +76,14 @@
       <li
         class="{$selectedGroup === group
           ? 'bg-osvauld-bordergreen rounded-lg'
-          : 'hover:bg-osvauld-bordergreen'} rounded-md pl-3"
+          : 'hover:bg-osvauld-bordergreen'} rounded-md pl-3 my-0.5"
       >
         <button
           on:click={() => selectGroup(group)}
           class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
         >
-          {group.name}
+          <GroupIcon color={$selectedGroup === group ? "white" : "#85889C"} />
+          <span class="ml-2">{group.name}</span>
         </button>
       </li>
     {/each}
