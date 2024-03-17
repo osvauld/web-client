@@ -1,7 +1,6 @@
 <script lang="ts">
   import { BinIcon } from "../icons";
   import { AddCredentialField } from "../dtos";
-  import { showEditCredentialDialog } from "../store";
 
   export let field: AddCredentialField;
   export let index: Number;
@@ -27,7 +26,7 @@
       id={`key-${index}`}
       type="text"
       placeholder="Enter field name"
-      autofocus={$showEditCredentialDialog}
+      autofocus
       bind:value={field.fieldName}
     />
     <input

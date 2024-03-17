@@ -214,19 +214,18 @@
   <div class="border-b border-osvauld-iconblack w-full"></div>
 
   <div class="mx-6">
-    <input
-      class=" w-full h-[3.8rem] my-2 ml-4 bg-osvauld-frameblack border-0 rounded-none text-3xl text-osvauld-quarzowhite font-normal focus:ring-0 focus:ring-offset-0"
-      id="name"
-      type="text"
-      placeholder="Enter Credential name"
-      autocomplete="off"
-      autofocus
-      bind:value={name}
-    />
-
     <div
-      class="min-h-[25vh] max-h-[30vh] overflow-y-scroll scrollbar-thin z-50"
+      class="min-h-[32vh] max-h-[35vh] overflow-y-scroll scrollbar-thin z-50"
     >
+      <input
+        class="w-[70%] h-[3.8rem] my-2 ml-4 bg-osvauld-frameblack border-0 rounded-none text-3xl text-osvauld-quarzowhite font-normal focus:ring-0 focus:ring-offset-0 flex"
+        id="name"
+        type="text"
+        placeholder="Enter Credential name...."
+        autocomplete="off"
+        autofocus
+        bind:value={name}
+      />
       {#each credentialFields as field, index}
         <AddLoginFields
           {field}

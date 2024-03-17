@@ -62,7 +62,7 @@
       <li
         class="{$selectedFolder?.id == folder.id
           ? 'bg-osvauld-bordergreen rounded-lg'
-          : 'hover:bg-osvauld-bordergreen'} rounded-md pl-3"
+          : 'hover:bg-osvauld-bordergreen'} rounded-md my-0.5 pl-3"
       >
         <button
           on:click={() => selectFolder(folder)}
