@@ -161,7 +161,7 @@
                     >
                       <span>{credential.username}</span>
                       <button
-                        class=""
+                        class="active:scale-90"
                         on:click|stopPropagation={() =>
                           copyToClipboard(credential.username)}
                         ><ActiveCopy />

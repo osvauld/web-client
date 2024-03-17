@@ -68,7 +68,7 @@
   };
   const handleSearchClick = (result) => {
     searchedCredential.set(result);
-    selectedPage.set("Credentials");
+    selectedPage.set("Folders");
     selectFolder({ id: result.folderId, name: result.folderName });
     closeModal();
   };
@@ -179,7 +179,7 @@
     class="h-auto min-h-[85vh] bg-osvauld-frameblack border-2 border-osvauld-iconblack rounded-2xl mr-4"
   >
     <!-- Content for the bottom part (dynamic content) -->
-    {#if $selectedPage === "Credentials"}
+    {#if $selectedPage === "Folders"}
       <CredentialList />
     {:else if $selectedPage === "Groups"}
       <GroupList />

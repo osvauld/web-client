@@ -6,7 +6,7 @@
   import { fetchAllUserGroups } from "../../apis/group.api";
   import { folderStore } from "../../store/folder.store";
   const select = async (choice: string) => {
-    if (choice === "Credentials") {
+    if (choice === "Folders") {
       const responseJson = await fetchAllFolders();
       folderStore.set(responseJson.data);
     } else {
@@ -23,7 +23,7 @@
   <div
     class="inline-flex justify-center space-x-1 p-1 bg-osvauld-frameblack border-2 border-osvauld-bordergreen rounded-xl xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
   >
-    {#each ["Credentials", "Groups"] as item}
+    {#each ["Folders", "Groups"] as item}
       <button
         class="w-1/2 px-6 py-2 text-lg flex justify-center items-center rounded-lg focus:outline-none {$selectedPage ===
         item

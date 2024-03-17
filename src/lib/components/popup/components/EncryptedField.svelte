@@ -60,7 +60,10 @@
             <Eye />
           {/if}
         </button>
-        <button on:click|stopPropagation={copyToClipboard}>
+        <button
+          on:click|stopPropagation={copyToClipboard}
+          class="active:scale-90"
+        >
           <ActiveCopy />
         </button>
       </div>

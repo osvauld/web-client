@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-export let selectedPage = writable("Credentials");
+export let selectedPage = writable("Folders");
 export let isLoggedIn = writable(false);
 export let isSignedUp = writable(false);
 export let showCredentialEditor = writable(false);
