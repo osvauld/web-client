@@ -29,10 +29,12 @@
     GroupWithAccessType,
     UserWithAccessType,
   } from "../dtos";
+  import Tick from "../../basic/icons/tick.svelte";
   export let credential: Credential;
   export let sensitiveFields: Fields[];
   let selectedTab = "Groups";
   let accessListSelected = false;
+  let accessChangeDetected = false;
   let users: UserWithAccessType[] = [];
   let groups: GroupWithAccessType[] = [];
 
@@ -166,18 +168,30 @@
       {:else}
         <div class="flex justify-between items-center">
           <UserGroupToggle on:select={toggleSelect} />
-          <button
-            class="p-2 mr-3 rounded-lg {$editPermissionTrigger
-              ? 'bg-osvauld-sensitivebgblue'
-              : ''}"
-            on:click={() => {
-              editPermissionTrigger.set(!$editPermissionTrigger);
-              isPermissionChanged.set(false);
-              accessSelectorIdentifier.set(null);
-            }}
-          >
-            <EditIcon />
-          </button>
+          <div class="mr-3">
+            {#if accessChangeDetected}
+              <button
+                class="p-2 mr-1 rounded-lg bg-osvauld-sensitivebgblue"
+                on:click={() => {
+                  accessChangeDetected = !accessChangeDetected;
+                }}
+              >
+                <Tick />
+              </button>
+            {/if}
+            <button
+              class="p-2 rounded-lg {$editPermissionTrigger
+                ? 'bg-osvauld-sensitivebgblue'
+                : ''}"
+              on:click={() => {
+                editPermissionTrigger.set(!$editPermissionTrigger);
+                isPermissionChanged.set(false);
+                accessSelectorIdentifier.set(null);
+              }}
+            >
+              <EditIcon />
+            </button>
+          </div>
         </div>
         <div class="items-left">
           {#if selectedTab == "Groups"}
