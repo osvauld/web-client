@@ -6,10 +6,13 @@
   import { Logo } from "./components/dashboard/icons";
   import { isLoggedIn, isSignedUp } from "../lib/store/ui.store";
   import Signup from "./components/popup/Signup.svelte";
+  import Loader from "./components/dashboard/components/Loader.svelte";
 
   let devType = "popup";
   let loggedIn = true;
+  let isLoaderActive = false;
   onMount(async () => {
+    isLoaderActive = true;
     if (devType != "popup") openFullscreenTab();
     const response = await browser.runtime.sendMessage({
       action: "isSignedUp",
@@ -24,6 +27,7 @@
     } else {
       loggedIn = false;
     }
+    isLoaderActive = false;
     // isSignedUp.set(false);
   });
 
@@ -45,7 +49,9 @@
       ? 'justify-center'
       : 'justify-start'} items-center bg-osvauld-frameblack"
   >
-    {#if !$isSignedUp}
+    {#if isLoaderActive}
+      <Loader />
+    {:else if !$isSignedUp}
       <Signup />
     {:else if loggedIn}
       <Home />
