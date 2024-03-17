@@ -72,22 +72,30 @@
     selectFolder({ id: result.folderId, name: result.folderName });
     closeModal();
   };
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      getSearchData();
+    }
+  }
 </script>
 
 <div class="flex flex-col h-auto">
   <div class="h-[7.8rem] pr-4 flex justify-between items-center">
     {#if !showModal}
       <div
-        class="h-[1.9rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+        class="h-[2.2rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
       >
         <Lens />
         <input
           type="text"
-          class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-          placeholder="Search"
+          class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+          placeholder="Search.."
+          autofocus
           on:click={getSearchData}
           on:input={handleInputChange}
           bind:value={query}
+          on:keydown={handleKeyDown}
         />
       </div>
     {/if}
@@ -107,19 +115,22 @@
           class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
         >
           <div
-            class="h-[3rem] w-[90%] px-2 mx-auto mt-4 flex justify-start items-center border-2 border-osvauld-carolinablue rounded-lg cursor-pointer"
+            class="h-[2.2rem] w-[90%] px-2 mx-auto mt-4 flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
           >
             <Lens />
             <input
               type="text"
-              class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-              placeholder="Search"
+              class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+              placeholder="Search.."
               autofocus
               on:click={getSearchData}
               on:input={handleInputChange}
               bind:value={query}
             />
           </div>
+          <div
+            class="w-full border-t-[1px] border-osvauld-iconblack my-3"
+          ></div>
           <div class="p-4 bg-osvauld-frameblack">
             <div
               class="max-h-64 min-h-32 overflow-y-auto flex justify-start items-center flex-col"
@@ -160,17 +171,18 @@
               {/each}
             </div>
           </div>
-          <div
-            class="bg-osvauld-frameblack px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
-          >
-            <button
-              type="button"
-              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-osvauld-carolinablue text-base font-medium text-osvauld-frameblack focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-              on:click={closeModal}
+          {#if searchResults.length === 0}
+            <div
+              class="bg-osvauld-frameblack w-full flex justify-center items-center px-4 mb-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
             >
-              Close
-            </button>
-          </div>
+              <p
+                class="text-osvauld-placeholderblack text-base text-center w-1/2"
+              >
+                Try searching for keywords in credentials, folders, groups,
+                descriptions and more
+              </p>
+            </div>
+          {/if}
         </div>
       </div>
     </div>
