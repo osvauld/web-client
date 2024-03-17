@@ -70,7 +70,7 @@
 </script>
 
 <button
-  class="mb-3 max-w-[19rem] overflow-x-hidden flex-none hover:border hover:border-osvauld-activelavender rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
+  class="mb-3 max-w-[19rem] overflow-x-hidden flex-none hover:shadow-[0_0_0_1px_#B4BEFE] rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
   style="border: {$borderHighLight ? '1px solid #48bb78' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
