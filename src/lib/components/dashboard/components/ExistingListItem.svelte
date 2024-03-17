@@ -4,10 +4,15 @@
   import DownArrow from "../../basic/icons/downArrow.svelte";
   import { createEventDispatcher } from "svelte";
   import AccessSelector from "./AccessSelector.svelte";
-  import { editPermissionTrigger, isPermissionChanged } from "../store";
+  import {
+    editPermissionTrigger,
+    isPermissionChanged,
+    accessSelectorIdentifier,
+  } from "../store";
 
   const dispatch = createEventDispatcher();
   export let item;
+  export let index;
 
   const handleItemRemove = () => {
     dispatch("remove");
@@ -20,6 +25,7 @@
   };
   const changePermissionHandler = () => {
     isPermissionChanged.set(!$isPermissionChanged);
+    accessSelectorIdentifier.set(index);
   };
 </script>
 
@@ -38,6 +44,7 @@
         on:click={() => {
           if ($editPermissionTrigger) {
             changePermissionHandler();
+            // Here set anew variable with index
           }
         }}
       >
@@ -46,7 +53,8 @@
           <DownArrow type={item.accessType} />
         {/if}
       </button>
-    {:else}
+    {:else if $accessSelectorIdentifier === index}
+      <!-- Here check the index with editpermission trigger -->
       <AccessSelector on:select={(e) => eventPasser(e)} />
     {/if}
     {#if $editPermissionTrigger}

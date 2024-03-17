@@ -16,3 +16,4 @@ export let showEditCredentialDialog = writable(false);
 export let credentialIdForEdit = writable(null);
 export const editPermissionTrigger = writable(false);
 export const isPermissionChanged = writable(false);
+export const accessSelectorIdentifier = writable(null);

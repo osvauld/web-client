@@ -18,6 +18,7 @@
     credentialIdForEdit,
     editPermissionTrigger,
     isPermissionChanged,
+    accessSelectorIdentifier,
   } from "../store";
   import { ClosePanel, EditIcon } from "../icons";
   import { onMount } from "svelte";
@@ -172,6 +173,7 @@
             on:click={() => {
               editPermissionTrigger.set(!$editPermissionTrigger);
               isPermissionChanged.set(false);
+              accessSelectorIdentifier.set(null);
             }}
           >
             <EditIcon />
@@ -179,18 +181,20 @@
         </div>
         <div class="items-left">
           {#if selectedTab == "Groups"}
-            {#each groups as group}
+            {#each groups as group, index}
               <ExistingListItem
                 item={group}
+                {index}
                 on:remove={() => removeGroupFromCredentialHandler(group)}
                 on:permissonChange={(e) =>
                   permissionChangeHandler(e, group.groupId, "group")}
               />
             {/each}
           {:else if selectedTab == "Users"}
-            {#each users as user}
+            {#each users as user, index}
               <ExistingListItem
                 item={user}
+                {index}
                 on:remove={() => removeUserFromCredentialHandler(user)}
                 on:permissonChange={(e) =>
                   permissionChangeHandler(e, user.id, "user")}
