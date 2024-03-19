@@ -15,7 +15,7 @@
 <div
   class="w-full px-4 py-5 my-2 rounded-lg bg-osvauld-bordergreen text-osvauld-quarzowhite font-normal text-xl flex justify-between items-center !z-50"
 >
-  <span class="ml-2 text-sm font-semibold">
+  <span class="ml-2 text-base font-sans">
     {message ? message : " Successfully Shared"}!</span
   >
   <button
