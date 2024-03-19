@@ -1,5 +1,6 @@
-type TypeToClassKey = "read" | "write" | "owner";
 import browser from "webextension-polyfill";
+type TypeToClassKey = "read" | "write" | "owner";
+
 export const setbackground = (type: TypeToClassKey): string => {
 
     const typeToClassMap: Record<TypeToClassKey, string> = {

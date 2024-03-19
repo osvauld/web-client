@@ -126,7 +126,7 @@
           : 'bg-osvauld-iconblack text-osvauld-sheffieldgrey'}"
         on:click={() => showCredentialEditor.set(true)}
         disabled={checkedCards.length !== 0}
-        ><span class="mr-1"> Add Credential</span> <Add color={addIconColor} />
+        ><Add color={addIconColor} /> <span class="ml-1"> Add Credential</span>
       </button>
     </div>
   {/if}

@@ -95,3 +95,44 @@ export const shareFolderWithGroups = async (payload: ShareFolderWithGroupsPayloa
 
   return response.json();
 }
+
+export const editFolderPermissionForUser = async (folderId: string, userId: string, accessType: string) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/folder/${folderId}/edit-user-access`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ accessType, userId }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+
+export const editFolderPermissionForGroup = async (folderId: string, groupId: string, accessType: string) => {
+  const headers = new Headers();
+  const tokenObj = await browser.storage.local.get("token");
+  const token = tokenObj.token;
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/folder/${folderId}/edit-group-access`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ accessType, groupId }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}

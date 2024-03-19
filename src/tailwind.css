@@ -50,5 +50,5 @@
 }
 
 .secondary-btn {
-  @apply border border-osvauld-iconblack bg-osvauld-addfieldgrey  rounded-lg text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack 
+  @apply border border-osvauld-iconblack bg-osvauld-addfieldgrey  rounded-lg text-osvauld-sheffieldgrey active:scale-95
 }

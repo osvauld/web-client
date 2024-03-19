@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-export let selectedPage = writable("Credentials");
+export let selectedPage = writable("Folders");
 export let isLoggedIn = writable(false);
 export let isSignedUp = writable(false);
 export let showCredentialEditor = writable(false);
@@ -14,3 +14,6 @@ export let showAddUserToGroupDrawer = writable(false);
 export let showCredentialDetailsDrawer = writable(false);
 export let showEditCredentialDialog = writable(false);
 export let credentialIdForEdit = writable(null);
+export const editPermissionTrigger = writable(false);
+export const isPermissionChanged = writable(false);
+export const accessSelectorIdentifier = writable(null);

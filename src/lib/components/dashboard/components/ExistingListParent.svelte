@@ -2,7 +2,6 @@
   import { createEventDispatcher } from "svelte";
   import ExistingListItem from "./ExistingListItem.svelte";
   import { DownArrow, RightArrow } from "../icons";
-  import { log } from "console";
 
   export let existingItemDropdown;
   export let existingItemsData;
@@ -16,6 +15,10 @@
 
   const handleRemoval = (item) => {
     dispatch("remove", item);
+  };
+
+  const handlePermissionChange = (e, item) => {
+    dispatch("permissionChange", { item, permission: e.detail });
   };
 </script>
 
@@ -44,7 +47,11 @@
     {#if existingItemDropdown}
       {#each existingItemsData as item, index}
         <!-- TODO: user should not be able to remove themselves -->
-        <ExistingListItem {item} on:remove={() => handleRemoval(item)} />
+        <ExistingListItem
+          {item}
+          on:remove={() => handleRemoval(item)}
+          on:permissonChange={(e) => handlePermissionChange(e, item)}
+        />
       {/each}
     {/if}
   </div>

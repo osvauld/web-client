@@ -12,6 +12,7 @@
   export let fieldName;
   export let fieldValue;
   export let hoverEffect;
+  export let bgColor;
   let visibility = false;
   let decrypted = false;
   let decryptedValue = "";
@@ -41,11 +42,13 @@
   </div>
 
   <div
-    class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base bg-osvauld-bordergreen border-osvauld-iconblack {hoverEffect
+    class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base {bgColor
+      ? bgColor
+      : 'bg-osvauld-bordergreen'} border-osvauld-iconblack {hoverEffect
       ? 'text-osvauld-quarzowhite'
       : 'text-osvauld-sheffieldgrey'}"
   >
-    <span class="max-w-[70%] overflow-x-hidden"
+    <span class="w-full text-left overflow-x-hidden"
       >{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
     >
     {#if !decrypted}

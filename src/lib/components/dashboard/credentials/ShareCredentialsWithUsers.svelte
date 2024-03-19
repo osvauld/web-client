@@ -56,6 +56,7 @@
     }
 
     function handleRoleChange(e: any, index: number, type: string) {
+        console.log("Handle role change", e);
         const user = e.detail.item;
         const option = e.detail.permission;
         showOptions = !showOptions;

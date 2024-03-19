@@ -14,6 +14,7 @@
 
   import { Folder } from "../dtos";
   import Add from "../../basic/icons/add.svelte";
+  import FolderIcon from "../../basic/icons/folderIcon.svelte";
 
   let iconColor = "#6E7681"; //sheffieldgrey:
 
@@ -44,8 +45,9 @@
     on:mouseenter={() => (iconColor = "#000")}
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={openModal}
-    ><span class="mr-1">Create new folder</span>
+  >
     <Add color={iconColor} />
+    <span class="ml-1">Create new folder</span>
   </button>
   {#if $showAddFolderDrawer}
     <button
@@ -62,13 +64,16 @@
       <li
         class="{$selectedFolder?.id == folder.id
           ? 'bg-osvauld-bordergreen rounded-lg'
-          : 'hover:bg-osvauld-bordergreen'} rounded-md pl-3"
+          : 'hover:bg-osvauld-bordergreen'} rounded-md my-0.5 pl-3"
       >
         <button
           on:click={() => selectFolder(folder)}
           class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
         >
-          {folder.name}
+          <FolderIcon
+            color={$selectedFolder?.id == folder.id ? "white" : "#85889C"}
+          />
+          <span class="ml-2">{folder.name}</span>
         </button>
       </li>
     {/each}

@@ -18,6 +18,7 @@
   import { fetchCredentialsByFolder } from "./apis";
 
   import { Folder } from "./dtos";
+  import LinkIcon from "../basic/icons/linkIcon.svelte";
   let searchResults = [];
   let searchData = [];
   let showModal = false;
@@ -39,16 +40,23 @@
     return searchResults;
   };
   const getSearchData = async () => {
-    const searchFieldSResponse = await getSearchFields();
-    console.log(searchFieldSResponse.data);
-    searchData = searchFieldSResponse.data;
     showModal = true;
+    const searchFieldSResponse = await getSearchFields();
+    searchData = searchFieldSResponse.data;
+    if (query.length !== 0) {
+      searchResults = searchObjects(query, searchData);
+    } else {
+      searchResults.length = 0;
+    }
   };
   let query = "";
   const handleInputChange = (e) => {
     query = e.target.value;
-    searchResults = searchObjects(e.target.value, searchData);
-    console.log(searchResults);
+    if (query.length !== 0) {
+      searchResults = searchObjects(e.target.value, searchData);
+    } else {
+      searchResults.length = 0;
+    }
   };
   const closeModal = () => {
     showModal = false;
@@ -68,26 +76,34 @@
   };
   const handleSearchClick = (result) => {
     searchedCredential.set(result);
-    selectedPage.set("Credentials");
+    selectedPage.set("Folders");
     selectFolder({ id: result.folderId, name: result.folderName });
     closeModal();
   };
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      getSearchData();
+    }
+  }
 </script>
 
 <div class="flex flex-col h-auto">
   <div class="h-[7.8rem] pr-4 flex justify-between items-center">
     {#if !showModal}
       <div
-        class="h-[1.9rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+        class="h-[2.2rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
       >
         <Lens />
         <input
           type="text"
-          class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-          placeholder="Search"
+          class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+          placeholder="Search.."
+          autofocus
           on:click={getSearchData}
           on:input={handleInputChange}
           bind:value={query}
+          on:keydown={handleKeyDown}
         />
       </div>
     {/if}
@@ -107,70 +123,75 @@
           class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
         >
           <div
-            class="h-[3rem] w-[90%] px-2 mx-auto mt-4 flex justify-start items-center border-2 border-osvauld-carolinablue rounded-lg cursor-pointer"
+            class="h-[2.2rem] w-[90%] px-2 mx-auto mt-4 flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
           >
             <Lens />
             <input
               type="text"
-              class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-              placeholder="Search"
+              class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+              placeholder="Search.."
               autofocus
               on:click={getSearchData}
               on:input={handleInputChange}
               bind:value={query}
             />
           </div>
-          <div class="p-4 bg-osvauld-frameblack">
+          <div
+            class="w-full border-t-[1px] border-osvauld-iconblack my-2"
+          ></div>
+          <div class=" bg-osvauld-frameblack">
+            {#if searchResults.length !== 0}
+              <p
+                class="text-osvauld-placeholderblack text-sm text-start w-1/2 pl-3"
+              >
+                Showing results for "{query}"
+              </p>
+            {/if}
             <div
-              class="max-h-64 min-h-32 overflow-y-auto flex justify-start items-center flex-col"
+              class="max-h-64 min-h-32 overflow-y-auto flex justify-start items-center flex-col mb-4 px-3"
             >
               {#each searchResults as result}
                 <button
                   on:click={() => handleSearchClick(result)}
-                  class="p-3 border border-osvauld-iconblack hover:bg-osvauld-iconblack w-full my-1 flex justify-start items-center"
+                  class="p-2 border rounded-lg border-osvauld-iconblack hover:bg-osvauld-iconblack w-full my-1 flex justify-start items-center"
                 >
                   <div
                     class="h-full flex justify-center items-center scale-150 px-2"
                   >
                     <Key />
                   </div>
-                  <div>
-                    <div
-                      class="ml-4 flex justify-start items-center text-base font-semibold"
-                    >
+                  <div
+                    class="w-full flex flex-col justify-center items-start pl-2"
+                  >
+                    <div class="text-base flex font-semibold">
+                      <Highlight text={result.name} {query} />&nbsp;
+                      <span>in</span>&nbsp;
                       <Highlight text={result.folderName} {query} />
                     </div>
-                    <div
-                      class="ml-4 flex flex-col justify-center items-start text-sm font-light"
-                    >
-                      <div>
-                        <Highlight text={result.name} {query} />
-                      </div>
-                      <div>
-                        <Highlight text={result.description} {query} />
-                      </div>
-                      {#if result.domain}
-                        <div class="">
-                          <Highlight text={result.domain} {query} />
-                        </div>
-                      {/if}
+                    <div class="text-sm font-normal">
+                      <Highlight text={result.domain} {query} />
+                    </div>
+                    <div class="text-sm font-normal">
+                      <Highlight text={result.description} {query} />
                     </div>
                   </div>
+                  <LinkIcon />
                 </button>
               {/each}
             </div>
           </div>
-          <div
-            class="bg-osvauld-frameblack px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
-          >
-            <button
-              type="button"
-              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-osvauld-carolinablue text-base font-medium text-osvauld-frameblack focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-              on:click={closeModal}
+          {#if searchResults.length === 0}
+            <div
+              class="bg-osvauld-frameblack w-full flex justify-center items-center px-4 mb-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
             >
-              Close
-            </button>
-          </div>
+              <p
+                class="text-osvauld-placeholderblack text-base text-center w-1/2"
+              >
+                Try searching for keywords in credentials, folders, groups,
+                descriptions and more
+              </p>
+            </div>
+          {/if}
         </div>
       </div>
     </div>
@@ -179,7 +200,7 @@
     class="h-auto min-h-[85vh] bg-osvauld-frameblack border-2 border-osvauld-iconblack rounded-2xl mr-4"
   >
     <!-- Content for the bottom part (dynamic content) -->
-    {#if $selectedPage === "Credentials"}
+    {#if $selectedPage === "Folders"}
       <CredentialList />
     {:else if $selectedPage === "Groups"}
       <GroupList />

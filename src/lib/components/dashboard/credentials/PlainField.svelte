@@ -3,6 +3,7 @@
   export let fieldName;
   export let fieldValue;
   export let hoverEffect;
+  export let bgColor;
 
   const copyToClipboard = async () => {
     try {
@@ -19,11 +20,13 @@
     for="field">{fieldName}</label
   >
   <div
-    class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base bg-osvauld-bordergreen border-osvauld-iconblack {hoverEffect
+    class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base {bgColor
+      ? bgColor
+      : 'bg-osvauld-bordergreen'} border-osvauld-iconblack {hoverEffect
       ? 'text-osvauld-quarzowhite'
       : 'text-osvauld-sheffieldgrey'}"
   >
-    <span class="max-w-[90%] overflow-x-hidden">{fieldValue}</span>
+    <span class="w-full text-left overflow-x-hidden">{fieldValue}</span>
     <button on:click={copyToClipboard}>
       {#if hoverEffect}
         <ActiveCopy />
