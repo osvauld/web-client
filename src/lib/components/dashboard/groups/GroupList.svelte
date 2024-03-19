@@ -46,32 +46,20 @@
 
 <div class="z-50">
   {#if $showAddUserDrawer || $showAddUserToGroupDrawer}
-    <div class="fixed z-10 inset-0 overflow-y-auto">
-      <div
-        class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
-      >
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div
-            class="absolute inset-0 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-          ></div>
-        </div>
-
-        <span
-          class="hidden sm:inline-block sm:align-middle sm:h-screen"
-          aria-hidden="true">&#8203;</span
-        >
-
-        <div
-          class="inline-flex justify-center items-center align-bottom rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
-        >
-          {#if $showAddUserDrawer}
-            <AddUser />
-          {:else if $showAddUserToGroupDrawer}
-            <AddUserToGroup />
-          {/if}
-        </div>
-      </div>
-    </div>
+    <button
+      class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
+      on:click={() => {}}
+    >
+      {#if $showAddUserDrawer}
+        <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
+          <AddUser />
+        </button>
+      {:else if $showAddUserToGroupDrawer}
+        <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
+          <AddUserToGroup />
+        </button>
+      {/if}
+    </button>
   {/if}
 </div>
 

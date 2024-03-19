@@ -1,15 +1,14 @@
 <script lang="ts">
-    import {
-        Group,
-        GroupWithAccessType,
-        CredentialFields,
-        ShareCredentialsWithGroupsPayload,
-    } from "../dtos";
-    import { writable } from "svelte/store";
-    import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
-    import { setbackground } from "../helper";
-    import browser from "webextension-polyfill";
-
+  import {
+    Group,
+    GroupWithAccessType,
+    CredentialFields,
+    ShareCredentialsWithGroupsPayload,
+  } from "../dtos";
+  import { writable } from "svelte/store";
+  import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
+  import { setbackground } from "../helper";
+  import browser from "webextension-polyfill";
 
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
@@ -29,34 +28,12 @@
       )
     : groups;
 
-
-    const shareCredentialHandler = async () => {
-        const groupIds = Array.from($selectedGroups.keys());
-        const response = await fetchUsersByGroupIds(groupIds);
-        const groupUsersList = response.data;
-        const payload: ShareCredentialsWithGroupsPayload = {
-            groupData: [],
-        };
-        for (const groupUsers of groupUsersList) {
-            const group = $selectedGroups.get(groupUsers.groupId);
-            if (group == undefined) continue;
-            const userData = await browser.runtime.sendMessage({
-                action: "createShareCredPayload",
-                data: {
-                    creds: credentialsFields,
-                    users: groupUsers.userDetails,
-                },
-            });
-
-            payload.groupData.push({
-                groupId: group.groupId,
-                accessType: group.accessType,
-                userData,
-            });
-        }
-        const shareStatus = await shareCredentialsWithGroups(payload);
-
-        shareToast = shareStatus.success === true;
+  const shareCredentialHandler = async () => {
+    const groupIds = Array.from($selectedGroups.keys());
+    const response = await fetchUsersByGroupIds(groupIds);
+    const groupUsersList = response.data;
+    const payload: ShareCredentialsWithGroupsPayload = {
+      groupData: [],
     };
     for (const groupUsers of groupUsersList) {
       const group = $selectedGroups.get(groupUsers.groupId);
