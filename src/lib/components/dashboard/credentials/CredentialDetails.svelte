@@ -3,6 +3,7 @@
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
   import UserGroupToggle from "../UserGroupToggle.svelte";
+  import ShareToast from "../components/ShareToast.svelte";
   import {
     fetchCredentialUsers,
     fetchCredentialGroups,
@@ -35,6 +36,19 @@
   let selectedTab = "Groups";
   let accessListSelected = false;
   let accessChangeDetected = false;
+  let permissionChangeAttemptMessage = "";
+  let changeToast = false;
+
+  let userPermissions: {
+    credentialId: string;
+    userId: string;
+    accessType: string;
+  };
+  let groupPermissions: {
+    credentialId: string;
+    groupId: string;
+    accessType: string;
+  };
   let users: UserWithAccessType[] = [];
   let groups: GroupWithAccessType[] = [];
 
@@ -62,22 +76,51 @@
     await toggleSelect({ detail: "Users" });
   };
 
-  const permissionChangeHandler = async (e: any, id: string, type: string) => {
-    console.log(e.detail, "cred details");
-    if (type == "user") {
-      await editUserPermissionForCredential(
-        credential.credentialId,
-        id,
-        e.detail
+  const savePermissions = async () => {
+    if (Object.keys(userPermissions).length !== 0) {
+      const userPermissionSaveResponse = await editUserPermissionForCredential(
+        userPermissions.credentialId,
+        userPermissions.userId,
+        userPermissions.accessType
       );
       await toggleSelect({ detail: "Users" });
-    } else {
-      await editGroupPermissionForCredential(
-        credential.credentialId,
-        id,
-        e.detail
-      );
+      accessChangeDetected = false;
+      changeToast = true;
+      permissionChangeAttemptMessage = userPermissionSaveResponse.message
+        ? userPermissionSaveResponse.message
+        : "Does not have access";
+    } else if (Object.keys(groupPermissions).length !== 0) {
+      const groupPermissionSaveResponse =
+        await editGroupPermissionForCredential(
+          groupPermissions.credentialId,
+          groupPermissions.groupId,
+          groupPermissions.accessType
+        );
       await toggleSelect({ detail: "Groups" });
+      accessChangeDetected = false;
+      changeToast = true;
+      permissionChangeAttemptMessage = groupPermissionSaveResponse.message
+        ? groupPermissionSaveResponse.message
+        : "Does not have access";
+    }
+    accessChangeDetected = false;
+  };
+
+  const permissionChangeHandler = async (e: any, id: string, type: string) => {
+    accessChangeDetected = true;
+    accessSelectorIdentifier.set(null);
+    if (type == "user") {
+      userPermissions = {
+        credentialId: credential.credentialId,
+        userId: id,
+        accessType: e.detail,
+      };
+    } else {
+      groupPermissions = {
+        credentialId: credential.credentialId,
+        groupId: id,
+        accessType: e.detail,
+      };
     }
   };
 
@@ -173,6 +216,7 @@
               <button
                 class="p-2 mr-1 rounded-lg bg-osvauld-sensitivebgblue"
                 on:click={() => {
+                  savePermissions();
                   accessChangeDetected = !accessChangeDetected;
                 }}
               >
@@ -214,6 +258,12 @@
                   permissionChangeHandler(e, user.id, "user")}
               />
             {/each}
+          {/if}
+          {#if changeToast}
+            <ShareToast
+              message={permissionChangeAttemptMessage}
+              on:close={() => (changeToast = !changeToast)}
+            />
           {/if}
         </div>
       {/if}
