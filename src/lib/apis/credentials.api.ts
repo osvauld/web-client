@@ -183,8 +183,7 @@ export const getSearchFields = async () => {
 
 export const editUserPermissionForCredential = async (credentialId: string, userId: string, accessType: string) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -199,8 +198,7 @@ export const editUserPermissionForCredential = async (credentialId: string, user
 
 export const editGroupPermissionForCredential = async (credentialId: string, groupId: string, accessType: string) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
