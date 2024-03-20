@@ -48,6 +48,7 @@
       {#each existingItemsData as item, index}
         <!-- TODO: user should not be able to remove themselves -->
         <ExistingListItem
+          {index}
           {item}
           on:remove={() => handleRemoval(item)}
           on:permissonChange={(e) => handlePermissionChange(e, item)}

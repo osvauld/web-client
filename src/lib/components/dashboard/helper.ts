@@ -1,12 +1,11 @@
 import browser from "webextension-polyfill";
-type TypeToClassKey = "read" | "write" | "owner";
+type TypeToClassKey = "read" | "manage";
 
 export const setbackground = (type: TypeToClassKey): string => {
 
     const typeToClassMap: Record<TypeToClassKey, string> = {
         read: "bg-osvauld-readerOrange text-osvauld-readerText",
-        write: "bg-osvauld-managerPurple text-osvauld-managerText",
-        owner: "bg-osvauld-ownerGreen text-osvauld-ownerText"
+        manage: "bg-osvauld-managerPurple text-osvauld-managerText",
     };
 
     return typeToClassMap[type] || "";
