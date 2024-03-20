@@ -20,7 +20,7 @@
   onMount(async () => {
     if (!$selectedFolder) throw new Error("folder not selected");
     const responseJson = await fetchCredentialsFieldsByFolderId(
-      $selectedFolder.id,
+      $selectedFolder.id
     );
     credentialsFields = responseJson.data;
   });
@@ -40,9 +40,7 @@
     class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6"
   >
     <div class="flex justify-between items-center p-3">
-      <span class="font-sans text-white text-28 font-normal"
-        >Share Credentials</span
-      >
+      <span class="font-sans text-white text-28 font-normal">Share Folder</span>
       <button class="p-2" on:click={() => showFolderShareDrawer.set(false)}
         ><ClosePanel /></button
       >
