@@ -2,6 +2,7 @@
   import {
     fetchAllUserUrls,
     fetchCredsByIds,
+    fetchSensitiveFieldsByCredentialId,
   } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
   import { onMount } from "svelte";
@@ -15,6 +16,7 @@
   let selectedCredentialIndex: number | undefined;
   let domain: string | null = null;
   let creds: Credential[] = [];
+  let selectedPassword: string = "";
 
   const openFullscreenTab = async () => {
     await browser.runtime.sendMessage({ action: "openFullscreenTab" });
@@ -24,6 +26,7 @@
     [key: string]: {
       username: string;
       password: string;
+      credentialId: string;
     };
   };
   let credMap: CredMap = {};
@@ -57,16 +60,26 @@
           });
           username = response.data;
         }
-        if (field.fieldName == "Password") {
-          password = field.fieldValue;
-        }
       }
       // @ts-ignore
-      credMap[cred.credentialId] = { username, password };
+      credMap[cred.credentialId] = {
+        username,
+        password,
+        credentialId: cred.credentialId,
+      };
     }
   });
 
-  const dropDownClicked = (index: number) => {
+  const dropDownClicked = async (index: number, credentialId: string) => {
+    if (!credentialClicked) {
+      const response = await fetchSensitiveFieldsByCredentialId(credentialId);
+      for (let i = 0; i < response.data.length; i++) {
+        if (response.data[i].fieldName === "Password") {
+          selectedPassword = response.data[i].fieldValue;
+        }
+      }
+    }
+
     credentialClicked = !credentialClicked;
     selectedCredentialIndex = index;
   };
@@ -126,7 +139,7 @@
           {#each Object.values(credMap) as credential, index}
             <button
               class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex flex-col justify-center items-center w-[98%] mb-3 cursor-default"
-              on:click={() => dropDownClicked(index)}
+              on:click={() => dropDownClicked(index, credential.credentialId)}
             >
               <div
                 class="w-full flex justify-between items-center {selectedCredentialIndex ===
@@ -170,7 +183,7 @@
                   </div>
                   <EncryptedField
                     fieldName={"Password"}
-                    fieldValue={credential.password}
+                    fieldValue={selectedPassword}
                   />
                 </div>
               {/if}

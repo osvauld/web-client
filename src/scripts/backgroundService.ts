@@ -1,5 +1,8 @@
 
 import browser from "webextension-polyfill";
+import { createChallenge, finalRegistration, initiateAuth } from '../lib/apis/auth.api.js';
+import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
+import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields } from './rust_openpgp_wasm.js';
 
 type CredentialsForUsersPayload = {
     accessType?: string;
@@ -7,10 +10,6 @@ type CredentialsForUsersPayload = {
     credentials: CredentialFields[];
 }
 type UserListForEncryption = { id: string, publicKey: string, accessType?: string };
-import { createChallenge, finalRegistration, initiateAuth } from '../lib/apis/auth.api.js';
-import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
-// @ts-ignore
-import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields } from './rust_openpgp_wasm.js';
 
 export const decryptCredentialFieldsHandler = async (credentials: CredentialFields[]) => {
 
