@@ -137,11 +137,7 @@ browser.runtime.onMessage.addListener(async (request) => {
     case "addCredential":
       return addCredentialHandler(request.data);
     case "createShareCredPayload":
-      console.log('createShareCredPayload', request.data);
-      //@ts-ignore
-      const response = await createShareCredsPayload(request.data.creds, request.data.users);
-      console.log(response)
-      return response;
+      return createShareCredsPayload(request.data.creds, request.data.users);
 
     default:
       console.log(request.action)
