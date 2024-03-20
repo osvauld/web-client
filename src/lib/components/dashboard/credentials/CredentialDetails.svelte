@@ -243,6 +243,7 @@
               <ExistingListItem
                 item={group}
                 {index}
+                groupAccess={true}
                 on:remove={() => removeGroupFromCredentialHandler(group)}
                 on:permissonChange={(e) =>
                   permissionChangeHandler(e, group.groupId, "group")}
@@ -253,6 +254,7 @@
               <ExistingListItem
                 item={user}
                 {index}
+                groupAccess={false}
                 on:remove={() => removeUserFromCredentialHandler(user)}
                 on:permissonChange={(e) =>
                   permissionChangeHandler(e, user.id, "user")}

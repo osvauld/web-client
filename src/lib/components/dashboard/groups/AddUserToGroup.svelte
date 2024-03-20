@@ -138,7 +138,7 @@
             class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
             on:click={() => {
               approveSelections();
-            }}>Share</button
+            }}>Add</button
           >
         </div>
       </div>

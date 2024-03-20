@@ -9,10 +9,12 @@
     isPermissionChanged,
     accessSelectorIdentifier,
   } from "../store";
+  import GroupAccessSelector from "./GroupAccessSelector.svelte";
 
   const dispatch = createEventDispatcher();
   export let item;
   export let index;
+  export let groupAccess;
 
   const handleItemRemove = () => {
     dispatch("remove");
@@ -27,6 +29,8 @@
     isPermissionChanged.set(!$isPermissionChanged);
     accessSelectorIdentifier.set(index);
   };
+
+  console.log("group access =>", groupAccess);
 </script>
 
 <div
@@ -61,7 +65,11 @@
     </button>
     {#if $accessSelectorIdentifier === index}
       <!-- Here check the index with editpermission trigger -->
-      <AccessSelector on:select={(e) => eventPasser(e)} />
+      {#if groupAccess}
+        <GroupAccessSelector on:select={(e) => eventPasser(e)} />
+      {:else}
+        <AccessSelector on:select={(e) => eventPasser(e)} />
+      {/if}
     {/if}
     {#if $editPermissionTrigger}
       <button

@@ -24,7 +24,7 @@
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase()),
+        group.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : groups;
 
@@ -120,6 +120,7 @@
         item={group}
         isSelected={index === selectionIndex && topList}
         isTopList={true}
+        groupAccess={true}
         on:click={() => handleClick(index, true)}
         on:remove={() => handleItemRemove(groupId)}
         {setbackground}
@@ -132,6 +133,7 @@
         item={group}
         isSelected={index === selectionIndex && !topList}
         isTopList={false}
+        groupAccess={true}
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}

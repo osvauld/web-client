@@ -4,11 +4,13 @@
   export let isTopList: boolean;
   export let setbackground: any;
   export let showOptions: boolean;
+  export let groupAccess: boolean;
 
   import { BinIcon, DownArrow } from "../icons";
   import AccessSelector from "./AccessSelector.svelte";
 
   import { createEventDispatcher } from "svelte";
+  import GroupAccessSelector from "./GroupAccessSelector.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -45,13 +47,17 @@
     <div class="flex justify-center items-center">
       <button
         class="w-[6.25rem] rounded-md cursor-pointer px-2 py-1 pl-2 flex justify-between items-center {setbackground(
-          item.accessType,
+          item.accessType
         )}"
         >{item.accessType}
         <span> <DownArrow type={item.accessType} /></span>
       </button>
       {#if showOptions && isSelected}
-        <AccessSelector on:select={(e) => eventPasser(e)} />
+        {#if groupAccess}
+          <GroupAccessSelector on:select={(e) => eventPasser(e)} />
+        {:else}
+          <AccessSelector on:select={(e) => eventPasser(e)} />
+        {/if}
       {/if}
       <button class="ml-2" on:click|stopPropagation={handleRemove}
         ><BinIcon /></button
@@ -59,6 +65,10 @@
     </div>
   {/if}
   {#if !isTopList && showOptions && isSelected}
-    <AccessSelector on:select={(e) => eventPasser(e)} />
+    {#if groupAccess}
+      <GroupAccessSelector on:select={(e) => eventPasser(e)} />
+    {:else}
+      <AccessSelector on:select={(e) => eventPasser(e)} />
+    {/if}
   {/if}
 </div>

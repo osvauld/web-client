@@ -11,9 +11,9 @@
     ShareFolderWithUsersPayload,
     CredentialFields,
   } from "../dtos";
-  import { selectedFolder, showFolderShareDrawer } from "../store";
+  import { selectedFolder } from "../store";
   import { setbackground } from "../helper";
-  import { Lens, DownArrow, RightArrow } from "../icons";
+  import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
   import ShareToast from "../components/ShareToast.svelte";
   import ExistingListParent from "../components/ExistingListParent.svelte";
@@ -32,7 +32,7 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase()),
+        user.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : users;
 
@@ -104,7 +104,7 @@
     await editFolderPermissionForUser(
       $selectedFolder.id,
       e.detail.item.id,
-      e.detail.permission,
+      e.detail.permission
     );
     await existingUsers(false);
   };
@@ -133,6 +133,7 @@
         item={user}
         isSelected={index === selectionIndex && topList}
         isTopList={true}
+        groupAccess={false}
         on:click={() => handleClick(index, true)}
         on:remove={() => handleItemRemove(index)}
         {setbackground}
@@ -145,6 +146,7 @@
         item={user}
         isSelected={index === selectionIndex && !topList}
         isTopList={false}
+        groupAccess={false}
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}
@@ -165,7 +167,10 @@
     >
   </div>
   {#if shareToast}
-    <ShareToast on:close={() => (shareToast = !shareToast)} />
+    <ShareToast
+      message={"Shared folder with user"}
+      on:close={() => (shareToast = !shareToast)}
+    />
   {/if}
 </div>
 
@@ -173,6 +178,7 @@
   {existingItemDropdown}
   existingItemsData={existingUserData}
   user={true}
+  groupAccess={false}
   on:click={() => existingUsers()}
   on:remove={(e) => removeExistingUser(e)}
   on:permissionChange={(e) => handlePermissionChange(e)}

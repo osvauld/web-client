@@ -6,6 +6,7 @@
   export let existingItemDropdown;
   export let existingItemsData;
   export let user;
+  export let groupAccess;
 
   const dispatch = createEventDispatcher();
 
@@ -48,7 +49,9 @@
       {#each existingItemsData as item, index}
         <!-- TODO: user should not be able to remove themselves -->
         <ExistingListItem
+          {index}
           {item}
+          {groupAccess}
           on:remove={() => handleRemoval(item)}
           on:permissonChange={(e) => handlePermissionChange(e, item)}
         />
