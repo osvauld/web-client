@@ -19,12 +19,15 @@
     groupUsers,
   } from "../store";
   import ShareToast from "../components/ShareToast.svelte";
+  import RoleSelector from "../components/roleSelector.svelte";
 
   let users: User[] = [];
   let userDataForApproval: User;
   let searchInput = "";
+  let selectedPermission = null;
   let selectedUserIndice = null;
   let finalBanner = false;
+  let roleSelectionPrompt = false;
   let credentialFields: CredentialFields[] = [];
   onMount(async () => {
     if (!$selectedGroup) return;
@@ -39,6 +42,8 @@
   });
 
   const approveSelections = async () => {
+    if (!selectedPermission) return;
+    console.log("Selected Permission ", selectedPermission);
     const userData = await browser.runtime.sendMessage({
       action: "createShareCredPayload",
       data: {
@@ -49,7 +54,7 @@
     const payload = {
       groupId: $selectedGroup.groupId,
       memberId: userDataForApproval.id,
-      memberRole: "member",
+      memberRole: selectedPermission,
       credentials: userData[0].credentials,
     };
     const userAdditionResponse = await addUserToGroup(payload);
@@ -61,11 +66,17 @@
   };
 
   const addUsertoGroup = async (user: User, selectedUser: number) => {
+    roleSelectionPrompt = true;
     selectedUserIndice = selectedUser;
     userDataForApproval = user;
     if ($selectedGroup === null) {
       throw new Error("Group not selected");
     }
+  };
+
+  const selectionMaker = async (e) => {
+    selectedPermission = e.detail.permission;
+    roleSelectionPrompt = false;
   };
 
   const closeDrawer = () => {
@@ -106,7 +117,7 @@
         <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
 
         <div
-          class="overflow-y-auto scrollbar-thin bg-osvauld-frameblack w-full"
+          class="overflow-y-auto scrollbar-thin bg-osvauld-frameblack w-full min-h-[40vh] max-h-[70vh]"
         >
           {#each users as user, index}
             <li
@@ -115,11 +126,14 @@
               <div class="flex items-center justify-between px-3">
                 <span class="text-base">{user.name}</span>
                 <button
-                  class="p-2"
+                  class="p-2 relative"
                   on:click={() => addUsertoGroup(user, index)}
                 >
                   {#if selectedUserIndice === index}
-                    <UserCheck />
+                    <svelte:component
+                      this={roleSelectionPrompt ? RoleSelector : UserCheck}
+                      on:select={selectionMaker}
+                    />
                   {:else}
                     <UserPlus />
                   {/if}
@@ -127,19 +141,19 @@
               </div>
             </li>
           {/each}
-        </div>
-        <div class="p-2 flex justify-between items-center box-border">
-          <button
-            class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
-            on:click={closeDrawer}>Cancel</button
-          >
+          <div class="p-2 flex justify-between items-center box-border">
+            <button
+              class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
+              on:click={closeDrawer}>Cancel</button
+            >
 
-          <button
-            class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
-            on:click={() => {
-              approveSelections();
-            }}>Share</button
-          >
+            <button
+              class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
+              on:click={() => {
+                approveSelections();
+              }}>Add</button
+            >
+          </div>
         </div>
       </div>
       {#if finalBanner}
