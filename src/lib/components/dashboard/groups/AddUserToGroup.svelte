@@ -117,11 +117,11 @@
         <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
 
         <div
-          class="overflow-y-auto scrollbar-thin bg-osvauld-frameblack w-full min-h-[40vh] max-h-[70vh]"
+          class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full min-h-[40vh] max-h-[70vh]"
         >
           {#each users as user, index}
             <li
-              class="list-none my-1 py-1 border border-osvauld-bordergreen rounded-lg hover:bg-osvauld-bordergreen"
+              class="list-none my-1 py-1 mr-1 border border-osvauld-bordergreen rounded-lg hover:bg-osvauld-bordergreen"
             >
               <div class="flex items-center justify-between px-3">
                 <span class="text-base">{user.name}</span>
@@ -141,20 +141,20 @@
               </div>
             </li>
           {/each}
-          <div class="p-2 flex justify-between items-center box-border">
-            <button
-              class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
-              on:click={closeDrawer}>Cancel</button
-            >
-
-            <button
-              class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
-              on:click={() => {
-                approveSelections();
-              }}>Add</button
-            >
-          </div>
         </div>
+      </div>
+      <div class="p-2 flex justify-between items-center box-border">
+        <button
+          class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
+          on:click={closeDrawer}>Cancel</button
+        >
+
+        <button
+          class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
+          on:click={() => {
+            approveSelections();
+          }}>Add</button
+        >
       </div>
       {#if finalBanner}
         <ShareToast

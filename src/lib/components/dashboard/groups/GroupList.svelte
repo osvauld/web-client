@@ -4,13 +4,11 @@
 
   import {
     selectedGroup,
-    showAddUserDrawer,
     showAddUserToGroupDrawer,
     allUsersSelected,
     adminStatus,
   } from "../store";
 
-  import AddUser from "./AddUser.svelte";
   import AddUserToGroup from "./AddUserToGroup.svelte";
 
   import { User } from "../dtos";
@@ -45,20 +43,14 @@
 </script>
 
 <div class="z-50">
-  {#if $showAddUserDrawer || $showAddUserToGroupDrawer}
+  {#if $showAddUserToGroupDrawer}
     <button
       class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
       on:click={() => {}}
     >
-      {#if $showAddUserDrawer}
-        <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
-          <AddUser />
-        </button>
-      {:else if $showAddUserToGroupDrawer}
-        <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
-          <AddUserToGroup />
-        </button>
-      {/if}
+      <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
+        <AddUserToGroup />
+      </button>
     </button>
   {/if}
 </div>
