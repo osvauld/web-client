@@ -1,7 +1,7 @@
 <script>
   import { getTokenAndBaseUrl } from "../helper";
   import Loader from "../components/Loader.svelte";
-  import { showAddUserDrawer } from "../store";
+  import { showAddUserDrawer, allUsersSelected } from "../store";
   import { createUser } from "../apis";
   import { ClosePanel, Tick } from "../icons";
 
@@ -12,7 +12,8 @@
   let isLoaderActive = false;
   $: activeButton = username.length >= 3 && name.length >= 3;
 
-  const submit = async () => {
+  const submit = async (event) => {
+    event.preventDefault();
     isLoaderActive = true;
     const { baseUrl } = await getTokenAndBaseUrl();
     const payload = {
@@ -21,13 +22,14 @@
       tempPassword,
     };
     await createUser(payload);
-    const shareWithMember = { username, tempPassword, baseUrl };
+    const shareWithMember = JSON.stringify({ username, tempPassword, baseUrl });
     await navigator.clipboard.writeText(shareWithMember);
     copiedToClipboard = true;
     isLoaderActive = false;
     setTimeout(() => {
       showAddUserDrawer.set(false);
-    }, 4000);
+      allUsersSelected.set(true);
+    }, 3000);
   };
 
   const handleClose = () => {
@@ -88,7 +90,7 @@
     </div>
 
     <button
-      class="w-full px-4 py-2 mt-3 border border-osvauld-placeholderblack rounded-md {activeButton
+      class="w-full px-4 py-2 mt-3 flex justify-center items-center border border-osvauld-placeholderblack rounded-md {activeButton
         ? 'bg-osvauld-carolinablue text-osvauld-ninjablack'
         : 'bg-osvauld-iconblack text-osvauld-sheffieldgrey'}"
       type="submit"
@@ -97,7 +99,8 @@
       {#if isLoaderActive}
         <Loader />
       {:else if copiedToClipboard}
-        <Tick /> Copied to clipboard
+        <Tick />
+        <span class="ml-2">Copied to clipboard</span>
       {:else}
         Create User
       {/if}
