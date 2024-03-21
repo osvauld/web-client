@@ -1,6 +1,7 @@
 <script>
-  import { Lens, Add, BinIcon, EditIcon } from "../icons";
+  import { Lens, Add, BinIcon } from "../icons";
   import { showAddUserDrawer } from "../store";
+  import AddUser from "./AddUser.svelte";
 
   export let allUsers;
 </script>
@@ -45,13 +46,27 @@
             <td class="py-6 px-6 text-left">
               {user.username}
             </td>
-            <td class="flex justify-between items-center py-6 w-[4rem]">
+            <td
+              class="flex justify-center items-center py-6 w-[4rem] cursor-pointer"
+            >
               <BinIcon />
-              <EditIcon />
             </td>
           </tr>
         {/each}
       </tbody>
     </table>
   </div>
+</div>
+
+<div class="z-50">
+  {#if $showAddUserDrawer}
+    <button
+      class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
+      on:click={() => {}}
+    >
+      <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
+        <AddUser />
+      </button>
+    </button>
+  {/if}
 </div>

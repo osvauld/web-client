@@ -90,23 +90,21 @@
 
 <div class="flex flex-col h-auto">
   <div class="h-[7.8rem] pr-4 flex justify-between items-center">
-    {#if !showModal}
-      <div
-        class="h-[2.2rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
-      >
-        <Lens />
-        <input
-          type="text"
-          class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-          placeholder="Search.."
-          autofocus
-          on:click={getSearchData}
-          on:input={handleInputChange}
-          bind:value={query}
-          on:keydown={handleKeyDown}
-        />
-      </div>
-    {/if}
+    <div
+      class="h-[2.2rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+    >
+      <Lens />
+      <input
+        type="text"
+        class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+        placeholder="Search.."
+        autofocus
+        on:click={getSearchData}
+        on:input={handleInputChange}
+        bind:value={query}
+        on:keydown={handleKeyDown}
+      />
+    </div>
     <div><Profile /></div>
     <!-- Content for the top part (search bar) -->
     <!-- Horizontal line -->
@@ -116,14 +114,14 @@
     <div
       class="fixed z-10 inset-0 overflow-y-auto backdrop-filter backdrop-blur-[2px]"
     >
-      <div class="flex items-center justify-center min-h-screen">
+      <div class="flex items-start justify-center min-h-screen mt-[3vh]">
         <button class="fixed inset-0 bg-black opacity-50" on:click={closeModal}>
         </button>
         <div
-          class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
+          class="bg-osvauld-frameblack border border-osvauld-defaultBorder rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw]"
         >
           <div
-            class="h-[2.2rem] w-[90%] px-2 mx-auto mt-4 flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+            class="h-[2.2rem] w-[90%] px-2 mx-auto mt-4 flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
           >
             <Lens />
             <input
@@ -165,17 +163,16 @@
                   >
                     <div class="text-base flex font-semibold">
                       <Highlight text={result.name} {query} />&nbsp;
-                      <span>in</span>&nbsp;
+                      <span>in folder</span>&nbsp;
                       <Highlight text={result.folderName} {query} />
                     </div>
                     <div class="text-sm font-normal">
                       <Highlight text={result.domain} {query} />
                     </div>
-                    <div class="text-sm font-normal">
-                      <Highlight text={result.description} {query} />
-                    </div>
                   </div>
-                  <LinkIcon />
+                  <div class="flex justify-center items-center">
+                    <LinkIcon />
+                  </div>
                 </button>
               {/each}
             </div>

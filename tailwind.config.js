@@ -77,6 +77,8 @@ export default {
           plainwhite: "#FFF",
           toastCloseBlue: "#2D3A4D",
           backgroundBlur: "#010409ad",
+          activeBorder: "#4D4F60",
+          defaultBorder: "#2F303E",
         },
       },
       fontFamily: {

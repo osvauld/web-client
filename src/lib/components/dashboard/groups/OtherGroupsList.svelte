@@ -1,5 +1,5 @@
 <script>
-  import { Lens, Add, BinIcon, EditIcon } from "../icons";
+  import { Lens, Add, BinIcon } from "../icons";
   import { showAddUserToGroupDrawer } from "../store";
   import { groupUsers } from "../store";
 
@@ -30,7 +30,7 @@
   <table class="min-w-max w-full table-auto table-layout-fixed">
     <thead>
       <tr class="leading-normal text-lg">
-        <th class="py-3 px-3 text-left whitespace-nowrap w-1/4 pl-6">Name</th>
+        <th class="py-3 px-3 text-left whitespace-nowrap w-1/5 pl-6">Name</th>
         <th class="py-3 px-3 text-left whitespace-nowrap w-1/3">Username</th>
       </tr>
     </thead>
@@ -46,9 +46,10 @@
             <td class="py-6 px-6 text-left">
               {user.username}
             </td>
-            <td class="flex justify-between items-center py-6 w-[4rem]">
+            <td
+              class="flex justify-center items-center py-6 w-[4rem] cursor-pointer"
+            >
               <BinIcon />
-              <EditIcon />
             </td>
           </tr>
         {/each}
