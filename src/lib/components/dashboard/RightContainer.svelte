@@ -118,7 +118,7 @@
         <button class="fixed inset-0 bg-black opacity-50" on:click={closeModal}>
         </button>
         <div
-          class="bg-osvauld-frameblack border border-osvauld-defaultBorder rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw]"
+          class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw]"
         >
           <div
             class="h-[2.2rem] w-[90%] px-2 mx-auto mt-4 flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"

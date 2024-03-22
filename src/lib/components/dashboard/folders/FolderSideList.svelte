@@ -41,7 +41,7 @@
 
 <div>
   <button
-    class="bg-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-illutionpurple hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-11 mb-4 flex justify-center items-center xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
+    class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-illutionpurple hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-14 mb-4 flex justify-center items-center xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
     on:mouseenter={() => (iconColor = "#000")}
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={openModal}
