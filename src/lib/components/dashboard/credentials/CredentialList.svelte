@@ -5,7 +5,7 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add } from "../icons";
+  import { Share, Add, InfoIcon } from "../icons";
   import { fetchFolderUsers, fetchAllUsers, fetchAllUserGroups } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
 
@@ -18,13 +18,14 @@
     showCredentialDetailsDrawer,
   } from "../store";
   import { onDestroy } from "svelte";
+  import DownArrow from "../../basic/icons/downArrow.svelte";
 
   let checkedCards: Credential[] = [];
   let users: User[] = [];
   let allGroups: Group[] = [];
   let selectedCard: any;
   let sensitiveFields: Fields[] = [];
-  $: addIconColor = checkedCards.length === 0 ? "#000" : "#6E7681";
+
   $: sortedCredentials = $credentialStore.sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
@@ -98,28 +99,36 @@
         </h1>
         <!-- TODO: update to share credentials in the same api -->
         <button
-          class=" bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+          class="rounded-md border border-osvauld-iconblack py-1 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
           on:click={() => showFolderShareDrawer.set(true)}
         >
-          <Share /> <span class="ml-1">Share Folder</span>
+          <Share color={"#A3A4B5"} /> <span class="ml-1">Share Folder</span>
         </button>
         <button
-          class=" bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+          class=" bg-osvauld-carolinablue rounded-md py-0.5 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
           on:click={() => showCredentialShareDrawer.set(true)}
         >
-          <Share /><span class="ml-1">Share Secrets</span>
+          <Share color={"#0D0E13"} /><span class="ml-1">Share Secrets</span>
         </button>
       </div>
-      <button
-        class="bg rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 {checkedCards.length ===
-        0
-          ? 'bg-osvauld-carolinablue text-osvauld-ninjablack'
-          : 'bg-osvauld-iconblack text-osvauld-sheffieldgrey'}"
-        on:click={() => showCredentialEditor.set(true)}
-        disabled={checkedCards.length !== 0}
-        ><Add color={addIconColor} />
-        <span class="ml-1"> Add New Credential</span>
-      </button>
+      <div class="w-1/2 flex justify-end items-center">
+        <button>
+          <InfoIcon />
+        </button>
+        <button
+          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-0.5 px-2 rounded-md ml-4"
+        >
+          <span class="mr-1">Latest</span>
+          <DownArrow type={"common"} />
+        </button>
+        <button
+          class="rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 border text-osvauld-textActive border-osvauld-iconblack"
+          on:click={() => showCredentialEditor.set(true)}
+          disabled={checkedCards.length !== 0}
+          ><Add color={"#A3A4B5"} />
+          <span class="ml-1">Add New Credential</span>
+        </button>
+      </div>
     </div>
   {/if}
   {#if $showCredentialEditor}
