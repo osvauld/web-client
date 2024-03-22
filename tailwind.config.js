@@ -41,9 +41,9 @@ export default {
           crust: "#11111b",
         },
         osvauld: {
-          frameblack: "#0D1117",
+          frameblack: "#0D0E13",
           bordergreen: "#161B22",
-          iconblack: "#21262D",
+          iconblack: "#2F303E",
           ninjablack: "#010409",
           sheffieldgrey: "#6E7681",
           placeholderblack: "#30363D",

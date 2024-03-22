@@ -44,7 +44,7 @@
 
 <main>
   <div
-    class="w-[22.5rem] h-[36.78rem] p-2 pt-3 flex flex-col {$isSignedUp &&
+    class="w-[22.5rem] h-[36.78rem] p-2 pt-3 flex flex-col !font-sans {$isSignedUp &&
     !loggedIn
       ? 'justify-center'
       : 'justify-start'} items-center bg-osvauld-frameblack"
