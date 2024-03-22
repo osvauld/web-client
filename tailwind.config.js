@@ -44,6 +44,7 @@ export default {
           frameblack: "#0D0E13",
           bordergreen: "#161B22",
           iconblack: "#2F303E",
+          cardshade: "#111218",
           ninjablack: "#010409",
           sheffieldgrey: "#6E7681",
           placeholderblack: "#30363D",
@@ -79,6 +80,8 @@ export default {
           backgroundBlur: "#010409ad",
           activeBorder: "#4D4F60",
           defaultBorder: "#2F303E",
+          textActive: "#A3A4B5",
+          textPassive: "#6E7681",
         },
       },
       fontFamily: {
