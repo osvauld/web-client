@@ -17,6 +17,8 @@
   const handleItemRemove = () => {
     dispatch("remove");
   };
+
+  console.log(item.accessType);
   const eventPasser = (e) => {
     item = { ...item, accessType: e.detail.permission };
     isPermissionChanged.set(!$isPermissionChanged);

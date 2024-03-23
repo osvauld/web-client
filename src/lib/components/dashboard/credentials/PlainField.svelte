@@ -14,17 +14,17 @@
   };
 </script>
 
-<div class="mb-4 mr-1 max-w-full">
+<div class="mb-2 mr-1 max-w-full">
   <label
     class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
     for="field">{fieldName}</label
   >
   <div
-    class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base {bgColor
+    class="py-1.5 px-3 w-full flex justify-between items-center rounded-lg text-base {bgColor
       ? bgColor
-      : 'bg-osvauld-bordergreen'} border-osvauld-iconblack {hoverEffect
-      ? 'text-osvauld-quarzowhite'
-      : 'text-osvauld-sheffieldgrey'}"
+      : 'bg-osvauld-fieldActive '}{hoverEffect
+      ? 'text-osvauld-fieldTextActive'
+      : 'text-osvauld-fieldText'}"
   >
     <span class="w-full text-left overflow-x-hidden">{fieldValue}</span>
     <button on:click={copyToClipboard}>
