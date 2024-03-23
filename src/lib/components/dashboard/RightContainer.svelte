@@ -67,7 +67,6 @@
     selectedFolder.set(folder);
     selectedCredential.set(null);
     const responseJson = await fetchCredentialsByFolder(folder.id);
-
     const response = await browser.runtime.sendMessage({
       action: "decryptMeta",
       data: responseJson.data,
@@ -81,10 +80,18 @@
     closeModal();
   };
 
+  selectedPage.subscribe(() => {
+    credentialStore.set([]);
+  });
+
   function handleKeyDown(event) {
     if (event.key === "Enter") {
       getSearchData();
     }
+  }
+
+  function autofocus(node) {
+    node.focus();
   }
 </script>
 
@@ -98,7 +105,7 @@
         type="text"
         class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
         placeholder="Search.."
-        autofocus
+        use:autofocus
         on:click={getSearchData}
         on:input={handleInputChange}
         bind:value={query}
@@ -128,7 +135,7 @@
               type="text"
               class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
               placeholder="Search.."
-              autofocus
+              use:autofocus
               on:click={getSearchData}
               on:input={handleInputChange}
               bind:value={query}
@@ -194,7 +201,7 @@
     </div>
   {/if}
   <div
-    class="h-auto min-h-[85vh] bg-osvauld-frameblack border-2 border-osvauld-iconblack rounded-2xl mr-4"
+    class="h-auto min-h-[85vh] bg-osvauld-frameblack border border-osvauld-iconblack rounded-2xl mr-4"
   >
     <!-- Content for the bottom part (dynamic content) -->
     {#if $selectedPage === "Folders"}

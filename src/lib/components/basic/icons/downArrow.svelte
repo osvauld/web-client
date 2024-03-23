@@ -2,8 +2,8 @@
   export let type;
   function setbackground(type) {
     const typeToClassMap = {
-      read: "#F9E2AF",
-      manage: "#F5C2E7",
+      reader: "#F9E2AF",
+      manager: "#F5C2E7",
       common: "#6E7681",
     };
     return typeToClassMap[type] || "";

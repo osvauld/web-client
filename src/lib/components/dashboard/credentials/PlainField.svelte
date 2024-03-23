@@ -20,7 +20,7 @@
     for="field">{fieldName}</label
   >
   <div
-    class="py-1.5 px-3 w-full flex justify-between items-center rounded-lg text-base {bgColor
+    class="py-1 px-3 w-full flex justify-between items-center rounded-lg text-base {bgColor
       ? bgColor
       : 'bg-osvauld-fieldActive '}{hoverEffect
       ? 'text-osvauld-fieldTextActive'
