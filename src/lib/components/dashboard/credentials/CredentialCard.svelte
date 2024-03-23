@@ -86,7 +86,7 @@
       <input
         type="checkbox"
         id="credentialChecker{index}"
-        class="bg-osvauld-cardshade mr-2 border-osvauld-activeBorder checked:bg-osvauld-lilacpink active:outline-none focus:text-primary focus:ring-offset-0 focus:ring-0 cursor-pointer"
+        class="bg-osvauld-cardshade mr-2 border-osvauld-activeBorder checked:bg-osvauld-activelavender focus:text-osvauld-activelavender hover:text-osvauld-activelavender active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
         on:change|stopPropagation={(e) => {
           toggleCheck();
         }}
@@ -134,7 +134,7 @@
       Description
     </label>
     <div
-      class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-cardshade rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
+      class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
       {hoverEffect ? 'text-osvauld-fieldTextActive' : 'text-osvauld-fieldText'}"
       id="credential-description"
     >
@@ -142,3 +142,48 @@
     </div>
   </button>
 </button>
+
+<style>
+  input[type="checkbox"] {
+    appearance: none;
+    position: relative;
+  }
+
+  input[type="checkbox"]::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background-color: #b4befe;
+    z-index: 50;
+    opacity: 0;
+  }
+
+  input[type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15px;
+    height: 11px;
+    background-color: #0d1117;
+    clip-path: path(
+      "M4.60852 10.4792C4.34185 10.4792 4.07518 10.3792 3.87102 10.175L0.000183105 6.3L0.883517 5.41667L4.60852 9.14167L13.7502 0L14.6335 0.883333L5.34602 10.1708C5.14185 10.375 4.87518 10.475 4.60852 10.475V10.4792Z"
+    );
+    opacity: 0;
+    z-index: 100;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  input[type="checkbox"]:checked::before {
+    opacity: 1;
+  }
+
+  input[type="checkbox"]:checked::after {
+    opacity: 1;
+  }
+</style>
