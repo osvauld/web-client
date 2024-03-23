@@ -71,7 +71,7 @@
 
 <button
   class="mb-3 max-w-[19rem] overflow-x-hidden flex-none hover:shadow-[0_0_0_1px_#B4BEFE] rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 border border-osvauld-iconblack"
-  style="border: {$borderHighLight ? '1px solid #48bb78' : ''}"
+  style="border: {$borderHighLight ? '1px solid #89B4FA' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
   on:click={handleClick}
@@ -93,7 +93,7 @@
         {checked}
       />
       <label
-        class="text-xl font-medium w-full text-left ml-2 cursor-pointer max-w-full overflow-x-hidden"
+        class="text-xl font-medium w-full text-left ml-2 cursor-pointer max-w-full text-osvauld-fieldTextActive overflow-x-hidden"
         for="credentialChecker{index}"
       >
         {credential.name}
@@ -104,12 +104,13 @@
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
     ></div>
     <div
-      class="w-[17rem] h-[14rem] overflow-y-scroll scrollbar-thin {hoverEffect
+      class="w-[17rem] h-[14rem] overflow-y-scroll scrollbar-thin pr-2 {hoverEffect
         ? 'active'
         : ''} mt-2"
     >
-      {#each credential.fields as field, index}
+      {#each credential.fields as field}
         <PlainField
+          bgColor={null}
           fieldName={field.fieldName}
           fieldValue={field.fieldValue}
           {hoverEffect}
@@ -118,6 +119,7 @@
       {#if sensitiveFields}
         {#each sensitiveFields as field}
           <EncryptedField
+            bgColor={null}
             fieldName={field.fieldName}
             fieldValue={field.fieldValue}
             {hoverEffect}
@@ -133,9 +135,7 @@
     </label>
     <div
       class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-cardshade rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
-            {hoverEffect
-        ? 'text-osvauld-quarzowhite'
-        : 'text-osvauld-sheffieldgrey'}"
+      {hoverEffect ? 'text-osvauld-fieldTextActive' : 'text-osvauld-fieldText'}"
       id="credential-description"
     >
       {credential.description}

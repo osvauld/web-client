@@ -82,6 +82,9 @@ export default {
           defaultBorder: "#2F303E",
           textActive: "#A3A4B5",
           textPassive: "#6E7681",
+          fieldActive: "#20212B",
+          fieldText: "#85889C",
+          fieldTextActive: "#BFC0CC",
         },
       },
       fontFamily: {

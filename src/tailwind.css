@@ -12,16 +12,16 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: #161B22; /* color of the thumb */
+  background-color: #4D4F60; /* color of the thumb */
   border-radius: 4px; /* roundness of the scrollbar thumb */
 }
 
 .active.scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: #21262D; /* color of the thumb */
+  background-color: #4D4F60; /* color of the thumb */
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background-color: #21262D; /* color of the thumb on hover */
+  background-color: #4D4F60; /* color of the thumb on hover */
 }
 
 

@@ -73,6 +73,8 @@
   onDestroy(() => {
     subscribe();
   });
+
+  console.log("All Credentials => ", sortedCredentials);
 </script>
 
 {#if $showCredentialDetailsDrawer}
@@ -118,7 +120,7 @@
         <button
           class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-0.5 px-2 rounded-md ml-4"
         >
-          <span class="mr-1">Latest</span>
+          <span class="mr-1 pl-2">Latest</span>
           <DownArrow type={"common"} />
         </button>
         <button
