@@ -70,14 +70,14 @@
 </script>
 
 <button
-  class="mb-3 max-w-[19rem] overflow-x-hidden flex-none hover:shadow-[0_0_0_1px_#B4BEFE] rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 border border-osvauld-iconblack"
+  class="mb-1 max-w-[19rem] overflow-x-hidden flex-none hover:shadow-[0_0_0_1px_#B4BEFE] rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 border border-osvauld-iconblack"
   style="border: {$borderHighLight ? '1px solid #89B4FA' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
   on:click={handleClick}
 >
   <button
-    class="container mx-auto py-3 pl-3 pr-3 relative group bg-osvauld-cardshade rounded-xl"
+    class="container mx-auto py-3 px-3 relative group bg-osvauld-cardshade rounded-xl"
   >
     <div
       class="flex justify-center items-center border-osvauld-iconblack pb-2"
@@ -86,7 +86,7 @@
       <input
         type="checkbox"
         id="credentialChecker{index}"
-        class="bg-osvauld-cardshade mr-2 border-osvauld-iconblack checked:bg-osvauld-lilacpink active:outline-none focus:text-primary focus:ring-offset-0 focus:ring-0 cursor-pointer"
+        class="bg-osvauld-cardshade mr-2 border-osvauld-activeBorder checked:bg-osvauld-lilacpink active:outline-none focus:text-primary focus:ring-offset-0 focus:ring-0 cursor-pointer"
         on:change|stopPropagation={(e) => {
           toggleCheck();
         }}
@@ -104,7 +104,7 @@
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
     ></div>
     <div
-      class="w-[17rem] h-[14rem] overflow-y-scroll scrollbar-thin pr-2 {hoverEffect
+      class="w-[17rem] h-[14rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
         ? 'active'
         : ''} mt-2"
     >

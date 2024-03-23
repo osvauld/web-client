@@ -183,7 +183,7 @@
             fieldName={field.fieldName}
             fieldValue={field.fieldValue}
             hoverEffect={true}
-            bgColor={"#0D1117"}
+            bgColor={null}
           />
         {/each}
         {#if sensitiveFields}
@@ -192,7 +192,7 @@
               fieldName={field.fieldName}
               fieldValue={field.fieldValue}
               hoverEffect={true}
-              bgColor={"#0D1117"}
+              bgColor={null}
             />
           {/each}
         {/if}

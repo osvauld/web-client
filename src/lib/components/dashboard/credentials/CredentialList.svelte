@@ -73,8 +73,6 @@
   onDestroy(() => {
     subscribe();
   });
-
-  console.log("All Credentials => ", sortedCredentials);
 </script>
 
 {#if $showCredentialDetailsDrawer}
@@ -172,10 +170,10 @@
     </button>
   {/if}
   <div
-    class="flex flex-wrap p-3 w-full max-h-[85vh] !overflow-y-scroll scrollbar-thin"
+    class="flex flex-wrap p-3 !pb-10 w-full max-h-[85vh] overflow-y-scroll scrollbar-thin"
   >
     {#each sortedCredentials as credential, index}
-      <div class="px-1 pb-1">
+      <div class="px-0.5 pb-0.5">
         <CredentialCard
           {credential}
           {index}
