@@ -114,6 +114,7 @@
     });
     addCredentialPaylod.userFields = response;
     if ($showEditCredentialDialog) {
+      console.log("Data for updataing =>", addCredentialPaylod);
       await updateCredential(addCredentialPaylod, $credentialIdForEdit);
     } else {
       await addCredential(addCredentialPaylod);
@@ -224,6 +225,7 @@
         placeholder="Enter Credential name...."
         autocomplete="off"
         autofocus
+        required
         bind:value={name}
       />
       {#each credentialFields as field, index}
