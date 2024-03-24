@@ -19,6 +19,7 @@
   } from "../store";
   import { onDestroy } from "svelte";
   import DownArrow from "../../basic/icons/downArrow.svelte";
+  import Placeholder from "../components/Placeholder.svelte";
 
   let checkedCards: Credential[] = [];
   let users: User[] = [];
@@ -90,7 +91,7 @@
   </button>
 {/if}
 
-<div>
+<div class="w-full max-h-[75vh] min-h-[70vh]">
   {#if $selectedFolder}
     <div class="flex justify-between items-center px-4 py-2">
       <div class="max-w-[50%] min-w-[30%] flex items-center">
@@ -129,6 +130,10 @@
           <span class="ml-1">Add New Credential</span>
         </button>
       </div>
+    </div>
+  {:else}
+    <div class="w-full max-h-[100vh] min-h-[70vh] mt-20">
+      <Placeholder />
     </div>
   {/if}
   {#if $showCredentialEditor}
@@ -169,18 +174,18 @@
       </button>
     </button>
   {/if}
-  <div
-    class="flex flex-wrap p-3 !pb-10 w-full max-h-[85vh] overflow-y-scroll scrollbar-thin"
-  >
-    {#each sortedCredentials as credential, index}
-      <div class="px-0.5 pb-0.5">
+  {#if sortedCredentials.length !== 0}
+    <div
+      class="grid grid-cols-4 gap-1.5 2xl:gap-3 3xl:gap-4 p-3 w-full max-h-[75vh] overflow-y-scroll overflow-x-hidden scrollbar-thin"
+    >
+      {#each sortedCredentials as credential, index}
         <CredentialCard
           {credential}
           {index}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
         />
-      </div>
-    {/each}
-  </div>
+      {/each}
+    </div>
+  {/if}
 </div>

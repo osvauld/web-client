@@ -59,14 +59,14 @@
 </script>
 
 <button
-  class="mb-1 max-w-[19rem] overflow-x-hidden flex-none hover:shadow-[0_0_0_1px_#B4BEFE] rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75 border border-osvauld-iconblack"
+  class="mb-1 max-w-[19rem] overflow-x-hidden flex-none hover:shadow-[0_0_0_1px_#B4BEFE] rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack"
   style="border: {$borderHighLight ? '1px solid #89B4FA' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
   on:click={handleClick}
 >
   <button
-    class="container mx-auto py-3 px-3 relative group bg-osvauld-cardshade rounded-xl"
+    class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
   >
     <div
       class="flex justify-center items-center border-osvauld-iconblack pb-2"
@@ -93,7 +93,7 @@
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
     ></div>
     <div
-      class="w-[17rem] h-[14rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
+      class="w-full h-[14rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
         ? 'active'
         : ''} mt-2"
     >
@@ -124,7 +124,7 @@
         Description
       </label>
       <div
-        class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
+        class="mt-4 w-[90%] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
     {hoverEffect ? 'text-osvauld-fieldTextActive' : 'text-osvauld-fieldText'}"
         id="credential-description"
       >
