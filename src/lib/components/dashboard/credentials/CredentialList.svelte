@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fly } from "svelte/transition";
   import CredentialEditor from "./CredentialEditor.svelte";
   import ShareFolderModal from "../folders/ShareFolderModal.svelte";
   import ShareCredentialModal from "./ShareCredentialModal.svelte";
@@ -26,6 +27,8 @@
   let allGroups: Group[] = [];
   let selectedCard: any;
   let sensitiveFields: Fields[] = [];
+  let areCardsSelected = false;
+  let noCardsSelected = false;
 
   $: sortedCredentials = $credentialStore.sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
@@ -71,6 +74,27 @@
     showCredentialDetailsDrawer.set(true);
   };
 
+  const folderShareManager = async () => {
+    areCardsSelected = checkedCards.length !== 0;
+    setTimeout(() => {
+      areCardsSelected = false;
+    }, 1000);
+    !areCardsSelected && showFolderShareDrawer.set(true);
+  };
+
+  const credentialShareManager = async () => {
+    noCardsSelected = checkedCards.length === 0;
+    setTimeout(() => {
+      noCardsSelected = false;
+    }, 1000);
+    !noCardsSelected && showCredentialShareDrawer.set(true);
+  };
+
+  const addCredentialManager = async () => {
+    showCredentialEditor.set(true);
+    checkedCards.length = 0;
+  };
+
   onDestroy(() => {
     subscribe();
   });
@@ -101,16 +125,29 @@
         <!-- TODO: update to share credentials in the same api -->
         <button
           class="rounded-md border border-osvauld-iconblack py-1 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
-          on:click={() => showFolderShareDrawer.set(true)}
+          on:click={folderShareManager}
         >
           <Share color={"#A3A4B5"} /> <span class="ml-1">Share Folder</span>
         </button>
         <button
           class=" bg-osvauld-carolinablue rounded-md py-0.5 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
-          on:click={() => showCredentialShareDrawer.set(true)}
+          on:click={credentialShareManager}
         >
-          <Share color={"#0D0E13"} /><span class="ml-1">Share Secrets</span>
+          <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
         </button>
+        {#if areCardsSelected}
+          <span
+            class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"
+            in:fly
+            out:fly>Credentials are selected</span
+          >
+        {:else if noCardsSelected}
+          <span
+            class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"
+            in:fly
+            out:fly>No cards are selected</span
+          >
+        {/if}
       </div>
       <div class="w-1/2 flex justify-end items-center">
         <button>
@@ -124,7 +161,7 @@
         </button>
         <button
           class="rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 border text-osvauld-textActive border-osvauld-iconblack"
-          on:click={() => showCredentialEditor.set(true)}
+          on:click={addCredentialManager}
           disabled={checkedCards.length !== 0}
           ><Add color={"#A3A4B5"} />
           <span class="ml-1">Add New Credential</span>
