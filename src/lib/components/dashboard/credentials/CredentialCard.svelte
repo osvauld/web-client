@@ -12,8 +12,10 @@
   export let credential: Credential;
   export let index: number;
   let sensitiveFields: Fields[] = [];
+  let decrypted = false;
   let checked = false;
   let hoverEffect = false;
+  let sensitiveCard = false;
   let hoverTimeout: any;
   let borderHighLight = tweened(0, { duration: 700 });
   $: {
@@ -31,20 +33,29 @@
   }
   function handleMouseEnter() {
     hoverEffect = true;
+    if (!decrypted) {
+      hoverTimeout = setTimeout(async () => {
+        const response = await fetchSensitiveFieldsByCredentialId(
+          credential.credentialId
+        );
+        sensitiveFields = response.data;
+        sensitiveFields.length >= 1
+          ? (sensitiveCard = true)
+          : (sensitiveCard = false);
+      }, 300);
+    }
   }
   function handleMouseLeave() {
-    // if (!$showCredentialDetailsDrawer) {
-    //   sensitiveFields = [];
-    // }
+    if (!$showCredentialDetailsDrawer) {
+      sensitiveFields = [];
+    }
     clearTimeout(hoverTimeout);
+    decrypted = false;
     hoverEffect = false;
+    sensitiveCard = false;
   }
   onMount(async () => {
     checked = false;
-    const response = await fetchSensitiveFieldsByCredentialId(
-      credential.credentialId
-    );
-    sensitiveFields = response.data;
   });
   const handleClick = async () => {
     if (sensitiveFields.length) {
