@@ -129,6 +129,8 @@
     credentialIdForEdit.set(credential.credentialId);
     const groupsResponse = await fetchCredentialGroups(credential.credentialId);
     groups = groupsResponse.data;
+
+    console.log("Credential data from details =>", credential);
   });
 </script>
 
