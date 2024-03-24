@@ -34,7 +34,7 @@
   };
 </script>
 
-<div class="mb-2 max-w-full" in:fly out:fly>
+<div class="mb-2 mr-1 max-w-full" in:fly out:fly>
   <div
     class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
   >
