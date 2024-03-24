@@ -12,10 +12,8 @@
   export let credential: Credential;
   export let index: number;
   let sensitiveFields: Fields[] = [];
-  let decrypted = false;
   let checked = false;
   let hoverEffect = false;
-  let sensitiveCard = false;
   let hoverTimeout: any;
   let borderHighLight = tweened(0, { duration: 700 });
   $: {
@@ -33,29 +31,20 @@
   }
   function handleMouseEnter() {
     hoverEffect = true;
-    if (!decrypted) {
-      hoverTimeout = setTimeout(async () => {
-        const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId
-        );
-        sensitiveFields = response.data;
-        sensitiveFields.length >= 1
-          ? (sensitiveCard = true)
-          : (sensitiveCard = false);
-      }, 300);
-    }
   }
   function handleMouseLeave() {
-    if (!$showCredentialDetailsDrawer) {
-      sensitiveFields = [];
-    }
+    // if (!$showCredentialDetailsDrawer) {
+    //   sensitiveFields = [];
+    // }
     clearTimeout(hoverTimeout);
-    decrypted = false;
     hoverEffect = false;
-    sensitiveCard = false;
   }
   onMount(async () => {
     checked = false;
+    const response = await fetchSensitiveFieldsByCredentialId(
+      credential.credentialId
+    );
+    sensitiveFields = response.data;
   });
   const handleClick = async () => {
     if (sensitiveFields.length) {
@@ -127,18 +116,20 @@
         {/each}
       {/if}
     </div>
-    <label
-      class="text-osvauld-dusklabel block text-left text-sm font-normal"
-      for="credential-description"
-    >
-      Description
-    </label>
-    <div
-      class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
-      {hoverEffect ? 'text-osvauld-fieldTextActive' : 'text-osvauld-fieldText'}"
-      id="credential-description"
-    >
-      {credential.description}
+    <div class={credential.description.length !== 0 ? "visible" : "invisible"}>
+      <label
+        class="text-osvauld-dusklabel block text-left text-sm font-normal"
+        for="credential-description"
+      >
+        Description
+      </label>
+      <div
+        class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
+    {hoverEffect ? 'text-osvauld-fieldTextActive' : 'text-osvauld-fieldText'}"
+        id="credential-description"
+      >
+        {credential.description}
+      </div>
     </div>
   </button>
 </button>

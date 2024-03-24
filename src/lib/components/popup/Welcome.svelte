@@ -23,6 +23,8 @@
     });
     if (response.isAuthenticated) {
       dispatch("authenticated", true);
+    } else {
+      errorMessage = true;
     }
     isLoaderActive = false;
   }
@@ -32,7 +34,7 @@
 </script>
 
 <div
-  class="h-auto mt-10 flex justify-center items-center text-base font-bold text-white"
+  class="h-auto mt-10 flex justify-center items-center text-base font-normal text-osvauld-sheffieldgrey"
 >
   <form
     class="flex flex-col justify-center items-center"
@@ -58,7 +60,7 @@
       </button>
     </div>
     {#if errorMessage}
-      <span class="text-xs text-red-500 font-thin"
+      <span class="text-xs text-red-500 font-thin mt-2"
         >Passphrase doesn't match</span
       >
     {/if}
