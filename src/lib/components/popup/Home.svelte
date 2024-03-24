@@ -78,10 +78,11 @@
           selectedPassword = response.data[i].fieldValue;
         }
       }
+      selectedCredentialIndex = index;
+    } else {
+      selectedCredentialIndex = null;
     }
-
     credentialClicked = !credentialClicked;
-    selectedCredentialIndex = index;
   };
 
   const copyToClipboard = (username: string) => {
@@ -145,13 +146,13 @@
                 class="w-full flex justify-between items-center {selectedCredentialIndex ===
                 index
                   ? 'text-osvauld-quarzowhite mb-2'
-                  : ''}"
+                  : 'mb-0'}"
               >
                 <span class="text-base font-medium tracking-wide"
                   >{credential.username}</span
                 >
                 <button
-                  class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px] cursor-pointer"
+                  class="bg-osvauld-fieldActive px-4 py-1 rounded-[4px] cursor-pointer"
                 >
                   {#if credentialClicked && selectedCredentialIndex === index}
                     <DownArrow type={"common"} />
@@ -162,7 +163,7 @@
               </div>
               {#if credentialClicked && selectedCredentialIndex === index}
                 <div
-                  class="rounded-lg h-[10rem] bg-osvauld-bordergreen p-2 w-full overflow-y-scroll scrollbar-thin"
+                  class="h-[10rem] bg-osvauld-frameblack border border-osvauld-iconblack p-2 w-full rounded-lg overflow-y-scroll scrollbar-thin"
                 >
                   <div class="mb-2">
                     <label
@@ -170,11 +171,11 @@
                       for={`input-`}>Username</label
                     >
                     <div
-                      class="w-full rounded-lg bg-osvauld-bordergreen border border-osvauld-iconblack text-osvauld-quarzowhite font-normal text-sm flex justify-between items-center px-2 py-1"
+                      class="w-full rounded-lg bg-osvauld-fieldActive text-osvauld-textActive font-normal text-sm flex justify-between items-center px-2 py-1"
                     >
                       <span>{credential.username}</span>
                       <button
-                        class="active:scale-90"
+                        class="scale-[0.8] active:scale-75"
                         on:click|stopPropagation={() =>
                           copyToClipboard(credential.username)}
                         ><ActiveCopy />
