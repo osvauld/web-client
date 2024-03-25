@@ -132,7 +132,7 @@
   </button>
 {/if}
 
-<div class="w-full max-h-[75vh] min-h-[70vh]">
+<div class="w-full h-[78vh]">
   {#if $selectedFolder}
     <div class="flex justify-between items-center px-4 py-2">
       <div class="max-w-[50%] min-w-[30%] flex items-center">

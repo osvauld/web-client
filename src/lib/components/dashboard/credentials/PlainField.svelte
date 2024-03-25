@@ -14,13 +14,13 @@
   };
 </script>
 
-<div class="mb-2 mr-1 max-w-full">
+<div class="mb-2.5 mr-1 max-w-full">
   <label
-    class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
+    class="label block mb-1 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
     for="field">{fieldName}</label
   >
   <div
-    class="py-1.5 px-3 w-full flex justify-between items-center rounded-lg text-base {bgColor
+    class="py-2 px-3 w-full flex justify-between items-center rounded-lg text-base {bgColor
       ? bgColor
       : 'bg-osvauld-fieldActive '}{hoverEffect
       ? 'text-osvauld-fieldTextActive'
