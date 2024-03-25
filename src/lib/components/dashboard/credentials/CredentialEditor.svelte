@@ -210,7 +210,7 @@
       </button>
     </div>
     <div>
-      {#if showEditCredentialDialog}
+      {#if $showEditCredentialDialog}
         <button class="bg-osvauld-frameblack p-4" on:click={deleteCredential}
           ><BinIcon /></button
         >
