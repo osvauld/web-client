@@ -4,7 +4,7 @@
   import { fetchSensitiveFieldsByCredentialId } from "../apis";
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
-  import { More, SensitiveEye, SensitiveEyeBlue } from "../icons";
+  import { More } from "../icons";
   import { showCredentialDetailsDrawer, searchedCredential } from "../store";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";
@@ -15,7 +15,6 @@
   let decrypted = false;
   let checked = false;
   let hoverEffect = false;
-  let sensitiveCard = false;
   let hoverTimeout: any;
   let borderHighLight = tweened(0, { duration: 700 });
   $: {
@@ -39,9 +38,6 @@
           credential.credentialId
         );
         sensitiveFields = response.data;
-        sensitiveFields.length >= 1
-          ? (sensitiveCard = true)
-          : (sensitiveCard = false);
       }, 300);
     }
   }
@@ -52,7 +48,6 @@
     clearTimeout(hoverTimeout);
     decrypted = false;
     hoverEffect = false;
-    sensitiveCard = false;
   }
   onMount(async () => {
     checked = false;
@@ -135,7 +130,7 @@
         Description
       </label>
       <div
-        class="mt-4 w-full h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
+        class="mt-4 w-[97%] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
     {hoverEffect ? 'text-osvauld-fieldTextActive' : 'text-osvauld-fieldText'}"
         id="credential-description"
       >

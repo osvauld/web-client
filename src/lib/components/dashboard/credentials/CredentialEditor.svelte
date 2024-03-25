@@ -33,6 +33,7 @@
   let credentialFields: AddCredentialField[] | CredentialFieldWithId[] = [];
   let description = "";
   let name = "";
+  let notNamed = false;
   let isLoaderActive: boolean = false;
   let loginSelected = true;
   let folderUsers: User[] = [];
@@ -81,10 +82,18 @@
   const saveCredential = async () => {
     isLoaderActive = true;
     if ($selectedFolder === null) throw new Error("folder not selected");
+    if (name.length === 0) {
+      isLoaderActive = false;
+      notNamed = true;
+      setTimeout(() => {
+        notNamed = false;
+      }, 1000);
+      throw new Error("no name given");
+    }
     let domain = "";
     let addCredentialFields: Fields[] = [];
     for (const field of credentialFields) {
-      if (field.fieldName === "URL") {
+      if (field.fieldName === "URL" && !$showEditCredentialDialog) {
         domain = new URL(field.fieldValue).hostname;
         addCredentialFields.push({
           fieldName: "Domain",
@@ -92,12 +101,14 @@
           fieldType: "additional",
         });
       }
-      const baseField: Fields = {
-        fieldName: field.fieldName,
-        fieldValue: field.fieldValue,
-        fieldType: field.sensitive ? "sensitive" : "meta",
-      };
-      addCredentialFields.push(baseField);
+      if (field.fieldName.length !== 0 || field.fieldValue.length !== 0) {
+        const baseField: Fields = {
+          fieldName: field.fieldName,
+          fieldValue: field.fieldValue,
+          fieldType: field.sensitive ? "sensitive" : "meta",
+        };
+        addCredentialFields.push(baseField);
+      }
     }
 
     addCredentialPaylod = {
@@ -108,18 +119,17 @@
       userFields: [],
       domain,
     };
+
     const response = await browser.runtime.sendMessage({
       action: "addCredential",
       data: { users: folderUsers, addCredentialFields },
     });
     addCredentialPaylod.userFields = response;
     if ($showEditCredentialDialog) {
-      console.log("Data for updataing =>", addCredentialPaylod);
       await updateCredential(addCredentialPaylod, $credentialIdForEdit);
     } else {
       await addCredential(addCredentialPaylod);
     }
-    if ($selectedFolder === null) throw new Error("folder not selected");
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
     const decryptedData = await browser.runtime.sendMessage({
       action: "decryptMeta",
@@ -219,13 +229,14 @@
       class="min-h-[32vh] max-h-[35vh] overflow-y-scroll scrollbar-thin z-50"
     >
       <input
-        class="w-[70%] h-[3.8rem] my-2 ml-4 bg-osvauld-frameblack border-0 rounded-none text-3xl text-osvauld-quarzowhite font-normal focus:ring-0 focus:ring-offset-0 flex"
+        class="w-[95%] h-[3.8rem] mb-2 mt-4 ml-4 pl-4 bg-osvauld-frameblack border rounded-xl text-3xl text-osvauld-quarzowhite font-normal focus:border-osvauld-activeBorder flex focus:ring-0 placeholder-osvauld-iconblack {notNamed
+          ? 'border-red-500'
+          : 'border-osvauld-iconblack '}"
         id="name"
         type="text"
         placeholder="Enter Credential name...."
         autocomplete="off"
         autofocus
-        required
         bind:value={name}
       />
       {#each credentialFields as field, index}
