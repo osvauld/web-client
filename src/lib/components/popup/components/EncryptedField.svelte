@@ -46,7 +46,7 @@
         <Locked />
       </button>
     {:else}
-      <div class="flex justify-center items-center scale-[0.8]">
+      <div class="w-1/3 flex justify-between items-center scale-[0.8]">
         <button
           on:click|stopPropagation={() => {
             visibility = false;

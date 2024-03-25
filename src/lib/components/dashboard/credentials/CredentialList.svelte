@@ -124,7 +124,7 @@
         </h1>
         <!-- TODO: update to share credentials in the same api -->
         <button
-          class="rounded-md border border-osvauld-iconblack py-1 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+          class="rounded-md border border-osvauld-iconblack py-0.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
           on:click={folderShareManager}
         >
           <Share color={"#A3A4B5"} /> <span class="ml-1">Share Folder</span>
