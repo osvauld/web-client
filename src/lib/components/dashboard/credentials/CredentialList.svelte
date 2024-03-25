@@ -150,7 +150,7 @@
         {/if}
       </div>
       <div class="w-1/2 flex justify-end items-center">
-        <button disabled class="scale-150">
+        <button disabled class="scale-110">
           <InfoIcon />
         </button>
         <button
