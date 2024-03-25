@@ -93,7 +93,9 @@
       >
         {credential.name}
       </label>
-      <More />
+      <span class="pr-2">
+        <More />
+      </span>
     </div>
     <div
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"

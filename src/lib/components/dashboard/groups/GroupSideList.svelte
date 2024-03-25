@@ -39,7 +39,7 @@
 
 <div>
   <button
-    class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-illutionpurple hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-14 mb-4 flex justify-center items-center xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
+    class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-14 mb-4 flex justify-center items-center xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
     on:mouseenter={() => (iconColor = "#000")}
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={() => openModal("group")}
@@ -56,7 +56,7 @@
       <AddGroup on:close={closeModal} />
     </button>
   {/if}
-  <ul class=" max-h-[40rem] overflow-y-scroll scrollbar-thin -pl-3">
+  <ul class=" max-h-[40rem] overflow-y-scroll scrollbar-thin -pl-3 xl:scale-95">
     {#if adminStatus}
       <li
         class="{$allUsersSelected
@@ -75,8 +75,8 @@
     {#each $groupStore as group}
       <li
         class="{$selectedGroup === group
-          ? 'bg-osvauld-bordergreen rounded-lg'
-          : 'hover:bg-osvauld-bordergreen'} rounded-md pl-3 my-0.5"
+          ? 'bg-osvauld-bordergreen rounded-lg text-osvauld-plainwhite'
+          : 'hover:bg-osvauld-bordergreen text-osvauld-quarzowhite'} rounded-md pl-3 my-0.5"
       >
         <button
           on:click={() => selectGroup(group)}
