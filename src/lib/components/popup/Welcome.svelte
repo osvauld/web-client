@@ -58,11 +58,11 @@
         <Eye />
       </button>
     </div>
-    {#if errorMessage}
-      <span class="text-xs text-red-500 font-thin mt-2"
-        >Passphrase doesn't match</span
-      >
-    {/if}
+    <span
+      class="text-xs text-red-500 font-thin mt-2 {errorMessage
+        ? 'visible'
+        : 'invisible'}">Passphrase doesn't match</span
+    >
     <button
       class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
       type="submit"

@@ -150,7 +150,8 @@ export const createShareCredsPayload = async (creds: CredentialFields[], selecte
 
 export const handlePvtKeyImport = async (pvtKeys: string, passphrase: string) => {
     await init();
-    const { encryptionKey, signKey } = JSON.parse(pvtKeys);
+    const { encryptionKey, signKey, baseUrl } = JSON.parse(pvtKeys);
+    await browser.storage.local.set({ baseUrl });
     const signPubKey = await get_pub_key(signKey);
     const encPublicKey = await get_pub_key(encryptionKey);
 

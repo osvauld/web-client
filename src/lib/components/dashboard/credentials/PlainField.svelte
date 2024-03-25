@@ -31,7 +31,7 @@
       {#if hoverEffect}
         <ActiveCopy />
       {:else}
-        <CopyIcon />
+        <CopyIcon color={null} />
       {/if}
     </button>
   </div>
