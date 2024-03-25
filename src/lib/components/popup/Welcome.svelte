@@ -3,6 +3,7 @@
   import Eye from "../basic/icons/eye.svelte";
   import Loader from "../dashboard/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
+  import { ClosedEye } from "../dashboard/icons";
   const dispatch = createEventDispatcher();
 
   let passphrase = "";
@@ -50,6 +51,7 @@
         class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
         {type}
         id="passphrase"
+        autocomplete="off"
         on:input={onInput}
       />
       <button
@@ -57,7 +59,11 @@
         class="flex justify-center items-center"
         on:click={toggleShowPassword}
       >
-        <Eye />
+        {#if showPassword}
+          <ClosedEye />
+        {:else}
+          <Eye />
+        {/if}
       </button>
     </div>
     <span
