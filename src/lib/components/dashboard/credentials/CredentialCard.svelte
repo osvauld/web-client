@@ -4,7 +4,7 @@
   import { fetchSensitiveFieldsByCredentialId } from "../apis";
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
-  import { More, SensitiveEye, SensitiveEyeBlue } from "../icons";
+  import { More } from "../icons";
   import { showCredentialDetailsDrawer, searchedCredential } from "../store";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";
@@ -15,7 +15,6 @@
   let decrypted = false;
   let checked = false;
   let hoverEffect = false;
-  let sensitiveCard = false;
   let hoverTimeout: any;
   let borderHighLight = tweened(0, { duration: 700 });
   $: {
@@ -39,9 +38,6 @@
           credential.credentialId
         );
         sensitiveFields = response.data;
-        sensitiveFields.length >= 1
-          ? (sensitiveCard = true)
-          : (sensitiveCard = false);
       }, 300);
     }
   }
@@ -52,7 +48,6 @@
     clearTimeout(hoverTimeout);
     decrypted = false;
     hoverEffect = false;
-    sensitiveCard = false;
   }
   onMount(async () => {
     checked = false;
@@ -70,14 +65,14 @@
 </script>
 
 <button
-  class="mb-3 max-w-[19rem] overflow-x-hidden flex-none hover:shadow-[0_0_0_1px_#B4BEFE] rounded-xl text-osvauld-chalkwhite xl:scale-95 lg:scale-90 md:scale-90 sm:scale-75"
-  style="border: {$borderHighLight ? '1px solid #48bb78' : ''}"
+  class="mb-1 max-w-[19rem] overflow-x-hidden flex-none hover:shadow-[0_0_0_1px_#B4BEFE] rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack"
+  style="border: {$borderHighLight ? '1px solid #89B4FA' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
   on:click={handleClick}
 >
   <button
-    class="container mx-auto py-3 pl-3 pr-3 relative group bg-osvauld-bordergreen rounded-xl"
+    class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
   >
     <div
       class="flex justify-center items-center border-osvauld-iconblack pb-2"
@@ -86,30 +81,33 @@
       <input
         type="checkbox"
         id="credentialChecker{index}"
-        class="bg-osvauld-bordergreen mr-2 border-osvauld-iconblack checked:bg-osvauld-lilacpink active:outline-none focus:text-primary focus:ring-offset-0 focus:ring-0 cursor-pointer"
+        class="bg-osvauld-cardshade mr-2 border-osvauld-activeBorder checked:bg-osvauld-activelavender focus:text-osvauld-activelavender hover:text-osvauld-activelavender active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
         on:change|stopPropagation={(e) => {
           toggleCheck();
         }}
         {checked}
       />
       <label
-        class="text-xl font-medium w-full text-left ml-2 cursor-pointer max-w-full overflow-x-hidden"
+        class="text-xl font-medium w-full text-left ml-2 cursor-pointer max-w-full text-osvauld-fieldTextActive overflow-x-hidden"
         for="credentialChecker{index}"
       >
         {credential.name}
       </label>
-      <More />
+      <span class="pr-2">
+        <More />
+      </span>
     </div>
     <div
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
     ></div>
     <div
-      class="w-[17rem] h-[16rem] overflow-y-scroll scrollbar-thin {hoverEffect
+      class="w-full h-[14rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
         ? 'active'
         : ''} mt-2"
     >
-      {#each credential.fields as field, index}
+      {#each credential.fields as field}
         <PlainField
+          bgColor={null}
           fieldName={field.fieldName}
           fieldValue={field.fieldValue}
           {hoverEffect}
@@ -118,6 +116,7 @@
       {#if sensitiveFields}
         {#each sensitiveFields as field}
           <EncryptedField
+            bgColor={null}
             fieldName={field.fieldName}
             fieldValue={field.fieldValue}
             {hoverEffect}
@@ -125,42 +124,65 @@
         {/each}
       {/if}
     </div>
-    <label
-      class="text-osvauld-dusklabel block text-left text-sm font-normal"
-      for="credential-description"
-    >
-      Description
-    </label>
-    <div
-      class="mt-4 w-[17rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-bordergreen rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
-            {hoverEffect
-        ? 'text-osvauld-quarzowhite'
-        : 'text-osvauld-sheffieldgrey'}"
-      id="credential-description"
-    >
-      {credential.description}
-    </div>
-
-    <div
-      class="border-t border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3 my-2"
-    ></div>
-    <div class="flex justify-start">
-      <span
-        class="{hoverEffect && sensitiveCard
-          ? 'bg-osvauld-sensitivebgblue text-osvauld-carolinablue'
-          : 'bg-osvauld-sensitivebgblack text-osvauld-chalkwhite'} py-0 px-3 text-sm border border-osvauld-bordergreen rounded-[4px] flex justify-center items-center"
+    <div class={credential.description.length !== 0 ? "visible" : "invisible"}>
+      <label
+        class="text-osvauld-dusklabel block text-left text-sm font-normal"
+        for="credential-description"
       >
-        {#if hoverEffect && sensitiveCard}
-          <SensitiveEyeBlue />
-        {:else}
-          <SensitiveEye />
-        {/if}
-        <span
-          class="ml-2 {hoverEffect && sensitiveCard
-            ? 'text-osvauld-carolinablue'
-            : 'text-osvauld-placeholderblack'}">Sensitive Fields</span
-        >
-      </span>
+        Description
+      </label>
+      <div
+        class="mt-4 w-[97%] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
+    {hoverEffect ? 'text-osvauld-fieldTextActive' : 'text-osvauld-fieldText'}"
+        id="credential-description"
+      >
+        {credential.description}
+      </div>
     </div>
   </button>
 </button>
+
+<style>
+  input[type="checkbox"] {
+    appearance: none;
+    position: relative;
+  }
+
+  input[type="checkbox"]::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background-color: #b4befe;
+    z-index: 50;
+    opacity: 0;
+  }
+
+  input[type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15px;
+    height: 11px;
+    background-color: #0d1117;
+    clip-path: path(
+      "M4.60852 10.4792C4.34185 10.4792 4.07518 10.3792 3.87102 10.175L0.000183105 6.3L0.883517 5.41667L4.60852 9.14167L13.7502 0L14.6335 0.883333L5.34602 10.1708C5.14185 10.375 4.87518 10.475 4.60852 10.475V10.4792Z"
+    );
+    opacity: 0;
+    z-index: 100;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  input[type="checkbox"]:checked::before {
+    opacity: 1;
+  }
+
+  input[type="checkbox"]:checked::after {
+    opacity: 1;
+  }
+</style>

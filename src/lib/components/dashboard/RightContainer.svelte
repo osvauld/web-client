@@ -67,7 +67,6 @@
     selectedFolder.set(folder);
     selectedCredential.set(null);
     const responseJson = await fetchCredentialsByFolder(folder.id);
-
     const response = await browser.runtime.sendMessage({
       action: "decryptMeta",
       data: responseJson.data,
@@ -81,10 +80,18 @@
     closeModal();
   };
 
+  selectedPage.subscribe(() => {
+    credentialStore.set([]);
+  });
+
   function handleKeyDown(event) {
     if (event.key === "Enter") {
       getSearchData();
     }
+  }
+
+  function autofocus(node) {
+    node.focus();
   }
 </script>
 
@@ -98,7 +105,7 @@
         type="text"
         class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
         placeholder="Search.."
-        autofocus
+        use:autofocus
         on:click={getSearchData}
         on:input={handleInputChange}
         bind:value={query}
@@ -118,7 +125,7 @@
         <button class="fixed inset-0 bg-black opacity-50" on:click={closeModal}>
         </button>
         <div
-          class="bg-osvauld-frameblack border border-osvauld-defaultBorder rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw]"
+          class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw]"
         >
           <div
             class="h-[2.2rem] w-[90%] px-2 mx-auto mt-4 flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
@@ -128,7 +135,7 @@
               type="text"
               class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
               placeholder="Search.."
-              autofocus
+              use:autofocus
               on:click={getSearchData}
               on:input={handleInputChange}
               bind:value={query}
@@ -194,7 +201,7 @@
     </div>
   {/if}
   <div
-    class="h-auto min-h-[85vh] bg-osvauld-frameblack border-2 border-osvauld-iconblack rounded-2xl mr-4"
+    class="h-full min-h-[85vh] bg-osvauld-frameblack border border-osvauld-iconblack rounded-2xl mr-4 overflow-hidden"
   >
     <!-- Content for the bottom part (dynamic content) -->
     {#if $selectedPage === "Folders"}

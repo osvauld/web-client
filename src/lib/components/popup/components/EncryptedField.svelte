@@ -18,9 +18,6 @@
 
   const toggleVisibility = () => {
     visibility = !visibility;
-    setTimeout(() => {
-      visibility = false;
-    }, 3000);
   };
 
   const copyToClipboard = () => {
@@ -32,25 +29,29 @@
 
 <div class="mb-2">
   <div
-    class="label block mb-1 text-left text-osvauld-dusklabel text-xs font-normal"
+    class="label block mb-1 text-left bg-osvauld-frameblack text-osvauld-dusklabel text-xs font-normal"
   >
     {fieldName}
   </div>
   <div
-    class="w-full rounded-lg bg-osvauld-bordergreen border border-osvauld-iconblack text-osvauld-quarzowhite font-normal text-sm flex justify-between items-center px-2 py-0"
+    class="w-full rounded-lg bg-osvauld-fieldActive text-osvauld-textActive font-normal text-sm flex justify-between items-center px-2 py-0"
   >
     <div
-      class="text-osvauld-sheffieldgrey border-0 rounded-lg py-1 w-2/3 text-left"
+      class=" border-0 rounded-lg py-1 w-2/3 flex justify-start items-center"
     >
       {decrypted && visibility ? decryptedValue : "*".repeat(8)}
     </div>
     {#if !decrypted}
-      <button on:click|stopPropagation={decrypt}>
+      <button on:click|stopPropagation={decrypt} class="scale-[0.8]">
         <Locked />
       </button>
     {:else}
-      <div class="flex justify-center items-center">
-        <button>
+      <div class="w-1/3 flex justify-between items-center scale-[0.8]">
+        <button
+          on:click|stopPropagation={() => {
+            visibility = false;
+          }}
+        >
           <Unlocked />
         </button>
         <button on:click|stopPropagation={toggleVisibility}>

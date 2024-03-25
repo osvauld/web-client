@@ -129,6 +129,8 @@
     credentialIdForEdit.set(credential.credentialId);
     const groupsResponse = await fetchCredentialGroups(credential.credentialId);
     groups = groupsResponse.data;
+
+    console.log("Credential data from details =>", credential);
   });
 </script>
 
@@ -183,7 +185,7 @@
             fieldName={field.fieldName}
             fieldValue={field.fieldValue}
             hoverEffect={true}
-            bgColor={"#0D1117"}
+            bgColor={null}
           />
         {/each}
         {#if sensitiveFields}
@@ -192,22 +194,24 @@
               fieldName={field.fieldName}
               fieldValue={field.fieldValue}
               hoverEffect={true}
-              bgColor={"#0D1117"}
+              bgColor={null}
             />
           {/each}
         {/if}
-        <label
-          class="text-osvauld-dusklabel block text-left text-sm font-normal"
-          for="credential-description"
-        >
-          Description
-        </label>
-        <div
-          class="mt-4 w-full h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-frameblack rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base text-osvauld-quarzowhite"
-          id="credential-description"
-        >
-          {credential.description}
-        </div>
+        {#if credential.description.length !== 0}
+          <label
+            class="text-osvauld-dusklabel block text-left text-sm font-normal"
+            for="credential-description"
+          >
+            Description
+          </label>
+          <div
+            class="mt-4 w-full h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base text-osvauld-quarzowhite"
+            id="credential-description"
+          >
+            {credential.description}
+          </div>
+        {/if}
       {:else}
         <div class="flex justify-between items-center">
           <UserGroupToggle on:select={toggleSelect} />

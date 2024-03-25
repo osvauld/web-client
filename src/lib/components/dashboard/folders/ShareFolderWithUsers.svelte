@@ -112,7 +112,7 @@
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[50vh]">
   <div
-    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-2"
+    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer"
   >
     <Lens />
     <input
@@ -154,8 +154,7 @@
   </div>
 
   <div class="p-2 flex justify-between items-center box-border">
-    <button
-      class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
+    <button class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
       >Cancel</button
     >
 

@@ -34,7 +34,7 @@
   };
 </script>
 
-<div class="mb-4 max-w-full" in:fly out:fly>
+<div class="mb-2 mr-1 max-w-full" in:fly out:fly>
   <div
     class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
   >
@@ -42,13 +42,13 @@
   </div>
 
   <div
-    class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base {bgColor
+    class="py-1.5 px-3 w-full flex justify-between items-center rounded-lg text-base {bgColor
       ? bgColor
-      : 'bg-osvauld-bordergreen'} border-osvauld-iconblack {hoverEffect
-      ? 'text-osvauld-quarzowhite'
-      : 'text-osvauld-sheffieldgrey'}"
+      : 'bg-osvauld-fieldActive '} {hoverEffect
+      ? 'text-osvauld-fieldTextActive'
+      : 'text-osvauld-fieldText'}"
   >
-    <span class="w-full text-left overflow-x-hidden"
+    <span class="w-2/3 text-left overflow-x-hidden"
       >{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
     >
     {#if !decrypted}
@@ -56,7 +56,7 @@
         <Locked />
       </button>
     {:else}
-      <div class="flex justify-center items-center">
+      <div class="w-1/3 flex justify-between items-center">
         <button>
           <Unlocked />
         </button>

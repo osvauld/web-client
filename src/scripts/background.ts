@@ -3,7 +3,8 @@ import browser from "webextension-polyfill";
 import {
   decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler,
   decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler,
-  decryptFieldHandler, encryptFieldHandler, createShareCredsPayload
+  decryptFieldHandler, encryptFieldHandler, createShareCredsPayload,
+  handlePvtKeyImport
 } from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
@@ -65,10 +66,15 @@ browser.runtime.onMessage.addListener(async (request) => {
       break;
 
     case "initiateAuth": {
-      const passphrase = request.data.passphrase;
-      await loadWasmModule();
-      await initiateAuthHandler(passphrase)
-      return { isAuthenticated: true }
+      try {
+
+        const passphrase = request.data.passphrase;
+        await loadWasmModule();
+        await initiateAuthHandler(passphrase)
+        return { isAuthenticated: true }
+      } catch (error) {
+        return { isAuthenticated: false, error: error.message }
+      }
     }
 
     case "isSignedUp": {
@@ -76,6 +82,11 @@ browser.runtime.onMessage.addListener(async (request) => {
       await init();
       if (signPvtKeyObj.signPvtKey) return { isSignedUp: true }
       else return { isSignedUp: false }
+    }
+
+    case "importPvtKey": {
+      await handlePvtKeyImport(request.privateKeys, request.passphrase);
+      return;
     }
 
 

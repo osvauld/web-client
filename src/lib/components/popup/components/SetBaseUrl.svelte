@@ -10,6 +10,11 @@
         // Dispatch an event to indicate that the base URL has been added to localStorage
         dispatch("baseUrlAdded");
     };
+
+    const handleImportPvtKeyClick = async () => {
+        await browser.storage.local.set({ baseUrl });
+        dispatch("importPvtKey", true);
+    };
 </script>
 
 <form
@@ -34,5 +39,12 @@
         type="submit"
     >
         <span>Submit</span>
+    </button>
+    <button
+        class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
+        type="button"
+        on:click={handleImportPvtKeyClick}
+    >
+        <span>Import Pvt Key</span>
     </button>
 </form>

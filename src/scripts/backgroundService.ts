@@ -2,7 +2,7 @@
 import browser from "webextension-polyfill";
 import { createChallenge, finalRegistration, initiateAuth } from '../lib/apis/auth.api.js';
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
-import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields } from './rust_openpgp_wasm.js';
+import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields, get_pub_key, } from './rust_openpgp_wasm.js';
 
 type CredentialsForUsersPayload = {
     accessType?: string;
@@ -26,12 +26,15 @@ export const decryptCredentialFieldsHandler = async (credentials: CredentialFiel
 
 export const initiateAuthHandler = async (passphrase: string) => {
 
+
     const encryptionPvtKeyObj = await browser.storage.local.get("encryptionPvtKey");
     const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
     const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
     const signKey = signPvtKeyObj.signPvtKey;
+    console.log(JSON.stringify({ encryptionKey, signKey }))
     const startTime = performance.now();
     const cacheObj = decrypt_and_store_keys(encryptionKey, signKey, passphrase);
+    // console.log(result2);
     const pubKeyObj = await browser.storage.local.get('signPublicKey');
     console.log("Time taken to decrypt and store keys:", performance.now() - startTime);
     const challengeResponse = await createChallenge(pubKeyObj.signPublicKey);
@@ -145,4 +148,25 @@ export const createShareCredsPayload = async (creds: CredentialFields[], selecte
         }
     }
     return userData;
+}
+
+export const handlePvtKeyImport = async (pvtKeys: string, passphrase: string) => {
+    await init();
+    const { encryptionKey, signKey } = JSON.parse(pvtKeys);
+    const signPubKey = await get_pub_key(signKey);
+    const encPublicKey = await get_pub_key(encryptionKey);
+
+    const challegeResult = await createChallenge(signPubKey)
+    await decrypt_and_store_keys(encryptionKey, signKey, passphrase)
+    const signedMessage = await sign_message_with_stored_key(challegeResult.data.challenge)
+    const verificationResponse = await initiateAuth(signedMessage, signPubKey);
+    const token = verificationResponse.data.token;
+    if (token) {
+        await browser.storage.local.set({ token: token });
+        await browser.storage.local.set({ isLoggedIn: true });
+    }
+    await browser.storage.local.set({ encryptionPvtKey: encryptionKey, signPvtKey: signKey, encPublicKey: encPublicKey, signPublicKey: signPubKey });
+
+    return token;
+
 }

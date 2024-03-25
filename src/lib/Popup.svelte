@@ -4,7 +4,7 @@
   import Welcome from "./components/popup/Welcome.svelte";
   import Home from "./components/popup/Home.svelte";
   import { Logo } from "./components/dashboard/icons";
-  import { isLoggedIn, isSignedUp } from "../lib/store/ui.store";
+  import { isSignedUp } from "../lib/store/ui.store";
   import Signup from "./components/popup/Signup.svelte";
   import Loader from "./components/dashboard/components/Loader.svelte";
 
@@ -28,7 +28,7 @@
       loggedIn = false;
     }
     isLoaderActive = false;
-    // isSignedUp.set(false);
+    isSignedUp.set(false);
   });
 
   const openFullscreenTab = async () => {
@@ -44,7 +44,7 @@
 
 <main>
   <div
-    class="w-[22.5rem] h-[36.78rem] p-2 pt-3 flex flex-col {$isSignedUp &&
+    class="w-[22.5rem] h-[36.78rem] p-2 pt-3 flex flex-col !font-sans {$isSignedUp &&
     !loggedIn
       ? 'justify-center'
       : 'justify-start'} items-center bg-osvauld-frameblack"

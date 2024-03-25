@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { fly } from "svelte/transition";
   import CredentialEditor from "./CredentialEditor.svelte";
   import ShareFolderModal from "../folders/ShareFolderModal.svelte";
   import ShareCredentialModal from "./ShareCredentialModal.svelte";
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Lens, Share, Add } from "../icons";
+  import { Share, Add, InfoIcon } from "../icons";
   import { fetchFolderUsers, fetchAllUsers, fetchAllUserGroups } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
 
@@ -18,13 +19,17 @@
     showCredentialDetailsDrawer,
   } from "../store";
   import { onDestroy } from "svelte";
+  import DownArrow from "../../basic/icons/downArrow.svelte";
+  import Placeholder from "../components/Placeholder.svelte";
 
   let checkedCards: Credential[] = [];
   let users: User[] = [];
   let allGroups: Group[] = [];
   let selectedCard: any;
   let sensitiveFields: Fields[] = [];
-  $: addIconColor = checkedCards.length === 0 ? "#000" : "#6E7681";
+  let areCardsSelected = false;
+  let noCardsSelected = false;
+
   $: sortedCredentials = $credentialStore.sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
@@ -69,6 +74,27 @@
     showCredentialDetailsDrawer.set(true);
   };
 
+  const folderShareManager = async () => {
+    areCardsSelected = checkedCards.length !== 0;
+    setTimeout(() => {
+      areCardsSelected = false;
+    }, 1000);
+    !areCardsSelected && showFolderShareDrawer.set(true);
+  };
+
+  const credentialShareManager = async () => {
+    noCardsSelected = checkedCards.length === 0;
+    setTimeout(() => {
+      noCardsSelected = false;
+    }, 1000);
+    !noCardsSelected && showCredentialShareDrawer.set(true);
+  };
+
+  const addCredentialManager = async () => {
+    showCredentialEditor.set(true);
+    checkedCards.length = 0;
+  };
+
   onDestroy(() => {
     subscribe();
   });
@@ -89,45 +115,62 @@
   </button>
 {/if}
 
-<div>
+<div class="w-full max-h-[75vh] min-h-[70vh]">
   {#if $selectedFolder}
-    <div class="flex items-center px-4 py-2">
-      <h1 class="text-4xl p-4 font-normal w-1/3">{$selectedFolder.name}</h1>
-      {#if checkedCards.length === 0}
+    <div class="flex justify-between items-center px-4 py-2">
+      <div class="max-w-[50%] min-w-[30%] flex items-center">
+        <h1 class="text-4xl p-4 font-normal whitespace-nowrap">
+          {$selectedFolder.name}
+        </h1>
         <!-- TODO: update to share credentials in the same api -->
         <button
-          class="w-[12rem] bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-macchiato-surface0 flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
-          on:click={() => showFolderShareDrawer.set(true)}
+          class="rounded-md border border-osvauld-iconblack py-0.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+          on:click={folderShareManager}
         >
-          <Share /> <span class="ml-1"> Manage Access</span>
+          <Share color={"#A3A4B5"} /> <span class="ml-1">Share Folder</span>
         </button>
-      {:else}
         <button
-          class="w-[12rem] bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-macchiato-surface0 flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
-          on:click={() => showCredentialShareDrawer.set(true)}
+          class=" bg-osvauld-carolinablue rounded-md py-0.5 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+          on:click={credentialShareManager}
         >
-          <Share /><span class="ml-1"> Share Secrets </span>
+          <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
         </button>
-      {/if}
-      <div
-        class="h-[2.1rem] w-1/4 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
-      >
-        <Lens />
-        <input
-          type="text"
-          class="h-[1.76rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-          placeholder="Find what you need faster.."
-        />
+        {#if areCardsSelected}
+          <span
+            class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"
+            in:fly
+            out:fly>Credentials are selected</span
+          >
+        {:else if noCardsSelected}
+          <span
+            class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"
+            in:fly
+            out:fly>No cards are selected</span
+          >
+        {/if}
       </div>
-      <button
-        class="bg rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 {checkedCards.length ===
-        0
-          ? 'bg-osvauld-carolinablue text-osvauld-ninjablack'
-          : 'bg-osvauld-iconblack text-osvauld-sheffieldgrey'}"
-        on:click={() => showCredentialEditor.set(true)}
-        disabled={checkedCards.length !== 0}
-        ><Add color={addIconColor} /> <span class="ml-1"> Add Credential</span>
-      </button>
+      <div class="w-1/2 flex justify-end items-center">
+        <button>
+          <InfoIcon />
+        </button>
+        <button
+          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-0.5 px-2 rounded-md ml-4"
+        >
+          <span class="mr-1 pl-2">Latest</span>
+          <DownArrow type={"common"} />
+        </button>
+        <button
+          class="rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 border text-osvauld-textActive border-osvauld-iconblack"
+          on:click={addCredentialManager}
+          disabled={checkedCards.length !== 0}
+          ><Add color={"#A3A4B5"} />
+          <span class="ml-1">Add New Credential</span>
+        </button>
+      </div>
+    </div>
+  {:else}
+    <div class="w-full max-h-[100vh] min-h-[70vh] mt-20">
+      <Placeholder />
     </div>
   {/if}
   {#if $showCredentialEditor}
@@ -168,18 +211,18 @@
       </button>
     </button>
   {/if}
-  <div
-    class="flex flex-wrap p-3 w-full max-h-[85vh] !overflow-y-scroll scrollbar-thin"
-  >
-    {#each sortedCredentials as credential, index}
-      <div class="px-1 pb-1">
+  {#if sortedCredentials.length !== 0}
+    <div
+      class="grid grid-cols-4 gap-1.5 2xl:gap-3 3xl:gap-4 p-3 w-full max-h-[75vh] overflow-y-scroll overflow-x-hidden scrollbar-thin"
+    >
+      {#each sortedCredentials as credential, index}
         <CredentialCard
           {credential}
           {index}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
         />
-      </div>
-    {/each}
-  </div>
+      {/each}
+    </div>
+  {/if}
 </div>

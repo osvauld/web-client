@@ -185,8 +185,7 @@
   </div>
 
   <div class="p-2 flex justify-between items-center box-border">
-    <button
-      class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
+    <button class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
       >Cancel</button
     >
 
