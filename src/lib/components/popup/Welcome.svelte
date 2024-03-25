@@ -21,6 +21,7 @@
       action: "initiateAuth",
       data: { passphrase },
     });
+    console.log(response);
     if (response.isAuthenticated) {
       dispatch("authenticated", true);
     }
