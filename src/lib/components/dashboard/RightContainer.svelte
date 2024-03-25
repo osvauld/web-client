@@ -92,7 +92,7 @@
 </script>
 
 <div class="flex flex-col h-auto">
-  <div class="h-[7.8rem] pr-4 flex justify-between items-center">
+  <div class="h-[5rem] pr-4 flex justify-between items-center">
     <div
       class="h-[2.2rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
     >
