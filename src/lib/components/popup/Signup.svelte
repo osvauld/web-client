@@ -9,11 +9,16 @@
   let isTempLoginVerified = false;
   let challenge = "";
   let username = "";
-  let importPvtKeyFlag = true;
+  let importPvtKeyFlag = false;
+
   const handleTempLogin = (e: any) => {
     challenge = e.detail.challenge;
     username = e.detail.username;
     isTempLoginVerified = true;
+  };
+
+  const handleRecovery = (e: any) => {
+    importPvtKeyFlag = e.detail;
   };
 
   const importPvtKey = async (e: any) => {
@@ -33,6 +38,9 @@
   {:else if isTempLoginVerified}
     <SetPassPhrase {challenge} {username} />
   {:else}
-    <TempLogin on:setPassPhrase={handleTempLogin} />
+    <TempLogin
+      on:setPassPhrase={handleTempLogin}
+      on:recovery={handleRecovery}
+    />
   {/if}
 </div>
