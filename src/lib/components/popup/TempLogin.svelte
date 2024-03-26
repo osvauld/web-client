@@ -1,13 +1,16 @@
 <script lang="ts">
+  import browser from "webextension-polyfill";
   import { getRegsitrationChallenge } from "../../apis/auth.api";
   import Eye from "../basic/icons/eye.svelte";
   import { createEventDispatcher } from "svelte";
   import Loader from "../dashboard/components/Loader.svelte";
+  import ClosedEye from "../basic/icons/closedEye.svelte";
 
   const dispatch = createEventDispatcher();
 
   let username = "";
   let password = "";
+  let baseurl = "";
   let showPassword = false;
   let showVerificationError = false;
   let isLoaderActive = false;
@@ -16,6 +19,8 @@
 
   async function handleSubmit() {
     isLoaderActive = true;
+    if (baseurl.length === 0) return;
+    await browser.storage.local.set({ baseUrl: baseurl });
     if (username && password) {
       const challengeResponse = await getRegsitrationChallenge(
         username,
@@ -36,15 +41,32 @@
   const togglePassword = () => {
     showPassword = !showPassword;
   };
+
+  const triggerAccountRecovery = () => {
+    dispatch("recovery", true);
+  };
 </script>
 
 <form
-  class="flex flex-col justify-center items-center"
+  class="flex flex-col justify-center items-center box-border"
   on:submit|preventDefault={handleSubmit}
 >
+  <label for="baseurl" class="font-normal mt-6">Enter Base URL</label>
+  <div
+    class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack w-[260px]"
+  >
+    <input
+      class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
+      type="text"
+      autocomplete="off"
+      id="baseurl"
+      bind:value={baseurl}
+    />
+  </div>
+
   <label for="username" class="font-normal mt-6">Enter Username</label>
   <div
-    class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack"
+    class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack w-[260px]"
   >
     <input
       class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
@@ -58,7 +80,7 @@
   <label for="password" class="font-normal mt-6">Enter Password</label>
 
   <div
-    class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack"
+    class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack w-[260px]"
   >
     <input
       class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
@@ -72,7 +94,11 @@
       class="flex justify-center items-center"
       on:click={togglePassword}
     >
-      <Eye />
+      {#if showPassword}
+        <ClosedEye />
+      {:else}
+        <Eye />
+      {/if}
     </button>
   </div>
   {#if showVerificationError}
@@ -89,5 +115,12 @@
     {:else}
       <span>Submit</span>
     {/if}</button
+  >
+  <button
+    class="bg-osvauld-ownerGreen py-2 px-10 mt-8 rounded-lg text-osvauld-ownerText font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
+    type="button"
+    on:click={triggerAccountRecovery}
+  >
+    <span>Account Recovery</span></button
   >
 </form>
