@@ -147,10 +147,12 @@
     credentialFields = isLogin
       ? loginFields
       : [{ fieldName: "", fieldValue: "", sensitive: false }];
+    credentialType = loginSelected ? "Login" : "Other";
   };
 
   onMount(async () => {
     credentialFields = loginFields;
+    console.log($selectedFolder.id);
     if ($showEditCredentialDialog) {
       const [credentialDataForEdit] = $credentialStore.filter(
         (credentials) => credentials.credentialId === $credentialIdForEdit,
@@ -163,7 +165,7 @@
     }
 
     if ($selectedFolder === null) throw new Error("folder not selected");
-    if ($showEditCredentialDialog) {
+    if (!$showEditCredentialDialog) {
       const responseJson = await fetchFolderUsersForDataSync(
         $selectedFolder.id,
       );

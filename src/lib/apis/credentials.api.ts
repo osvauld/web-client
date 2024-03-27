@@ -225,3 +225,19 @@ export const fetchCredentialUsersForDataSync = async (credentialId: string) => {
 
   return response;
 }
+
+
+export const removeCredential = async (credentialId: string) => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/credential/${credentialId}`, {
+    method: "DELETE",
+    headers,
+  }).then((response) => response.json());
+
+  return response;
+}
+
