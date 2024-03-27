@@ -92,9 +92,9 @@
 </script>
 
 <div class="flex flex-col h-auto">
-  <div class="h-[5rem] pr-4 flex justify-between items-center">
+  <div class="h-[6rem] pr-4 flex justify-between items-center">
     <div
-      class="h-[2.2rem] w-2/5 px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+      class="h-[2.2rem] w-[31.25rem] px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
     >
       <Lens />
       <input
@@ -117,14 +117,14 @@
     <div
       class="fixed z-10 inset-0 overflow-y-auto backdrop-filter backdrop-blur-[2px]"
     >
-      <div class="flex items-start justify-center min-h-screen mt-[3vh]">
+      <div class="flex items-start justify-center min-h-screen mt-[2.6vh]">
         <button class="fixed inset-0 bg-black opacity-50" on:click={closeModal}>
         </button>
         <div
-          class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw]"
+          class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw] ml-[16vw]"
         >
           <div
-            class="h-[2.2rem] w-[90%] px-2 mx-auto mt-4 flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
+            class="h-[2.2rem] w-[31.25rem] px-2 flex m-auto mt-2 justify-center items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
           >
             <Lens />
             <input

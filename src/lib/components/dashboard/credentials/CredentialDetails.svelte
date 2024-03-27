@@ -206,7 +206,7 @@
             Description
           </label>
           <div
-            class="mt-4 w-full h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base text-osvauld-quarzowhite"
+            class="mt-4 w-full h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin resize-none text-base text-osvauld-quarzowhite"
             id="credential-description"
           >
             {credential.description}
