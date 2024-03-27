@@ -160,3 +160,28 @@ export const removeGroupFromCredential = async (credentialId: string, groupId: s
     body: JSON.stringify({ groupIds: [groupId] }),
   }).then(response => response.json());
 }
+
+
+export const removeUserFromGroup = async (groupId: string, memberId: string) => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/group/member`, {
+    method: "DELETE",
+    headers,
+    body: JSON.stringify({ memberId, groupId }),
+  }).then(response => response.json());
+}
+
+
+export const removeGroup = async (groupId: string) => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/group/${groupId}`, {
+    method: "DELETE",
+    headers,
+  }).then(response => response.json());
+}

@@ -32,7 +32,7 @@
   };
 
   const selectingAllUsers = () => {
-    $selectedGroup = null;
+    selectedGroup.set(null);
     allUsersSelected.set(true);
   };
 </script>

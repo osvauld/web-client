@@ -15,7 +15,7 @@ export {
 export {
     fetchAllUserGroups, fetchGroupUsers, createGroup, addUserToGroup, fetchUsersByGroupIds,
     shareCredentialsWithGroups, fetchGroupsWithoutAccess, fetchCredentialFieldsByGroupId, fetchCredentialGroups,
-    fetchUsersWithoutGroupAccess, removeGroupFromFolder, removeGroupFromCredential
+    fetchUsersWithoutGroupAccess, removeGroupFromFolder, removeGroupFromCredential, removeUserFromGroup, removeGroup
 } from '../../apis/group.api';
 export {
     fetchAllUsers, createUser, fetchCredentialUsers, removeUserFromFolder,
