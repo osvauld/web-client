@@ -30,9 +30,11 @@
             />
           </span>
         {:else}
-          <UserIcon color={selectedItem === "Users" ? "white" : "#85889C"} />
+          <span class="scale-[0.80]">
+            <UserIcon color={selectedItem === "Users" ? "white" : "#85889C"} />
+          </span>
         {/if}
-        <span class="ml-2">{item}</span>
+        <span class={item === "Groups" ? "ml-2" : "ml-0"}>{item}</span>
       </button>
     {/each}
   </div>
