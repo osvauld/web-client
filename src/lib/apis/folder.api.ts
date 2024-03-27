@@ -28,6 +28,18 @@ export const fetchFolderUsers = async (folderId: string): Promise<FolderUserResp
   }).then((response) => response.json());
 };
 
+export const fetchFolderUsersForDataSync = async (folderId: string): Promise<any> => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  return fetch(`${baseUrl}/folder/${folderId}/users-data-sync`, {
+    headers,
+  }).then((response) => response.json());
+
+}
+
 export const fetchFolderGroups = async (folderId: string): Promise<FolderGroupResponse> => {
   const headers = new Headers();
   const { token, baseUrl } = await getTokenAndBaseUrl()
@@ -98,8 +110,8 @@ export const shareFolderWithGroups = async (payload: ShareFolderWithGroupsPayloa
 
 export const editFolderPermissionForUser = async (folderId: string, userId: string, accessType: string) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -119,8 +131,7 @@ export const editFolderPermissionForUser = async (folderId: string, userId: stri
 
 export const editFolderPermissionForGroup = async (folderId: string, groupId: string, accessType: string) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -136,3 +147,22 @@ export const editFolderPermissionForGroup = async (folderId: string, groupId: st
 
   return response.json();
 }
+
+export const removeFolder = async (folderId: string) => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/folder/${folderId}`, {
+    method: "DELETE",
+    headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
