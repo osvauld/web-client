@@ -3,7 +3,6 @@
   import Eye from "../basic/icons/eye.svelte";
   import Loader from "../dashboard/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
-  import { ClosedEye } from "../dashboard/icons";
   const dispatch = createEventDispatcher();
 
   let passphrase = "";
@@ -51,7 +50,6 @@
         class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
         {type}
         id="passphrase"
-        autocomplete="off"
         on:input={onInput}
       />
       <button
@@ -59,18 +57,14 @@
         class="flex justify-center items-center"
         on:click={toggleShowPassword}
       >
-        {#if showPassword}
-          <ClosedEye />
-        {:else}
-          <Eye />
-        {/if}
+        <Eye />
       </button>
     </div>
-    <span
-      class="text-xs text-red-500 font-thin mt-2 {errorMessage
-        ? 'visible'
-        : 'invisible'}">Passphrase doesn't match</span
-    >
+    {#if errorMessage}
+      <span class="text-xs text-red-500 font-thin mt-2"
+        >Passphrase doesn't match</span
+      >
+    {/if}
     <button
       class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
       type="submit"
