@@ -13,6 +13,7 @@
     removeGroupFromFolder,
     editFolderPermissionForGroup,
   } from "../apis";
+  import { createEventDispatcher } from "svelte";
   import { setbackground } from "../helper";
   import { writable } from "svelte/store";
   import { selectedFolder } from "../store";
@@ -139,6 +140,11 @@
     const responseJson = await fetchGroupsWithoutAccess($selectedFolder.id);
     groups = responseJson.data;
   });
+
+  function handleCancel() {
+    const dispatch = createEventDispatcher();
+    dispatch("cancel", true);
+  }
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[50vh]">
@@ -185,8 +191,9 @@
   </div>
 
   <div class="p-2 flex justify-between items-center box-border">
-    <button class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
-      >Cancel</button
+    <button
+      class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
+      on:click={handleCancel}>Cancel</button
     >
 
     <button

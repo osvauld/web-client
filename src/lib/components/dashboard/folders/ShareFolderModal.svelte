@@ -70,9 +70,16 @@
     <div class="flex-grow max-h-[85vh]">
       <UserGroupToggle on:select={toggleSelect} />
       {#if selectedTab === "Users"}
-        <ShareFolderWithUsers {users} {credentialsFields} />
+        <ShareFolderWithUsers
+          {users}
+          {credentialsFields}
+          on:cancel={() => showFolderShareDrawer.set(false)}
+        />
       {:else}
-        <ShareFolderWithGroups {credentialsFields} />
+        <ShareFolderWithGroups
+          {credentialsFields}
+          on:cancel={() => showFolderShareDrawer.set(false)}
+        />
       {/if}
     </div>
   </div>

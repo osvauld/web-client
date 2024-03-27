@@ -5,6 +5,7 @@
     CredentialFields,
     ShareCredentialsWithGroupsPayload,
   } from "../dtos";
+  import { createEventDispatcher } from "svelte";
   import { writable } from "svelte/store";
   import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
   import { setbackground } from "../helper";
@@ -95,6 +96,11 @@
       groups = groups.filter((u) => u.groupId !== item.groupId);
     }
   }
+
+  function handleCancel() {
+    const dispatch = createEventDispatcher();
+    dispatch("cancel", true);
+  }
 </script>
 
 <div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">
@@ -141,8 +147,9 @@
   </div>
 
   <div class="p-2 flex justify-between items-center box-border">
-    <button class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
-      >Cancel</button
+    <button
+      class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
+      on:click={handleCancel}>Cancel</button
     >
 
     <button

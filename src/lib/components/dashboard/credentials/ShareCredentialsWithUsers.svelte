@@ -5,6 +5,7 @@
     CredentialFields,
     ShareCredentialsWithUsersPayload,
   } from "../dtos";
+  import { createEventDispatcher } from "svelte";
   import { shareCredentialsWithUsers } from "../apis";
   import { setbackground } from "../helper";
   import browser from "webextension-polyfill";
@@ -56,7 +57,6 @@
   }
 
   function handleRoleChange(e: any, index: number, type: string) {
-    console.log("Handle role change", e);
     const user = e.detail.item;
     const option = e.detail.permission;
     showOptions = !showOptions;
@@ -68,6 +68,11 @@
       selectedUsers = [...selectedUsers, { ...user, accessType: option }];
       users = users.filter((u) => u.id !== user.id);
     }
+  }
+
+  function handleCancel() {
+    const dispatch = createEventDispatcher();
+    dispatch("cancel", true);
   }
 </script>
 
@@ -83,8 +88,6 @@
       placeholder="Search for users"
     />
   </div>
-
-  <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
 
   <div
     class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full"
@@ -115,8 +118,9 @@
   </div>
 
   <div class="p-2 flex justify-between items-center box-border">
-    <button class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
-      >Cancel</button
+    <button
+      class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
+      on:click={handleCancel}>Cancel</button
     >
 
     <button
