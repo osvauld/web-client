@@ -1,9 +1,16 @@
 <script>
   import { Lens, Add, BinIcon } from "../icons";
   import { showAddUserDrawer } from "../store";
+  import { deleteUser, fetchAllUsers } from "../apis";
   import AddUser from "./AddUser.svelte";
 
   export let allUsers;
+
+  const deleteUserHandler = async (id) => {
+    await deleteUser(id);
+    const allUsersResponse = await fetchAllUsers();
+    allUsers = allUsersResponse.data;
+  };
 </script>
 
 <div class="flex items-center justify-between px-4 py-5 pb-0">
@@ -49,7 +56,13 @@
             <td
               class="flex justify-center items-center py-6 w-[4rem] cursor-pointer"
             >
-              <BinIcon />
+              <button
+                on:click={() => {
+                  deleteUserHandler(user.id);
+                }}
+              >
+                <BinIcon />
+              </button>
             </td>
           </tr>
         {/each}

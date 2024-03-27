@@ -28,6 +28,18 @@ export const fetchFolderUsers = async (folderId: string): Promise<FolderUserResp
   }).then((response) => response.json());
 };
 
+export const fetchFolderUsersForDataSync = async (folderId: string): Promise<any> => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  return fetch(`${baseUrl}/folder/${folderId}/users-data-sync`, {
+    headers,
+  }).then((response) => response.json());
+
+}
+
 export const fetchFolderGroups = async (folderId: string): Promise<FolderGroupResponse> => {
   const headers = new Headers();
   const { token, baseUrl } = await getTokenAndBaseUrl()
