@@ -132,7 +132,7 @@
   </button>
 {/if}
 
-<div class="w-full h-[78vh]">
+<div class="w-full min-h-[80vh]">
   {#if $selectedFolder}
     <div class="flex justify-between items-center px-4 py-2">
       <div class="max-w-[50%] min-w-[30%] flex items-center">
@@ -233,7 +233,7 @@
   {/if}
   {#if sortedCredentials.length !== 0}
     <div
-      class="flex flex-wrap p-3 gap-2 w-full max-h-[85vh] !overflow-y-scroll scrollbar-thin"
+      class="flex flex-wrap p-3 gap-4 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
     >
       {#each sortedCredentials as credential, index}
         <CredentialCard
