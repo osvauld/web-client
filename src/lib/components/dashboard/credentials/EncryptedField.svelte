@@ -55,7 +55,7 @@
         <Locked />
       </button>
     {:else}
-      <div class="w-2/5 flex gap-2 items-center pr-2">
+      <div class="w-2/5 flex gap-2 items-center justify-end">
         <button>
           <Unlocked />
         </button>
