@@ -235,7 +235,7 @@
       class="min-h-[32vh] max-h-[35vh] overflow-y-scroll scrollbar-thin z-50"
     >
       <input
-        class="w-[95%] h-[3.4rem] mb-2 mt-4 ml-4 pl-4 bg-osvauld-frameblack border rounded-xl text-3xl text-osvauld-quarzowhite font-normal focus:border-osvauld-activeBorder flex focus:ring-0 placeholder-osvauld-iconblack {notNamed
+        class="w-[95%] h-[3.8rem] mb-2 mt-4 ml-4 pl-4 bg-osvauld-frameblack border rounded-xl text-3xl text-osvauld-quarzowhite font-normal focus:border-osvauld-activeBorder flex focus:ring-0 placeholder-osvauld-iconblack {notNamed
           ? 'border-red-500'
           : 'border-osvauld-iconblack '}"
         id="name"
