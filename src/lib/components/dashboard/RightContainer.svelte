@@ -201,7 +201,7 @@
     </div>
   {/if}
   <div
-    class="h-full min-h-[85vh] bg-osvauld-frameblack border border-osvauld-iconblack rounded-2xl mr-4 overflow-hidden"
+    class="h-[90vh] bg-osvauld-frameblack border border-osvauld-iconblack rounded-2xl mr-4 overflow-hidden"
   >
     <!-- Content for the bottom part (dynamic content) -->
     {#if $selectedPage === "Folders"}

@@ -73,7 +73,7 @@
   on:click={handleClick}
 >
   <button
-    class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
+    class="container mx-auto py-3 pl-3 pr-2 relative group bg-osvauld-cardshade rounded-xl"
   >
     <div
       class="flex justify-center items-center border-osvauld-iconblack pb-2"
@@ -102,7 +102,7 @@
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
     ></div>
     <div
-      class="w-full h-[14rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
+      class="w-[15rem] h-[14rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
         ? 'active'
         : ''} mt-2"
     >
@@ -133,7 +133,7 @@
         Description
       </label>
       <div
-        class="mt-4 w-[97%] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
+        class="mt-4 w-[15rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
     {hoverEffect ? 'text-osvauld-fieldTextActive' : 'text-osvauld-fieldText'}"
         id="credential-description"
       >
