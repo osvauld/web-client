@@ -45,13 +45,14 @@
     <label for="passphrase">Enter Passphrase</label>
 
     <div
-      class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack"
+      class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack focus-within:border-osvauld-activeBorder"
     >
       <input
-        class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
+        class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 focus:border-osvauld-activeBorder"
         {type}
         id="passphrase"
         autocomplete="off"
+        autofocus
         on:input={onInput}
       />
       <button

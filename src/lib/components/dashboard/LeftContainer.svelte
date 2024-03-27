@@ -3,7 +3,7 @@
   import SideList from "./SideList.svelte";
 </script>
 
-<div class="flex justify-center items-center h-[5rem] scale-[0.8]">
+<div class="flex justify-center items-center h-[6rem] scale-[0.8]">
   <Logo />
 </div>
 

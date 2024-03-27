@@ -213,7 +213,7 @@
   {/if}
   {#if sortedCredentials.length !== 0}
     <div
-      class="flex flex-wrap p-3 gap-4 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
+      class="flex flex-wrap p-3 pl-7 gap-4 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
     >
       {#each sortedCredentials as credential, index}
         <CredentialCard
