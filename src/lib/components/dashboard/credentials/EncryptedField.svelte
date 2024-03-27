@@ -48,7 +48,7 @@
       ? 'text-osvauld-fieldTextActive'
       : 'text-osvauld-fieldText'}"
   >
-    <span class="w-2/3 text-left overflow-x-hidden"
+    <span class="w-3/5 text-left overflow-x-hidden"
       >{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
     >
     {#if !decrypted}
@@ -56,7 +56,7 @@
         <Locked />
       </button>
     {:else}
-      <div class="w-1/3 flex justify-between items-center">
+      <div class="w-2/5 flex gap-2 items-center justify-end">
         <button>
           <Unlocked />
         </button>
@@ -71,7 +71,7 @@
           {#if hoverEffect}
             <ActiveCopy />
           {:else}
-            <CopyIcon />
+            <CopyIcon color={null} />
           {/if}
         </button>
       </div>

@@ -65,7 +65,8 @@
 </script>
 
 <button
-  class="mb-1 max-w-[19rem] overflow-x-hidden flex-none hover:shadow-[0_0_0_1px_#B4BEFE] rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack"
+  class="mb-1 max-w-[19rem] overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack {checked &&
+    'shadow-[0_0_0_1px_#B4BEFE]'}"
   style="border: {$borderHighLight ? '1px solid #89B4FA' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
@@ -101,7 +102,7 @@
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
     ></div>
     <div
-      class="w-full h-[14rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
+      class="w-[15rem] h-[14rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
         ? 'active'
         : ''} mt-2"
     >
@@ -132,7 +133,7 @@
         Description
       </label>
       <div
-        class="mt-4 w-[97%] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin border border-osvauld-iconblack resize-none text-base
+        class="mt-4 w-[14.3rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin resize-none text-base
     {hoverEffect ? 'text-osvauld-fieldTextActive' : 'text-osvauld-fieldText'}"
         id="credential-description"
       >
@@ -157,7 +158,7 @@
     width: 100%;
     height: 100%;
     background-color: #b4befe;
-    z-index: 50;
+    z-index: 1;
     opacity: 0;
   }
 
@@ -174,7 +175,7 @@
       "M4.60852 10.4792C4.34185 10.4792 4.07518 10.3792 3.87102 10.175L0.000183105 6.3L0.883517 5.41667L4.60852 9.14167L13.7502 0L14.6335 0.883333L5.34602 10.1708C5.14185 10.375 4.87518 10.475 4.60852 10.475V10.4792Z"
     );
     opacity: 0;
-    z-index: 100;
+    z-index: 10;
     transition: opacity 0.2s ease-in-out;
   }
 

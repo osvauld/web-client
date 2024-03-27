@@ -115,7 +115,7 @@
   </button>
 {/if}
 
-<div class="w-full max-h-[75vh] min-h-[70vh]">
+<div class="w-full min-h-[80vh]">
   {#if $selectedFolder}
     <div class="flex justify-between items-center px-4 py-2">
       <div class="max-w-[50%] min-w-[30%] flex items-center">
@@ -124,13 +124,13 @@
         </h1>
         <!-- TODO: update to share credentials in the same api -->
         <button
-          class="rounded-md border border-osvauld-iconblack py-0.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+          class="rounded-md border border-osvauld-iconblack py-2 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90"
           on:click={folderShareManager}
         >
           <Share color={"#A3A4B5"} /> <span class="ml-1">Share Folder</span>
         </button>
         <button
-          class=" bg-osvauld-carolinablue rounded-md py-0.5 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+          class=" bg-osvauld-carolinablue rounded-md py-2 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90"
           on:click={credentialShareManager}
         >
           <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
@@ -150,17 +150,17 @@
         {/if}
       </div>
       <div class="w-1/2 flex justify-end items-center">
-        <button>
+        <button disabled class="scale-110">
           <InfoIcon />
         </button>
         <button
-          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-0.5 px-2 rounded-md ml-4"
+          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-2 px-4 xl:scale-90 rounded-md ml-4"
         >
           <span class="mr-1 pl-2">Latest</span>
           <DownArrow type={"common"} />
         </button>
         <button
-          class="rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 border text-osvauld-textActive border-osvauld-iconblack"
+          class="rounded-md py-2 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 border text-osvauld-textActive border-osvauld-iconblack"
           on:click={addCredentialManager}
           disabled={checkedCards.length !== 0}
           ><Add color={"#A3A4B5"} />
@@ -213,7 +213,7 @@
   {/if}
   {#if sortedCredentials.length !== 0}
     <div
-      class="grid grid-cols-4 gap-1.5 2xl:gap-3 3xl:gap-4 p-3 w-full max-h-[75vh] overflow-y-scroll overflow-x-hidden scrollbar-thin"
+      class="flex flex-wrap p-3 pl-7 gap-4 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
     >
       {#each sortedCredentials as credential, index}
         <CredentialCard
