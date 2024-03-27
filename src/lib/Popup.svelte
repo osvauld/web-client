@@ -21,7 +21,7 @@
       loggedIn = false;
     }
     isLoaderActive = false;
-    // isSignedUp.set(false);
+    //isSignedUp.set(false);
   });
 
   const checkAuth = (event: CustomEvent) => {

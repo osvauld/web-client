@@ -81,7 +81,8 @@
 </script>
 
 <button
-  class="mb-1 max-w-[19rem] overflow-x-hidden flex-none hover:shadow-[0_0_0_1px_#B4BEFE] rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack"
+  class="mb-1 max-w-[19rem] overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack {checked &&
+    'shadow-[0_0_0_1px_#B4BEFE]'}"
   style="border: {$borderHighLight ? '1px solid #89B4FA' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
@@ -176,7 +177,7 @@
     width: 100%;
     height: 100%;
     background-color: #b4befe;
-    z-index: 50;
+    z-index: 1;
     opacity: 0;
   }
 
@@ -193,7 +194,7 @@
       "M4.60852 10.4792C4.34185 10.4792 4.07518 10.3792 3.87102 10.175L0.000183105 6.3L0.883517 5.41667L4.60852 9.14167L13.7502 0L14.6335 0.883333L5.34602 10.1708C5.14185 10.375 4.87518 10.475 4.60852 10.475V10.4792Z"
     );
     opacity: 0;
-    z-index: 100;
+    z-index: 10;
     transition: opacity 0.2s ease-in-out;
   }
 
