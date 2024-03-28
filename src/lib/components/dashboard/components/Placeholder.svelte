@@ -10,8 +10,8 @@
     isLoaderActive = true;
     const { baseUrl } = await getTokenAndBaseUrl();
     const encryptionPvtKeyObj =
-      await browser.storage.local.get("encryptionPvtKey");
-    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+      await chrome.storage.local.get("encryptionPvtKey");
+    const signPvtKeyObj = await chrome.storage.local.get("signPvtKey");
     const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
     const signKey = signPvtKeyObj.signPvtKey;
     const exporter = JSON.stringify({ encryptionKey, signKey, baseUrl });

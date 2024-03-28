@@ -1,7 +1,6 @@
 <script>
   import { fly } from "svelte/transition";
 
-  import browser from "webextension-polyfill";
   import {
     Locked,
     Eye,

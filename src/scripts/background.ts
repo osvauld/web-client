@@ -8,7 +8,7 @@ import {
 } from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
-import init, { is_global_context_set, hello_wasm } from "./rust_openpgp_wasm";
+import init, { is_global_context_set } from "./rust_openpgp_wasm";
 import browser from "webextension-polyfill";
 
 let urlObj = new Map<string, Set<string>>();
@@ -19,7 +19,7 @@ browser.runtime.onInstalled.addListener(async () => {
 });
 
 
-browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+browser.runtime.onMessage.addListener(async (request) => {
 
   switch (request.action) {
     case "decrypt": {
@@ -81,7 +81,6 @@ browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
     case "isSignedUp": {
       const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
-      console.log(signPvtKeyObj.signPvtKey);
       await init();
       const SAVE_TIMESTAMP_INTERVAL_MS = 2 * 1000;
       saveTimestamp();
@@ -119,6 +118,7 @@ browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
 
     case "checkPvtLoaded":
+      console.log('check pvt load')
       return is_global_context_set()
     case "getActiveCredSuggestion": {
       let tabs = await browser.tabs.query({

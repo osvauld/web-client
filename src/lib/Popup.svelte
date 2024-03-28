@@ -10,6 +10,7 @@
   let loggedIn = true;
   let isLoaderActive = false;
   onMount(async () => {
+    console.log("popup mounted");
     isLoaderActive = true;
     const response = await sendMessage("isSignedUp");
     isSignedUp.set(response.isSignedUp);
