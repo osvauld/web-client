@@ -9,8 +9,6 @@
   } from "../apis";
   import { CredentialFields } from "../dtos";
 
-  import browser from "webextension-polyfill";
-
   import { User } from "../dtos";
   import { ClosePanel, Lens, UserCheck, UserPlus } from "../icons";
   import {
@@ -32,11 +30,11 @@
   onMount(async () => {
     if (!$selectedGroup) return;
     const userGroup = await fetchUsersWithoutGroupAccess(
-      $selectedGroup.groupId
+      $selectedGroup.groupId,
     );
     users = userGroup.data;
     const credentialFieldsResponse = await fetchCredentialFieldsByGroupId(
-      $selectedGroup.groupId
+      $selectedGroup.groupId,
     );
     credentialFields = credentialFieldsResponse.data;
   });
@@ -44,7 +42,7 @@
   const approveSelections = async () => {
     if (!selectedPermission) return;
     console.log("Selected Permission ", selectedPermission);
-    const userData = await browser.runtime.sendMessage({
+    const userData = await chrome.runtime.sendMessage({
       action: "createShareCredPayload",
       data: {
         creds: credentialFields,

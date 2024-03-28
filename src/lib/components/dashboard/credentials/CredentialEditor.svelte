@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import browser from "webextension-polyfill";
+
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
 
@@ -66,7 +66,7 @@
     const response = await fetchSensitiveFieldsByCredentialId(credentialId);
     let sensitiveFields = response.data;
     for (let field of sensitiveFields) {
-      const response = await browser.runtime.sendMessage({
+      const response = await chrome.runtime.sendMessage({
         action: "decryptField",
         data: field.fieldValue,
       });
@@ -121,7 +121,7 @@
       domain,
     };
 
-    const response = await browser.runtime.sendMessage({
+    const response = await chrome.runtime.sendMessage({
       action: "addCredential",
       data: { users: usersToShare, addCredentialFields },
     });
@@ -132,7 +132,7 @@
       await addCredential(addCredentialPaylod);
     }
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const decryptedData = await browser.runtime.sendMessage({
+    const decryptedData = await chrome.runtime.sendMessage({
       action: "decryptMeta",
       data: responseJson.data,
     });

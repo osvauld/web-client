@@ -3,7 +3,7 @@
   import SetPassPhrase from "./SetPassPhrase.svelte";
   import SetBaseUrl from "./components/SetBaseUrl.svelte";
   import ImportPvtKey from "./ImportPvtKey.svelte";
-  import browser from "webextension-polyfill";
+
   import { isLoggedIn, isSignedUp } from "../../store/ui.store";
 
   let isTempLoginVerified = false;
@@ -28,7 +28,7 @@
   const importPvtKey = async (e: any) => {
     console.log(e.detail);
     const { privateKeys, passphrase } = e.detail;
-    await browser.runtime.sendMessage({
+    await chrome.runtime.sendMessage({
       action: "importPvtKey",
       passphrase,
       privateKeys,

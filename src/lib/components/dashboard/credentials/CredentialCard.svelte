@@ -11,7 +11,7 @@
     credentialStore,
     selectedFolder,
   } from "../store";
-  import browser from "webextension-polyfill";
+
   import { removeCredential, fetchCredentialsByFolder } from "../apis";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";
@@ -60,7 +60,7 @@
   const removeCredentialHandler = async () => {
     await removeCredential(credential.credentialId);
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const response = await browser.runtime.sendMessage({
+    const response = await chrome.runtime.sendMessage({
       action: "decryptMeta",
       data: responseJson.data,
     });

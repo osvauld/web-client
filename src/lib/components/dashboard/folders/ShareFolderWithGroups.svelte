@@ -21,7 +21,6 @@
   import ListItem from "../components/ListItem.svelte";
   import ExistingListParent from "../components/ExistingListParent.svelte";
   import ShareToast from "../components/ShareToast.svelte";
-  import browser from "webextension-polyfill";
 
   let groups: Group[] = [];
   export let credentialsFields: CredentialFields[];
@@ -37,7 +36,7 @@
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase())
+        group.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : groups;
 
@@ -65,7 +64,7 @@
     for (const groupUsers of groupUsersList) {
       const group = $selectedGroups.get(groupUsers.groupId);
       if (group === undefined) continue;
-      const userData = await browser.runtime.sendMessage({
+      const userData = await chrome.runtime.sendMessage({
         action: "createShareCredPayload",
         data: {
           creds: credentialsFields,
@@ -129,7 +128,7 @@
     await editFolderPermissionForGroup(
       $selectedFolder.id,
       e.detail.item.id,
-      e.detail.permission
+      e.detail.permission,
     );
     await existingGroups(false);
   };

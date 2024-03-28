@@ -1,6 +1,6 @@
 <script lang="ts">
   import Eye from "../basic/icons/eye.svelte";
-  import browser from "webextension-polyfill";
+
   import { isSignedUp } from "../../store/ui.store";
   import Loader from "../dashboard/components/Loader.svelte";
 
@@ -17,7 +17,7 @@
   const handlePassPhraseSubmit = async () => {
     isLoaderActive = true;
     if (passphrase === confirmPassphrase) {
-      const response = await browser.runtime.sendMessage({
+      const response = await chrome.runtime.sendMessage({
         action: "savePassphrase",
         passphrase,
         challenge,

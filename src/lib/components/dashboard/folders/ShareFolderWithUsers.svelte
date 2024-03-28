@@ -17,7 +17,6 @@
   import ListItem from "../components/ListItem.svelte";
   import ShareToast from "../components/ShareToast.svelte";
   import ExistingListParent from "../components/ExistingListParent.svelte";
-  import browser from "webextension-polyfill";
 
   export let users: User[];
   export let credentialsFields: CredentialFields[];
@@ -32,7 +31,7 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase())
+        user.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : users;
 
@@ -52,7 +51,7 @@
     if ($selectedFolder === null) {
       throw new Error("Folder not selected");
     }
-    const userData = await browser.runtime.sendMessage({
+    const userData = await chrome.runtime.sendMessage({
       action: "createShareCredPayload",
       data: {
         creds: credentialsFields,
@@ -104,7 +103,7 @@
     await editFolderPermissionForUser(
       $selectedFolder.id,
       e.detail.item.id,
-      e.detail.permission
+      e.detail.permission,
     );
     await existingUsers(false);
   };

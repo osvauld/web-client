@@ -1,4 +1,4 @@
-import browser from "webextension-polyfill";
+
 type TypeToClassKey = "reader" | "manager";
 
 export const setbackground = (type: TypeToClassKey): string => {
@@ -15,8 +15,8 @@ export const setbackground = (type: TypeToClassKey): string => {
 
 export const getTokenAndBaseUrl = async () => {
     const [token, baseUrl] = await Promise.all([
-        browser.storage.local.get("token"),
-        browser.storage.local.get("baseUrl")
+        chrome.storage.local.get("token"),
+        chrome.storage.local.get("baseUrl")
     ]);
     return { token: token.token, baseUrl: baseUrl.baseUrl };
 }

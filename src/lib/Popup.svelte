@@ -1,5 +1,4 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
   import { onMount } from "svelte";
   import Welcome from "./components/popup/Welcome.svelte";
   import Home from "./components/popup/Home.svelte";
@@ -8,20 +7,21 @@
   import Signup from "./components/popup/Signup.svelte";
   import Loader from "./components/dashboard/components/Loader.svelte";
 
-  let devType = "popup";
   let loggedIn = true;
   let isLoaderActive = false;
   onMount(async () => {
+    console.log("popup mounted");
     isLoaderActive = true;
-    if (devType != "popup") openFullscreenTab();
-    const response = await browser.runtime.sendMessage({
+    const response = await chrome.runtime.sendMessage({
       action: "isSignedUp",
     });
+    console.log("message sent", response);
 
     isSignedUp.set(response.isSignedUp);
-    const checkPvtLoad = await browser.runtime.sendMessage({
+    const checkPvtLoad = await chrome.runtime.sendMessage({
       action: "checkPvtLoaded",
     });
+    console.log("checkPvtLoad", checkPvtLoad);
     if (checkPvtLoad) {
       loggedIn = true;
     } else {
@@ -31,13 +31,7 @@
     // isSignedUp.set(false);
   });
 
-  const openFullscreenTab = async () => {
-    // Send a message to the background sdaash
-    await browser.runtime.sendMessage({ action: "openFullscreenTab" });
-  };
-
   const checkAuth = (event: CustomEvent) => {
-    console.log("check auth event...", event);
     loggedIn = event.detail;
   };
 </script>

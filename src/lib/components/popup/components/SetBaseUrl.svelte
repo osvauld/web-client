@@ -1,18 +1,18 @@
 <script>
     import { createEventDispatcher } from "svelte";
-    import browser from "webextension-polyfill";
+
     let baseUrl = "";
     const dispatch = createEventDispatcher();
 
     const handleBaseUrlSubmit = async () => {
         // Save baseUrl to localStorage
-        await browser.storage.local.set({ baseUrl });
+        await chrome.storage.local.set({ baseUrl });
         // Dispatch an event to indicate that the base URL has been added to localStorage
         dispatch("baseUrlAdded");
     };
 
     const handleImportPvtKeyClick = async () => {
-        await browser.storage.local.set({ baseUrl });
+        await chrome.storage.local.set({ baseUrl });
         dispatch("importPvtKey", true);
     };
 </script>

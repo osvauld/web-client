@@ -14,7 +14,6 @@
     searchedCredential,
   } from "./store";
 
-  import browser from "webextension-polyfill";
   import { fetchCredentialsByFolder } from "./apis";
 
   import { Folder } from "./dtos";
@@ -67,7 +66,7 @@
     selectedFolder.set(folder);
     selectedCredential.set(null);
     const responseJson = await fetchCredentialsByFolder(folder.id);
-    const response = await browser.runtime.sendMessage({
+    const response = await chrome.runtime.sendMessage({
       action: "decryptMeta",
       data: responseJson.data,
     });

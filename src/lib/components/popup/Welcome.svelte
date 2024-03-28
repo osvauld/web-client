@@ -1,5 +1,4 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
   import Eye from "../basic/icons/eye.svelte";
   import Loader from "../dashboard/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
@@ -17,7 +16,7 @@
   $: type = showPassword ? "text" : "password";
   async function handleSubmit() {
     isLoaderActive = true;
-    const response = await browser.runtime.sendMessage({
+    const response = await chrome.runtime.sendMessage({
       action: "initiateAuth",
       data: { passphrase },
     });

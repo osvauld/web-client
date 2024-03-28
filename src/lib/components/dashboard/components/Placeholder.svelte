@@ -1,5 +1,4 @@
 <script>
-  import browser from "webextension-polyfill";
   import Loader from "./Loader.svelte";
   let copiedToClipboard = false;
   let isLoaderActive = false;
@@ -7,8 +6,8 @@
   const exportManager = async () => {
     isLoaderActive = true;
     const encryptionPvtKeyObj =
-      await browser.storage.local.get("encryptionPvtKey");
-    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+      await chrome.storage.local.get("encryptionPvtKey");
+    const signPvtKeyObj = await chrome.storage.local.get("signPvtKey");
     const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
     const signKey = signPvtKeyObj.signPvtKey;
     const exporter = JSON.stringify({ encryptionKey, signKey });
