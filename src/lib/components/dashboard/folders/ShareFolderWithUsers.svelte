@@ -1,5 +1,4 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
   import {
     shareFolderWithUsers,
     fetchFolderUsers,
@@ -13,7 +12,7 @@
     CredentialFields,
   } from "../dtos";
   import { selectedFolder } from "../store";
-  import { setbackground } from "../helper";
+  import { sendMessage, setbackground } from "../helper";
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
   import ShareToast from "../components/ShareToast.svelte";
@@ -52,12 +51,9 @@
     if ($selectedFolder === null) {
       throw new Error("Folder not selected");
     }
-    const userData = await browser.runtime.sendMessage({
-      action: "createShareCredPayload",
-      data: {
-        creds: credentialsFields,
-        users: selectedUsers,
-      },
+    const userData = await sendMessage("createShareCredPayload", {
+      creds: credentialsFields,
+      users: selectedUsers,
     });
 
     const shareFolderPayload: ShareFolderWithUsersPayload = {

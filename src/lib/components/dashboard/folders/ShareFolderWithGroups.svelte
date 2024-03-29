@@ -1,5 +1,4 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
   import {
     Group,
     GroupWithAccessType,
@@ -14,7 +13,7 @@
     removeGroupFromFolder,
     editFolderPermissionForGroup,
   } from "../apis";
-  import { setbackground } from "../helper";
+  import { sendMessage, setbackground } from "../helper";
   import { writable } from "svelte/store";
   import { selectedFolder } from "../store";
   import { onMount } from "svelte";
@@ -65,12 +64,9 @@
     for (const groupUsers of groupUsersList) {
       const group = $selectedGroups.get(groupUsers.groupId);
       if (group === undefined) continue;
-      const userData = await browser.runtime.sendMessage({
-        action: "createShareCredPayload",
-        data: {
-          creds: credentialsFields,
-          users: groupUsers.userDetails,
-        },
+      const userData = await sendMessage("createShareCredPayload", {
+        creds: credentialsFields,
+        users: groupUsers.userDetails,
       });
       payload.groupData.push({
         groupId: group.groupId,

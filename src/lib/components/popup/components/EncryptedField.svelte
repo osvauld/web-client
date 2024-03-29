@@ -1,6 +1,6 @@
 <script>
+  import { sendMessage } from "../../dashboard/helper";
   import { Locked, Eye, Unlocked, ActiveCopy, ClosedEye } from "../icons";
-  import browser from "webextension-polyfill";
   export let fieldName;
   export let fieldValue;
   let visibility = false;
@@ -8,10 +8,7 @@
   let decryptedValue = "";
 
   const decrypt = async () => {
-    const response = await browser.runtime.sendMessage({
-      action: "decryptField",
-      data: fieldValue,
-    });
+    const response = await sendMessage("decryptField", { fieldValue });
     decryptedValue = response.data;
     decrypted = true;
   };

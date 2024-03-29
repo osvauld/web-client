@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import browser from "webextension-polyfill";
   import {
     fetchGroupUsers,
     addUserToGroup,
@@ -19,6 +18,7 @@
   } from "../store";
   import ShareToast from "../components/ShareToast.svelte";
   import RoleSelector from "../components/roleSelector.svelte";
+  import { sendMessage } from "../helper";
 
   let users: User[] = [];
   let userDataForApproval: User;
@@ -42,13 +42,9 @@
 
   const approveSelections = async () => {
     if (!selectedPermission) return;
-    console.log("Selected Permission ", selectedPermission);
-    const userData = await browser.runtime.sendMessage({
-      action: "createShareCredPayload",
-      data: {
-        creds: credentialFields,
-        users: [userDataForApproval],
-      },
+    const userData = await sendMessage("createShareCredPayload", {
+      creds: credentialFields,
+      users: [userDataForApproval],
     });
     const payload = {
       groupId: $selectedGroup.groupId,

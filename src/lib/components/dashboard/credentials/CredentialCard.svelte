@@ -12,10 +12,10 @@
     selectedFolder,
   } from "../store";
 
-  import browser from "webextension-polyfill";
   import { removeCredential, fetchCredentialsByFolder } from "../apis";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";
+  import { sendMessage } from "../helper";
   const dispatch = createEventDispatcher();
   export let credential: Credential;
   export let index: number;
@@ -61,10 +61,7 @@
   const removeCredentialHandler = async () => {
     await removeCredential(credential.credentialId);
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const response = await browser.runtime.sendMessage({
-      action: "decryptMeta",
-      data: responseJson.data,
-    });
+    const response = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(response.data);
   };
 

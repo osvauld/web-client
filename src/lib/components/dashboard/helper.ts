@@ -21,3 +21,13 @@ export const getTokenAndBaseUrl = async () => {
     ]);
     return { token: token.token, baseUrl: baseUrl.baseUrl };
 }
+
+
+export const sendMessage = async (action: string, data: any = {}) => {
+    const response = await browser.runtime.sendMessage({
+        action,
+        data,
+    });
+    console.log(response, action, data);
+    return response;
+}

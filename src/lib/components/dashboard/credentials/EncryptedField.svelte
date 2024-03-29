@@ -10,6 +10,7 @@
     ClosedEye,
     CopyIcon,
   } from "../icons";
+  import { sendMessage } from "../helper";
   export let fieldName;
   export let fieldValue;
   export let hoverEffect;
@@ -19,10 +20,7 @@
   let decryptedValue = "";
 
   const decrypt = async () => {
-    const response = await browser.runtime.sendMessage({
-      action: "decryptField",
-      data: fieldValue,
-    });
+    const response = sendMessage("decryptField", fieldValue);
     decryptedValue = response.data;
     decrypted = true;
   };

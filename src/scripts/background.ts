@@ -68,11 +68,13 @@ browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     case "initiateAuth": {
       try {
 
+        console.log(request.data);
         const passphrase = request.data.passphrase;
         await loadWasmModule();
         await initiateAuthHandler(passphrase)
         return { isAuthenticated: true }
       } catch (error) {
+        console.log(error);
         return { isAuthenticated: false }
       }
     }
@@ -89,14 +91,14 @@ browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     }
 
     case "importPvtKey": {
-      await handlePvtKeyImport(request.privateKeys, request.passphrase);
+      await handlePvtKeyImport(request.data.privateKeys, request.data.passphrase);
       return;
     }
 
 
     case "savePassphrase":
-      if (request.passphrase) {
-        return savePassphraseHandler(request.passphrase, request.challenge, request.username)
+      if (request.data.passphrase) {
+        return savePassphraseHandler(request.data.passphrase, request.data.challenge, request.data.username)
       }
       break;
     case "updateAllUrls":
@@ -117,7 +119,6 @@ browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
 
     case "checkPvtLoaded":
-      console.log('check pvt load', await is_global_context_set())
       return is_global_context_set()
     case "getActiveCredSuggestion": {
       let tabs = await browser.tabs.query({
