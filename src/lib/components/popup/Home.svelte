@@ -4,8 +4,8 @@
     fetchCredsByIds,
     fetchSensitiveFieldsByCredentialId,
   } from "../../apis/credentials.api";
-  import browser from "webextension-polyfill";
 
+  import browser from "webextension-polyfill";
   import { onMount } from "svelte";
   import { Maximize, Lens, RightArrow, DownArrow, ActiveCopy } from "./icons";
   import PasswordNotFound from "./components/PasswordNotFound.svelte";
