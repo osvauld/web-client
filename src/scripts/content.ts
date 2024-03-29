@@ -2,6 +2,7 @@
 import { craftSaveDialouge, createIcon, createSuggestionBox, createSuggestionChildren } from "../lib/components/content/nodeGenerators";
 import { getElement } from "../lib/components/content/xpaths"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
+import browser from "webextension-polyfill";
 
 let count = 0;
 let creds: InjectionPayload[] = [];
@@ -66,7 +67,7 @@ function suggestionsDialouge(element: HTMLInputElement, count: number) {
       .map((item) => {
         let mappedDiv = createSuggestionChildren(item.username);
         mappedDiv.addEventListener("click", async () => {
-          const userDetails = await chrome.runtime.sendMessage({ action: 'getActiveCredSuggestion', data: item.id })
+          const userDetails = await browser.runtime.sendMessage({ action: 'getActiveCredSuggestion', data: item.id })
           fillCredentials(userDetails.username, userDetails.password);
         });
         return mappedDiv;
@@ -118,7 +119,7 @@ try {
   console.log("username field xpath failed");
 }
 
-chrome.runtime.onMessage.addListener(function (request) {
+browser.runtime.onMessage.addListener(function (request) {
   if (request.action === "fillingSignal") {
     let usernameElem = getElement('username');
 
@@ -159,7 +160,7 @@ function getLoginCredentials() {
     if (usernameValue.length > 3 && passwordValue.length > 3) {
       (async () => {
 
-        await chrome.runtime.sendMessage({ action: 'credSubmitted', url: location.href, username: usernameValue, password: passwordValue })
+        await browser.runtime.sendMessage({ action: 'credSubmitted', url: location.href, username: usernameValue, password: passwordValue })
       })()
     }
 
@@ -177,7 +178,7 @@ if (loginButtonElem) {
 }
 
 
-// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+// browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 //   if (message.event === "updateCreds") {
 //     // creds = message.data;
 //     console.log(creds, "FFFFFFFFFFFFFFFFFFFFFFFF");

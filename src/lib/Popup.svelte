@@ -6,19 +6,19 @@
   import { isSignedUp } from "../lib/store/ui.store";
   import Signup from "./components/popup/Signup.svelte";
   import Loader from "./components/dashboard/components/Loader.svelte";
-
+  import browser from "webextension-polyfill";
   let loggedIn = true;
   let isLoaderActive = false;
   onMount(async () => {
     console.log("popup mounted");
     isLoaderActive = true;
-    const response = await chrome.runtime.sendMessage({
+    const response = await browser.runtime.sendMessage({
       action: "isSignedUp",
     });
     console.log("message sent", response);
 
     isSignedUp.set(response.isSignedUp);
-    const checkPvtLoad = await chrome.runtime.sendMessage({
+    const checkPvtLoad = await browser.runtime.sendMessage({
       action: "checkPvtLoaded",
     });
     console.log("checkPvtLoad", checkPvtLoad);

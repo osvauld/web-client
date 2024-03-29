@@ -4,25 +4,30 @@
   "version": "1.0",
   "description": "Your extension description",
   "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "background": {
+    "type": "module",
     "service_worker": "background.js"
-  },
+},
   "permissions": [
     "storage",
     "activeTab",
     "webRequest",
     "webRequestBlocking"
   ],
+  
+"host_permissions": [
+  "<all_urls>"
+],
   "action": {
     "default_popup": "popup.html"
   },
   "web_accessible_resources": [
     {
-      "resources": ["your_module.wasm"],
+      "resources": ["rust_openpgp_wasm_bg.wasm"],
       "matches": ["<all_urls>"]
     }
   ],

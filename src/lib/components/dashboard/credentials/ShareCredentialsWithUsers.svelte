@@ -7,6 +7,7 @@
   } from "../dtos";
   import { shareCredentialsWithUsers } from "../apis";
   import { setbackground } from "../helper";
+  import browser from "webextension-polyfill";
 
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
@@ -28,7 +29,7 @@
     : users;
 
   const shareCredentialHandler = async () => {
-    const userData = await chrome.runtime.sendMessage({
+    const userData = await browser.runtime.sendMessage({
       action: "createShareCredPayload",
       data: {
         creds: credentialsFields,

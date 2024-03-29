@@ -4,7 +4,7 @@
   import { getSearchFields } from "./apis";
   import Highlight from "./components/Highlight.svelte";
   import Key from "../basic/icons/key.svelte";
-
+  import browser from "webextension-polyfill";
   import { Profile, Lens } from "./icons";
   import {
     selectedCredential,
@@ -66,7 +66,7 @@
     selectedFolder.set(folder);
     selectedCredential.set(null);
     const responseJson = await fetchCredentialsByFolder(folder.id);
-    const response = await chrome.runtime.sendMessage({
+    const response = await browser.runtime.sendMessage({
       action: "decryptMeta",
       data: responseJson.data,
     });

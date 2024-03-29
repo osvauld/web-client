@@ -4,6 +4,7 @@
     fetchCredsByIds,
     fetchSensitiveFieldsByCredentialId,
   } from "../../apis/credentials.api";
+  import browser from "webextension-polyfill";
 
   import { onMount } from "svelte";
   import { Maximize, Lens, RightArrow, DownArrow, ActiveCopy } from "./icons";
@@ -19,7 +20,7 @@
   let selectedPassword: string = "";
 
   const openFullscreenTab = async () => {
-    await chrome.runtime.sendMessage({ action: "openFullscreenTab" });
+    await browser.runtime.sendMessage({ action: "openFullscreenTab" });
   };
 
   type CredMap = {
@@ -34,13 +35,13 @@
     const responseJson = await fetchAllUserUrls();
     const urls = responseJson.data;
 
-    const tabs = await chrome.tabs.query({
+    const tabs = await browser.tabs.query({
       active: true,
       currentWindow: true,
     });
     const activeTab = tabs[0];
     if (activeTab && activeTab.url) domain = new URL(activeTab.url).hostname;
-    const { credIds } = await chrome.runtime.sendMessage({
+    const { credIds } = await browser.runtime.sendMessage({
       action: "updateAllUrls",
       data: { urls, domain },
     });
@@ -54,7 +55,7 @@
       let password = "";
       for (let field of cred.fields) {
         if (field.fieldName == "Username") {
-          const response = await chrome.runtime.sendMessage({
+          const response = await browser.runtime.sendMessage({
             action: "decryptField",
             data: field.fieldValue,
           });

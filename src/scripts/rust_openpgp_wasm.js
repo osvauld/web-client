@@ -190,6 +190,14 @@ function debugString(val) {
     return className;
 }
 /**
+* @returns {any}
+*/
+export function hello_wasm() {
+    const ret = wasm.hello_wasm();
+    return takeObject(ret);
+}
+
+/**
 * @param {string} password
 * @returns {any}
 */

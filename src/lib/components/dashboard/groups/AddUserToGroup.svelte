@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
+  import browser from "webextension-polyfill";
   import {
     fetchGroupUsers,
     addUserToGroup,
@@ -42,7 +43,7 @@
   const approveSelections = async () => {
     if (!selectedPermission) return;
     console.log("Selected Permission ", selectedPermission);
-    const userData = await chrome.runtime.sendMessage({
+    const userData = await browser.runtime.sendMessage({
       action: "createShareCredPayload",
       data: {
         creds: credentialFields,

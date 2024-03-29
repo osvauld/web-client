@@ -8,18 +8,18 @@ import {
 } from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
-import init, { is_global_context_set } from "./rust_openpgp_wasm";
-
+import init, { is_global_context_set, hello_wasm } from "./rust_openpgp_wasm";
+import browser from "webextension-polyfill";
 
 let urlObj = new Map<string, Set<string>>();
 
 
-chrome.runtime.onInstalled.addListener(async () => {
-  chrome.tabs.create({ url: chrome.runtime.getURL("dashboard.html") });
+browser.runtime.onInstalled.addListener(async () => {
+  browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
 });
 
 
-chrome.runtime.onMessage.addListener(async (request) => {
+browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
   switch (request.action) {
     case "decrypt": {
@@ -36,26 +36,26 @@ chrome.runtime.onMessage.addListener(async (request) => {
 
     case "fillingSignal":
       {
-        const [tab]: any[] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-        await chrome.tabs.sendMessage(tab.id, request);
+        const [tab]: any[] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+        await browser.tabs.sendMessage(tab.id, request);
         break;
       }
 
     case "openFullscreenTab":
-      chrome.tabs.create({ url: chrome.runtime.getURL("dashboard.html") });
+      browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
       break;
 
     case "credSubmitted": {
       let currentUrl = request.url;
       setTimeout(async () => {
         try {
-          const [tab]: chrome.Tabs.Tab[] = await chrome.tabs.query({
+          const [tab]: browser.Tabs.Tab[] = await browser.tabs.query({
             active: true,
             currentWindow: true,
           });
           if (tab && tab.id) {
             if (tab.url !== currentUrl) {
-              await chrome.tabs.sendMessage(tab.id, { action: "saveToVault", username: request.username, password: request.password });
+              await browser.tabs.sendMessage(tab.id, { action: "saveToVault", username: request.username, password: request.password });
             }
           }
         } catch (error) {
@@ -73,21 +73,15 @@ chrome.runtime.onMessage.addListener(async (request) => {
         await initiateAuthHandler(passphrase)
         return { isAuthenticated: true }
       } catch (error) {
-        return { isAuthenticated: false, error: error.message }
+        return { isAuthenticated: false }
       }
     }
 
     case "isSignedUp": {
-      const signPvtKeyObj = await chrome.storage.local.get("signPvtKey");
+      const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
       console.log(signPvtKeyObj.signPvtKey);
-      try {
-
-        await init();
-      } catch (error) {
-        console.log(error);
-      }
+      await init();
       const SAVE_TIMESTAMP_INTERVAL_MS = 2 * 1000;
-
       saveTimestamp();
       setInterval(saveTimestamp, SAVE_TIMESTAMP_INTERVAL_MS);
       if (signPvtKeyObj.signPvtKey) return { isSignedUp: true }
@@ -123,10 +117,10 @@ chrome.runtime.onMessage.addListener(async (request) => {
 
 
     case "checkPvtLoaded":
-      console.log('check pvt load')
+      console.log('check pvt load', await is_global_context_set())
       return is_global_context_set()
     case "getActiveCredSuggestion": {
-      let tabs = await chrome.tabs.query({
+      let tabs = await browser.tabs.query({
         active: true,
         currentWindow: true,
       });
@@ -169,7 +163,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
 
 
 
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   // Log for debugging
 
   // Check if the tab status is 'complete'
@@ -196,7 +190,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         }
       }
       try {
-        await chrome.tabs.sendMessage(tabId, { action: "updateCredsList", creds: payload });
+        await browser.tabs.sendMessage(tabId, { action: "updateCredsList", creds: payload });
       } catch (error) {
         console.error("Error sending message to tab:", error);
       }
@@ -210,5 +204,5 @@ function saveTimestamp() {
 
   console.log('stroing timestamp')
   const timestamp = new Date().toISOString();
-  chrome.storage.local.set({ timestamp });
+  browser.storage.local.set({ timestamp });
 }

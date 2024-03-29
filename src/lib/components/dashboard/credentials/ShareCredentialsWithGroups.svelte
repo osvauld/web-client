@@ -7,6 +7,7 @@
   } from "../dtos";
   import { writable } from "svelte/store";
   import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
+  import browser from "webextension-polyfill";
   import { setbackground } from "../helper";
 
   import { Lens } from "../icons";
@@ -37,7 +38,7 @@
     for (const groupUsers of groupUsersList) {
       const group = $selectedGroups.get(groupUsers.groupId);
       if (group == undefined) continue;
-      const userData = await chrome.runtime.sendMessage({
+      const userData = await browser.runtime.sendMessage({
         action: "createShareCredPayload",
         data: {
           creds: credentialsFields,

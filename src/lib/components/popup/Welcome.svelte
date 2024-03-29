@@ -3,6 +3,7 @@
   import Loader from "../dashboard/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
+  import browser from "webextension-polyfill";
 
   let passphrase = "";
   let showPassword = false;
@@ -16,7 +17,7 @@
   $: type = showPassword ? "text" : "password";
   async function handleSubmit() {
     isLoaderActive = true;
-    const response = await chrome.runtime.sendMessage({
+    const response = await browser.runtime.sendMessage({
       action: "initiateAuth",
       data: { passphrase },
     });

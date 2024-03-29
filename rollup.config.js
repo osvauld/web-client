@@ -77,7 +77,7 @@ export default [
   {
     input: "src/scripts/background.ts",
     output: {
-      format: "iife",
+      format: "es",
       name: "background",
       file: "public/background.js",
     },

@@ -3,6 +3,7 @@
 import { createChallenge, finalRegistration, initiateAuth } from '../lib/apis/auth.api.js';
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
 import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields, get_pub_key, } from './rust_openpgp_wasm.js';
+import browser from "webextension-polyfill";
 
 type CredentialsForUsersPayload = {
     accessType?: string;
@@ -27,15 +28,15 @@ export const decryptCredentialFieldsHandler = async (credentials: CredentialFiel
 export const initiateAuthHandler = async (passphrase: string) => {
 
 
-    const encryptionPvtKeyObj = await chrome.storage.local.get("encryptionPvtKey");
-    const signPvtKeyObj = await chrome.storage.local.get("signPvtKey");
+    const encryptionPvtKeyObj = await browser.storage.local.get("encryptionPvtKey");
+    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
     const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
     const signKey = signPvtKeyObj.signPvtKey;
     console.log(JSON.stringify({ encryptionKey, signKey }))
     const startTime = performance.now();
     const cacheObj = decrypt_and_store_keys(encryptionKey, signKey, passphrase);
     // console.log(result2);
-    const pubKeyObj = await chrome.storage.local.get('signPublicKey');
+    const pubKeyObj = await browser.storage.local.get('signPublicKey');
     console.log("Time taken to decrypt and store keys:", performance.now() - startTime);
     const challengeResponse = await createChallenge(pubKeyObj.signPublicKey);
     await cacheObj;
@@ -43,8 +44,8 @@ export const initiateAuthHandler = async (passphrase: string) => {
     const verificationResponse = await initiateAuth(signedMessage, pubKeyObj.signPublicKey);
     const token = verificationResponse.data.token;
     if (token) {
-        await chrome.storage.local.set({ token: token });
-        await chrome.storage.local.set({ isLoggedIn: true });
+        await browser.storage.local.set({ token: token });
+        await browser.storage.local.set({ isLoggedIn: true });
     }
     return token;
 }
@@ -53,7 +54,7 @@ export const initiateAuthHandler = async (passphrase: string) => {
 export const savePassphraseHandler = async (passphrase: string, challenge: string, username: string) => {
     await init();
     const keyPair = await generate_and_encrypt_keys(passphrase);
-    await chrome.storage.local.set({ encryptionPvtKey: keyPair.get('enc_private_key'), signPvtKey: keyPair.get('sign_private_key'), encPublicKey: keyPair.get('enc_public_key'), signPublicKey: keyPair.get('sign_public_key') });
+    await browser.storage.local.set({ encryptionPvtKey: keyPair.get('enc_private_key'), signPvtKey: keyPair.get('sign_private_key'), encPublicKey: keyPair.get('enc_public_key'), signPublicKey: keyPair.get('sign_public_key') });
     const signature = await sign_message(keyPair.get('sign_private_key'), passphrase, challenge)
     await finalRegistration(username, signature, keyPair.get('sign_public_key'), keyPair.get('enc_public_key'))
     return { isSaved: true }
@@ -162,10 +163,10 @@ export const handlePvtKeyImport = async (pvtKeys: string, passphrase: string) =>
     const verificationResponse = await initiateAuth(signedMessage, signPubKey);
     const token = verificationResponse.data.token;
     if (token) {
-        await chrome.storage.local.set({ token: token });
-        await chrome.storage.local.set({ isLoggedIn: true });
+        await browser.storage.local.set({ token: token });
+        await browser.storage.local.set({ isLoggedIn: true });
     }
-    await chrome.storage.local.set({ encryptionPvtKey: encryptionKey, signPvtKey: signKey, encPublicKey: encPublicKey, signPublicKey: signPubKey });
+    await browser.storage.local.set({ encryptionPvtKey: encryptionKey, signPvtKey: signKey, encPublicKey: encPublicKey, signPublicKey: signPubKey });
 
     return token;
 

@@ -1,6 +1,7 @@
 <script>
   import { fly } from "svelte/transition";
 
+  import browser from "webextension-polyfill";
   import {
     Locked,
     Eye,
@@ -18,7 +19,7 @@
   let decryptedValue = "";
 
   const decrypt = async () => {
-    const response = await chrome.runtime.sendMessage({
+    const response = await browser.runtime.sendMessage({
       action: "decryptField",
       data: fieldValue,
     });

@@ -5,6 +5,7 @@
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
 
+  import browser from "webextension-polyfill";
   import {
     selectedFolder,
     showCredentialEditor,
@@ -66,7 +67,7 @@
     const response = await fetchSensitiveFieldsByCredentialId(credentialId);
     let sensitiveFields = response.data;
     for (let field of sensitiveFields) {
-      const response = await chrome.runtime.sendMessage({
+      const response = await browser.runtime.sendMessage({
         action: "decryptField",
         data: field.fieldValue,
       });
@@ -121,7 +122,7 @@
       domain,
     };
 
-    const response = await chrome.runtime.sendMessage({
+    const response = await browser.runtime.sendMessage({
       action: "addCredential",
       data: { users: usersToShare, addCredentialFields },
     });
@@ -132,7 +133,7 @@
       await addCredential(addCredentialPaylod);
     }
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const decryptedData = await chrome.runtime.sendMessage({
+    const decryptedData = await browser.runtime.sendMessage({
       action: "decryptMeta",
       data: responseJson.data,
     });

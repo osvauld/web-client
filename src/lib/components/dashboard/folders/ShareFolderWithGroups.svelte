@@ -1,4 +1,5 @@
 <script lang="ts">
+  import browser from "webextension-polyfill";
   import {
     Group,
     GroupWithAccessType,
@@ -64,7 +65,7 @@
     for (const groupUsers of groupUsersList) {
       const group = $selectedGroups.get(groupUsers.groupId);
       if (group === undefined) continue;
-      const userData = await chrome.runtime.sendMessage({
+      const userData = await browser.runtime.sendMessage({
         action: "createShareCredPayload",
         data: {
           creds: credentialsFields,

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import browser from "webextension-polyfill";
   import {
     shareFolderWithUsers,
     fetchFolderUsers,
@@ -51,7 +52,7 @@
     if ($selectedFolder === null) {
       throw new Error("Folder not selected");
     }
-    const userData = await chrome.runtime.sendMessage({
+    const userData = await browser.runtime.sendMessage({
       action: "createShareCredPayload",
       data: {
         creds: credentialsFields,

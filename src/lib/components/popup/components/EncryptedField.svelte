@@ -1,5 +1,6 @@
 <script>
   import { Locked, Eye, Unlocked, ActiveCopy, ClosedEye } from "../icons";
+  import browser from "webextension-polyfill";
   export let fieldName;
   export let fieldValue;
   let visibility = false;
@@ -7,7 +8,7 @@
   let decryptedValue = "";
 
   const decrypt = async () => {
-    const response = await chrome.runtime.sendMessage({
+    const response = await browser.runtime.sendMessage({
       action: "decryptField",
       data: fieldValue,
     });
