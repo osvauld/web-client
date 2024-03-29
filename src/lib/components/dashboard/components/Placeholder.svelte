@@ -3,15 +3,17 @@
   import browser from "webextension-polyfill";
   import { getTokenAndBaseUrl } from "../helper";
   import CopyIcon from "../../basic/icons/copyIcon.svelte";
-  let copiedToClipboard = false;
+  import browser from "webextension-polyfill";
+
   let isLoaderActive = false;
+  let copiedToClipboard = false;
 
   const exportManager = async () => {
     isLoaderActive = true;
     const { baseUrl } = await getTokenAndBaseUrl();
     const encryptionPvtKeyObj =
-      await chrome.storage.local.get("encryptionPvtKey");
-    const signPvtKeyObj = await chrome.storage.local.get("signPvtKey");
+      await browser.storage.local.get("encryptionPvtKey");
+    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
     const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
     const signKey = signPvtKeyObj.signPvtKey;
     const exporter = JSON.stringify({ encryptionKey, signKey, baseUrl });

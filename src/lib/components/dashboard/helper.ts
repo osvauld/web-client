@@ -16,8 +16,8 @@ export const setbackground = (type: TypeToClassKey): string => {
 
 export const getTokenAndBaseUrl = async () => {
     const [token, baseUrl] = await Promise.all([
-        chrome.storage.local.get("token"),
-        chrome.storage.local.get("baseUrl")
+        browser.storage.local.get("token"),
+        browser.storage.local.get("baseUrl")
     ]);
     return { token: token.token, baseUrl: baseUrl.baseUrl };
 }

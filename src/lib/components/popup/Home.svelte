@@ -4,6 +4,7 @@
     fetchCredsByIds,
     fetchSensitiveFieldsByCredentialId,
   } from "../../apis/credentials.api";
+  import browser from "webextension-polyfill";
 
   import { onMount } from "svelte";
   import { Maximize, Lens, RightArrow, DownArrow, ActiveCopy } from "./icons";
@@ -35,7 +36,7 @@
     const responseJson = await fetchAllUserUrls();
     const urls = responseJson.data;
 
-    const tabs = await chrome.tabs.query({
+    const tabs = await browser.tabs.query({
       active: true,
       currentWindow: true,
     });

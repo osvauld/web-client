@@ -118,7 +118,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 
     case "checkPvtLoaded":
-      console.log('check pvt load')
+      console.log('check pvt load', await is_global_context_set())
       return is_global_context_set()
     case "getActiveCredSuggestion": {
       let tabs = await browser.tabs.query({
