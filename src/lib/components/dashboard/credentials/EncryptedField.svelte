@@ -1,6 +1,5 @@
 <script>
   import { fly } from "svelte/transition";
-  import browser from "webextension-polyfill";
   import {
     Locked,
     Eye,
@@ -9,6 +8,7 @@
     ClosedEye,
     CopyIcon,
   } from "../icons";
+  import { sendMessage } from "../helper";
   export let fieldName;
   export let fieldValue;
   export let hoverEffect;
@@ -18,10 +18,7 @@
   let decryptedValue = "";
 
   const decrypt = async () => {
-    const response = await browser.runtime.sendMessage({
-      action: "decryptField",
-      data: fieldValue,
-    });
+    const response = await sendMessage("decryptField", fieldValue);
     decryptedValue = response.data;
     decrypted = true;
   };

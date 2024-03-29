@@ -80,19 +80,23 @@ browser.runtime.onMessage.addListener(async (request) => {
     case "isSignedUp": {
       const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
       await init();
+      const SAVE_TIMESTAMP_INTERVAL_MS = 2 * 1000;
+      saveTimestamp();
+      setInterval(saveTimestamp, SAVE_TIMESTAMP_INTERVAL_MS);
       if (signPvtKeyObj.signPvtKey) return { isSignedUp: true }
       else return { isSignedUp: false }
+
     }
 
     case "importPvtKey": {
-      await handlePvtKeyImport(request.privateKeys, request.passphrase);
+      await handlePvtKeyImport(request.data.privateKeys, request.data.passphrase);
       return;
     }
 
 
     case "savePassphrase":
-      if (request.passphrase) {
-        return savePassphraseHandler(request.passphrase, request.challenge, request.username)
+      if (request.data.passphrase) {
+        return savePassphraseHandler(request.data.passphrase, request.data.challenge, request.data.username)
       }
       break;
     case "updateAllUrls":
@@ -195,4 +199,9 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   }
 });
 
-// ... rest of your script ...
+function saveTimestamp() {
+
+  console.log('stroing timestamp')
+  const timestamp = new Date().toISOString();
+  browser.storage.local.set({ timestamp });
+}

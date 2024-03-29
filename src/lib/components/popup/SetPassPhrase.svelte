@@ -3,6 +3,7 @@
   import browser from "webextension-polyfill";
   import { isSignedUp } from "../../store/ui.store";
   import Loader from "../dashboard/components/Loader.svelte";
+  import { sendMessage } from "../dashboard/helper";
 
   export let challenge;
   export let username;
@@ -17,8 +18,7 @@
   const handlePassPhraseSubmit = async () => {
     isLoaderActive = true;
     if (passphrase === confirmPassphrase) {
-      const response = await browser.runtime.sendMessage({
-        action: "savePassphrase",
+      const response = await sendMessage("savePassphrase", {
         passphrase,
         challenge,
         username,

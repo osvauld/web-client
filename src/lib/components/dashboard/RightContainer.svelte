@@ -14,9 +14,8 @@
     searchedCredential,
   } from "./store";
 
-  import browser from "webextension-polyfill";
   import { fetchCredentialsByFolder } from "./apis";
-
+  import { sendMessage } from "./helper";
   import { Folder } from "./dtos";
   import LinkIcon from "../basic/icons/linkIcon.svelte";
   let searchResults = [];
@@ -67,10 +66,7 @@
     selectedFolder.set(folder);
     selectedCredential.set(null);
     const responseJson = await fetchCredentialsByFolder(folder.id);
-    const response = await browser.runtime.sendMessage({
-      action: "decryptMeta",
-      data: responseJson.data,
-    });
+    const response = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(response.data);
   };
   const handleSearchClick = (result) => {

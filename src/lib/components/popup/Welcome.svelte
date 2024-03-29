@@ -4,6 +4,7 @@
   import Loader from "../dashboard/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
   import { ClosedEye } from "../dashboard/icons";
+  import { sendMessage } from "../dashboard/helper";
   const dispatch = createEventDispatcher();
 
   let passphrase = "";
@@ -18,11 +19,7 @@
   $: type = showPassword ? "text" : "password";
   async function handleSubmit() {
     isLoaderActive = true;
-    const response = await browser.runtime.sendMessage({
-      action: "initiateAuth",
-      data: { passphrase },
-    });
-    console.log(response);
+    const response = await sendMessage("initiateAuth", { passphrase });
     if (response.isAuthenticated) {
       dispatch("authenticated", true);
     } else {

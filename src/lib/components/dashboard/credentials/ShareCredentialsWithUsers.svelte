@@ -6,7 +6,7 @@
     ShareCredentialsWithUsersPayload,
   } from "../dtos";
   import { shareCredentialsWithUsers } from "../apis";
-  import { setbackground } from "../helper";
+  import { sendMessage, setbackground } from "../helper";
   import browser from "webextension-polyfill";
 
   import { Lens } from "../icons";
@@ -24,17 +24,14 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase())
+        user.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : users;
 
   const shareCredentialHandler = async () => {
-    const userData = await browser.runtime.sendMessage({
-      action: "createShareCredPayload",
-      data: {
-        creds: credentialsFields,
-        users: selectedUsers,
-      },
+    const userData = await sendMessage("createShareCredPayload", {
+      creds: credentialsFields,
+      users: selectedUsers,
     });
 
     const payload: ShareCredentialsWithUsersPayload = { userData };

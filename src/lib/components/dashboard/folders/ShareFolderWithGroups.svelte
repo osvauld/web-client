@@ -13,7 +13,7 @@
     removeGroupFromFolder,
     editFolderPermissionForGroup,
   } from "../apis";
-  import { setbackground } from "../helper";
+  import { sendMessage, setbackground } from "../helper";
   import { writable } from "svelte/store";
   import { selectedFolder } from "../store";
   import { onMount } from "svelte";
@@ -37,7 +37,7 @@
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase())
+        group.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : groups;
 
@@ -65,12 +65,9 @@
     for (const groupUsers of groupUsersList) {
       const group = $selectedGroups.get(groupUsers.groupId);
       if (group === undefined) continue;
-      const userData = await browser.runtime.sendMessage({
-        action: "createShareCredPayload",
-        data: {
-          creds: credentialsFields,
-          users: groupUsers.userDetails,
-        },
+      const userData = await sendMessage("createShareCredPayload", {
+        creds: credentialsFields,
+        users: groupUsers.userDetails,
       });
       payload.groupData.push({
         groupId: group.groupId,
@@ -129,7 +126,7 @@
     await editFolderPermissionForGroup(
       $selectedFolder.id,
       e.detail.item.id,
-      e.detail.permission
+      e.detail.permission,
     );
     await existingGroups(false);
   };
