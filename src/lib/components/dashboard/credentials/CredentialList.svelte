@@ -109,7 +109,7 @@
 
   const addCredentialManager = async () => {
     showCredentialEditor.set(true);
-    checkedCards.length = 0;
+    checkedCards = [];
   };
 
   onDestroy(() => {
@@ -235,10 +235,12 @@
     <div
       class="flex flex-wrap p-3 pl-7 gap-4 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
     >
-      {#each sortedCredentials as credential, index}
+      {#each sortedCredentials as credential}
         <CredentialCard
           {credential}
-          {index}
+          checked={checkedCards.some(
+            (c) => c.credentialId === credential.credentialId,
+          )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
         />

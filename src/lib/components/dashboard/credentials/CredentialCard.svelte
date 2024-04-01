@@ -17,10 +17,9 @@
   import { sendMessage } from "../helper";
   const dispatch = createEventDispatcher();
   export let credential: Credential;
-  export let index: number;
+  export let checked = false;
   let sensitiveFields: Fields[] = [];
   let decrypted = false;
-  let checked = false;
   let hoverEffect = false;
   let hoverTimeout: any;
   let borderHighLight = tweened(0, { duration: 700 });
@@ -64,9 +63,10 @@
     credentialStore.set(response.data);
   };
 
-  onMount(async () => {
-    checked = false;
-  });
+  $: {
+    console.log(`checked: ${checked}`);
+  }
+
   const handleClick = async () => {
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
