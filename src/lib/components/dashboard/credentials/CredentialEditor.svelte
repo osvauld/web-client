@@ -3,21 +3,14 @@
   import { fly } from "svelte/transition";
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
-
-  import {
-    selectedFolder,
-    showCredentialEditor,
-    credentialStore,
-    showEditCredentialDialog,
-    credentialIdForEdit,
-  } from "../store";
+  import { createEventDispatcher } from "svelte";
+  import { selectedFolder, credentialStore } from "../store";
 
   import {
     fetchFolderUsersForDataSync,
     addCredential,
     updateCredential,
     fetchCredentialsByFolder,
-    fetchSensitiveFieldsByCredentialId,
     fetchCredentialUsersForDataSync,
   } from "../apis";
 
@@ -26,27 +19,27 @@
     Fields,
     User,
     AddCredentialField,
-    CredentialFieldWithId,
   } from "../dtos";
   import AddLoginFields from "./AddLoginFields.svelte";
   import { sendMessage } from "../helper";
 
-  let credentialFields: AddCredentialField[] | CredentialFieldWithId[] = [];
-  let description = "";
-  let name = "";
-  let notNamed = false;
-  let isLoaderActive: boolean = false;
-  let loginSelected = true;
-  let usersToShare: User[] = [];
-  let addCredentialPaylod: AddCredentialPayload;
-  let hoveredIndex: Number | null = null;
-  let credentialType = "Login";
-  let loginFields = [
+  export let edit = false;
+  export let credentialFields = [
     { fieldName: "Username", fieldValue: "", sensitive: false },
     { fieldName: "Password", fieldValue: "", sensitive: true },
     { fieldName: "URL", fieldValue: "https://", sensitive: false },
   ];
+  export let credentialId = null;
+  export let description = "";
+  export let name = "";
+  export let credentialType = "Login";
+  let notNamed = false;
+  let isLoaderActive: boolean = false;
+  let usersToShare: User[] = [];
+  let addCredentialPaylod: AddCredentialPayload;
+  let hoveredIndex: Number | null = null;
 
+  const dispatcher = createEventDispatcher();
   const addField = () => {
     let newField: AddCredentialField = {
       fieldName: "",
@@ -59,22 +52,6 @@
   const removeField = (index: number) => {
     credentialFields.splice(index, 1);
     credentialFields = [...credentialFields];
-  };
-
-  const FetchSensitiveFieldsAndDecrypt = async (credentialId: string) => {
-    let sensitiveFieldsForEdit = [];
-    const response = await fetchSensitiveFieldsByCredentialId(credentialId);
-    let sensitiveFields = response.data;
-    for (let field of sensitiveFields) {
-      const response = await sendMessage("decryptField", field.fieldValue);
-      let decryptedValue = response.data;
-      sensitiveFieldsForEdit.push({
-        fieldName: field.fieldName,
-        fieldValue: decryptedValue,
-        sensitive: true,
-      });
-    }
-    return sensitiveFieldsForEdit;
   };
 
   const saveCredential = async () => {
@@ -91,7 +68,7 @@
     let domain = "";
     let addCredentialFields: Fields[] = [];
     for (const field of credentialFields) {
-      if (field.fieldName === "URL" && !$showEditCredentialDialog) {
+      if (field.fieldName === "URL" && edit === false) {
         domain = new URL(field.fieldValue).hostname;
         addCredentialFields.push({
           fieldName: "Domain",
@@ -123,60 +100,41 @@
       addCredentialFields,
     });
     addCredentialPaylod.userFields = response;
-    if ($showEditCredentialDialog) {
-      if ($credentialIdForEdit == null) {
+    if (edit) {
+      if (credentialId == null) {
         throw new Error("credential not selected for edit");
       }
-      await updateCredential(addCredentialPaylod, $credentialIdForEdit);
+      await updateCredential(addCredentialPaylod, credentialId);
     } else {
       await addCredential(addCredentialPaylod);
     }
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
     const decryptedData = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(decryptedData.data);
-    showEditCredentialDialog.set(false);
-    showCredentialEditor.set(false);
     isLoaderActive = false;
+    dispatcher("close");
   };
 
   const credentialTypeSelection = (isLogin: boolean) => {
-    loginSelected = isLogin;
-    credentialFields = isLogin
-      ? loginFields
-      : [{ fieldName: "", fieldValue: "", sensitive: false }];
-    credentialType = loginSelected ? "Login" : "Other";
+    credentialType = isLogin ? "Login" : "Other";
   };
 
   onMount(async () => {
-    credentialFields = loginFields;
-    console.log($selectedFolder.id);
-    if ($showEditCredentialDialog) {
-      const [credentialDataForEdit] = $credentialStore.filter(
-        (credentials) => credentials.credentialId === $credentialIdForEdit,
-      );
-      name = credentialDataForEdit.name;
-      description = credentialDataForEdit.description;
-      let sensitiveFields =
-        await FetchSensitiveFieldsAndDecrypt($credentialIdForEdit);
-      credentialFields = [...credentialDataForEdit.fields, ...sensitiveFields];
-    }
-
-    if ($selectedFolder === null) throw new Error("folder not selected");
-    if (!$showEditCredentialDialog) {
+    if (edit) {
+      const responseJson = await fetchCredentialUsersForDataSync(credentialId);
+      usersToShare = responseJson.data;
+    } else {
       const responseJson = await fetchFolderUsersForDataSync(
         $selectedFolder.id,
       );
       usersToShare = responseJson.data;
-    } else {
-      const responseJson =
-        await fetchCredentialUsersForDataSync($credentialIdForEdit);
-      usersToShare = responseJson.data;
     }
+
+    console.log(credentialFields, "Credential Fields");
   });
 
   function closeDialog() {
-    showCredentialEditor.set(false);
-    showEditCredentialDialog.set(false);
+    dispatcher("close");
   }
 
   function deleteCredential() {
@@ -186,8 +144,6 @@
   function triggerSensitiveBubble(index: number, isEnter: boolean) {
     isEnter ? (hoveredIndex = index) : (hoveredIndex = null);
   }
-
-  /* eslint-disable */
 </script>
 
 <div
@@ -197,28 +153,25 @@
   <div class="flex justify-between items-center px-12 py-6">
     <div>
       <button
-        class="text-[1.4rem] font-sans font-normal {loginSelected
+        class="text-[1.4rem] font-sans font-normal {credentialType === 'Login'
           ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
           : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(true)}
       >
-        {$showEditCredentialDialog
-          ? "Edit login credential"
-          : "Add Login credential"}
+        {edit ? "Edit login credential" : "Add Login credential"}
       </button>
       <button
-        class="text-[1.4rem] font-sans font-normal ml-2 {!loginSelected
+        class="text-[1.4rem] font-sans font-normal ml-2 {credentialType ===
+        'Other'
           ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
           : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(false)}
       >
-        {$showEditCredentialDialog
-          ? "Change to other credential"
-          : "Add other credential"}
+        {edit ? "Edit other credential" : "Add other credential"}
       </button>
     </div>
     <div>
-      {#if $showEditCredentialDialog}
+      {#if edit}
         <button class="bg-osvauld-frameblack p-4" on:click={deleteCredential}
           ><BinIcon /></button
         >
@@ -288,9 +241,7 @@
       {#if isLoaderActive}
         <Loader size={24} color="#1F242A" duration={1} />
       {:else}
-        <span
-          >{$showEditCredentialDialog ? "Save Changes" : "Add credential"}</span
-        >
+        <span>{edit ? "Save Changes" : "Add credential"}</span>
       {/if}
     </button>
   </div>

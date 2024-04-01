@@ -19,7 +19,6 @@
 
   import {
     credentialStore,
-    showCredentialEditor,
     showFolderShareDrawer,
     showCredentialShareDrawer,
     selectedFolder,
@@ -39,6 +38,7 @@
   let sensitiveFields: Fields[] = [];
   let areCardsSelected = false;
   let noCardsSelected = false;
+  let showCreateCredentialModal = false;
 
   $: sortedCredentials = $credentialStore.sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
@@ -114,8 +114,9 @@
     folderStore.set(responseJson.data);
   };
 
-  const addCredentialManager = async () => {
-    showCredentialEditor.set(true);
+  const addCredentialManager = () => {
+    console.log("add credential");
+    showCreateCredentialModal = true;
     checkedCards = [];
   };
 
@@ -200,13 +201,13 @@
       <Placeholder />
     </div>
   {/if}
-  {#if $showCredentialEditor}
+  {#if showCreateCredentialModal}
     <button
       class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-      on:click={() => showCredentialEditor.set(false)}
+      on:click={() => !showCreateCredentialModal}
     >
       <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
-        <CredentialEditor on:close={() => showCredentialEditor.set(false)} />
+        <CredentialEditor on:close={() => !showCreateCredentialModal} />
       </button>
     </button>
   {/if}
