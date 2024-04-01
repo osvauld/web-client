@@ -27,15 +27,15 @@
 </script>
 
 <div
-  class="relative w-[95%] my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between {isSelected
-    ? 'bg-osvauld-bordergreen'
+  class="relative w-[99%] my-1 px-2 border border-osvauld-iconblack rounded-lg cursor-pointer flex items-center justify-between {isSelected
+    ? 'bg-osvauld-bordergreen text-osvauld-plainwhite'
     : ''}"
   on:click={handleClick}
 >
   <div class="flex items-center space-x-4 max-w-full">
     <p
-      class="p-2 max-w-full whitespace-nowrap text-base {isTopList
-        ? 'text-osvauld-quarzowhite'
+      class="p-1 max-w-full whitespace-nowrap text-base {isTopList
+        ? 'text-osvauld-plainwhite'
         : 'text-osvauld-sheffieldgrey'}"
     >
       {item.name}
@@ -45,7 +45,7 @@
     <div class="flex justify-center items-center">
       <button
         class="w-[6.25rem] rounded-md cursor-pointer px-2 py-1 pl-2 flex justify-between items-center {setbackground(
-          item.accessType,
+          item.accessType
         )}"
         >{item.accessType}
         <span> <DownArrow type={item.accessType} /></span>

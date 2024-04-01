@@ -160,8 +160,6 @@
     />
   </div>
 
-  <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
-
   <div
     class="overflow-y-auto scrollbar-thin h-[35vh] bg-osvauld-frameblack w-full"
   >

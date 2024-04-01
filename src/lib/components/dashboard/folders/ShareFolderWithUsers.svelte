@@ -116,9 +116,9 @@
   }
 </script>
 
-<div class="p-2 border border-osvauld-bordergreen rounded-lg h-[50vh]">
+<div class="p-2 border border-osvauld-iconblack rounded-lg max-h-[65vh]">
   <div
-    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer"
+    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
   >
     <Lens />
     <input
@@ -128,11 +128,8 @@
       placeholder="Search for users"
     />
   </div>
-
-  <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
-
   <div
-    class="overflow-y-auto scrollbar-thin h-[35vh] bg-osvauld-frameblack w-full"
+    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[17.5vh] bg-osvauld-frameblack w-full"
   >
     {#each selectedUsers as user, index}
       <ListItem
@@ -146,6 +143,10 @@
         on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
       />
     {/each}
+  </div>
+  <div
+    class="overflow-y-auto scrollbar-thin min-h-[17.5vh] max-h-[35vh] bg-osvauld-frameblack w-full"
+  >
     {#each filteredUsers as user, index}
       <ListItem
         item={user}
@@ -158,18 +159,19 @@
       />
     {/each}
   </div>
+  {#if selectedUsers.length !== 0}
+    <div class="p-2 flex justify-between items-center box-border">
+      <button
+        class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
+        on:click={handleCancel}>Cancel</button
+      >
 
-  <div class="p-2 flex justify-between items-center box-border">
-    <button
-      class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
-      on:click={handleCancel}>Cancel</button
-    >
-
-    <button
-      class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
-      on:click={shareFolderHandler}>Share</button
-    >
-  </div>
+      <button
+        class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
+        on:click={shareFolderHandler}>Share</button
+      >
+    </div>
+  {/if}
   {#if shareToast}
     <ShareToast
       message={"Shared Folder with user"}

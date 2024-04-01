@@ -30,7 +30,7 @@
     on:click={dispatchClick}
   >
     <span class="ml-3"> {user ? "Users" : "Groups"} with Access</span>
-    <span class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px]">
+    <span class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px] -z-10">
       {#if existingItemDropdown}
         <DownArrow type={"common"} />
       {:else}
