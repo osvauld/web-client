@@ -8,13 +8,6 @@
   import MultipleFolders from "./icons/multipleFolders.svelte";
   import GroupIcon from "./icons/groupIcon.svelte";
   const select = async (choice: string) => {
-    if (choice === "Folders") {
-      const responseJson = await fetchAllFolders();
-      folderStore.set(responseJson.data);
-    } else {
-      const responseJson = await fetchAllUserGroups();
-      groupStore.set(responseJson.data);
-    }
     selectedPage.set(choice);
     selectedGroup.set(null);
     selectedFolder.set(null);

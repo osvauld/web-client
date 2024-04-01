@@ -8,9 +8,11 @@
     allUsersSelected,
     adminStatus,
   } from "../store";
+  import { fetchAllUserGroups } from "../apis";
   import { Group } from "../dtos";
   import Add from "../../basic/icons/add.svelte";
   import { GroupIcon } from "../icons";
+  import { onMount } from "svelte";
 
   let iconColor = "#6E7681"; //sheffieldgrey:
 
@@ -35,6 +37,10 @@
     selectedGroup.set(null);
     allUsersSelected.set(true);
   };
+  onMount(async () => {
+    const responseJson = await fetchAllUserGroups();
+    groupStore.set(responseJson.data);
+  });
 </script>
 
 <div>
