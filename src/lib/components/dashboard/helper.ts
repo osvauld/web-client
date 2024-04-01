@@ -30,19 +30,3 @@ export const sendMessage = async (action: string, data: any = {}) => {
     return response;
 }
 
-
-// export const FetchSensitiveFieldsAndDecrypt = async (credentialId: string) => {
-
-//     const response = await fetchSensitiveFieldsByCredentialId(credentialId);
-//     let sensitiveFields = response.data;
-//     for (let field of sensitiveFields) {
-//         const response = await sendMessage("decryptField", field.fieldValue);
-//         let decryptedValue = response.data;
-//         sensitiveFieldsForEdit.push({
-//             fieldName: field.fieldName,
-//             fieldValue: decryptedValue,
-//             sensitive: true,
-//         });
-//     }
-//     return sensitiveFieldsForEdit;
-// };

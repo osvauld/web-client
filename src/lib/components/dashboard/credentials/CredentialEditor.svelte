@@ -129,8 +129,6 @@
       );
       usersToShare = responseJson.data;
     }
-
-    console.log(credentialFields, "Credential Fields");
   });
 
   function closeDialog() {

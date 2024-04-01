@@ -115,7 +115,6 @@
   };
 
   const addCredentialManager = () => {
-    console.log("add credential");
     showCreateCredentialModal = true;
     checkedCards = [];
   };
