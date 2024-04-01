@@ -11,12 +11,10 @@
     removeUserFromCredential,
     editGroupPermissionForCredential,
     editUserPermissionForCredential,
+    fetchSensitiveFieldsByCredentialId,
   } from "../apis";
   import {
     showCredentialDetailsDrawer,
-    showEditCredentialDialog,
-    showCredentialEditor,
-    credentialIdForEdit,
     editPermissionTrigger,
     isPermissionChanged,
     accessSelectorIdentifier,
@@ -24,6 +22,9 @@
   import { ClosePanel, EditIcon } from "../icons";
   import { onMount } from "svelte";
   import ExistingListItem from "../components/ExistingListItem.svelte";
+  import CredentialEditor from "./CredentialEditor.svelte";
+  import { sendMessage } from "../helper";
+
   import {
     Credential,
     Fields,
@@ -38,6 +39,7 @@
   let accessChangeDetected = false;
   let permissionChangeAttemptMessage = "";
   let changeToast = false;
+  let fieldsForEdit = [];
 
   let userPermissions: {
     credentialId: string;
@@ -49,6 +51,7 @@
     groupId: string;
     accessType: string;
   };
+  let showEditCredentialModal = false;
   let users: UserWithAccessType[] = [];
   let groups: GroupWithAccessType[] = [];
 
@@ -59,14 +62,14 @@
       users = usersResponse.data;
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
-        credential.credentialId
+        credential.credentialId,
       );
       groups = groupsResponse.data;
     }
   };
 
   const removeGroupFromCredentialHandler = async (
-    group: GroupWithAccessType
+    group: GroupWithAccessType,
   ) => {
     await removeGroupFromCredential(credential.credentialId, group.groupId);
     await toggleSelect({ detail: "Groups" });
@@ -81,7 +84,7 @@
       const userPermissionSaveResponse = await editUserPermissionForCredential(
         userPermissions.credentialId,
         userPermissions.userId,
-        userPermissions.accessType
+        userPermissions.accessType,
       );
       await toggleSelect({ detail: "Users" });
       accessChangeDetected = false;
@@ -94,7 +97,7 @@
         await editGroupPermissionForCredential(
           groupPermissions.credentialId,
           groupPermissions.groupId,
-          groupPermissions.accessType
+          groupPermissions.accessType,
         );
       await toggleSelect({ detail: "Groups" });
       accessChangeDetected = false;
@@ -124,16 +127,58 @@
     }
   };
 
+  const handleEditCredential = async () => {
+    for (let field of sensitiveFields) {
+      const response = await sendMessage("decryptField", field.fieldValue);
+      let decryptedValue = response.data;
+      fieldsForEdit.push({
+        fieldName: field.fieldName,
+        fieldValue: decryptedValue,
+        sensitive: true,
+      });
+    }
+    for (let field of credential.fields) {
+      fieldsForEdit.push({
+        fieldName: field.fieldName,
+        fieldValue: field.fieldValue,
+        sensitive: false,
+      });
+    }
+
+    showEditCredentialModal = true;
+  };
   onMount(async () => {
-    // @ts-ignore
-    credentialIdForEdit.set(credential.credentialId);
     const groupsResponse = await fetchCredentialGroups(credential.credentialId);
     groups = groupsResponse.data;
-
+    if (sensitiveFields.length === 0) {
+      const sensitiveFieldsResponse = await fetchSensitiveFieldsByCredentialId(
+        credential.credentialId,
+      );
+      sensitiveFields = sensitiveFieldsResponse.data;
+    }
     console.log("Credential data from details =>", credential);
   });
 </script>
 
+{#if showEditCredentialModal}
+  <div
+    class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
+  >
+    <div class="p-6 rounded bg-transparent" on:click|stopPropagation>
+      <CredentialEditor
+        on:close={() => {
+          showEditCredentialModal = !showEditCredentialModal;
+        }}
+        edit={true}
+        credentialId={credential.credentialId}
+        name={credential.name}
+        description={credential.description}
+        credentialType={credential.credentialType}
+        credentialFields={fieldsForEdit}
+      />
+    </div>
+  </div>
+{/if}
 <div
   class="fixed top-0 right-0 z-50 flex justify-end rounded-xl blur-none"
   in:fly
@@ -147,14 +192,8 @@
         {credential.name}
       </div>
       <button
-        class="p-2 mr-3 rounded-lg {$showEditCredentialDialog
-          ? 'bg-osvauld-sensitivebgblue'
-          : ''}"
-        on:click={() => {
-          showEditCredentialDialog.set(true);
-          showCredentialEditor.set(true);
-          showCredentialDetailsDrawer.set(false);
-        }}
+        class="p-2 mr-3 rounded-lg {false ? 'bg-osvauld-sensitivebgblue' : ''}"
+        on:click={handleEditCredential}
       >
         <EditIcon />
       </button>
