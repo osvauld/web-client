@@ -34,7 +34,7 @@
 >
   <div class="flex items-center space-x-4 max-w-full">
     <p
-      class="p-1 max-w-full whitespace-nowrap text-base {isTopList
+      class="py-0.5 px-1 max-w-full whitespace-nowrap text-base {isTopList
         ? 'text-osvauld-plainwhite'
         : 'text-osvauld-sheffieldgrey'}"
     >
@@ -44,7 +44,7 @@
   {#if isTopList}
     <div class="flex justify-center items-center">
       <button
-        class="w-[6.25rem] rounded-md cursor-pointer px-2 py-1 pl-2 flex justify-between items-center {setbackground(
+        class="w-[6.25rem] rounded-md font-normal cursor-pointer px-2 py-0 pl-2 text-base flex justify-between items-center {setbackground(
           item.accessType
         )}"
         >{item.accessType}

@@ -128,22 +128,24 @@
       placeholder="Search for users"
     />
   </div>
-  <div
-    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[17.5vh] bg-osvauld-frameblack w-full"
-  >
-    {#each selectedUsers as user, index}
-      <ListItem
-        item={user}
-        isSelected={index === selectionIndex && topList}
-        isTopList={true}
-        on:click={() => handleClick(index, true)}
-        on:remove={() => handleItemRemove(index)}
-        {setbackground}
-        {showOptions}
-        on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
-      />
-    {/each}
-  </div>
+  {#if selectedUsers.length !== 0}
+    <div
+      class="overflow-y-auto scrollbar-thin min-h-0 max-h-[17.5vh] bg-osvauld-bordergreen rounded-lg w-full p-0.5 border border-osvauld-iconblack mt-1"
+    >
+      {#each selectedUsers as user, index}
+        <ListItem
+          item={user}
+          isSelected={index === selectionIndex && topList}
+          isTopList={true}
+          on:click={() => handleClick(index, true)}
+          on:remove={() => handleItemRemove(index)}
+          {setbackground}
+          {showOptions}
+          on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
+        />
+      {/each}
+    </div>
+  {/if}
   <div
     class="overflow-y-auto scrollbar-thin min-h-[17.5vh] max-h-[35vh] bg-osvauld-frameblack w-full"
   >

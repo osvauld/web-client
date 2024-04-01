@@ -32,11 +32,11 @@
 </script>
 
 <div
-  class="relative w-full my-2 px-2 border border-osvauld-bordergreen rounded-lg cursor-pointer flex items-center justify-between"
+  class="relative w-full my-2 px-2 border border-osvauld-iconblack rounded-lg cursor-pointer flex items-center justify-between text-osvauld-sheffieldgrey font-normal text-base"
 >
   <div class="flex items-center space-x-4">
     <p
-      class="p-2 w-3/4 whitespace-nowrap {$isPermissionChanged &&
+      class="p-1 w-3/4 whitespace-nowrap {$isPermissionChanged &&
         $accessSelectorIdentifier !== index &&
         'opacity-40'}"
     >
@@ -45,7 +45,7 @@
   </div>
   <div class="flex justify-center items-center">
     <button
-      class="w-[10rem] rounded-md cursor-pointer px-2 py-1 {$isPermissionChanged &&
+      class="w-[10rem] rounded-md cursor-pointer px-1 py-0.5 {$isPermissionChanged &&
         'opacity-40'} flex justify-around items-center {setbackground(
         item.accessType
       )}"
