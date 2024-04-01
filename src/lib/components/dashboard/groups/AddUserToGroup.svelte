@@ -9,8 +9,6 @@
   } from "../apis";
   import { CredentialFields } from "../dtos";
 
-  import browser from "webextension-polyfill";
-
   import { User } from "../dtos";
   import { ClosePanel, Lens, UserCheck, UserPlus } from "../icons";
   import {
@@ -20,6 +18,7 @@
   } from "../store";
   import ShareToast from "../components/ShareToast.svelte";
   import RoleSelector from "../components/roleSelector.svelte";
+  import { sendMessage } from "../helper";
 
   let users: User[] = [];
   let userDataForApproval: User;
@@ -32,24 +31,20 @@
   onMount(async () => {
     if (!$selectedGroup) return;
     const userGroup = await fetchUsersWithoutGroupAccess(
-      $selectedGroup.groupId
+      $selectedGroup.groupId,
     );
     users = userGroup.data;
     const credentialFieldsResponse = await fetchCredentialFieldsByGroupId(
-      $selectedGroup.groupId
+      $selectedGroup.groupId,
     );
     credentialFields = credentialFieldsResponse.data;
   });
 
   const approveSelections = async () => {
     if (!selectedPermission) return;
-    console.log("Selected Permission ", selectedPermission);
-    const userData = await browser.runtime.sendMessage({
-      action: "createShareCredPayload",
-      data: {
-        creds: credentialFields,
-        users: [userDataForApproval],
-      },
+    const userData = await sendMessage("createShareCredPayload", {
+      creds: credentialFields,
+      users: [userDataForApproval],
     });
     const payload = {
       groupId: $selectedGroup.groupId,

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   export let text = "";
   export let query = "";
 
@@ -10,7 +10,7 @@
     return parts.map((part) =>
       regex.test(part)
         ? { text: part, highlight: true }
-        : { text: part, highlight: false }
+        : { text: part, highlight: false },
     );
   }
 </script>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { GroupIcon, UserIcon } from "./icons";
 
   import { createEventDispatcher } from "svelte";

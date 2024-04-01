@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import browser from "webextension-polyfill";
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
 
@@ -30,6 +29,7 @@
     CredentialFieldWithId,
   } from "../dtos";
   import AddLoginFields from "./AddLoginFields.svelte";
+  import { sendMessage } from "../helper";
 
   let credentialFields: AddCredentialField[] | CredentialFieldWithId[] = [];
   let description = "";
@@ -66,10 +66,7 @@
     const response = await fetchSensitiveFieldsByCredentialId(credentialId);
     let sensitiveFields = response.data;
     for (let field of sensitiveFields) {
-      const response = await browser.runtime.sendMessage({
-        action: "decryptField",
-        data: field.fieldValue,
-      });
+      const response = await sendMessage("decryptField", field.fieldValue);
       let decryptedValue = response.data;
       sensitiveFieldsForEdit.push({
         fieldName: field.fieldName,
@@ -121,21 +118,21 @@
       domain,
     };
 
-    const response = await browser.runtime.sendMessage({
-      action: "addCredential",
-      data: { users: usersToShare, addCredentialFields },
+    const response = await sendMessage("addCredential", {
+      users: usersToShare,
+      addCredentialFields,
     });
     addCredentialPaylod.userFields = response;
     if ($showEditCredentialDialog) {
+      if ($credentialIdForEdit == null) {
+        throw new Error("credential not selected for edit");
+      }
       await updateCredential(addCredentialPaylod, $credentialIdForEdit);
     } else {
       await addCredential(addCredentialPaylod);
     }
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const decryptedData = await browser.runtime.sendMessage({
-      action: "decryptMeta",
-      data: responseJson.data,
-    });
+    const decryptedData = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(decryptedData.data);
     showEditCredentialDialog.set(false);
     showCredentialEditor.set(false);

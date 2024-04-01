@@ -1,5 +1,4 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
   import { onMount } from "svelte";
   import Welcome from "./components/popup/Welcome.svelte";
   import Home from "./components/popup/Home.svelte";
@@ -7,6 +6,7 @@
   import { isSignedUp } from "../lib/store/ui.store";
   import Signup from "./components/popup/Signup.svelte";
   import Loader from "./components/dashboard/components/Loader.svelte";
+  import { sendMessage } from "./components/dashboard/helper";
 
   let devType = "popup";
   let loggedIn = true;
@@ -14,14 +14,9 @@
   onMount(async () => {
     isLoaderActive = true;
     if (devType != "popup") openFullscreenTab();
-    const response = await browser.runtime.sendMessage({
-      action: "isSignedUp",
-    });
-
+    const response = await sendMessage("isSignedUp");
     isSignedUp.set(response.isSignedUp);
-    const checkPvtLoad = await browser.runtime.sendMessage({
-      action: "checkPvtLoaded",
-    });
+    const checkPvtLoad = await sendMessage("checkPvtLoaded");
     if (checkPvtLoad) {
       loggedIn = true;
     } else {
@@ -33,7 +28,7 @@
 
   const openFullscreenTab = async () => {
     // Send a message to the background sdaash
-    await browser.runtime.sendMessage({ action: "openFullscreenTab" });
+    await sendMessage("openFullscreenTab");
   };
 
   const checkAuth = (event: CustomEvent) => {

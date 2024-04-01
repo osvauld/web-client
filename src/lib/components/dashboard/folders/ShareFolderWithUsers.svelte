@@ -12,12 +12,11 @@
     CredentialFields,
   } from "../dtos";
   import { selectedFolder } from "../store";
-  import { setbackground } from "../helper";
+  import { sendMessage, setbackground } from "../helper";
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
   import ShareToast from "../components/ShareToast.svelte";
   import ExistingListParent from "../components/ExistingListParent.svelte";
-  import browser from "webextension-polyfill";
 
   export let users: User[];
   export let credentialsFields: CredentialFields[];
@@ -32,7 +31,7 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase())
+        user.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : users;
 
@@ -52,12 +51,9 @@
     if ($selectedFolder === null) {
       throw new Error("Folder not selected");
     }
-    const userData = await browser.runtime.sendMessage({
-      action: "createShareCredPayload",
-      data: {
-        creds: credentialsFields,
-        users: selectedUsers,
-      },
+    const userData = await sendMessage("createShareCredPayload", {
+      creds: credentialsFields,
+      users: selectedUsers,
     });
 
     const shareFolderPayload: ShareFolderWithUsersPayload = {
@@ -104,7 +100,7 @@
     await editFolderPermissionForUser(
       $selectedFolder.id,
       e.detail.item.id,
-      e.detail.permission
+      e.detail.permission,
     );
     await existingUsers(false);
   };
