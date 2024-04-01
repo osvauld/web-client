@@ -103,9 +103,9 @@
   }
 </script>
 
-<div class="p-2 border border-osvauld-bordergreen rounded-lg h-[70vh]">
+<div class="p-2 border border-osvauld-bordergreen rounded-lg max-h-[65vh]">
   <div
-    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer"
+    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
   >
     <Lens />
     <input
@@ -116,23 +116,27 @@
     />
   </div>
 
-  <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
-
+  {#if $selectedGroups.size !== 0}
+    <div
+      class="overflow-y-auto scrollbar-thin min-h-0 max-h-[17.5vh] bg-osvauld-bordergreen rounded-lg w-full p-0.5 border border-osvauld-iconblack mt-1"
+    >
+      {#each Array.from($selectedGroups) as [groupId, group], index}
+        <ListItem
+          item={group}
+          isSelected={index === selectionIndex && topList}
+          isTopList={true}
+          on:click={() => handleClick(index, true)}
+          on:remove={() => handleItemRemove(groupId)}
+          {setbackground}
+          {showOptions}
+          on:select={(e) => handleRoleChange(e, index, "selectedGroups")}
+        />
+      {/each}
+    </div>
+  {/if}
   <div
-    class="overflow-y-auto scrollbar-thin h-[50vh] bg-osvauld-frameblack w-full"
+    class="overflow-y-auto scrollbar-thin min-h-[17.5vh] max-h-[35vh] bg-osvauld-frameblack w-full"
   >
-    {#each Array.from($selectedGroups) as [groupId, group], index}
-      <ListItem
-        item={group}
-        isSelected={index === selectionIndex && topList}
-        isTopList={true}
-        on:click={() => handleClick(index, true)}
-        on:remove={() => handleItemRemove(groupId)}
-        {setbackground}
-        {showOptions}
-        on:select={(e) => handleRoleChange(e, index, "selectedGroups")}
-      />
-    {/each}
     {#each filteredGroups as group, index}
       <ListItem
         item={group}
@@ -146,17 +150,18 @@
     {/each}
   </div>
 
-  <div class="p-2 flex justify-between items-center box-border">
-    <button
-      class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
-      on:click={handleCancel}>Cancel</button
-    >
-
-    <button
-      class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-osvauld-frameblack rounded-md"
-      on:click={shareCredentialHandler}>Share</button
-    >
-  </div>
+  {#if $selectedGroups.size !== 0}
+    <div class="p-2 flex justify-between items-center box-border">
+      <button
+        class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
+        on:click={handleCancel}>Cancel</button
+      >
+      <button
+        class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-osvauld-frameblack rounded-md"
+        on:click={shareCredentialHandler}>Share</button
+      >
+    </div>
+  {/if}
   {#if shareToast}
     <ShareToast
       message={"Shared with groups"}
