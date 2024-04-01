@@ -34,36 +34,11 @@ browser.runtime.onMessage.addListener(async (request) => {
       return encryptFieldHandler(request.data.fields, request.data.publicKey)
     }
 
-    case "fillingSignal":
-      {
-        const [tab]: any[] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
-        await browser.tabs.sendMessage(tab.id, request);
-        break;
-      }
 
     case "openFullscreenTab":
       browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
       break;
 
-    case "credSubmitted": {
-      let currentUrl = request.url;
-      setTimeout(async () => {
-        try {
-          const [tab]: browser.Tabs.Tab[] = await browser.tabs.query({
-            active: true,
-            currentWindow: true,
-          });
-          if (tab && tab.id) {
-            if (tab.url !== currentUrl) {
-              await browser.tabs.sendMessage(tab.id, { action: "saveToVault", username: request.username, password: request.password });
-            }
-          }
-        } catch (error) {
-          console.error("Error querying tabs:", error);
-        }
-      }, 3000);
-    }
-      break;
 
     case "initiateAuth": {
       try {
@@ -118,35 +93,6 @@ browser.runtime.onMessage.addListener(async (request) => {
 
     case "checkPvtLoaded":
       return is_global_context_set()
-    case "getActiveCredSuggestion": {
-      let tabs = await browser.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      const activeTab = tabs[0];
-      let url: URL | undefined;
-      if (activeTab && activeTab.url) {
-        url = new URL(activeTab.url);
-      }
-      const domain = url?.hostname;
-      // @ts-ignore
-      const credentialIds = [...urlObj.get(domain)];
-      const responseJson = await fetchCredsByIds(credentialIds);
-      let username = "";
-      let password = "";
-      for (const cred of responseJson.data) {
-        if (cred.credentialId === request.data) {
-          for (let field of cred.fields) {
-            if (field.fieldName === 'Username') {
-              username = await decryptFieldHandler(field.fieldValue);
-            } else if (field.fieldName === 'Password') {
-              password = await decryptFieldHandler(field.fieldValue);
-            }
-          }
-        }
-      }
-      return Promise.resolve({ username, password });
-    }
     case "decryptMeta":
       return decryptCredentialFieldsHandlerNew(request.data);
     case "addCredential":

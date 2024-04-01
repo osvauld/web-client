@@ -91,23 +91,5 @@ export default [
     watch: {
       clearScreen: false,
     },
-  },
-  {
-    input: "src/scripts/content.ts",
-    output: {
-      format: "iife",
-      name: "background",
-      file: "public/content.js",
-    },
-    plugins: [
-      typescript({
-        tsconfig: "./tsconfig.background.json",
-      }),
-      commonjs(),
-      resolve({ browser: true, preferBuiltins: false }),
-    ],
-    watch: {
-      clearScreen: false,
-    },
-  },
+  }
 ];
