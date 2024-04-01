@@ -9,22 +9,19 @@
     credentialStore,
   } from "../store";
 
-  import { fetchCredentialsByFolder } from "../apis";
+  import { fetchAllFolders } from "../apis";
 
   import { Folder } from "../dtos";
   import Add from "../../basic/icons/add.svelte";
   import FolderIcon from "../../basic/icons/folderIcon.svelte";
   import { sendMessage } from "../helper";
+  import { on } from "events";
+  import { onMount } from "svelte";
 
   let iconColor = "#6E7681"; //sheffieldgrey:
 
   const selectFolder = async (folder: Folder) => {
     selectedFolder.set(folder);
-    selectedCredential.set(null);
-    const responseJson = await fetchCredentialsByFolder(folder.id);
-
-    const response = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(response.data);
   };
 
   const openModal = () => {
@@ -34,6 +31,11 @@
   const closeModal = () => {
     showAddFolderDrawer.set(false);
   };
+
+  onMount(async () => {
+    const responseJson = await fetchAllFolders();
+    folderStore.set(responseJson.data);
+  });
 </script>
 
 <div>

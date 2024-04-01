@@ -8,9 +8,11 @@
     allUsersSelected,
     adminStatus,
   } from "../store";
+  import { fetchAllUserGroups } from "../apis";
   import { Group } from "../dtos";
   import Add from "../../basic/icons/add.svelte";
   import { GroupIcon } from "../icons";
+  import { onMount } from "svelte";
 
   let iconColor = "#6E7681"; //sheffieldgrey:
 
@@ -35,6 +37,10 @@
     selectedGroup.set(null);
     allUsersSelected.set(true);
   };
+  onMount(async () => {
+    const responseJson = await fetchAllUserGroups();
+    groupStore.set(responseJson.data);
+  });
 </script>
 
 <div>
@@ -74,7 +80,7 @@
     {/if}
     {#each $groupStore as group}
       <li
-        class="{$selectedGroup === group
+        class="{$selectedGroup && $selectedGroup.groupId === group.groupId
           ? 'bg-osvauld-bordergreen rounded-lg text-osvauld-plainwhite'
           : 'hover:bg-osvauld-bordergreen text-osvauld-quarzowhite'} rounded-md pl-3 my-0.5"
       >
@@ -82,7 +88,11 @@
           on:click={() => selectGroup(group)}
           class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
         >
-          <GroupIcon color={$selectedGroup === group ? "white" : "#85889C"} />
+          <GroupIcon
+            color={$selectedGroup && $selectedGroup.groupId === group.groupId
+              ? "white"
+              : "#85889C"}
+          />
           <span class="ml-2">{group.name}</span>
         </button>
       </li>

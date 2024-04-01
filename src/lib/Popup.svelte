@@ -23,11 +23,11 @@
       loggedIn = false;
     }
     isLoaderActive = false;
-    //isSignedUp.set(false);
+    // isSignedUp.set(false);
   });
 
   const openFullscreenTab = async () => {
-    // Send a message to the background sdaash
+    // Send a message to the background
     await sendMessage("openFullscreenTab");
   };
 
