@@ -2,7 +2,7 @@
   import { getTokenAndBaseUrl } from "../helper";
   import Loader from "../components/Loader.svelte";
   import { showAddUserDrawer, allUsersSelected } from "../store";
-  import { createUser } from "../apis";
+  import { createUser, checkUserNameExists } from "../apis";
   import { ClosePanel, Tick } from "../icons";
 
   let username = "";
@@ -10,11 +10,18 @@
   let tempPassword = "test@123";
   let copiedToClipboard = false;
   let isLoaderActive = false;
+  let erroMessage = "";
   $: activeButton = username.length >= 3 && name.length >= 3;
 
   const submit = async (event) => {
     event.preventDefault();
     isLoaderActive = true;
+    const response = await checkUserNameExists(username, name);
+    if (response.data.available === false) {
+      erroMessage = response.data.message;
+      isLoaderActive = false;
+      return;
+    }
     const { baseUrl } = await getTokenAndBaseUrl();
     const payload = {
       username,
@@ -105,5 +112,8 @@
         Create User
       {/if}
     </button>
+    {#if erroMessage}
+      <p class="text-base text-sm">{erroMessage}</p>
+    {/if}
   </form>
 </div>
