@@ -9,7 +9,6 @@
     credentialStore,
   } from "../store";
 
-  import browser from "webextension-polyfill";
   import { fetchCredentialsByFolder } from "../apis";
 
   import { Folder } from "../dtos";

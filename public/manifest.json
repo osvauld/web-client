@@ -16,8 +16,7 @@
   "permissions": [
     "storage",
     "activeTab",
-    "webRequest",
-    "webRequestBlocking"
+    "webRequest"
   ],
   
 "host_permissions": [

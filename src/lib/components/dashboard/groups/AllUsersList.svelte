@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Lens, Add, BinIcon } from "../icons";
   import { showAddUserDrawer } from "../store";
   import { deleteUser, fetchAllUsers } from "../apis";

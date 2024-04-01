@@ -2,7 +2,6 @@
   import TempLogin from "./TempLogin.svelte";
   import SetPassPhrase from "./SetPassPhrase.svelte";
   import ImportPvtKey from "./ImportPvtKey.svelte";
-  import browser from "webextension-polyfill";
   import { isLoggedIn, isSignedUp } from "../../store/ui.store";
   import { sendMessage } from "../dashboard/helper";
 

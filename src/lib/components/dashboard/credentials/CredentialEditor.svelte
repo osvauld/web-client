@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import browser from "webextension-polyfill";
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
 
@@ -125,6 +124,9 @@
     });
     addCredentialPaylod.userFields = response;
     if ($showEditCredentialDialog) {
+      if ($credentialIdForEdit == null) {
+        throw new Error("credential not selected for edit");
+      }
       await updateCredential(addCredentialPaylod, $credentialIdForEdit);
     } else {
       await addCredential(addCredentialPaylod);

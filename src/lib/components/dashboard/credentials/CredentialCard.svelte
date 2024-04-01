@@ -11,7 +11,6 @@
     credentialStore,
     selectedFolder,
   } from "../store";
-  import browser from "webextension-polyfill";
   import { removeCredential, fetchCredentialsByFolder } from "../apis";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";

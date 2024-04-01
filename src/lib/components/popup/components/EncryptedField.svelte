@@ -1,5 +1,4 @@
-<script>
-  import browser from "webextension-polyfill";
+<script lang="ts">
   import { Locked, Eye, Unlocked, ActiveCopy, ClosedEye } from "../icons";
   import { sendMessage } from "../../dashboard/helper";
   export let fieldName;

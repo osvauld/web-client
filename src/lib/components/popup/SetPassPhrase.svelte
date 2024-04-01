@@ -1,6 +1,5 @@
 <script lang="ts">
   import Eye from "../basic/icons/eye.svelte";
-  import browser from "webextension-polyfill";
   import { isSignedUp } from "../../store/ui.store";
   import Loader from "../dashboard/components/Loader.svelte";
   import { sendMessage } from "../dashboard/helper";

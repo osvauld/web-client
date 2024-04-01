@@ -8,7 +8,6 @@
   import { writable } from "svelte/store";
   import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
   import { sendMessage, setbackground } from "../helper";
-  import browser from "webextension-polyfill";
 
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";

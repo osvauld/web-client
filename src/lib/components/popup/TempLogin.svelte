@@ -1,11 +1,11 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
   import { getRegsitrationChallenge } from "../../apis/auth.api";
   import Eye from "../basic/icons/eye.svelte";
   import { createEventDispatcher } from "svelte";
   import Loader from "../dashboard/components/Loader.svelte";
   import ClosedEye from "../basic/icons/closedEye.svelte";
 
+  import browser from "webextension-polyfill";
   const dispatch = createEventDispatcher();
 
   let username = "";
@@ -24,7 +24,7 @@
     if (username && password) {
       const challengeResponse = await getRegsitrationChallenge(
         username,
-        password
+        password,
       );
       if (challengeResponse.data.challenge) {
         dispatch("setPassPhrase", {

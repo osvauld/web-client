@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import browser from "webextension-polyfill";
   import Loader from "./Loader.svelte";
   import { getTokenAndBaseUrl } from "../helper";

@@ -21,7 +21,6 @@
   import ListItem from "../components/ListItem.svelte";
   import ExistingListParent from "../components/ExistingListParent.svelte";
   import ShareToast from "../components/ShareToast.svelte";
-  import browser from "webextension-polyfill";
 
   let groups: Group[] = [];
   export let credentialsFields: CredentialFields[];

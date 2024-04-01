@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { getTokenAndBaseUrl } from "../helper";
   import Loader from "../components/Loader.svelte";
   import { showAddUserDrawer, allUsersSelected } from "../store";

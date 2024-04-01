@@ -7,7 +7,6 @@
   } from "../dtos";
   import { shareCredentialsWithUsers } from "../apis";
   import { sendMessage, setbackground } from "../helper";
-  import browser from "webextension-polyfill";
 
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";

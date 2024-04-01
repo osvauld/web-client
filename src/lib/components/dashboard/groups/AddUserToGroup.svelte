@@ -9,8 +9,6 @@
   } from "../apis";
   import { CredentialFields } from "../dtos";
 
-  import browser from "webextension-polyfill";
-
   import { User } from "../dtos";
   import { ClosePanel, Lens, UserCheck, UserPlus } from "../icons";
   import {
