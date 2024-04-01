@@ -8,15 +8,16 @@
   import browser from "webextension-polyfill";
   const dispatch = createEventDispatcher();
 
-  let username = "";
+  let username = localStorage.getItem("username") || "";
   let password = "";
-  let baseurl = "";
+  let baseurl = localStorage.getItem("baseUrl") || "";
   let showPassword = false;
   let showVerificationError = false;
   let isLoaderActive = false;
 
   $: type = showPassword ? "text" : "password";
-
+  $: localStorage.setItem("username", username);
+  $: localStorage.setItem("baseUrl", baseurl);
   async function handleSubmit() {
     isLoaderActive = true;
     if (baseurl.length === 0) return;
