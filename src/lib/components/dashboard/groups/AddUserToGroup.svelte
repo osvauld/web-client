@@ -21,7 +21,7 @@
   import { sendMessage } from "../helper";
 
   let users: User[] = [];
-  let userDataForApproval: User;
+  let userDataForApproval: any;
   let searchInput = "";
   let selectedPermission = null;
   let selectedUserIndice = null;
@@ -42,9 +42,16 @@
 
   const approveSelections = async () => {
     if (!selectedPermission) return;
+    // Map over fields to remove fieldName and fieldType
+
     const userData = await sendMessage("createShareCredPayload", {
       creds: credentialFields,
-      users: [userDataForApproval],
+      users: [
+        {
+          id: userDataForApproval.id,
+          publicKey: userDataForApproval.encryptionKey,
+        },
+      ],
     });
     const payload = {
       groupId: $selectedGroup.groupId,

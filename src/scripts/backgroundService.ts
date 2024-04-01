@@ -130,6 +130,7 @@ export const createShareCredsPayload = async (creds: CredentialFields[], selecte
     const response = await decryptCredentialFieldsHandler(creds)
     const userData: CredentialsForUsersPayload[] = [];
     for (const user of selectedUsers) {
+        console.log(response?.data, user.publicKey)
         const userEncryptedFields = await encryptCredentialsForUser(
             response.data,
             user.publicKey,

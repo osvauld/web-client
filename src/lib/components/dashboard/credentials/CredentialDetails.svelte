@@ -156,7 +156,6 @@
       );
       sensitiveFields = sensitiveFieldsResponse.data;
     }
-    console.log("Credential data from details =>", credential);
   });
 </script>
 
