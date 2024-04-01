@@ -9,7 +9,7 @@
     credentialStore,
   } from "../store";
 
-  import { fetchCredentialsByFolder, fetchAllFolders } from "../apis";
+  import { fetchAllFolders } from "../apis";
 
   import { Folder } from "../dtos";
   import Add from "../../basic/icons/add.svelte";
@@ -22,11 +22,6 @@
 
   const selectFolder = async (folder: Folder) => {
     selectedFolder.set(folder);
-    selectedCredential.set(null);
-    const responseJson = await fetchCredentialsByFolder(folder.id);
-
-    const response = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(response.data);
   };
 
   const openModal = () => {

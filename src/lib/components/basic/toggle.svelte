@@ -1,10 +1,7 @@
 <script lang="ts">
   import { selectedPage } from "../../store/ui.store";
-  import { groupStore, selectedGroup } from "../../store/group.store";
+  import { selectedGroup } from "../../store/group.store";
   import { selectedFolder } from "../../store/folder.store";
-  import { fetchAllFolders } from "../../apis/folder.api";
-  import { fetchAllUserGroups } from "../../apis/group.api";
-  import { folderStore } from "../../store/folder.store";
   import MultipleFolders from "./icons/multipleFolders.svelte";
   import GroupIcon from "./icons/groupIcon.svelte";
   const select = async (choice: string) => {

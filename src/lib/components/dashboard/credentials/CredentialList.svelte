@@ -13,6 +13,7 @@
     fetchAllUserGroups,
     fetchAllFolders,
     removeFolder,
+    fetchCredentialsByFolder,
   } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
 
@@ -24,8 +25,10 @@
     selectedFolder,
     showCredentialDetailsDrawer,
     folderStore,
+    selectedCredential,
   } from "../store";
   import { onDestroy } from "svelte";
+  import { sendMessage } from "../helper";
   import DownArrow from "../../basic/icons/downArrow.svelte";
   import Placeholder from "../components/Placeholder.svelte";
 
@@ -56,6 +59,10 @@
       selectedFolder.set(null);
       return;
     }
+    selectedCredential.set(null);
+    const responseJson = await fetchCredentialsByFolder(folder.id);
+    const response = await sendMessage("decryptMeta", responseJson.data);
+    credentialStore.set(response.data);
     let [allUsersResponse, folderUsersResponse, allGroupResponse] =
       await Promise.all([
         fetchAllUsers(),

@@ -7,15 +7,12 @@
 
   import { Profile, Lens } from "./icons";
   import {
-    selectedCredential,
     selectedFolder,
     selectedPage,
     credentialStore,
     searchedCredential,
   } from "./store";
 
-  import { fetchCredentialsByFolder } from "./apis";
-  import { sendMessage } from "./helper";
   import { Folder } from "./dtos";
   import LinkIcon from "../basic/icons/linkIcon.svelte";
   let searchResults = [];
@@ -64,11 +61,8 @@
   };
   const selectFolder = async (folder: Folder) => {
     selectedFolder.set(folder);
-    selectedCredential.set(null);
-    const responseJson = await fetchCredentialsByFolder(folder.id);
-    const response = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(response.data);
   };
+
   const handleSearchClick = (result) => {
     searchedCredential.set(result);
     selectedPage.set("Folders");
