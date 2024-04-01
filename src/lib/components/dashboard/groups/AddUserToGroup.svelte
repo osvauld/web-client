@@ -42,16 +42,10 @@
 
   const approveSelections = async () => {
     if (!selectedPermission) return;
-    // Map over fields to remove fieldName and fieldType
-
+    console.log(userDataForApproval);
     const userData = await sendMessage("createShareCredPayload", {
       creds: credentialFields,
-      users: [
-        {
-          id: userDataForApproval.id,
-          publicKey: userDataForApproval.encryptionKey,
-        },
-      ],
+      users: [userDataForApproval],
     });
     const payload = {
       groupId: $selectedGroup.groupId,

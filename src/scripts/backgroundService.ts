@@ -31,7 +31,6 @@ export const initiateAuthHandler = async (passphrase: string) => {
     const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
     const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
     const signKey = signPvtKeyObj.signPvtKey;
-    console.log(JSON.stringify({ encryptionKey, signKey }))
     const startTime = performance.now();
     const cacheObj = decrypt_and_store_keys(encryptionKey, signKey, passphrase);
     // console.log(result2);
