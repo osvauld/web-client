@@ -55,7 +55,7 @@
   {/if}
 </div>
 
-<div class="min-w-screen h-[48rem] flex overflow-hidden">
+<div class="min-w-screen h-[48rem] flex overflow-">
   <div class="w-full">
     {#if adminStatus && $allUsersSelected}
       <AllUsersList {allUsers} />

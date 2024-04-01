@@ -46,7 +46,7 @@
       >
     </div>
     <div
-      class="relative h-auto w-full px-4 py-2 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown
+      class="relative h-auto w-full px-4 py-1 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown
         ? 'bg-osvauld-bordergreen'
         : ''}"
       on:click={() => (infoDropdown = !infoDropdown)}
@@ -70,9 +70,16 @@
     <div class="flex-grow max-h-[85vh]">
       <UserGroupToggle on:select={toggleSelect} />
       {#if selectedTab === "Users"}
-        <ShareFolderWithUsers {users} {credentialsFields} />
+        <ShareFolderWithUsers
+          {users}
+          {credentialsFields}
+          on:cancel={() => showFolderShareDrawer.set(false)}
+        />
       {:else}
-        <ShareFolderWithGroups {credentialsFields} />
+        <ShareFolderWithGroups
+          {credentialsFields}
+          on:cancel={() => showFolderShareDrawer.set(false)}
+        />
       {/if}
     </div>
   </div>

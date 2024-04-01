@@ -73,9 +73,17 @@
     <div class="flex-grow max-h-[85vh]">
       <UserGroupToggle on:select={toggleSelect} />
       {#if selectedTab === "Users"}
-        <ShareCredentialsWithUser {users} {credentialsFields} />
+        <ShareCredentialsWithUser
+          {users}
+          {credentialsFields}
+          on:cancel={() => showCredentialShareDrawer.set(false)}
+        />
       {:else}
-        <ShareCredentialsWithGroups {groups} {credentialsFields} />
+        <ShareCredentialsWithGroups
+          {groups}
+          {credentialsFields}
+          on:cancel={() => showCredentialShareDrawer.set(false)}
+        />
       {/if}
     </div>
   </div>
