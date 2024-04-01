@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { setbackground } from "../helper";
   import BinIcon from "../../basic/icons/binIcon.svelte";
   import DownArrow from "../../basic/icons/downArrow.svelte";
@@ -42,12 +42,15 @@
     >
       {item.name}
     </p>
+    {#if item.accessSource}
+      {item.accessSource}
+    {/if}
   </div>
   <div class="flex justify-center items-center">
     <button
       class="w-[10rem] rounded-md cursor-pointer px-1 py-0.5 {$isPermissionChanged &&
         'opacity-40'} flex justify-around items-center {setbackground(
-        item.accessType
+        item.accessType,
       )}"
       on:click={() => {
         if ($editPermissionTrigger) {

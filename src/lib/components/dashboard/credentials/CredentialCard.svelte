@@ -4,16 +4,22 @@
   import { fetchSensitiveFieldsByCredentialId } from "../apis";
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
-  import { More } from "../icons";
-  import { showCredentialDetailsDrawer, searchedCredential } from "../store";
+  import { More, BinIcon } from "../icons";
+  import {
+    showCredentialDetailsDrawer,
+    searchedCredential,
+    credentialStore,
+    selectedFolder,
+  } from "../store";
+  import { removeCredential, fetchCredentialsByFolder } from "../apis";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";
+  import { sendMessage } from "../helper";
   const dispatch = createEventDispatcher();
   export let credential: Credential;
-  export let index: number;
+  export let checked = false;
   let sensitiveFields: Fields[] = [];
   let decrypted = false;
-  let checked = false;
   let hoverEffect = false;
   let hoverTimeout: any;
   let borderHighLight = tweened(0, { duration: 700 });
@@ -35,7 +41,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId
+          credential.credentialId,
         );
         sensitiveFields = response.data;
       }, 300);
@@ -49,14 +55,23 @@
     decrypted = false;
     hoverEffect = false;
   }
-  onMount(async () => {
-    checked = false;
-  });
+
+  const removeCredentialHandler = async () => {
+    await removeCredential(credential.credentialId);
+    const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
+    const response = await sendMessage("decryptMeta", responseJson.data);
+    credentialStore.set(response.data);
+  };
+
+  $: {
+    console.log(`checked: ${checked}`);
+  }
+
   const handleClick = async () => {
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId
+        credential.credentialId,
       );
       sensitiveFields = response.data;
     }
@@ -81,7 +96,7 @@
     >
       <input
         type="checkbox"
-        id="credentialChecker{index}"
+        id={credential.credentialId}
         class="bg-osvauld-cardshade mr-2 border-osvauld-activeBorder checked:bg-osvauld-activelavender focus:text-osvauld-activelavender hover:text-osvauld-activelavender active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
         on:change|stopPropagation={(e) => {
           toggleCheck();
@@ -90,13 +105,16 @@
       />
       <label
         class="text-xl font-medium w-full text-left ml-2 cursor-pointer max-w-full text-osvauld-fieldTextActive overflow-x-hidden"
-        for="credentialChecker{index}"
+        for={credential.credentialId}
       >
         {credential.name}
       </label>
       <span class="pr-2">
         <More />
       </span>
+      <button on:click={removeCredentialHandler}>
+        <BinIcon />
+      </button>
     </div>
     <div
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"

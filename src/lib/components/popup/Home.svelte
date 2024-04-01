@@ -10,6 +10,7 @@
   import PasswordNotFound from "./components/PasswordNotFound.svelte";
   import EncryptedField from "./components/EncryptedField.svelte";
   import { Credential } from "../../dtos/credential.dto";
+  import { sendMessage } from "../dashboard/helper";
 
   let passwordFound = false;
   let credentialClicked = false;
@@ -19,7 +20,7 @@
   let selectedPassword: string = "";
 
   const openFullscreenTab = async () => {
-    await browser.runtime.sendMessage({ action: "openFullscreenTab" });
+    await sendMessage("openFullscreenTab");
   };
 
   type CredMap = {
@@ -40,10 +41,7 @@
     });
     const activeTab = tabs[0];
     if (activeTab && activeTab.url) domain = new URL(activeTab.url).hostname;
-    const { credIds } = await browser.runtime.sendMessage({
-      action: "updateAllUrls",
-      data: { urls, domain },
-    });
+    const { credIds } = await sendMessage("updateAllUrls", { urls, domain });
     if (credIds.length > 0) {
       passwordFound = true;
       const responseJson = await fetchCredsByIds(credIds);
@@ -54,10 +52,7 @@
       let password = "";
       for (let field of cred.fields) {
         if (field.fieldName == "Username") {
-          const response = await browser.runtime.sendMessage({
-            action: "decryptField",
-            data: field.fieldValue,
-          });
+          const response = await sendMessage("decryptField", field.fieldValue);
           username = response.data;
         }
       }

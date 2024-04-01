@@ -6,7 +6,7 @@
   let name = "";
   let description = "";
 
-  function autofocus(node) {
+  function autofocus(node: any) {
     node.focus();
   }
 

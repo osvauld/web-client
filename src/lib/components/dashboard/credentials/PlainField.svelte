@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { ActiveCopy, CopyIcon } from "../icons";
   export let fieldName;
   export let fieldValue;

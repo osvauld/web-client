@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import browser from "webextension-polyfill";
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
 
@@ -14,11 +13,12 @@
   } from "../store";
 
   import {
-    fetchFolderUsers,
+    fetchFolderUsersForDataSync,
     addCredential,
     updateCredential,
     fetchCredentialsByFolder,
     fetchSensitiveFieldsByCredentialId,
+    fetchCredentialUsersForDataSync,
   } from "../apis";
 
   import {
@@ -29,6 +29,7 @@
     CredentialFieldWithId,
   } from "../dtos";
   import AddLoginFields from "./AddLoginFields.svelte";
+  import { sendMessage } from "../helper";
 
   let credentialFields: AddCredentialField[] | CredentialFieldWithId[] = [];
   let description = "";
@@ -36,7 +37,7 @@
   let notNamed = false;
   let isLoaderActive: boolean = false;
   let loginSelected = true;
-  let folderUsers: User[] = [];
+  let usersToShare: User[] = [];
   let addCredentialPaylod: AddCredentialPayload;
   let hoveredIndex: Number | null = null;
   let credentialType = "Login";
@@ -54,7 +55,7 @@
     };
     credentialFields = [...credentialFields, newField];
   };
-
+  //TODO: change user type
   const removeField = (index: number) => {
     credentialFields.splice(index, 1);
     credentialFields = [...credentialFields];
@@ -65,10 +66,7 @@
     const response = await fetchSensitiveFieldsByCredentialId(credentialId);
     let sensitiveFields = response.data;
     for (let field of sensitiveFields) {
-      const response = await browser.runtime.sendMessage({
-        action: "decryptField",
-        data: field.fieldValue,
-      });
+      const response = await sendMessage("decryptField", field.fieldValue);
       let decryptedValue = response.data;
       sensitiveFieldsForEdit.push({
         fieldName: field.fieldName,
@@ -120,21 +118,21 @@
       domain,
     };
 
-    const response = await browser.runtime.sendMessage({
-      action: "addCredential",
-      data: { users: folderUsers, addCredentialFields },
+    const response = await sendMessage("addCredential", {
+      users: usersToShare,
+      addCredentialFields,
     });
     addCredentialPaylod.userFields = response;
     if ($showEditCredentialDialog) {
+      if ($credentialIdForEdit == null) {
+        throw new Error("credential not selected for edit");
+      }
       await updateCredential(addCredentialPaylod, $credentialIdForEdit);
     } else {
       await addCredential(addCredentialPaylod);
     }
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const decryptedData = await browser.runtime.sendMessage({
-      action: "decryptMeta",
-      data: responseJson.data,
-    });
+    const decryptedData = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(decryptedData.data);
     showEditCredentialDialog.set(false);
     showCredentialEditor.set(false);
@@ -146,13 +144,15 @@
     credentialFields = isLogin
       ? loginFields
       : [{ fieldName: "", fieldValue: "", sensitive: false }];
+    credentialType = loginSelected ? "Login" : "Other";
   };
 
   onMount(async () => {
     credentialFields = loginFields;
+    console.log($selectedFolder.id);
     if ($showEditCredentialDialog) {
       const [credentialDataForEdit] = $credentialStore.filter(
-        (credentials) => credentials.credentialId === $credentialIdForEdit
+        (credentials) => credentials.credentialId === $credentialIdForEdit,
       );
       name = credentialDataForEdit.name;
       description = credentialDataForEdit.description;
@@ -162,8 +162,16 @@
     }
 
     if ($selectedFolder === null) throw new Error("folder not selected");
-    const responseJson = await fetchFolderUsers($selectedFolder.id);
-    folderUsers = responseJson.data;
+    if (!$showEditCredentialDialog) {
+      const responseJson = await fetchFolderUsersForDataSync(
+        $selectedFolder.id,
+      );
+      usersToShare = responseJson.data;
+    } else {
+      const responseJson =
+        await fetchCredentialUsersForDataSync($credentialIdForEdit);
+      usersToShare = responseJson.data;
+    }
   });
 
   function closeDialog() {

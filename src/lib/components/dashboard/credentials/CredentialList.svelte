@@ -6,8 +6,14 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add, InfoIcon } from "../icons";
-  import { fetchFolderUsers, fetchAllUsers, fetchAllUserGroups } from "../apis";
+  import { Share, Add, InfoIcon, BinIcon } from "../icons";
+  import {
+    fetchFolderUsers,
+    fetchAllUsers,
+    fetchAllUserGroups,
+    fetchAllFolders,
+    removeFolder,
+  } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
 
   import {
@@ -17,6 +23,7 @@
     showCredentialShareDrawer,
     selectedFolder,
     showCredentialDetailsDrawer,
+    folderStore,
   } from "../store";
   import { onDestroy } from "svelte";
   import DownArrow from "../../basic/icons/downArrow.svelte";
@@ -31,7 +38,7 @@
   let noCardsSelected = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -39,13 +46,16 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId
+        (c) => c.credentialId !== card.credentialId,
       );
     }
   }
   const subscribe = selectedFolder.subscribe(async (folder) => {
     //TODO: fetch shared groups.
-    if (folder === null) return;
+    if (folder === null) {
+      selectedFolder.set(null);
+      return;
+    }
     let [allUsersResponse, folderUsersResponse, allGroupResponse] =
       await Promise.all([
         fetchAllUsers(),
@@ -55,7 +65,7 @@
     allGroups = allGroupResponse.data;
     users = allUsersResponse.data.filter((user) => {
       return !folderUsersResponse.data.some(
-        (folderUser) => folderUser.id === user.id
+        (folderUser) => folderUser.id === user.id,
       );
     });
     checkedCards = [];
@@ -67,7 +77,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential
+    credential: Credential,
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -90,9 +100,16 @@
     !noCardsSelected && showCredentialShareDrawer.set(true);
   };
 
+  const removeFolderHandler = async () => {
+    await removeFolder($selectedFolder.id);
+    selectedFolder.set(null);
+    const responseJson = await fetchAllFolders();
+    folderStore.set(responseJson.data);
+  };
+
   const addCredentialManager = async () => {
     showCredentialEditor.set(true);
-    checkedCards.length = 0;
+    checkedCards = [];
   };
 
   onDestroy(() => {
@@ -134,6 +151,9 @@
           on:click={credentialShareManager}
         >
           <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
+        </button>
+        <button on:click={removeFolderHandler}>
+          <BinIcon />
         </button>
         {#if areCardsSelected}
           <span
@@ -215,10 +235,12 @@
     <div
       class="flex flex-wrap p-3 pl-7 gap-4 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
     >
-      {#each sortedCredentials as credential, index}
+      {#each sortedCredentials as credential}
         <CredentialCard
           {credential}
-          {index}
+          checked={checkedCards.some(
+            (c) => c.credentialId === credential.credentialId,
+          )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
         />

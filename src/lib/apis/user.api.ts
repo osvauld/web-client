@@ -63,3 +63,28 @@ export const removeUserFromCredential = async (credentialId: string, userId: str
     body: JSON.stringify({ userIds: [userId] }),
   }).then(response => response.json());
 }
+
+
+export const deleteUser = async (userId: string) => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/user/${userId}`, {
+    method: "DELETE",
+    headers,
+  }).then(response => response.json());
+}
+
+
+export const checkUserNameExists = async (username: string, name: string) => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/user/name-availability`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ username, name }),
+  }).then(response => response.json());
+}

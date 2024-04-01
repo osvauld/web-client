@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { BlueClose } from "../icons";
 
   import { createEventDispatcher } from "svelte";

@@ -12,7 +12,7 @@
   import AddUserToGroup from "./AddUserToGroup.svelte";
 
   import { User } from "../dtos";
-  import { groupUsers } from "../store";
+  import { groupUsers, groupStore } from "../store";
   import { fetchGroupUsers, fetchAllUsers } from "../apis";
   import AllUsersList from "./AllUsersList.svelte";
   import OtherGroupsList from "./OtherGroupsList.svelte";

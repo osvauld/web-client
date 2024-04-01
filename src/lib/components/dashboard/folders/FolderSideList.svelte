@@ -9,12 +9,12 @@
     credentialStore,
   } from "../store";
 
-  import browser from "webextension-polyfill";
   import { fetchCredentialsByFolder } from "../apis";
 
   import { Folder } from "../dtos";
   import Add from "../../basic/icons/add.svelte";
   import FolderIcon from "../../basic/icons/folderIcon.svelte";
+  import { sendMessage } from "../helper";
 
   let iconColor = "#6E7681"; //sheffieldgrey:
 
@@ -23,10 +23,7 @@
     selectedCredential.set(null);
     const responseJson = await fetchCredentialsByFolder(folder.id);
 
-    const response = await browser.runtime.sendMessage({
-      action: "decryptMeta",
-      data: responseJson.data,
-    });
+    const response = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(response.data);
   };
 

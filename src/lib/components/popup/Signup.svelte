@@ -2,8 +2,8 @@
   import TempLogin from "./TempLogin.svelte";
   import SetPassPhrase from "./SetPassPhrase.svelte";
   import ImportPvtKey from "./ImportPvtKey.svelte";
-  import browser from "webextension-polyfill";
   import { isLoggedIn, isSignedUp } from "../../store/ui.store";
+  import { sendMessage } from "../dashboard/helper";
 
   let isTempLoginVerified = false;
   let challenge = "";
@@ -23,8 +23,7 @@
   const importPvtKey = async (e: any) => {
     console.log(e.detail);
     const { privateKeys, passphrase } = e.detail;
-    await browser.runtime.sendMessage({
-      action: "importPvtKey",
+    await sendMessage("importPvtKey", {
       passphrase,
       privateKeys,
     });
