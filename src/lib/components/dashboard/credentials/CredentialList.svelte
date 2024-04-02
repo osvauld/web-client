@@ -206,7 +206,9 @@
       on:click={() => !showCreateCredentialModal}
     >
       <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
-        <CredentialEditor on:close={() => !showCreateCredentialModal} />
+        <CredentialEditor
+          on:close={() => (showCreateCredentialModal = false)}
+        />
       </button>
     </button>
   {/if}

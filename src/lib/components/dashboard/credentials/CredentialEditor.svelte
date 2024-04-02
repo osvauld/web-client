@@ -117,6 +117,21 @@
 
   const credentialTypeSelection = (isLogin: boolean) => {
     credentialType = isLogin ? "Login" : "Other";
+    if (credentialType === "Other") {
+      credentialFields = [
+        {
+          fieldName: "Field Name",
+          fieldValue: "",
+          sensitive: false,
+        },
+      ];
+    } else {
+      credentialFields = [
+        { fieldName: "Username", fieldValue: "", sensitive: false },
+        { fieldName: "Password", fieldValue: "", sensitive: true },
+        { fieldName: "URL", fieldValue: "https://", sensitive: false },
+      ];
+    }
   };
 
   onMount(async () => {
