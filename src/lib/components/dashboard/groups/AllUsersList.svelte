@@ -3,14 +3,22 @@
   import { showAddUserDrawer } from "../store";
   import { deleteUser, fetchAllUsers } from "../apis";
   import AddUser from "./AddUser.svelte";
+  import { onMount } from "svelte";
 
   export let allUsers;
+
+  let accountRole: string = "";
 
   const deleteUserHandler = async (id) => {
     await deleteUser(id);
     const allUsersResponse = await fetchAllUsers();
     allUsers = allUsersResponse.data;
   };
+
+  onMount(() => {
+    const accountDetails = localStorage.getItem("user");
+    accountRole = JSON.parse(accountDetails).type;
+  });
 </script>
 
 <div class="flex items-center justify-between px-4 py-5 pb-0">
@@ -26,11 +34,14 @@
     />
   </div>
   <button
-    class="rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+    class="rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75 {accountRole ===
+    'user'
+      ? 'invisible'
+      : ''}"
     on:click={() => showAddUserDrawer.set(true)}
   >
     <span class="mr-1">Add new user</span>
-    <Add />
+    <Add color={"#010409"} />
   </button>
 </div>
 <div class="rounded my-6 px-10">

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getTokenAndBaseUrl } from "../helper";
   import Loader from "../components/Loader.svelte";
+  import RoleToggle from "../../basic/RoleToggle.svelte";
   import { showAddUserDrawer, allUsersSelected } from "../store";
   import { createUser, checkUserNameExists } from "../apis";
   import { ClosePanel, Tick } from "../icons";
@@ -11,6 +12,7 @@
   let copiedToClipboard = false;
   let isLoaderActive = false;
   let erroMessage = "";
+  let assignedRole = "user";
   $: activeButton = username.length >= 3 && name.length >= 3;
 
   const submit = async (event) => {
@@ -26,6 +28,7 @@
     const payload = {
       username,
       name,
+      type: assignedRole,
       tempPassword,
     };
     await createUser(payload);
@@ -39,12 +42,17 @@
     }, 3000);
   };
 
+  const roleManager = async (e: any) => {
+    e.preventDefault();
+    assignedRole = e.detail;
+  };
+
   const handleClose = () => {
     showAddUserDrawer.set(false);
   };
 </script>
 
-<div class="bg-osvauld-frameblack rounded-3xl h-[25rem] w-[23rem] p-6 pt-2">
+<div class="bg-osvauld-frameblack rounded-3xl h-[30rem] w-[23rem] p-6 pt-2">
   <div class="flex justify-between items-center px-4 py-6">
     <p class="text-2xl font-sans font-normal text-osvauld-dusklabel">
       Add new user
@@ -94,6 +102,15 @@
         class="py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
         autocomplete="off"
       />
+    </div>
+
+    <div class="mb-4 w-full">
+      <label
+        for="role"
+        class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
+        >Select Role:</label
+      >
+      <RoleToggle on:select={roleManager} />
     </div>
 
     <button
