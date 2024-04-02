@@ -26,7 +26,6 @@ export const sendMessage = async (action: string, data: any = {}) => {
         action,
         data,
     });
-    console.log(response, action, data);
     return response;
 }
 

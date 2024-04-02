@@ -32,7 +32,6 @@
   };
 
   const checkAuth = (event: CustomEvent) => {
-    console.log("check auth event...", event);
     loggedIn = event.detail;
   };
 </script>

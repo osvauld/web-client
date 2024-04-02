@@ -21,7 +21,6 @@
   };
 
   const importPvtKey = async (e: any) => {
-    console.log(e.detail);
     const { privateKeys, passphrase } = e.detail;
     await sendMessage("importPvtKey", {
       passphrase,

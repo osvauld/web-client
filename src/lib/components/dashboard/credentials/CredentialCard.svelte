@@ -62,10 +62,6 @@
     credentialStore.set(response.data);
   };
 
-  $: {
-    console.log(`checked: ${checked}`);
-  }
-
   const handleClick = async () => {
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
