@@ -96,6 +96,14 @@
       />
     </div>
 
+    <div class="mb-4 w-full">
+      <label
+        for="name"
+        class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
+        >Select Role:</label
+      >
+    </div>
+
     <button
       class="w-full px-4 py-2 mt-3 flex justify-center items-center border border-osvauld-placeholderblack rounded-md {activeButton
         ? 'bg-osvauld-carolinablue text-osvauld-ninjablack'
