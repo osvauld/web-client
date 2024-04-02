@@ -34,7 +34,7 @@
 >
   <div class="flex items-center space-x-4 max-w-full">
     <p
-      class="py-0.5 px-1 max-w-full whitespace-nowrap text-base {isTopList
+      class="py-1 px-1 max-w-full whitespace-nowrap text-base {isTopList
         ? 'text-osvauld-plainwhite'
         : 'text-osvauld-sheffieldgrey'}"
     >

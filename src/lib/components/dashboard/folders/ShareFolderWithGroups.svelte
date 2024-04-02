@@ -38,7 +38,7 @@
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase()),
+        group.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : groups;
 
@@ -129,7 +129,7 @@
     await editFolderPermissionForGroup(
       $selectedFolder.id,
       e.detail.item.id,
-      e.detail.permission,
+      e.detail.permission
     );
     await existingGroups(false);
   };
@@ -178,7 +178,7 @@
     </div>
   {/if}
   <div
-    class="overflow-y-auto scrollbar-thin min-h-[17.5vh] max-h-[35vh] bg-osvauld-frameblack w-full"
+    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[35vh] bg-osvauld-frameblack w-full"
   >
     {#each filteredGroups as group, index}
       <ListItem

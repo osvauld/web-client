@@ -23,6 +23,7 @@ export type CredentialBasic = {
 
 export type Credential = CredentialBasic & {
   name: string;
+  accessType: string;
   description: string;
   folderId: UUID;
   credentialType: string;
