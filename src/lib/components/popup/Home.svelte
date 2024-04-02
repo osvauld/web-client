@@ -11,13 +11,53 @@
   import { Credential } from "../../dtos/credential.dto";
   import { sendMessage } from "../dashboard/helper";
   import { getUser } from "../../apis/user.api";
-
+  import SearchModal from "../dashboard/SearchModal.svelte";
+  import { searchObjects } from "../dashboard/helper";
+  import { getSearchFields } from "../dashboard/apis";
+  import CredentialCard from "../dashboard/credentials/CredentialCard.svelte";
   let passwordFound = false;
   let credentialClicked = false;
   let selectedCredentialIndex: number | undefined;
   let domain: string | null = null;
   let creds: Credential[] = [];
+  let showCredentialCard = false;
 
+  let searchResults = [];
+  let searchData = [];
+  let showModal = false;
+  let query = "";
+  let searchedCredential: any | null = null;
+
+  export const getSearchData = async () => {
+    showModal = true;
+    const searchFieldSResponse = await getSearchFields();
+    searchData = searchFieldSResponse.data;
+    if (query.length !== 0) {
+      searchResults = searchObjects(query, searchData);
+    } else {
+      searchResults.length = 0;
+    }
+  };
+  const handleSearchClick = async (result) => {
+    // Implement the behavior specific to Home.svelte
+    const credentialResponse: any = await fetchCredsByIds([result.id]);
+    searchedCredential = credentialResponse.data[0];
+
+    const decyrptedResponse = await sendMessage("decryptMeta", [
+      searchedCredential,
+    ]);
+    searchedCredential = decyrptedResponse.data[0];
+    console.log("Search result clicked:", searchedCredential);
+    showCredentialCard = true;
+    // For example, navigate to a different page or set a store value
+    closeModal();
+  };
+
+  const closeModal = () => {
+    showModal = false;
+    query = "";
+    searchResults = [];
+  };
   const openFullscreenTab = async () => {
     await sendMessage("openFullscreenTab");
   };
@@ -42,11 +82,21 @@
         ),
       }));
     }
+    console.log("creds", creds);
     const decyrptedResponse = await sendMessage("decryptMeta", creds);
     creds = decyrptedResponse.data;
     const user = await getUser();
     localStorage.setItem("user", JSON.stringify(user.data));
   });
+
+  const handleInputChange = (e) => {
+    query = e.target.value;
+    if (query.length !== 0) {
+      searchResults = searchObjects(e.target.value, searchData);
+    } else {
+      searchResults.length = 0;
+    }
+  };
 
   const dropDownClicked = async (index: number, credential: any) => {
     if (!credentialClicked) {
@@ -90,6 +140,9 @@
       </div>
     {/if}
 
+    {#if showModal}
+      <SearchModal {searchResults} {query} {handleSearchClick} {closeModal} />
+    {/if}
     <div
       class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-4"
     >
@@ -98,6 +151,9 @@
         type="text"
         class="h-7 w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-sm font-light focus:border-transparent focus:ring-0 cursor-pointer"
         placeholder="Find what you need faster.."
+        on:click={getSearchData}
+        on:input={handleInputChange}
+        bind:value={query}
       />
     </div>
 
@@ -105,6 +161,9 @@
       <div
         class="border-b border-osvauld-iconblack w-[calc(100%+1.55rem)] -translate-x-[0.8rem] mb-3"
       ></div>
+      {#if showCredentialCard}
+        <CredentialCard credential={searchedCredential} />
+      {/if}
       <div class="h-[25rem] overflow-y-scroll scrollbar-thin">
         {#each creds as credential, index}
           <button

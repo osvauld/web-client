@@ -1,8 +1,6 @@
 <script lang="ts">
   import CredentialList from "./credentials/CredentialList.svelte";
   import GroupList from "./groups/GroupList.svelte";
-  import Highlight from "./components/Highlight.svelte";
-  import Key from "../basic/icons/key.svelte";
   import SearchModal from "./SearchModal.svelte";
   import { searchObjects } from "./helper";
   import { getSearchFields } from "./apis";
@@ -21,7 +19,7 @@
   let showModal = false;
   let query = "";
 
-  export const getSearchData = async () => {
+  const getSearchData = async () => {
     showModal = true;
     const searchFieldSResponse = await getSearchFields();
     searchData = searchFieldSResponse.data;
