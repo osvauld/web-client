@@ -62,14 +62,14 @@
       users = usersResponse.data;
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
-        credential.credentialId,
+        credential.credentialId
       );
       groups = groupsResponse.data;
     }
   };
 
   const removeGroupFromCredentialHandler = async (
-    group: GroupWithAccessType,
+    group: GroupWithAccessType
   ) => {
     await removeGroupFromCredential(credential.credentialId, group.groupId);
     await toggleSelect({ detail: "Groups" });
@@ -84,7 +84,7 @@
       const userPermissionSaveResponse = await editUserPermissionForCredential(
         userPermissions.credentialId,
         userPermissions.userId,
-        userPermissions.accessType,
+        userPermissions.accessType
       );
       await toggleSelect({ detail: "Users" });
       accessChangeDetected = false;
@@ -97,7 +97,7 @@
         await editGroupPermissionForCredential(
           groupPermissions.credentialId,
           groupPermissions.groupId,
-          groupPermissions.accessType,
+          groupPermissions.accessType
         );
       await toggleSelect({ detail: "Groups" });
       accessChangeDetected = false;
@@ -152,7 +152,7 @@
     groups = groupsResponse.data;
     if (sensitiveFields.length === 0) {
       const sensitiveFieldsResponse = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       sensitiveFields = sensitiveFieldsResponse.data;
     }
@@ -164,7 +164,7 @@
   <div
     class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
   >
-    <div class="p-6 rounded bg-transparent" on:click|stopPropagation>
+    <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
       <CredentialEditor
         on:close={() => {
           showEditCredentialModal = !showEditCredentialModal;
@@ -176,7 +176,7 @@
         credentialType={credential.credentialType}
         credentialFields={fieldsForEdit}
       />
-    </div>
+    </button>
   </div>
 {/if}
 <div
@@ -191,12 +191,16 @@
       <div class="text-3xl font-semibold w-full text-left ml-2">
         {credential.name}
       </div>
-      <button
-        class="p-2 mr-3 rounded-lg {false ? 'bg-osvauld-sensitivebgblue' : ''}"
-        on:click={handleEditCredential}
-      >
-        <EditIcon />
-      </button>
+      {#if credential.accessType === "manager"}
+        <button
+          class="p-2 mr-3 rounded-lg {showEditCredentialModal
+            ? 'bg-osvauld-sensitivebgblue'
+            : ''}"
+          on:click={handleEditCredential}
+        >
+          <EditIcon />
+        </button>
+      {/if}
       <button
         class="p-2"
         on:click={() => showCredentialDetailsDrawer.set(false)}
