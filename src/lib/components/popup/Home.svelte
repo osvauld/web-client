@@ -11,6 +11,7 @@
   import EncryptedField from "./components/EncryptedField.svelte";
   import { Credential } from "../../dtos/credential.dto";
   import { sendMessage } from "../dashboard/helper";
+  import { getUser } from "../../apis/user.api";
 
   let passwordFound = false;
   let credentialClicked = false;
@@ -34,7 +35,6 @@
   onMount(async () => {
     const responseJson = await fetchAllUserUrls();
     const urls = responseJson.data;
-
     const tabs = await browser.tabs.query({
       active: true,
       currentWindow: true,
@@ -63,6 +63,8 @@
         credentialId: cred.credentialId,
       };
     }
+    const user = await getUser();
+    localStorage.setItem("user", JSON.stringify(user.data));
   });
 
   const dropDownClicked = async (index: number, credentialId: string) => {
