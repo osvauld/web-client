@@ -32,7 +32,7 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase()),
+        user.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : users;
 
@@ -101,7 +101,7 @@
     await editFolderPermissionForUser(
       $selectedFolder.id,
       e.detail.item.id,
-      e.detail.permission,
+      e.detail.permission
     );
     await existingUsers(false);
   };
@@ -143,7 +143,7 @@
     </div>
   {/if}
   <div
-    class="overflow-y-auto scrollbar-thin min-h-[17.5vh] max-h-[35vh] bg-osvauld-frameblack w-full"
+    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[35vh] bg-osvauld-frameblack w-full"
   >
     {#each filteredUsers as user, index}
       <ListItem
