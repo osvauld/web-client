@@ -15,7 +15,7 @@
     class="inline-flex justify-center space-x-1 p-1 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl w-[70%]"
   >
     {#each ["user", "admin"] as item}
-      <button
+      <div
         class="w-1/2 px-4 py-1 text-lg flex justify-center items-center rounded-lg focus:outline-none {selectedItem ===
         item
           ? 'bg-osvauld-bordergreen text-osvauld-plainwhite'
@@ -23,7 +23,7 @@
         on:click={() => select(item)}
       >
         <span class="">{item}</span>
-      </button>
+      </div>
     {/each}
   </div>
 </div>

@@ -28,6 +28,7 @@
     const payload = {
       username,
       name,
+      type: assignedRole,
       tempPassword,
     };
     await createUser(payload);
