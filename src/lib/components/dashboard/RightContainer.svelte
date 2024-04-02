@@ -13,7 +13,6 @@
   } from "./store";
 
   import { Folder } from "./dtos";
-  import LinkIcon from "../basic/icons/linkIcon.svelte";
   let searchResults = [];
   let searchData = [];
   let showModal = false;
@@ -30,7 +29,7 @@
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     query = e.target.value;
     if (query.length !== 0) {
       searchResults = searchObjects(e.target.value, searchData);
@@ -39,6 +38,7 @@
     }
   };
   const closeModal = () => {
+    console.log("close modal triggered");
     showModal = false;
     query = "";
     searchResults = [];
@@ -47,10 +47,10 @@
     selectedFolder.set(folder);
   };
 
-  const handleSearchClick = (result) => {
-    searchedCredential.set(result);
+  const handleSearchClick = (e: any) => {
+    searchedCredential.set(e.detail);
     selectedPage.set("Folders");
-    selectFolder({ id: result.folderId, name: result.folderName });
+    selectFolder({ id: e.detail.folderId, name: e.detail.folderName });
     closeModal();
   };
 
@@ -90,7 +90,14 @@
   </div>
 
   {#if showModal}
-    <SearchModal {searchResults} {query} {handleSearchClick} {closeModal} />
+    <SearchModal
+      {searchResults}
+      {query}
+      on:close={closeModal}
+      on:select={handleSearchClick}
+      on:change={handleInputChange}
+      on:search={getSearchData}
+    />
   {/if}
   <div
     class="h-[90vh] bg-osvauld-frameblack border border-osvauld-iconblack rounded-2xl mr-4 overflow-hidden"
