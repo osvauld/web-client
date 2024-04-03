@@ -72,24 +72,24 @@ function buildConfig(inputFileName, outputFileName) {
   };
 }
 export default [
-  buildConfig("popup", "popup"),
+  // buildConfig("popup", "popup"),
   buildConfig("dashboard", "dashboard"),
-  {
-    input: "src/scripts/background.ts",
-    output: {
-      format: "es",
-      name: "background",
-      file: "public/background.js",
-    },
-    plugins: [
-      typescript({
-        tsconfig: "./tsconfig.background.json",
-      }),
-      commonjs(),
-      resolve({ browser: true, preferBuiltins: false }),
-    ],
-    watch: {
-      clearScreen: false,
-    },
-  }
+  // {
+  //   input: "src/scripts/background.ts",
+  //   output: {
+  //     format: "es",
+  //     name: "background",
+  //     file: "public/background.js",
+  //   },
+  //   plugins: [
+  //     typescript({
+  //       tsconfig: "./tsconfig.background.json",
+  //     }),
+  //     commonjs(),
+  //     resolve({ browser: true, preferBuiltins: false }),
+  //   ],
+  //   watch: {
+  //     clearScreen: false,
+  //   },
+  // }
 ];

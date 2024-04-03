@@ -1,23 +1,14 @@
 <script lang="ts">
   import AddFolder from "./AddFolder.svelte";
 
-  import {
-    selectedCredential,
-    showAddFolderDrawer,
-    folderStore,
-    selectedFolder,
-    credentialStore,
-  } from "../store";
+  import { showAddFolderDrawer, folderStore, selectedFolder } from "../store";
 
   import { fetchAllFolders } from "../apis";
 
   import { Folder } from "../dtos";
-  import Add from "../../basic/icons/add.svelte";
-  import FolderIcon from "../../basic/icons/folderIcon.svelte";
-  import { sendMessage } from "../helper";
-  import { on } from "events";
+  import { Menu, FolderIcon, Add } from "../icons";
   import { onMount } from "svelte";
-
+  import FolderMenu from "./FolderMenu.svelte";
   let iconColor = "#6E7681"; //sheffieldgrey:
 
   const selectFolder = async (folder: Folder) => {
@@ -31,6 +22,16 @@
   const closeModal = () => {
     showAddFolderDrawer.set(false);
   };
+
+  let showFolderMenu = false;
+
+  function openFolderMenu() {
+    showFolderMenu = true;
+  }
+
+  function closeFolderMenu() {
+    showFolderMenu = false;
+  }
 
   onMount(async () => {
     const responseJson = await fetchAllFolders();
@@ -63,7 +64,7 @@
       <li
         class="{$selectedFolder?.id == folder.id
           ? 'bg-osvauld-bordergreen rounded-lg text-osvauld-plainwhite'
-          : 'hover:bg-osvauld-bordergreen text-osvauld-quarzowhite'} rounded-md my-0.5 pl-3"
+          : 'hover:bg-osvauld-bordergreen text-osvauld-quarzowhite'} rounded-md my-0.5 pl-3 flex items-center"
       >
         <button
           on:click={() => selectFolder(folder)}
@@ -74,6 +75,14 @@
           />
           <span class="ml-2">{folder.name}</span>
         </button>
+        <div class="relative">
+          <button class="p-2" on:click={openFolderMenu}>
+            <Menu />
+          </button>
+          {#if showFolderMenu}
+            <FolderMenu bind:showModal={showFolderMenu} />
+          {/if}
+        </div>
       </li>
     {/each}
   </ul>
