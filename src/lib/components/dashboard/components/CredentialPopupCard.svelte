@@ -5,7 +5,13 @@
   import { Credential, Fields } from "../dtos";
 
   export let credential: Credential;
-  let sensitiveFields: Fields[] = [];
+  let sensitiveFields = credential.fields.filter(
+    (field) => field.fieldType === "sensitive"
+  );
+
+  let nonSensitiveFields = credential.fields.filter(
+    (field) => field.fieldType !== "sensitive"
+  );
 
   /* eslint-disable */
 </script>
@@ -19,7 +25,7 @@
     <div
       class="w-full h-[90%] overflow-y-scroll scrollbar-thin pr-0 active mt-2"
     >
-      {#each credential.fields as field}
+      {#each nonSensitiveFields as field}
         <PlainField
           bgColor={null}
           fieldName={field.fieldName}
@@ -47,7 +53,7 @@
       </label>
       <div
         class="mt-4 w-[14.3rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin resize-none text-base
-     'text-osvauld-fieldTextActive'"
+     text-osvauld-fieldTextActive font-normal text-sm"
         id="credential-description"
       >
         {credential.description}

@@ -108,16 +108,14 @@
         searchedCredential,
       ]);
       searchedCredential = decyrptedResponse.data[0];
-      console.log("searchedCredential =>", searchedCredential);
-      const response = await fetchSensitiveFieldsByCredentialId(
+      const sensitiveResponse = await fetchSensitiveFieldsByCredentialId(
         credentialIdentification
       );
-      console.log("search resp response =>", response);
       searchedCredential.fields = [
         ...searchedCredential.fields,
-        response.data[0],
+        ...sensitiveResponse.data,
       ];
-      console.log("final searched credential =>", searchedCredential);
+      console.log("final credential data=>", searchedCredential);
       selectedCredentialIndex = index;
     } else {
       selectedCredentialIndex = null;
@@ -164,6 +162,7 @@
         placeholder="Find what you need faster.."
         on:keyup={handleInputChange}
         bind:value={query}
+        autofocus
       />
     </div>
 
