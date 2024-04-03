@@ -14,7 +14,7 @@
   import SearchModal from "../dashboard/SearchModal.svelte";
   import { searchObjects } from "../dashboard/helper";
   import { getSearchFields } from "../dashboard/apis";
-  import CredentialCard from "../dashboard/credentials/CredentialCard.svelte";
+  import CredentialPopupCard from "../dashboard/components/CredentialPopupCard.svelte";
   let passwordFound = false;
   let credentialClicked = false;
   let selectedCredentialIndex: number | undefined;
@@ -198,7 +198,7 @@
             </div>
             {#if credentialClicked && selectedCredentialIndex === index}
               <!-- <PopupCard fields={credential.fields} /> -->
-              <CredentialCard credential={searchedCredential} />
+              <CredentialPopupCard credential={searchedCredential} />
             {/if}
           </button>
         {/each}
