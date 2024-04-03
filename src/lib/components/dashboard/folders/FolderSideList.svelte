@@ -75,7 +75,7 @@
           />
           <span class="ml-2">{folder.name}</span>
         </button>
-        <div class="relative">
+        <div class="relative z-100">
           <button class="p-2" on:click={openFolderMenu}>
             <Menu />
           </button>

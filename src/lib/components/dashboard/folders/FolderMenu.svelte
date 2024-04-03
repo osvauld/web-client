@@ -2,9 +2,23 @@
     import BinIcon from "../../basic/icons/binIcon.svelte";
     import EditIcon from "../../basic/icons/editIcon.svelte";
     import Share from "../../basic/icons/share.svelte";
+
+    export let showModal = false;
+
+    let dialog: HTMLDialogElement;
+
+    $: if (dialog && showModal) dialog.showModal();
+
+    function closeModal() {
+        showModal = false;
+        dialog.close();
+    }
 </script>
 
-<div
+<dialog
+    bind:this={dialog}
+    on:close={() => (showModal = false)}
+    on:click|self={closeModal}
     class="bg-gray-900 border border-gray-700 rounded-2xl w-44 h-44 absolute top-0 left-0 z-100 m-0"
 >
     <div
@@ -32,4 +46,4 @@
             <div class="font-inter text-lg text-gray-400">Delete folder</div>
         </button>
     </div>
-</div>
+</dialog>
