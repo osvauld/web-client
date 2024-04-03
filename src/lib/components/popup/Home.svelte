@@ -82,7 +82,6 @@
 
   const handleInputChange = async (e) => {
     const query = e.target.value;
-    console.log("Query =>", query);
     if (query.length >= 1) {
       const searchFieldSResponse = await getSearchFields();
       searchData = searchFieldSResponse.data;
@@ -93,11 +92,32 @@
   };
 
   const dropDownClicked = async (index: number, credential: any) => {
+    console.log("credential clicked", index, credential);
+    let credentialIdentification;
+    if (query.length >= 1) {
+      credentialIdentification = credential.id;
+    } else {
+      credentialIdentification = credential.credentialId;
+    }
     if (!credentialClicked) {
+      const credentialResponse: any = await fetchCredsByIds([
+        credentialIdentification,
+      ]);
+      searchedCredential = credentialResponse.data[0];
+      const decyrptedResponse = await sendMessage("decryptMeta", [
+        searchedCredential,
+      ]);
+      searchedCredential = decyrptedResponse.data[0];
+      console.log("searchedCredential =>", searchedCredential);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId
+        credentialIdentification
       );
-      credential.fields = [...credential.fields, ...response.data];
+      console.log("search resp response =>", response);
+      searchedCredential.fields = [
+        ...searchedCredential.fields,
+        response.data[0],
+      ];
+      console.log("final searched credential =>", searchedCredential);
       selectedCredentialIndex = index;
     } else {
       selectedCredentialIndex = null;
@@ -151,13 +171,10 @@
       <div
         class="border-b border-osvauld-iconblack w-[calc(100%+1.55rem)] -translate-x-[0.8rem] mb-3"
       ></div>
-      {#if showCredentialCard}
-        <CredentialCard credential={searchedCredential} />
-      {/if}
       <div class="h-[25rem] overflow-y-scroll scrollbar-thin">
         {#each creds as credential, index}
           <button
-            class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex flex-col justify-center items-center w-[98%] mb-3 cursor-default"
+            class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex flex-col justify-center items-center w-[98%] mb-3 cursor-pointer"
             on:click={() => dropDownClicked(index, credential)}
           >
             <div
@@ -180,7 +197,8 @@
               </button>
             </div>
             {#if credentialClicked && selectedCredentialIndex === index}
-              <PopupCard fields={credential.fields} />
+              <!-- <PopupCard fields={credential.fields} /> -->
+              <CredentialCard credential={searchedCredential} />
             {/if}
           </button>
         {/each}
