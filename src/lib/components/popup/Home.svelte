@@ -22,21 +22,14 @@
   let creds: Credential[] = [];
   let showCredentialCard = false;
 
-  let searchResults = [];
   let searchData = [];
-  let showModal = false;
   let query = "";
   let searchedCredential: any | null = null;
 
   export const getSearchData = async () => {
-    showModal = true;
     const searchFieldSResponse = await getSearchFields();
     searchData = searchFieldSResponse.data;
-    if (query.length !== 0) {
-      searchResults = searchObjects(query, searchData);
-    } else {
-      searchResults.length = 0;
-    }
+    searchResults = query.length !== 0 ? searchObjects(query, searchData) : [];
   };
   const handleSearchClick = async (result) => {
     // Implement the behavior specific to Home.svelte
@@ -54,7 +47,6 @@
   };
 
   const closeModal = () => {
-    showModal = false;
     query = "";
     searchResults = [];
   };
@@ -78,30 +70,32 @@
       creds = creds.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
         ),
       }));
     }
-    console.log("creds", creds);
     const decyrptedResponse = await sendMessage("decryptMeta", creds);
     creds = decyrptedResponse.data;
     const user = await getUser();
     localStorage.setItem("user", JSON.stringify(user.data));
   });
 
-  const handleInputChange = (e) => {
-    query = e.target.value;
-    if (query.length !== 0) {
-      searchResults = searchObjects(e.target.value, searchData);
+  const handleInputChange = async (e) => {
+    const query = e.target.value;
+    console.log("Query =>", query);
+    if (query.length >= 1) {
+      const searchFieldSResponse = await getSearchFields();
+      searchData = searchFieldSResponse.data;
+      creds = query.length !== 0 ? searchObjects(query, searchData) : [];
     } else {
-      searchResults.length = 0;
+      creds = [];
     }
   };
 
   const dropDownClicked = async (index: number, credential: any) => {
     if (!credentialClicked) {
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       credential.fields = [...credential.fields, ...response.data];
       selectedCredentialIndex = index;
@@ -140,9 +134,6 @@
       </div>
     {/if}
 
-    {#if showModal}
-      <SearchModal {searchResults} {query} {handleSearchClick} {closeModal} />
-    {/if}
     <div
       class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-4"
     >
@@ -151,8 +142,7 @@
         type="text"
         class="h-7 w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-sm font-light focus:border-transparent focus:ring-0 cursor-pointer"
         placeholder="Find what you need faster.."
-        on:click={getSearchData}
-        on:input={handleInputChange}
+        on:keyup={handleInputChange}
         bind:value={query}
       />
     </div>

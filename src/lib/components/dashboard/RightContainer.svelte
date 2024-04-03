@@ -88,7 +88,6 @@
       on:close={closeModal}
       on:select={handleSearchClick}
       on:change={handleInputChange}
-      on:search={getSearchData}
       on:enter={handleKeyDown}
     />
   {/if}
