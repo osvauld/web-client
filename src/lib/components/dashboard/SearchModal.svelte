@@ -11,20 +11,15 @@
     node.focus();
   }
 
-  const closeModal = async () => {
-    console.log("cliked, need to close");
+  const closeModal = () => {
     dispatch("close", true);
   };
 
-  const getSearchData = async () => {
-    dispatch("search", true);
-  };
-
-  const handleInputChange = async () => {
+  const handleInputChange = () => {
     dispatch("change", query);
   };
 
-  const handleSearchClick = async (result) => {
+  const handleSearchClick = (result) => {
     dispatch("select", result);
   };
 </script>
@@ -47,8 +42,7 @@
           class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
           placeholder="Search.."
           use:autofocus
-          on:click={getSearchData}
-          on:input={handleInputChange}
+          on:keyup={handleInputChange}
           bind:value={query}
         />
       </div>

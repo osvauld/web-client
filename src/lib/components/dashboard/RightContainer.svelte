@@ -22,23 +22,15 @@
     showModal = true;
     const searchFieldSResponse = await getSearchFields();
     searchData = searchFieldSResponse.data;
-    if (query.length !== 0) {
-      searchResults = searchObjects(query, searchData);
-    } else {
-      searchResults.length = 0;
-    }
+    searchResults = query.length !== 0 ? searchObjects(query, searchData) : [];
   };
 
   const handleInputChange = (e: any) => {
-    query = e.target.value;
-    if (query.length !== 0) {
-      searchResults = searchObjects(e.target.value, searchData);
-    } else {
-      searchResults.length = 0;
-    }
+    const query = e.type === "input" ? e.target.value : e.detail;
+    searchResults = query.length >= 1 ? searchObjects(query, searchData) : [];
   };
+
   const closeModal = () => {
-    console.log("close modal triggered");
     showModal = false;
     query = "";
     searchResults = [];
@@ -83,7 +75,7 @@
         on:click={getSearchData}
         on:input={handleInputChange}
         bind:value={query}
-        on:keydown={handleKeyDown}
+        on:keyup={handleKeyDown}
       />
     </div>
     <div><Profile /></div>
@@ -97,6 +89,7 @@
       on:select={handleSearchClick}
       on:change={handleInputChange}
       on:search={getSearchData}
+      on:enter={handleKeyDown}
     />
   {/if}
   <div
