@@ -14,8 +14,6 @@
   import { Folder } from "../dtos";
   import Add from "../../basic/icons/add.svelte";
   import FolderIcon from "../../basic/icons/folderIcon.svelte";
-  import { sendMessage } from "../helper";
-  import { on } from "events";
   import { onMount } from "svelte";
 
   let iconColor = "#6E7681"; //sheffieldgrey:

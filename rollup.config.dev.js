@@ -15,10 +15,11 @@ function serve() {
       writeBundle() {
         let command;
         if (os.platform() === "linux") {
-          command = "brave --silent http://reload.extensions";
+          command = "brave --reload-extension=public/build";
         } else {
           command =
-            '/usr/bin/open -g -a "/Applications/Brave Browser.app" "http://reload.extensions"';
+          "'/Applications/Brave Browser.app/Contents/MacOS/Brave Browser' --reload-extension=public/build";
+          
         }
   
         // Open Brave browser with the specified URL
