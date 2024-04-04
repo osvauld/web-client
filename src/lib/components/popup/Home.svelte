@@ -61,9 +61,9 @@
   onMount(async () => {
     query = await localStorage.getItem("query");
     if (query.length >= 1) {
-      listedCredentials = searchObjects(query, searchData);
       const searchFieldSResponse = await getSearchFields();
       searchData = searchFieldSResponse.data;
+      listedCredentials = searchObjects(query, searchData);
     } else {
       await fetchCredentialsOfCurrentDomin();
     }
