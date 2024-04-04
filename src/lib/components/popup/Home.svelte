@@ -31,6 +31,8 @@
   onMount(async () => {
     const responseJson = await fetchAllUserUrls();
     const urls = responseJson.data;
+    const searchFieldSResponse = await getSearchFields();
+    searchData = searchFieldSResponse.data;
     const tabs = await browser.tabs.query({
       active: true,
       currentWindow: true,
@@ -62,8 +64,6 @@
   const handleInputChange = async (e) => {
     const query = e.target.value;
     if (query.length >= 1) {
-      const searchFieldSResponse = await getSearchFields();
-      searchData = searchFieldSResponse.data;
       listedCredentials =
         query.length !== 0 ? searchObjects(query, searchData) : [];
     } else {
@@ -74,12 +74,7 @@
   const dropDownClicked = async (e: any) => {
     const index = e.detail.index;
     const credential = e.detail.credential;
-    let credentialIdentification;
-    if (query.length >= 1) {
-      credentialIdentification = credential.id;
-    } else {
-      credentialIdentification = credential.credentialId;
-    }
+    let credentialIdentification = credential.credentialId;
     if (!credentialClicked) {
       const credentialResponse: any = await fetchCredsByIds([
         credentialIdentification,
@@ -106,7 +101,7 @@
 
 <div class="w-full h-full">
   <div class="flex justify-between items-center mb-3 px-4 py-0">
-    <h6 class="text-2xl font-medium text-osvauld-highlightwhite tracking-wide">
+    <h6 class="text-2xl font-medium text-osvauld-fieldText tracking-wide">
       osvauld
     </h6>
     <div>
@@ -116,27 +111,22 @@
     </div>
   </div>
 
-  <div
-    class="rounded-lg border border-osvauld-iconblack w-full min-h-[15rem] max-h-[33rem] p-3 overflow-hidden"
-  >
+  <div class="w-full h-[90%] p-3 overflow-hidden">
     {#if passwordFound}
       <div
-        class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm {query.length !==
-        0
-          ? 'hidden'
-          : ''}"
+        class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm"
       >
-        <span class="text-base">
+        <span class="text-base text-osvauld-carolinablue">
           {domain}
         </span>
         <span class="text-osvauld-sheffieldgrey">
-          {listedCredentials.length}
+          {domainAssociatedCredentials.length}
         </span>
       </div>
     {/if}
 
     <div
-      class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-4"
+      class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-2"
     >
       <Lens />
       <input
@@ -149,10 +139,8 @@
       />
     </div>
 
-    <div class="h-auto p-0">
-      <div
-        class="border-b border-osvauld-iconblack w-[calc(100%+1.55rem)] -translate-x-[0.8rem] mb-3"
-      ></div>
+    <div class="h-full p-0 scrollbar-thin">
+      <div class="border-b border-osvauld-iconblack w-full mb-3"></div>
       <div class="h-[25rem] overflow-y-scroll scrollbar-thin">
         {#if query.length !== 0}
           {#each listedCredentials as credential, index}

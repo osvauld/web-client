@@ -37,7 +37,7 @@ export type SearchResponse = {
   domain: string;
   folderId: UUID;
   folderName: string;
-  id: UUID;
+  credentialId: UUID;
   name: string;
 }
 

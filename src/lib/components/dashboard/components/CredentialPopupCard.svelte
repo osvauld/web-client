@@ -17,7 +17,7 @@
 </script>
 
 <button
-  class="mb-1 w-full overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack"
+  class="mb-1 w-full overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite"
 >
   <button
     class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
@@ -52,7 +52,7 @@
         Description
       </label>
       <div
-        class="mt-4 w-[14.3rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin resize-none text-base
+        class="mt-4 w-[96%] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin resize-none text-base
      text-osvauld-fieldTextActive font-normal text-sm"
         id="credential-description"
       >
