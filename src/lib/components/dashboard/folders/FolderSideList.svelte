@@ -15,7 +15,8 @@
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";
   import { onMount } from "svelte";
-  let iconColor = "#6E7681"; //sheffieldgrey:
+  let iconColor = "#6E7681";
+  let hoveringIndex = null;
   const selectFolder = async (folder: Folder) => {
     selectedFolder.set(folder);
   };
@@ -47,7 +48,7 @@
 
 <div>
   <button
-    class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-14 mb-4 flex justify-center items-center xl:scale-95"
+    class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-14 mb-4 flex justify-center items-center"
     on:mouseenter={() => (iconColor = "#000")}
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={openModal}
@@ -65,23 +66,37 @@
       </button>
     </button>
   {/if}
-  <ul class="xl:scale-95">
-    {#each $folderStore as folder}
+  <ul class="">
+    {#each $folderStore as folder, index}
       <li
         class="{$selectedFolder?.id == folder.id
-          ? 'bg-osvauld-bordergreen rounded-lg text-osvauld-plainwhite'
-          : 'hover:bg-osvauld-bordergreen text-osvauld-quarzowhite'} rounded-md my-0.5 pl-3 flex items-center"
+          ? 'bg-osvauld-bordergreen rounded-lg text-osvauld-sideListTextActive'
+          : 'hover:bg-osvauld-bordergreen text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 flex items-center"
+        on:mouseenter={() => (hoveringIndex = index)}
+        on:mouseleave={() => (hoveringIndex = null)}
       >
         <button
           on:click={() => selectFolder(folder)}
           class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
         >
           <FolderIcon
-            color={$selectedFolder?.id == folder.id ? "white" : "#85889C"}
+            color={$selectedFolder?.id == folder.id || hoveringIndex === index
+              ? "#F2F2F0"
+              : "#85889C"}
           />
-          <span class="ml-2">{folder.name}</span>
+          <span
+            class="ml-2 text-base font-light {$selectedFolder?.id ==
+              folder.id || hoveringIndex === index
+              ? 'text-osvauld-sideListTextActive'
+              : 'text-osvauld-fieldText'}">{folder.name}</span
+          >
         </button>
-        <div class="relative z-100">
+        <div
+          class="relative z-100 flex justify-center items-center {$selectedFolder?.id ==
+            folder.id || hoveringIndex === index
+            ? 'visible'
+            : 'invisible'}"
+        >
           <button
             class="p-2"
             on:click={(e) => {
