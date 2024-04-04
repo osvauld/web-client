@@ -29,6 +29,14 @@
       visibility = false;
     }, 3000);
   };
+
+  const copyToClipboard = async (e) => {
+    try {
+      await navigator.clipboard.writeText(decryptedValue);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  };
 </script>
 
 <div class="mb-2 mr-1 max-w-full" in:fly out:fly>
@@ -64,7 +72,7 @@
             <Eye />
           {/if}
         </button>
-        <button>
+        <button on:click|stopPropagation={copyToClipboard}>
           {#if hoverEffect}
             <ActiveCopy />
           {:else}

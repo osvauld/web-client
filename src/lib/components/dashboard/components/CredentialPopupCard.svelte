@@ -2,18 +2,16 @@
   import EncryptedField from "../credentials/EncryptedField.svelte";
   import PlainField from "../credentials/PlainField.svelte";
 
-  import { Credential, Fields } from "../dtos";
+  import { Credential } from "../dtos";
 
   export let credential: Credential;
   let sensitiveFields = credential.fields.filter(
-    (field) => field.fieldType === "sensitive"
+    (field) => field.fieldType === "sensitive",
   );
 
   let nonSensitiveFields = credential.fields.filter(
-    (field) => field.fieldType !== "sensitive"
+    (field) => field.fieldType !== "sensitive",
   );
-
-  /* eslint-disable */
 </script>
 
 <button

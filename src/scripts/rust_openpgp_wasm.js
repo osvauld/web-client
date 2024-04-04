@@ -190,6 +190,14 @@ function debugString(val) {
     return className;
 }
 /**
+* @returns {any}
+*/
+export function hello_wasm() {
+    const ret = wasm.hello_wasm();
+    return takeObject(ret);
+}
+
+/**
 * @param {string} password
 * @returns {any}
 */
@@ -524,9 +532,6 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbg_set_1754fb90457a8cce = function(arg0, arg1, arg2) {
         getObject(arg0)[takeObject(arg1)] = takeObject(arg2);
-    };
-    imports.wbg.__wbg_log_79d3c56888567995 = function(arg0) {
-        console.log(getObject(arg0));
     };
     imports.wbg.__wbg_crypto_d05b68a3572bb8ca = function(arg0) {
         const ret = getObject(arg0).crypto;
