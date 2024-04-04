@@ -23,7 +23,7 @@
   let hoverTimeout: any;
   let borderHighLight = tweened(0, { duration: 700 });
   $: {
-    if ($searchedCredential?.id === credential.credentialId) {
+    if ($searchedCredential?.credentialId === credential.credentialId) {
       borderHighLight.set(1);
       setTimeout(() => {
         borderHighLight.set(0);
@@ -40,7 +40,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId,
+          credential.credentialId
         );
         sensitiveFields = response.data;
       }, 300);
@@ -62,15 +62,11 @@
     credentialStore.set(response.data);
   };
 
-  $: {
-    console.log(`checked: ${checked}`);
-  }
-
   const handleClick = async () => {
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       sensitiveFields = response.data;
     }

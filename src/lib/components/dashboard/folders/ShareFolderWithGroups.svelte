@@ -14,7 +14,6 @@
     editFolderPermissionForGroup,
   } from "../apis";
   import { createEventDispatcher } from "svelte";
-  import { setbackground } from "../helper";
   import { sendMessage, setbackground } from "../helper";
   import { writable } from "svelte/store";
   import { selectedFolder } from "../store";
@@ -38,7 +37,7 @@
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase())
+        group.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : groups;
 
@@ -116,8 +115,6 @@
       $selectedGroups.set(item.groupId, { ...item, accessType: option });
       groups = groups.filter((u) => u.groupId !== item.groupId);
     }
-
-    console.log($selectedGroups);
   }
 
   const removeExistingGroup = async (e: any) => {
@@ -129,7 +126,7 @@
     await editFolderPermissionForGroup(
       $selectedFolder.id,
       e.detail.item.id,
-      e.detail.permission
+      e.detail.permission,
     );
     await existingGroups(false);
   };

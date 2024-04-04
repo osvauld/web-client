@@ -45,7 +45,7 @@
       ? 'text-osvauld-fieldTextActive'
       : 'text-osvauld-fieldText'}"
   >
-    <span class="w-3/5 text-left overflow-x-hidden"
+    <span class="w-3/5 text-left overflow-x-hidden font-normal text-sm"
       >{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
     >
     {#if !decrypted}
