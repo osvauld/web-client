@@ -1,16 +1,21 @@
 <script lang="ts">
   import AddFolder from "./AddFolder.svelte";
 
-  import { showAddFolderDrawer, folderStore, selectedFolder } from "../store";
+  import {
+    showAddFolderDrawer,
+    folderStore,
+    selectedFolder,
+    buttonRef,
+    showFolderMenu,
+    menuForFolder,
+  } from "../store";
 
   import { fetchAllFolders } from "../apis";
 
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";
   import { onMount } from "svelte";
-  import FolderMenu from "./FolderMenu.svelte";
   let iconColor = "#6E7681"; //sheffieldgrey:
-
   const selectFolder = async (folder: Folder) => {
     selectedFolder.set(folder);
   };
@@ -23,16 +28,11 @@
     showAddFolderDrawer.set(false);
   };
 
-  let showFolderMenu = false;
-
-  function openFolderMenu() {
-    showFolderMenu = true;
-  }
-
-  function closeFolderMenu() {
-    showFolderMenu = false;
-  }
-
+  const openFolderMenu = (e, folderId: string) => {
+    showFolderMenu.set(true);
+    buttonRef.set(e.currentTarget);
+    menuForFolder.set(folderId);
+  };
   onMount(async () => {
     const responseJson = await fetchAllFolders();
     folderStore.set(responseJson.data);
@@ -76,12 +76,14 @@
           <span class="ml-2">{folder.name}</span>
         </button>
         <div class="relative z-100">
-          <button class="p-2" on:click={openFolderMenu}>
+          <button
+            class="p-2"
+            on:click={(e) => {
+              openFolderMenu(e, folder.id);
+            }}
+          >
             <Menu />
           </button>
-          {#if showFolderMenu}
-            <FolderMenu bind:showModal={showFolderMenu} />
-          {/if}
         </div>
       </li>
     {/each}
