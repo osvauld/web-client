@@ -23,3 +23,6 @@ export { default as GroupIcon } from "../basic/icons/groupIcon.svelte";
 export { default as UserIcon } from "../basic/icons/userIcon.svelte";
 export { default as BlueClose } from "../basic/icons/blueClose.svelte";
 export { default as EditIcon } from "../basic/icons/editIcon.svelte";
+export { default as UserPlus } from "../basic/icons/userPlus.svelte";
+export { default as UserCheck } from "../basic/icons/userCheck.svelte";
+export { default as Tick } from "../basic/icons/tick.svelte";

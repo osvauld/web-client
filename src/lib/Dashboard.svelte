@@ -14,7 +14,7 @@
 <main
   class="
     bg-osvauld-frameblack
-   w-screen h-screen text-macchiato-text text-lg"
+   w-screen h-screen text-macchiato-text text-lg !font-sans"
 >
   <div class="flex h-full">
     <div

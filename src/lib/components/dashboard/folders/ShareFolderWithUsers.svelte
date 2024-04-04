@@ -3,6 +3,7 @@
     shareFolderWithUsers,
     fetchFolderUsers,
     removeUserFromFolder,
+    editFolderPermissionForUser,
   } from "../apis";
   import {
     User,
@@ -10,9 +11,10 @@
     ShareFolderWithUsersPayload,
     CredentialFields,
   } from "../dtos";
-  import { selectedFolder, showFolderShareDrawer } from "../store";
-  import { createShareCredsPayload, setbackground } from "../helper";
-  import { Lens, DownArrow, RightArrow } from "../icons";
+  import { createEventDispatcher } from "svelte";
+  import { selectedFolder } from "../store";
+  import { sendMessage, setbackground } from "../helper";
+  import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
   import ShareToast from "../components/ShareToast.svelte";
   import ExistingListParent from "../components/ExistingListParent.svelte";
@@ -30,7 +32,7 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase()),
+        user.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : users;
 
@@ -50,10 +52,11 @@
     if ($selectedFolder === null) {
       throw new Error("Folder not selected");
     }
-    const userData = await createShareCredsPayload(
-      credentialsFields,
-      selectedUsers,
-    );
+    const userData = await sendMessage("createShareCredPayload", {
+      creds: credentialsFields,
+      users: selectedUsers,
+    });
+
     const shareFolderPayload: ShareFolderWithUsersPayload = {
       folderId: $selectedFolder.id,
       // @ts-ignore
@@ -91,15 +94,27 @@
   }
 
   const removeExistingUser = async (e: any) => {
-    console.log("removing user...");
     await removeUserFromFolder($selectedFolder.id, e.detail.id);
     await existingUsers(false);
   };
+  const handlePermissionChange = async (e: any) => {
+    await editFolderPermissionForUser(
+      $selectedFolder.id,
+      e.detail.item.id,
+      e.detail.permission
+    );
+    await existingUsers(false);
+  };
+
+  function handleCancel() {
+    const dispatch = createEventDispatcher();
+    dispatch("cancel", true);
+  }
 </script>
 
-<div class="p-2 border border-osvauld-bordergreen rounded-lg h-[50vh]">
+<div class="p-2 border border-osvauld-iconblack rounded-lg max-h-[65vh]">
   <div
-    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-2"
+    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
   >
     <Lens />
     <input
@@ -109,24 +124,27 @@
       placeholder="Search for users"
     />
   </div>
-
-  <div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
-
+  {#if selectedUsers.length !== 0}
+    <div
+      class="overflow-y-auto scrollbar-thin min-h-0 max-h-[17.5vh] bg-osvauld-bordergreen rounded-lg w-full p-0.5 border border-osvauld-iconblack mt-1"
+    >
+      {#each selectedUsers as user, index}
+        <ListItem
+          item={user}
+          isSelected={index === selectionIndex && topList}
+          isTopList={true}
+          on:click={() => handleClick(index, true)}
+          on:remove={() => handleItemRemove(index)}
+          {setbackground}
+          {showOptions}
+          on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
+        />
+      {/each}
+    </div>
+  {/if}
   <div
-    class="overflow-y-auto scrollbar-thin h-[35vh] bg-osvauld-frameblack w-full"
+    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[35vh] bg-osvauld-frameblack w-full"
   >
-    {#each selectedUsers as user, index}
-      <ListItem
-        item={user}
-        isSelected={index === selectionIndex && topList}
-        isTopList={true}
-        on:click={() => handleClick(index, true)}
-        on:remove={() => handleItemRemove(index)}
-        {setbackground}
-        {showOptions}
-        on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
-      />
-    {/each}
     {#each filteredUsers as user, index}
       <ListItem
         item={user}
@@ -139,20 +157,24 @@
       />
     {/each}
   </div>
+  {#if selectedUsers.length !== 0}
+    <div class="p-2 flex justify-between items-center box-border">
+      <button
+        class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
+        on:click={handleCancel}>Cancel</button
+      >
 
-  <div class="p-2 flex justify-between items-center box-border">
-    <button
-      class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
-      >Cancel</button
-    >
-
-    <button
-      class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
-      on:click={shareFolderHandler}>Share</button
-    >
-  </div>
+      <button
+        class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
+        on:click={shareFolderHandler}>Share</button
+      >
+    </div>
+  {/if}
   {#if shareToast}
-    <ShareToast on:close={() => (shareToast = !shareToast)} />
+    <ShareToast
+      message={"Shared Folder with user"}
+      on:close={() => (shareToast = !shareToast)}
+    />
   {/if}
 </div>
 
@@ -162,4 +184,5 @@
   user={true}
   on:click={() => existingUsers()}
   on:remove={(e) => removeExistingUser(e)}
+  on:permissionChange={(e) => handlePermissionChange(e)}
 />

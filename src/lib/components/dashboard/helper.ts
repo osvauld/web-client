@@ -1,52 +1,48 @@
+import browser from "webextension-polyfill";
+type TypeToClassKey = "reader" | "manager";
 
-import browser from 'webextension-polyfill';
-import { CredentialFields } from './dtos';
-import { encryptCredentialsForUserNew } from "../../utils/helperMethods";
-
-type CredentialsForUsersPayload = {
-    accessType?: string;
-    userId: string;
-    credentials: CredentialFields[];
-}
-type UserListForEncryption = { id: string, publicKey: string, accessType?: string };
-export const createShareCredsPayload = async (creds: CredentialFields[], selectedUsers: UserListForEncryption[]): Promise<CredentialsForUsersPayload[]> => {
-
-
-    const response = await browser.runtime.sendMessage({
-        action: "decrypt",
-        data: creds,
-    });
-
-    const userData: CredentialsForUsersPayload[] = [];
-    for (const user of selectedUsers) {
-        const userEncryptedFields = await encryptCredentialsForUserNew(
-            response.data,
-            user.publicKey,
-        );
-        if (user.accessType) {
-            userData.push({
-                userId: user.id,
-                credentials: userEncryptedFields,
-                accessType: user.accessType,
-            });
-        } else {
-            userData.push({
-                userId: user.id,
-                credentials: userEncryptedFields,
-            });
-        }
-    }
-    return userData;
-}
-
-type TypeToClassKey = "read" | "write" | "owner";
 export const setbackground = (type: TypeToClassKey): string => {
 
     const typeToClassMap: Record<TypeToClassKey, string> = {
-        read: "bg-osvauld-readerOrange text-osvauld-readerText",
-        write: "bg-osvauld-managerPurple text-osvauld-managerText",
-        owner: "bg-osvauld-ownerGreen text-osvauld-ownerText"
+        reader: "bg-osvauld-readerOrange text-osvauld-readerText",
+        manager: "bg-osvauld-managerPurple text-osvauld-managerText",
     };
 
     return typeToClassMap[type] || "";
 }
+
+
+
+export const getTokenAndBaseUrl = async () => {
+    const [token, baseUrl] = await Promise.all([
+        browser.storage.local.get("token"),
+        browser.storage.local.get("baseUrl")
+    ]);
+    return { token: token.token, baseUrl: baseUrl.baseUrl };
+}
+
+export const sendMessage = async (action: string, data: any = {}) => {
+    const response = await browser.runtime.sendMessage({
+        action,
+        data,
+    });
+    return response;
+}
+export const searchObjects = (query, objects) => {
+    const searchResults = [];
+
+    for (const obj of objects) {
+        for (const prop in obj) {
+            if (
+                typeof obj[prop] === "string" &&
+                obj[prop].toLowerCase().includes(query.toLowerCase())
+            ) {
+                searchResults.push(obj);
+                break;
+            }
+        }
+    }
+
+    return searchResults;
+}
+

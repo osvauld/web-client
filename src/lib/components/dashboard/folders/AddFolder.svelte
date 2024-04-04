@@ -6,6 +6,10 @@
   let name = "";
   let description = "";
 
+  function autofocus(node: any) {
+    node.focus();
+  }
+
   const addFolderFunc = async () => {
     const payload = {
       name: name,
@@ -30,6 +34,7 @@
   <input
     id="name"
     type="text"
+    use:autofocus
     bind:value={name}
     class=" py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
     autocomplete="off"

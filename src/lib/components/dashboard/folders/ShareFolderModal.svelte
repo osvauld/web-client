@@ -20,7 +20,7 @@
   onMount(async () => {
     if (!$selectedFolder) throw new Error("folder not selected");
     const responseJson = await fetchCredentialsFieldsByFolderId(
-      $selectedFolder.id,
+      $selectedFolder.id
     );
     credentialsFields = responseJson.data;
   });
@@ -40,15 +40,13 @@
     class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6"
   >
     <div class="flex justify-between items-center p-3">
-      <span class="font-sans text-white text-28 font-normal"
-        >Share Credentials</span
-      >
+      <span class="font-sans text-white text-28 font-normal">Share Folder</span>
       <button class="p-2" on:click={() => showFolderShareDrawer.set(false)}
         ><ClosePanel /></button
       >
     </div>
     <div
-      class="relative h-auto w-full px-4 py-2 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown
+      class="relative h-auto w-full px-4 py-1 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown
         ? 'bg-osvauld-bordergreen'
         : ''}"
       on:click={() => (infoDropdown = !infoDropdown)}
@@ -69,13 +67,19 @@
       {/if}
     </div>
 
-    <UserGroupToggle on:select={toggleSelect} />
-    <div class="border border-osvauld-bordergreen mb-2 w-full"></div>
     <div class="flex-grow max-h-[85vh]">
+      <UserGroupToggle on:select={toggleSelect} />
       {#if selectedTab === "Users"}
-        <ShareFolderWithUsers {users} {credentialsFields} />
+        <ShareFolderWithUsers
+          {users}
+          {credentialsFields}
+          on:cancel={() => showFolderShareDrawer.set(false)}
+        />
       {:else}
-        <ShareFolderWithGroups {credentialsFields} />
+        <ShareFolderWithGroups
+          {credentialsFields}
+          on:cancel={() => showFolderShareDrawer.set(false)}
+        />
       {/if}
     </div>
   </div>

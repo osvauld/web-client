@@ -12,16 +12,16 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: #161B22; /* color of the thumb */
+  background-color: #2F303E; /* color of the thumb */
   border-radius: 4px; /* roundness of the scrollbar thumb */
 }
 
 .active.scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: #21262D; /* color of the thumb */
+  background-color: #2F303E; /* color of the thumb */
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background-color: #21262D; /* color of the thumb on hover */
+  background-color: #2F303E; /* color of the thumb on hover */
 }
 
 
@@ -50,5 +50,5 @@
 }
 
 .secondary-btn {
-  @apply border border-osvauld-iconblack bg-osvauld-addfieldgrey  rounded-lg text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack 
+  @apply border border-osvauld-iconblack bg-osvauld-addfieldgrey  rounded-lg text-osvauld-sheffieldgrey active:scale-95
 }

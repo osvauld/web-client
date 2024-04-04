@@ -1,11 +1,13 @@
 import browser from "webextension-polyfill";
 
-import { generateECCKeyPairForSigning, generateRSAKeyPairForEncryption, decryptCredentialField, } from "../lib/utils/crypto";
-import { verifyUser } from "../lib/utils/helperMethods";
-import { decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler, decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler, decryptFieldHandler, e, encryptFieldHandler } from "./backgroundService";
+import {
+  decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler,
+  decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler,
+  decryptFieldHandler, encryptFieldHandler, createShareCredsPayload,
+  handlePvtKeyImport
+} from "./backgroundService";
 import { fetchCredsByIds } from "../lib/apis/credentials.api"
 import { InjectionPayload } from "../lib/dtos/credential.dto";
-let rsaPvtKey: CryptoKey;
 import init, { is_global_context_set } from "./rust_openpgp_wasm";
 
 
@@ -21,7 +23,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
   switch (request.action) {
     case "decrypt": {
-      return decryptCredentialFieldsHandler(request.data, rsaPvtKey);
+      return decryptCredentialFieldsHandler(request.data);
     }
     case "decryptField": {
       const field = await decryptFieldHandler(request.data)
@@ -32,55 +34,44 @@ browser.runtime.onMessage.addListener(async (request) => {
       return encryptFieldHandler(request.data.fields, request.data.publicKey)
     }
 
-    case "fillingSignal":
-      {
-        const [tab]: any[] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
-        await browser.tabs.sendMessage(tab.id, request);
-        break;
-      }
 
     case "openFullscreenTab":
       browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
       break;
 
-    case "credSubmitted": {
-      let currentUrl = request.url;
-      setTimeout(async () => {
-        try {
-          const [tab]: browser.Tabs.Tab[] = await browser.tabs.query({
-            active: true,
-            currentWindow: true,
-          });
-          if (tab && tab.id) {
-            if (tab.url !== currentUrl) {
-              await browser.tabs.sendMessage(tab.id, { action: "saveToVault", username: request.username, password: request.password });
-            }
-          }
-        } catch (error) {
-          console.error("Error querying tabs:", error);
-        }
-      }, 3000);
-    }
-      break;
 
     case "initiateAuth": {
-      const passphrase = request.data.passphrase;
-      await loadWasmModule();
-      await initiateAuthHandler(passphrase)
-      return { isAuthenticated: true }
+      try {
+
+        const passphrase = request.data.passphrase;
+        await loadWasmModule();
+        await initiateAuthHandler(passphrase)
+        return { isAuthenticated: true }
+      } catch (error) {
+        return { isAuthenticated: false, error: error.message }
+      }
     }
 
     case "isSignedUp": {
       const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
       await init();
+      const SAVE_TIMESTAMP_INTERVAL_MS = 2 * 1000;
+      saveTimestamp();
+      setInterval(saveTimestamp, SAVE_TIMESTAMP_INTERVAL_MS);
       if (signPvtKeyObj.signPvtKey) return { isSignedUp: true }
       else return { isSignedUp: false }
+
+    }
+
+    case "importPvtKey": {
+      await handlePvtKeyImport(request.data.privateKeys, request.data.passphrase);
+      return;
     }
 
 
     case "savePassphrase":
-      if (request.passphrase) {
-        return savePassphraseHandler(request.passphrase, request.challenge, request.username)
+      if (request.data.passphrase) {
+        return savePassphraseHandler(request.data.passphrase, request.data.challenge, request.data.username)
       }
       break;
     case "updateAllUrls":
@@ -102,40 +93,12 @@ browser.runtime.onMessage.addListener(async (request) => {
 
     case "checkPvtLoaded":
       return is_global_context_set()
-    case "getActiveCredSuggestion": {
-      let tabs = await browser.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      const activeTab = tabs[0];
-      let url: URL | undefined;
-      if (activeTab && activeTab.url) {
-        url = new URL(activeTab.url);
-      }
-      const domain = url?.hostname;
-      // @ts-ignore
-      const credentialIds = [...urlObj.get(domain)];
-      const responseJson = await fetchCredsByIds(credentialIds);
-      let username = "";
-      let password = "";
-      for (const cred of responseJson.data) {
-        if (cred.credentialId === request.data) {
-          for (let field of cred.fields) {
-            if (field.fieldName === 'Username') {
-              username = await decryptFieldHandler(field.fieldValue);
-            } else if (field.fieldName === 'Password') {
-              password = await decryptFieldHandler(field.fieldValue);
-            }
-          }
-        }
-      }
-      return Promise.resolve({ username, password });
-    }
     case "decryptMeta":
       return decryptCredentialFieldsHandlerNew(request.data);
     case "addCredential":
       return addCredentialHandler(request.data);
-
+    case "createShareCredPayload":
+      return createShareCredsPayload(request.data.creds, request.data.users);
 
     default:
       console.log(request.action)
@@ -182,4 +145,8 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   }
 });
 
-// ... rest of your script ...
+function saveTimestamp() {
+
+  const timestamp = new Date().toISOString();
+  browser.storage.local.set({ timestamp });
+}

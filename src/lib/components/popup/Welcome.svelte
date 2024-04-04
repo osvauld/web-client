@@ -1,9 +1,9 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
-  import { isLoggedIn } from "../../store/ui.store";
   import Eye from "../basic/icons/eye.svelte";
   import Loader from "../dashboard/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
+  import { ClosedEye } from "../dashboard/icons";
+  import { sendMessage } from "../dashboard/helper";
   const dispatch = createEventDispatcher();
 
   let passphrase = "";
@@ -18,12 +18,11 @@
   $: type = showPassword ? "text" : "password";
   async function handleSubmit() {
     isLoaderActive = true;
-    const response = await browser.runtime.sendMessage({
-      action: "initiateAuth",
-      data: { passphrase },
-    });
+    const response = await sendMessage("initiateAuth", { passphrase });
     if (response.isAuthenticated) {
       dispatch("authenticated", true);
+    } else {
+      errorMessage = true;
     }
     isLoaderActive = false;
   }
@@ -33,7 +32,7 @@
 </script>
 
 <div
-  class="h-auto mt-10 flex justify-center items-center text-base font-bold text-white"
+  class="h-auto mt-10 flex justify-center items-center text-base font-normal text-osvauld-sheffieldgrey"
 >
   <form
     class="flex flex-col justify-center items-center"
@@ -42,12 +41,14 @@
     <label for="passphrase">Enter Passphrase</label>
 
     <div
-      class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack"
+      class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack focus-within:border-osvauld-activeBorder"
     >
       <input
-        class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
+        class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 focus:border-osvauld-activeBorder"
         {type}
         id="passphrase"
+        autocomplete="off"
+        autofocus
         on:input={onInput}
       />
       <button
@@ -55,14 +56,18 @@
         class="flex justify-center items-center"
         on:click={toggleShowPassword}
       >
-        <Eye />
+        {#if showPassword}
+          <ClosedEye />
+        {:else}
+          <Eye />
+        {/if}
       </button>
     </div>
-    {#if errorMessage}
-      <span class="text-xs text-red-500 font-thin"
-        >Passphrase doesn't match</span
-      >
-    {/if}
+    <span
+      class="text-xs text-red-500 font-thin mt-2 {errorMessage
+        ? 'visible'
+        : 'invisible'}">Passphrase doesn't match</span
+    >
     <button
       class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
       type="submit"

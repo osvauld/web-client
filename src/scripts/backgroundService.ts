@@ -1,14 +1,17 @@
 
 import browser from "webextension-polyfill";
-
-import { decryptCredentialFields, deriveKeyFromPassphrase, encryptPvtKeyWithSymmerticKey, generateRandomString, decryptPvtKeys } from "../lib/utils/crypto";
-import { intiateAuth, } from "../lib/utils/helperMethods";
 import { createChallenge, finalRegistration, initiateAuth } from '../lib/apis/auth.api.js';
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
-// @ts-ignore
-import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields } from './rust_openpgp_wasm.js';
+import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields, get_pub_key, } from './rust_openpgp_wasm.js';
 
-export const decryptCredentialFieldsHandler = async (credentials: CredentialFields[], rsaPvtKey: CryptoKey) => {
+type CredentialsForUsersPayload = {
+    accessType?: string;
+    userId: string;
+    credentials: CredentialFields[];
+}
+type UserListForEncryption = { id: string, publicKey: string, accessType?: string };
+
+export const decryptCredentialFieldsHandler = async (credentials: CredentialFields[]) => {
 
     try {
         const response = await decrypt_fields(credentials)
@@ -22,6 +25,7 @@ export const decryptCredentialFieldsHandler = async (credentials: CredentialFiel
 
 
 export const initiateAuthHandler = async (passphrase: string) => {
+
 
     const encryptionPvtKeyObj = await browser.storage.local.get("encryptionPvtKey");
     const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
@@ -57,7 +61,6 @@ export const decryptCredentialFieldsHandlerNew = async (credentials: Credential[
     try {
 
         const response = await decrypt_credentials(credentials);
-        console.log('responsebh', response)
         return { data: response };
     } catch (error) {
         console.error("Error decrypting credentials:", error);
@@ -101,3 +104,68 @@ export const loadWasmModule = async () => {
         console.error("Error loading WASM module or processing encryption/decryption:", error);
     }
 };
+
+
+
+export const encryptCredentialsForUser = async (credentials: CredentialFields[], publicKeyStr: string): Promise<CredentialFields[]> => {
+    const encryptedCredsForUser: CredentialFields[] = []
+    for (const credential of credentials) {
+        const encryptedCred: CredentialFields = {
+            credentialId: credential.credentialId,
+            fields: []
+        }
+        encryptedCred.credentialId = credential.credentialId
+        const response = await encryptFieldHandler(credential.fields, publicKeyStr);
+        encryptedCred.fields = response.data
+        encryptedCredsForUser.push(encryptedCred)
+    }
+    return encryptedCredsForUser;
+}
+
+
+export const createShareCredsPayload = async (creds: CredentialFields[], selectedUsers: UserListForEncryption[]): Promise<CredentialsForUsersPayload[]> => {
+
+    const response = await decryptCredentialFieldsHandler(creds)
+    const userData: CredentialsForUsersPayload[] = [];
+    for (const user of selectedUsers) {
+        const userEncryptedFields = await encryptCredentialsForUser(
+            response.data,
+            user.publicKey,
+        );
+        if (user.accessType) {
+            userData.push({
+                userId: user.id,
+                credentials: userEncryptedFields,
+                accessType: user.accessType,
+            });
+        } else {
+            userData.push({
+                userId: user.id,
+                credentials: userEncryptedFields,
+            });
+        }
+    }
+    return userData;
+}
+
+export const handlePvtKeyImport = async (pvtKeys: string, passphrase: string) => {
+    await init();
+    const { encryptionKey, signKey, baseUrl } = JSON.parse(pvtKeys);
+    await browser.storage.local.set({ baseUrl });
+    const signPubKey = await get_pub_key(signKey);
+    const encPublicKey = await get_pub_key(encryptionKey);
+
+    const challegeResult = await createChallenge(signPubKey)
+    await decrypt_and_store_keys(encryptionKey, signKey, passphrase)
+    const signedMessage = await sign_message_with_stored_key(challegeResult.data.challenge)
+    const verificationResponse = await initiateAuth(signedMessage, signPubKey);
+    const token = verificationResponse.data.token;
+    if (token) {
+        await browser.storage.local.set({ token: token });
+        await browser.storage.local.set({ isLoggedIn: true });
+    }
+    await browser.storage.local.set({ encryptionPvtKey: encryptionKey, signPvtKey: signKey, encPublicKey: encPublicKey, signPublicKey: signPubKey });
+
+    return token;
+
+}

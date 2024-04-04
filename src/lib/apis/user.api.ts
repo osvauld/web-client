@@ -1,11 +1,9 @@
-import { baseUrl, } from "./temp";
-import browser from "webextension-polyfill";
 import { FetchAllUsersResponse, FetchCredentialUsersResponse } from "../dtos/response.dto";
+import { getTokenAndBaseUrl } from "../components/dashboard/helper";
 
 export const fetchAllUsers = async (): Promise<FetchAllUsersResponse> => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   return await fetch(`${baseUrl}/users`, {
@@ -17,8 +15,7 @@ export const fetchAllUsers = async (): Promise<FetchAllUsersResponse> => {
 // TODO: types for request and response
 export const createUser = async (payload: any) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -33,8 +30,7 @@ export const createUser = async (payload: any) => {
 export const fetchCredentialUsers = async (credentialId: string): Promise<FetchCredentialUsersResponse> => {
 
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   return await fetch(`${baseUrl}/credential/${credentialId}/users`, {
@@ -46,8 +42,7 @@ export const fetchCredentialUsers = async (credentialId: string): Promise<FetchC
 
 export const removeUserFromFolder = async (folderId: string, userId: string) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   return await fetch(`${baseUrl}/folder/${folderId}/remove-user-access`, {
@@ -59,13 +54,49 @@ export const removeUserFromFolder = async (folderId: string, userId: string) => 
 
 export const removeUserFromCredential = async (credentialId: string, userId: string) => {
   const headers = new Headers();
-  const tokenObj = await browser.storage.local.get("token");
-  const token = tokenObj.token;
+  const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
   return await fetch(`${baseUrl}/credential/${credentialId}/remove-user-access`, {
     method: "POST",
     headers,
     body: JSON.stringify({ userIds: [userId] }),
+  }).then(response => response.json());
+}
+
+
+export const deleteUser = async (userId: string) => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/user/${userId}`, {
+    method: "DELETE",
+    headers,
+  }).then(response => response.json());
+}
+
+
+export const checkUserNameExists = async (username: string, name: string) => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/user/name-availability`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ username, name }),
+  }).then(response => response.json());
+}
+
+
+export const getUser = async () => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/user`, {
+    method: "GET",
+    headers,
   }).then(response => response.json());
 }

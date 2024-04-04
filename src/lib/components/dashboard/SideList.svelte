@@ -4,7 +4,7 @@
   import GroupSideList from "./groups/GroupSideList.svelte";
 </script>
 
-{#if $selectedPage === "Credentials"}
+{#if $selectedPage === "Folders"}
   <FolderSideList />
 {:else if $selectedPage === "Groups"}
   <GroupSideList />

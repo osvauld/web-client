@@ -1,7 +1,9 @@
-<script>
+<script lang="ts">
   import { BlueClose } from "../icons";
 
   import { createEventDispatcher } from "svelte";
+
+  export let message;
 
   const dispatch = createEventDispatcher();
 
@@ -11,9 +13,11 @@
 </script>
 
 <div
-  class="w-full px-4 py-5 my-2 rounded-lg bg-osvauld-bordergreen text-osvauld-quarzowhite font-normal text-xl flex justify-between items-center !z-50"
+  class="w-full px-4 py-5 my-2 rounded-lg bg-osvauld-bordergreen text-osvauld-quarzowhite font-normal text-xl flex justify-between items-center z-[9999]"
 >
-  <span class="ml-2"> Successfully shared!</span>
+  <span class="ml-2 text-base font-sans">
+    {message ? message : " Successfully Shared"}!</span
+  >
   <button
     class="border-0 bg-osvauld-toastCloseBlue rounded-lg flex justify-center items-center p-2 mr-5"
     on:click={triggerCloseEvent}

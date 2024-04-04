@@ -1,24 +1,17 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import browser from "webextension-polyfill";
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
+  import { createEventDispatcher } from "svelte";
+  import { selectedFolder, credentialStore } from "../store";
 
   import {
-    selectedFolder,
-    showCredentialEditor,
-    credentialStore,
-    showEditCredentialDialog,
-    credentialIdForEdit,
-  } from "../store";
-
-  import {
-    fetchFolderUsers,
+    fetchFolderUsersForDataSync,
     addCredential,
     updateCredential,
     fetchCredentialsByFolder,
-    fetchSensitiveFieldsByCredentialId,
+    fetchCredentialUsersForDataSync,
   } from "../apis";
 
   import {
@@ -26,25 +19,27 @@
     Fields,
     User,
     AddCredentialField,
-    CredentialFieldWithId,
   } from "../dtos";
   import AddLoginFields from "./AddLoginFields.svelte";
+  import { sendMessage } from "../helper";
 
-  let credentialFields: AddCredentialField[] | CredentialFieldWithId[] = [];
-  let description = "";
-  let name = "";
-  let isLoaderActive: boolean = false;
-  let loginSelected = true;
-  let folderUsers: User[] = [];
-  let addCredentialPaylod: AddCredentialPayload;
-  let hoveredIndex: Number | null = null;
-  let credentialType = "Login";
-  let loginFields = [
+  export let edit = false;
+  export let credentialFields = [
     { fieldName: "Username", fieldValue: "", sensitive: false },
     { fieldName: "Password", fieldValue: "", sensitive: true },
     { fieldName: "URL", fieldValue: "https://", sensitive: false },
   ];
+  export let credentialId = null;
+  export let description = "";
+  export let name = "";
+  export let credentialType = "Login";
+  let notNamed = false;
+  let isLoaderActive: boolean = false;
+  let usersToShare: User[] = [];
+  let addCredentialPaylod: AddCredentialPayload;
+  let hoveredIndex: Number | null = null;
 
+  const dispatcher = createEventDispatcher();
   const addField = () => {
     let newField: AddCredentialField = {
       fieldName: "",
@@ -53,38 +48,27 @@
     };
     credentialFields = [...credentialFields, newField];
   };
-
+  //TODO: change user type
   const removeField = (index: number) => {
     credentialFields.splice(index, 1);
     credentialFields = [...credentialFields];
   };
 
-  const FetchSensitiveFieldsAndDecrypt = async (credentialId: string) => {
-    let sensitiveFieldsForEdit = [];
-    const response = await fetchSensitiveFieldsByCredentialId(credentialId);
-    let sensitiveFields = response.data;
-    for (let field of sensitiveFields) {
-      const response = await browser.runtime.sendMessage({
-        action: "decryptField",
-        data: field.fieldValue,
-      });
-      let decryptedValue = response.data;
-      sensitiveFieldsForEdit.push({
-        fieldName: field.fieldName,
-        fieldValue: decryptedValue,
-        sensitive: true,
-      });
-    }
-    return sensitiveFieldsForEdit;
-  };
-
   const saveCredential = async () => {
     isLoaderActive = true;
     if ($selectedFolder === null) throw new Error("folder not selected");
+    if (name.length === 0) {
+      isLoaderActive = false;
+      notNamed = true;
+      setTimeout(() => {
+        notNamed = false;
+      }, 1000);
+      throw new Error("no name given");
+    }
     let domain = "";
     let addCredentialFields: Fields[] = [];
     for (const field of credentialFields) {
-      if (field.fieldName === "URL") {
+      if (field.fieldName === "URL" && edit === false) {
         domain = new URL(field.fieldValue).hostname;
         addCredentialFields.push({
           fieldName: "Domain",
@@ -92,12 +76,14 @@
           fieldType: "additional",
         });
       }
-      const baseField: Fields = {
-        fieldName: field.fieldName,
-        fieldValue: field.fieldValue,
-        fieldType: field.sensitive ? "sensitive" : "meta",
-      };
-      addCredentialFields.push(baseField);
+      if (field.fieldName.length !== 0 || field.fieldValue.length !== 0) {
+        const baseField: Fields = {
+          fieldName: field.fieldName,
+          fieldValue: field.fieldValue,
+          fieldType: field.sensitive ? "sensitive" : "meta",
+        };
+        addCredentialFields.push(baseField);
+      }
     }
 
     addCredentialPaylod = {
@@ -108,56 +94,60 @@
       userFields: [],
       domain,
     };
-    const response = await browser.runtime.sendMessage({
-      action: "addCredential",
-      data: { users: folderUsers, addCredentialFields },
+
+    const response = await sendMessage("addCredential", {
+      users: usersToShare,
+      addCredentialFields,
     });
     addCredentialPaylod.userFields = response;
-    if ($showEditCredentialDialog) {
-      await updateCredential(addCredentialPaylod, $credentialIdForEdit);
+    if (edit) {
+      if (credentialId == null) {
+        throw new Error("credential not selected for edit");
+      }
+      await updateCredential(addCredentialPaylod, credentialId);
     } else {
       await addCredential(addCredentialPaylod);
     }
-    if ($selectedFolder === null) throw new Error("folder not selected");
     const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const decryptedData = await browser.runtime.sendMessage({
-      action: "decryptMeta",
-      data: responseJson.data,
-    });
+    const decryptedData = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(decryptedData.data);
-    showEditCredentialDialog.set(false);
-    showCredentialEditor.set(false);
     isLoaderActive = false;
+    dispatcher("close");
   };
 
   const credentialTypeSelection = (isLogin: boolean) => {
-    loginSelected = isLogin;
-    credentialFields = isLogin
-      ? loginFields
-      : [{ fieldName: "", fieldValue: "", sensitive: false }];
+    credentialType = isLogin ? "Login" : "Other";
+    if (credentialType === "Other") {
+      credentialFields = [
+        {
+          fieldName: "Field Name",
+          fieldValue: "",
+          sensitive: false,
+        },
+      ];
+    } else {
+      credentialFields = [
+        { fieldName: "Username", fieldValue: "", sensitive: false },
+        { fieldName: "Password", fieldValue: "", sensitive: true },
+        { fieldName: "URL", fieldValue: "https://", sensitive: false },
+      ];
+    }
   };
 
   onMount(async () => {
-    credentialFields = loginFields;
-    if ($showEditCredentialDialog) {
-      const [credentialDataForEdit] = $credentialStore.filter(
-        (credentials) => credentials.credentialId === $credentialIdForEdit
+    if (edit) {
+      const responseJson = await fetchCredentialUsersForDataSync(credentialId);
+      usersToShare = responseJson.data;
+    } else {
+      const responseJson = await fetchFolderUsersForDataSync(
+        $selectedFolder.id,
       );
-      name = credentialDataForEdit.name;
-      description = credentialDataForEdit.description;
-      let sensitiveFields =
-        await FetchSensitiveFieldsAndDecrypt($credentialIdForEdit);
-      credentialFields = [...credentialDataForEdit.fields, ...sensitiveFields];
+      usersToShare = responseJson.data;
     }
-
-    if ($selectedFolder === null) throw new Error("folder not selected");
-    const responseJson = await fetchFolderUsers($selectedFolder.id);
-    folderUsers = responseJson.data;
   });
 
   function closeDialog() {
-    showCredentialEditor.set(false);
-    showEditCredentialDialog.set(false);
+    dispatcher("close");
   }
 
   function deleteCredential() {
@@ -167,8 +157,6 @@
   function triggerSensitiveBubble(index: number, isEnter: boolean) {
     isEnter ? (hoveredIndex = index) : (hoveredIndex = null);
   }
-
-  /* eslint-disable */
 </script>
 
 <div
@@ -178,28 +166,25 @@
   <div class="flex justify-between items-center px-12 py-6">
     <div>
       <button
-        class="text-[1.4rem] font-sans font-normal {loginSelected
+        class="text-[1.4rem] font-sans font-normal {credentialType === 'Login'
           ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
           : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(true)}
       >
-        {$showEditCredentialDialog
-          ? "Edit login credential"
-          : "Add Login credential"}
+        {edit ? "Edit login credential" : "Add Login credential"}
       </button>
       <button
-        class="text-[1.4rem] font-sans font-normal ml-2 {!loginSelected
+        class="text-[1.4rem] font-sans font-normal ml-2 {credentialType ===
+        'Other'
           ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
           : 'text-osvauld-sheffieldgrey '}"
         on:click={() => credentialTypeSelection(false)}
       >
-        {$showEditCredentialDialog
-          ? "Change to other credential"
-          : "Add other credential"}
+        {edit ? "Edit other credential" : "Add other credential"}
       </button>
     </div>
     <div>
-      {#if showEditCredentialDialog}
+      {#if edit}
         <button class="bg-osvauld-frameblack p-4" on:click={deleteCredential}
           ><BinIcon /></button
         >
@@ -214,19 +199,20 @@
   <div class="border-b border-osvauld-iconblack w-full"></div>
 
   <div class="mx-6">
-    <input
-      class=" w-full h-[3.8rem] my-2 ml-4 bg-osvauld-frameblack border-0 rounded-none text-3xl text-osvauld-quarzowhite font-normal focus:ring-0 focus:ring-offset-0"
-      id="name"
-      type="text"
-      placeholder="Enter Credential name"
-      autocomplete="off"
-      autofocus
-      bind:value={name}
-    />
-
     <div
-      class="min-h-[25vh] max-h-[30vh] overflow-y-scroll scrollbar-thin z-50"
+      class="min-h-[32vh] max-h-[35vh] overflow-y-scroll scrollbar-thin z-50"
     >
+      <input
+        class="w-[95%] h-[3.4rem] mb-2 mt-4 ml-4 pl-4 bg-osvauld-frameblack border rounded-xl text-3xl text-osvauld-quarzowhite font-normal focus:border-osvauld-activeBorder flex focus:ring-0 placeholder-osvauld-iconblack {notNamed
+          ? 'border-red-500'
+          : 'border-osvauld-iconblack '}"
+        id="name"
+        type="text"
+        placeholder="Enter Credential name...."
+        autocomplete="off"
+        autofocus
+        bind:value={name}
+      />
       {#each credentialFields as field, index}
         <AddLoginFields
           {field}
@@ -268,9 +254,7 @@
       {#if isLoaderActive}
         <Loader size={24} color="#1F242A" duration={1} />
       {:else}
-        <span
-          >{$showEditCredentialDialog ? "Save Changes" : "Add credential"}</span
-        >
+        <span>{edit ? "Save Changes" : "Add credential"}</span>
       {/if}
     </button>
   </div>

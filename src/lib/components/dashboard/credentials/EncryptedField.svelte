@@ -1,6 +1,5 @@
-<script>
+<script lang="ts">
   import { fly } from "svelte/transition";
-  import browser from "webextension-polyfill";
   import {
     Locked,
     Eye,
@@ -9,18 +8,17 @@
     ClosedEye,
     CopyIcon,
   } from "../icons";
+  import { sendMessage } from "../helper";
   export let fieldName;
   export let fieldValue;
   export let hoverEffect;
+  export let bgColor;
   let visibility = false;
   let decrypted = false;
   let decryptedValue = "";
 
   const decrypt = async () => {
-    const response = await browser.runtime.sendMessage({
-      action: "decryptField",
-      data: fieldValue,
-    });
+    const response = await sendMessage("decryptField", fieldValue);
     decryptedValue = response.data;
     decrypted = true;
   };
@@ -31,9 +29,17 @@
       visibility = false;
     }, 3000);
   };
+
+  const copyToClipboard = async (e) => {
+    try {
+      await navigator.clipboard.writeText(decryptedValue);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  };
 </script>
 
-<div class="mb-4 max-w-full" in:fly out:fly>
+<div class="mb-2 mr-1 max-w-full" in:fly out:fly>
   <div
     class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
   >
@@ -41,11 +47,13 @@
   </div>
 
   <div
-    class="py-1 px-3 w-full flex justify-between items-center border rounded-lg text-base bg-osvauld-bordergreen border-osvauld-iconblack {hoverEffect
-      ? 'text-osvauld-quarzowhite'
-      : 'text-osvauld-sheffieldgrey'}"
+    class="py-1.5 px-3 w-full flex justify-between items-center rounded-lg text-base {bgColor
+      ? bgColor
+      : 'bg-osvauld-fieldActive '} {hoverEffect
+      ? 'text-osvauld-fieldTextActive'
+      : 'text-osvauld-fieldText'}"
   >
-    <span class="max-w-[70%] overflow-x-hidden"
+    <span class="w-3/5 text-left overflow-x-hidden font-normal text-sm"
       >{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
     >
     {#if !decrypted}
@@ -53,7 +61,7 @@
         <Locked />
       </button>
     {:else}
-      <div class="flex justify-center items-center">
+      <div class="w-2/5 flex gap-2 items-center justify-end">
         <button>
           <Unlocked />
         </button>
@@ -64,11 +72,11 @@
             <Eye />
           {/if}
         </button>
-        <button>
+        <button on:click|stopPropagation={copyToClipboard}>
           {#if hoverEffect}
             <ActiveCopy />
           {:else}
-            <CopyIcon />
+            <CopyIcon color={null} />
           {/if}
         </button>
       </div>

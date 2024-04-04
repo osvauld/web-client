@@ -1,9 +1,29 @@
-<script>
-  import { Lens, Add, BinIcon, EditIcon } from "../icons";
-  import { showAddUserToGroupDrawer } from "../store";
-  import { groupUsers } from "../store";
-
+<script lang="ts">
+  import { Lens, Add, BinIcon } from "../icons";
+  import {
+    groupUsers,
+    selectedGroup,
+    groupStore,
+    showAddUserToGroupDrawer,
+  } from "../store";
+  import {
+    removeUserFromGroup,
+    fetchAllUserGroups,
+    removeGroup,
+  } from "../apis";
   export let groupName;
+
+  const handleRemoveUserFromGroup = async (userId) => {
+    await removeUserFromGroup($selectedGroup.groupId, userId);
+    selectedGroup.set($selectedGroup);
+  };
+
+  const handleGroupRemoval = async () => {
+    await removeGroup($selectedGroup.groupId);
+    selectedGroup.set(null);
+    const responseJson = await fetchAllUserGroups();
+    groupStore.set(responseJson.data);
+  };
 </script>
 
 <div class="flex items-center justify-between px-4 py-5 pb-0">
@@ -30,12 +50,17 @@
   <table class="min-w-max w-full table-auto table-layout-fixed">
     <thead>
       <tr class="leading-normal text-lg">
-        <th class="py-3 px-3 text-left whitespace-nowrap w-1/4 pl-6">Name</th>
+        <th class="py-3 px-3 text-left whitespace-nowrap w-1/5 pl-6">Name</th>
         <th class="py-3 px-3 text-left whitespace-nowrap w-1/3">Username</th>
       </tr>
     </thead>
   </table>
   <div class="h-[40rem] overflow-y-auto scrollbar-thin px-2">
+    <div class="bg-red-200">
+      <button on:click={handleGroupRemoval}>
+        <BinIcon />
+      </button>
+    </div>
     <table class="min-w-max w-full table-auto table-layout-fixed">
       <tbody class="text-xl text-osvauld-dusklabel font-normal text-sm">
         {#each $groupUsers as user}
@@ -46,9 +71,12 @@
             <td class="py-6 px-6 text-left">
               {user.username}
             </td>
-            <td class="flex justify-between items-center py-6 w-[4rem]">
-              <BinIcon />
-              <EditIcon />
+            <td
+              class="flex justify-center items-center py-6 w-[4rem] cursor-pointer"
+            >
+              <button on:click={() => handleRemoveUserFromGroup(user.id)}>
+                <BinIcon />
+              </button>
             </td>
           </tr>
         {/each}

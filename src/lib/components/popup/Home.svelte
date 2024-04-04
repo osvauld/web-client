@@ -2,79 +2,132 @@
   import {
     fetchAllUserUrls,
     fetchCredsByIds,
+    fetchSensitiveFieldsByCredentialId,
   } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
   import { onMount } from "svelte";
-  import { Maximize, Lens, RightArrow, DownArrow, ActiveCopy } from "./icons";
-  import PasswordNotFound from "./components/PasswordNotFound.svelte";
-  import EncryptedField from "./components/EncryptedField.svelte";
+  import { Maximize, Lens } from "./icons";
   import { Credential } from "../../dtos/credential.dto";
+  import { sendMessage } from "../dashboard/helper";
+  import { getUser } from "../../apis/user.api";
+  import { searchObjects } from "../dashboard/helper";
+  import { getSearchFields } from "../dashboard/apis";
+  import ListedCredentials from "./components/ListedCredentials.svelte";
 
   let passwordFound = false;
   let credentialClicked = false;
-  let selectedCredentialIndex: number | undefined;
   let domain: string | null = null;
-  let creds: Credential[] = [];
+  let listedCredentials: Credential[] = [];
+  let domainAssociatedCredentials: Credential[] = [];
+  let selectedCredentialId: string | null = null;
+  let searchData = [];
+  let query = "";
+  let scrollPosition = 0;
+  let clickedCredential: any | null = null;
+  let scrollableElement;
 
   const openFullscreenTab = async () => {
-    await browser.runtime.sendMessage({ action: "openFullscreenTab" });
+    await sendMessage("openFullscreenTab");
   };
 
-  type CredMap = {
-    [key: string]: {
-      username: string;
-      password: string;
-    };
-  };
-  let credMap: CredMap = {};
-  onMount(async () => {
+  const fetchCredentialsOfCurrentDomin = async () => {
     const responseJson = await fetchAllUserUrls();
     const urls = responseJson.data;
-
     const tabs = await browser.tabs.query({
       active: true,
       currentWindow: true,
     });
     const activeTab = tabs[0];
     if (activeTab && activeTab.url) domain = new URL(activeTab.url).hostname;
-    const { credIds } = await browser.runtime.sendMessage({
-      action: "updateAllUrls",
-      data: { urls, domain },
-    });
+    const { credIds } = await sendMessage("updateAllUrls", { urls, domain });
     if (credIds.length > 0) {
       passwordFound = true;
       const responseJson = await fetchCredsByIds(credIds);
-      creds = responseJson.data;
+      listedCredentials = responseJson.data;
+      listedCredentials = listedCredentials.map((cred) => ({
+        ...cred,
+        fields: cred.fields.filter(
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
+        ),
+      }));
     }
-    for (let cred of creds) {
-      let username = "";
-      let password = "";
-      for (let field of cred.fields) {
-        if (field.fieldName == "Username") {
-          const response = await browser.runtime.sendMessage({
-            action: "decryptField",
-            data: field.fieldValue,
-          });
-          username = response.data;
-        }
-        if (field.fieldName == "Password") {
-          password = field.fieldValue;
-        }
-      }
-      // @ts-ignore
-      credMap[cred.credentialId] = { username, password };
+    const decyrptedResponse = await sendMessage(
+      "decryptMeta",
+      listedCredentials,
+    );
+    listedCredentials = decyrptedResponse.data;
+    domainAssociatedCredentials = listedCredentials;
+  };
+  onMount(async () => {
+    query = await localStorage.getItem("query");
+    if (query.length >= 1) {
+      const searchFieldSResponse = await getSearchFields();
+      searchData = searchFieldSResponse.data;
+      listedCredentials = searchObjects(query, searchData);
+    } else {
+      await fetchCredentialsOfCurrentDomin();
+    }
+    const user = await getUser();
+    localStorage.setItem("user", JSON.stringify(user.data));
+    const storedCredentialId = localStorage.getItem("selectedCredentialId");
+    if (storedCredentialId != "") {
+      await dropDownClicked({ detail: { credentialId: storedCredentialId } });
+    }
+    const storedScrollPosition = localStorage.getItem("scrollPosition");
+    if (storedScrollPosition !== null) {
+      scrollPosition = parseInt(storedScrollPosition);
+      scrollableElement.scrollTop = scrollPosition;
     }
   });
 
-  const dropDownClicked = (index: number) => {
+  const handleInputChange = async (e) => {
+    const query = e.target.value;
+    if (query.length >= 1) {
+      if (searchData.length === 0) {
+        const searchFieldSResponse = await getSearchFields();
+        searchData = searchFieldSResponse.data;
+      }
+      passwordFound = false;
+      listedCredentials = searchObjects(query, searchData);
+    } else {
+      await fetchCredentialsOfCurrentDomin();
+    }
+    await localStorage.setItem("query", query);
+  };
+
+  const dropDownClicked = async (e: any) => {
+    const credentialId = e.detail.credentialId;
+    if (!credentialClicked) {
+      const credentialResponse: any = await fetchCredsByIds([credentialId]);
+      clickedCredential = credentialResponse.data[0];
+      const decyrptedResponse = await sendMessage("decryptMeta", [
+        clickedCredential,
+      ]);
+      clickedCredential = decyrptedResponse.data[0];
+      const sensitiveResponse =
+        await fetchSensitiveFieldsByCredentialId(credentialId);
+      clickedCredential.fields = [
+        ...clickedCredential.fields,
+        ...sensitiveResponse.data,
+      ];
+      selectedCredentialId = credentialId;
+      localStorage.setItem("selectedCredentialId", selectedCredentialId);
+    } else {
+      selectedCredentialId = null;
+      localStorage.setItem("selectedCredentialId", "");
+    }
     credentialClicked = !credentialClicked;
-    selectedCredentialIndex = index;
+  };
+
+  const handleScroll = async (e) => {
+    scrollPosition = e.target.scrollTop;
+    await localStorage.setItem("scrollPosition", scrollPosition.toString());
   };
 </script>
 
 <div class="w-full h-full">
   <div class="flex justify-between items-center mb-3 px-4 py-0">
-    <h6 class="text-2xl font-medium text-osvauld-highlightwhite tracking-wide">
+    <h6 class="text-2xl font-medium text-osvauld-fieldText tracking-wide">
       osvauld
     </h6>
     <div>
@@ -84,91 +137,49 @@
     </div>
   </div>
 
-  <div
-    class="rounded-lg border border-osvauld-iconblack w-full min-h-[15rem] max-h-[33rem] p-3 overflow-hidden"
-  >
+  <div class="w-full h-[90%] p-3 overflow-hidden">
     {#if passwordFound}
       <div
         class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm"
       >
-        <span class="text-base">
+        <span class="text-base text-osvauld-carolinablue">
           {domain}
         </span>
         <span class="text-osvauld-sheffieldgrey">
-          {creds.length}
+          {domainAssociatedCredentials.length}
         </span>
       </div>
     {/if}
 
     <div
-      class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-4"
+      class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-2"
     >
       <Lens />
       <input
         type="text"
         class="h-7 w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-sm font-light focus:border-transparent focus:ring-0 cursor-pointer"
         placeholder="Find what you need faster.."
+        on:keyup={handleInputChange}
+        bind:value={query}
+        autofocus
       />
     </div>
 
-    {#if !passwordFound}
-      <PasswordNotFound />
-    {:else}
-      <div class="h-auto p-0">
-        <div
-          class="border-b border-osvauld-iconblack w-[calc(100%+1.55rem)] -translate-x-[0.8rem] mb-3"
-        ></div>
-        <div class="h-[25rem] overflow-y-scroll scrollbar-thin">
-          {#each Object.values(credMap) as credential, index}
-            <button
-              class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex flex-col justify-center items-center w-[98%] mb-3 cursor-default"
-              on:click={() => dropDownClicked(index)}
-            >
-              <div
-                class="w-full flex justify-between items-center {selectedCredentialIndex ===
-                index
-                  ? 'text-osvauld-quarzowhite mb-2'
-                  : ''}"
-              >
-                <span class="text-base font-medium tracking-wide"
-                  >{credential.username}</span
-                >
-                <button
-                  class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px] cursor-pointer"
-                >
-                  {#if credentialClicked && selectedCredentialIndex === index}
-                    <DownArrow type={"common"} />
-                  {:else}
-                    <RightArrow />
-                  {/if}
-                </button>
-              </div>
-              {#if credentialClicked && selectedCredentialIndex === index}
-                <div
-                  class="rounded-lg h-[10rem] bg-osvauld-bordergreen p-2 w-full overflow-y-scroll"
-                >
-                  <div class="mb-2">
-                    <label
-                      class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal"
-                      for={`input-`}>Username</label
-                    >
-                    <div
-                      class="w-full rounded-lg bg-osvauld-bordergreen border border-osvauld-iconblack text-osvauld-quarzowhite font-normal text-sm flex justify-between items-center px-2 py-1"
-                    >
-                      <span>{credential.username}</span>
-                      <button class=""><ActiveCopy /> </button>
-                    </div>
-                  </div>
-                  <EncryptedField
-                    fieldName={"Password"}
-                    fieldValue={credential.password}
-                  />
-                </div>
-              {/if}
-            </button>
-          {/each}
-        </div>
+    <div class="h-full p-0 scrollbar-thin">
+      <div class="border-b border-osvauld-iconblack w-full mb-3"></div>
+      <div
+        class="h-[25rem] overflow-y-scroll scrollbar-thin"
+        on:scroll={handleScroll}
+        bind:this={scrollableElement}
+      >
+        {#each listedCredentials as credential}
+          <ListedCredentials
+            {credential}
+            {selectedCredentialId}
+            {clickedCredential}
+            on:select={dropDownClicked}
+          />{/each}
       </div>
-    {/if}
+    </div>
   </div>
 </div>

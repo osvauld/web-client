@@ -6,13 +6,13 @@
   "type": "module",
   "scripts": {
     "build:rollup": "NODE_ENV=production rollup -c",
-    "dev": "rollup -c -w",
+    "dev": "rollup -c rollup.config.dev.js -w",
     "build:popup": "browserify public/build/popup.js -p [ lavamoat-browserify --writeAutoPolicy --policy lavamoat/browserify/popup-policy.json ] -o public/build/popup.js",
     "build:background": "browserify public/background.js -p [ lavamoat-browserify --writeAutoPolicy   --policy lavamoat/browserify/background-policy.json] -o public/background.js",
     "build:dashboard": "browserify public/build/dashboard.js -p [ lavamoat-browserify --writeAutoPolicy --policy lavamoat/browserify/dashboard-policy.json ] -o public/build/dashboard.js",
     "check": "svelte-check --tsconfig ./tsconfig.app.json",
     "watch": "svelte-check --tsconfig ./tsconfig.app.json --watch",
-    "build": "npm run build:rollup && npm run build:popup && npm run build:background && npm run build:dashboard",
+    "build": "npm run build:rollup",
     "lint": "eslint --ext .svelte,.ts src/",
     "prepare": "npx allow-scripts"
   },

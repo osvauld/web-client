@@ -23,6 +23,7 @@ export type CredentialBasic = {
 
 export type Credential = CredentialBasic & {
   name: string;
+  accessType: string;
   description: string;
   folderId: UUID;
   credentialType: string;
@@ -36,7 +37,7 @@ export type SearchResponse = {
   domain: string;
   folderId: UUID;
   folderName: string;
-  id: UUID;
+  credentialId: UUID;
   name: string;
 }
 

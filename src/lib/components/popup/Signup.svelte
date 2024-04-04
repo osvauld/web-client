@@ -1,22 +1,47 @@
 <script lang="ts">
   import TempLogin from "./TempLogin.svelte";
   import SetPassPhrase from "./SetPassPhrase.svelte";
+  import ImportPvtKey from "./ImportPvtKey.svelte";
+  import { isLoggedIn, isSignedUp } from "../../store/ui.store";
+  import { sendMessage } from "../dashboard/helper";
+
   let isTempLoginVerified = false;
   let challenge = "";
   let username = "";
+  let importPvtKeyFlag = false;
+
   const handleTempLogin = (e: any) => {
     challenge = e.detail.challenge;
     username = e.detail.username;
     isTempLoginVerified = true;
   };
+
+  const handleRecovery = (e: any) => {
+    importPvtKeyFlag = e.detail;
+  };
+
+  const importPvtKey = async (e: any) => {
+    const { privateKeys, passphrase } = e.detail;
+    await sendMessage("importPvtKey", {
+      passphrase,
+      privateKeys,
+    });
+    isLoggedIn.set(true);
+    isSignedUp.set(true);
+  };
 </script>
 
 <div
-  class="h-auto mt-12 flex justify-center items-center text-base font-bold text-white"
+  class="h-full flex justify-center items-center text-base font-bold text-white"
 >
-  {#if isTempLoginVerified}
+  {#if importPvtKeyFlag}
+    <ImportPvtKey on:submit={(e) => importPvtKey(e)} />
+  {:else if isTempLoginVerified}
     <SetPassPhrase {challenge} {username} />
   {:else}
-    <TempLogin on:setPassPhrase={handleTempLogin} />
+    <TempLogin
+      on:setPassPhrase={handleTempLogin}
+      on:recovery={handleRecovery}
+    />
   {/if}
 </div>
