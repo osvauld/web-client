@@ -2,7 +2,10 @@
   export let text = "";
   export let query = "";
 
-  $: parts = highlightMatch(text, query);
+  $: parts =
+    query.length >= 3
+      ? highlightMatch(text, query)
+      : [{ text, highlight: false }];
 
   function highlightMatch(text, query) {
     const regex = new RegExp(`(${query})`, "gi");
