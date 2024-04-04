@@ -86,7 +86,9 @@
 </script>
 
 <div class="flex flex-col h-auto">
-  <div class="h-[6rem] pr-4 flex justify-between items-center">
+  <div
+    class="h-[6rem] pr-4 flex justify-between items-center border-b border-osvauld-iconblack"
+  >
     <div
       class="h-[2.2rem] w-[31.25rem] px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
     >
@@ -190,9 +192,7 @@
       </div>
     </div>
   {/if}
-  <div
-    class="h-[90vh] bg-osvauld-frameblack border border-osvauld-iconblack rounded-2xl mr-4 overflow-hidden"
-  >
+  <div class="h-[90vh] bg-osvauld-frameblack mr-4 overflow-hidden">
     <!-- Content for the bottom part (dynamic content) -->
     {#if $selectedPage === "Folders"}
       <CredentialList />

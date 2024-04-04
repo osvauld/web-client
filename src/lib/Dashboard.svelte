@@ -24,7 +24,7 @@
       <LeftContainer />
     </div>
     <!-- Right container -->
-    <div class="w-4/5 h-full overflow-hidden">
+    <div class="w-4/5 h-full overflow-hidden border-l border-osvauld-iconblack">
       <RightContainer />
     </div>
   </div>

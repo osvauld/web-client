@@ -13,7 +13,7 @@
 
 <div class="flex justify-start my-2">
   <div
-    class="inline-flex justify-center space-x-1 p-1 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl xl:scale-95 lg:scale-90 md:scale-75 sm:scale-50"
+    class="inline-flex justify-center space-x-1 p-1 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl"
   >
     {#each ["Groups", "Users"] as item}
       <button
