@@ -9,27 +9,7 @@ import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import os from "os";
 
-const production = !process.env.ROLLUP_WATCH;
-function serve() {
-  return {
-    writeBundle() {
-      let command;
-      if (os.platform() === "linux") {
-        command = "brave -g http://reload.extensions";
-      } else {
-        command =
-          '/usr/bin/open -g -a "/Applications/Brave Browser.app" "http://reload.extensions"';
-      }
 
-      // Open Brave browser with the specified URL
-      exec(command, (err) => {
-        if (err) {
-          console.error("Failed to open Brave:", err);
-        }
-      });
-    },
-  };
-}
 
 function buildConfig(inputFileName, outputFileName) {
   return {
@@ -42,7 +22,7 @@ function buildConfig(inputFileName, outputFileName) {
     plugins: [
       svelte({
         compilerOptions: {
-          dev: !production,
+          dev: false,
         },
         preprocess: preprocess({
           typescript: {
@@ -56,15 +36,14 @@ function buildConfig(inputFileName, outputFileName) {
       postcss({
         extract: `${outputFileName}.css`,
         minimize: true,
-        sourceMap: !production,
+        sourceMap: false,
         config: {
           path: "./postcss.config.cjs",
         },
       }),
-      typescript({ sourceMap: !production, tsconfig: "./tsconfig.app.json" }),
+      typescript({ sourceMap: true, tsconfig: "./tsconfig.app.json" }),
       resolve({ browser: true }),
       commonjs(),
-      !production && serve(),
     ],
     watch: {
       clearScreen: false,
@@ -83,7 +62,7 @@ export default [
     },
     plugins: [
       typescript({
-        tsconfig: "./tsconfig.background.json",
+        tsconfig: "./tsconfig.background.json", sourceMap: true
       }),
       commonjs(),
       resolve({ browser: true, preferBuiltins: false }),
