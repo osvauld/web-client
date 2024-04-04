@@ -6,50 +6,25 @@
   } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
   import { onMount } from "svelte";
-  import { Maximize, Lens, RightArrow, DownArrow } from "./icons";
-  import PopupCard from "./components/PopupCard.svelte";
+  import { Maximize, Lens } from "./icons";
   import { Credential } from "../../dtos/credential.dto";
   import { sendMessage } from "../dashboard/helper";
   import { getUser } from "../../apis/user.api";
-  import SearchModal from "../dashboard/SearchModal.svelte";
   import { searchObjects } from "../dashboard/helper";
   import { getSearchFields } from "../dashboard/apis";
-  import CredentialPopupCard from "../dashboard/components/CredentialPopupCard.svelte";
+  import ListedCredentials from "./components/ListedCredentials.svelte";
+
   let passwordFound = false;
   let credentialClicked = false;
   let selectedCredentialIndex: number | undefined;
   let domain: string | null = null;
-  let creds: Credential[] = [];
-  let showCredentialCard = false;
+  let listedCredentials: Credential[] = [];
+  let domainAssociatedCredentials: Credential[] = [];
 
   let searchData = [];
   let query = "";
   let searchedCredential: any | null = null;
 
-  export const getSearchData = async () => {
-    const searchFieldSResponse = await getSearchFields();
-    searchData = searchFieldSResponse.data;
-    searchResults = query.length !== 0 ? searchObjects(query, searchData) : [];
-  };
-  const handleSearchClick = async (result) => {
-    // Implement the behavior specific to Home.svelte
-    const credentialResponse: any = await fetchCredsByIds([result.id]);
-    searchedCredential = credentialResponse.data[0];
-
-    const decyrptedResponse = await sendMessage("decryptMeta", [
-      searchedCredential,
-    ]);
-    searchedCredential = decyrptedResponse.data[0];
-    console.log("Search result clicked:", searchedCredential);
-    showCredentialCard = true;
-    // For example, navigate to a different page or set a store value
-    closeModal();
-  };
-
-  const closeModal = () => {
-    query = "";
-    searchResults = [];
-  };
   const openFullscreenTab = async () => {
     await sendMessage("openFullscreenTab");
   };
@@ -66,16 +41,20 @@
     if (credIds.length > 0) {
       passwordFound = true;
       const responseJson = await fetchCredsByIds(credIds);
-      creds = responseJson.data;
-      creds = creds.map((cred) => ({
+      listedCredentials = responseJson.data;
+      listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
           (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
         ),
       }));
     }
-    const decyrptedResponse = await sendMessage("decryptMeta", creds);
-    creds = decyrptedResponse.data;
+    const decyrptedResponse = await sendMessage(
+      "decryptMeta",
+      listedCredentials
+    );
+    listedCredentials = decyrptedResponse.data;
+    domainAssociatedCredentials = listedCredentials;
     const user = await getUser();
     localStorage.setItem("user", JSON.stringify(user.data));
   });
@@ -85,14 +64,16 @@
     if (query.length >= 1) {
       const searchFieldSResponse = await getSearchFields();
       searchData = searchFieldSResponse.data;
-      creds = query.length !== 0 ? searchObjects(query, searchData) : [];
+      listedCredentials =
+        query.length !== 0 ? searchObjects(query, searchData) : [];
     } else {
-      creds = [];
+      listedCredentials = [];
     }
   };
 
-  const dropDownClicked = async (index: number, credential: any) => {
-    console.log("credential clicked", index, credential);
+  const dropDownClicked = async (e: any) => {
+    const index = e.detail.index;
+    const credential = e.detail.credential;
     let credentialIdentification;
     if (query.length >= 1) {
       credentialIdentification = credential.id;
@@ -115,7 +96,6 @@
         ...searchedCredential.fields,
         ...sensitiveResponse.data,
       ];
-      console.log("final credential data=>", searchedCredential);
       selectedCredentialIndex = index;
     } else {
       selectedCredentialIndex = null;
@@ -141,13 +121,16 @@
   >
     {#if passwordFound}
       <div
-        class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm"
+        class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm {query.length !==
+        0
+          ? 'hidden'
+          : ''}"
       >
         <span class="text-base">
           {domain}
         </span>
         <span class="text-osvauld-sheffieldgrey">
-          {creds.length}
+          {listedCredentials.length}
         </span>
       </div>
     {/if}
@@ -171,36 +154,28 @@
         class="border-b border-osvauld-iconblack w-[calc(100%+1.55rem)] -translate-x-[0.8rem] mb-3"
       ></div>
       <div class="h-[25rem] overflow-y-scroll scrollbar-thin">
-        {#each creds as credential, index}
-          <button
-            class="rounded-lg border border-osvauld-iconblack px-4 py-3 font-bold text-osvauld-sheffieldgrey flex flex-col justify-center items-center w-[98%] mb-3 cursor-pointer"
-            on:click={() => dropDownClicked(index, credential)}
-          >
-            <div
-              class="w-full flex justify-between items-center {selectedCredentialIndex ===
-              index
-                ? 'text-osvauld-quarzowhite mb-2'
-                : 'mb-0'}"
-            >
-              <span class="text-base font-medium tracking-wide"
-                >{credential.name}</span
-              >
-              <button
-                class="bg-osvauld-fieldActive px-4 py-1 rounded-[4px] cursor-pointer"
-              >
-                {#if credentialClicked && selectedCredentialIndex === index}
-                  <DownArrow type={"common"} />
-                {:else}
-                  <RightArrow />
-                {/if}
-              </button>
-            </div>
-            {#if credentialClicked && selectedCredentialIndex === index}
-              <!-- <PopupCard fields={credential.fields} /> -->
-              <CredentialPopupCard credential={searchedCredential} />
-            {/if}
-          </button>
-        {/each}
+        {#if query.length !== 0}
+          {#each listedCredentials as credential, index}
+            <ListedCredentials
+              {credential}
+              {index}
+              {selectedCredentialIndex}
+              {credentialClicked}
+              {searchedCredential}
+              on:select={dropDownClicked}
+            />
+          {/each}
+        {:else}
+          {#each domainAssociatedCredentials as credential, index}
+            <ListedCredentials
+              {credential}
+              {index}
+              {selectedCredentialIndex}
+              {credentialClicked}
+              {searchedCredential}
+              on:select={dropDownClicked}
+            />{/each}
+        {/if}
       </div>
     </div>
   </div>
