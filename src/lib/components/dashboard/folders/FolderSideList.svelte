@@ -29,9 +29,15 @@
   };
 
   const openFolderMenu = (e, folderId: string) => {
-    showFolderMenu.set(true);
-    buttonRef.set(e.currentTarget);
-    menuForFolder.set(folderId);
+    if ($menuForFolder) {
+      showFolderMenu.set(false);
+      buttonRef.set(null);
+      menuForFolder.set(null);
+    } else {
+      showFolderMenu.set(true);
+      buttonRef.set(e.currentTarget);
+      menuForFolder.set(folderId);
+    }
   };
   onMount(async () => {
     const responseJson = await fetchAllFolders();
