@@ -45,3 +45,4 @@ export const searchObjects = (query, objects) => {
 
     return searchResults;
 }
+

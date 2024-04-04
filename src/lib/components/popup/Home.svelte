@@ -16,23 +16,23 @@
 
   let passwordFound = false;
   let credentialClicked = false;
-  let selectedCredentialIndex: number | undefined;
   let domain: string | null = null;
   let listedCredentials: Credential[] = [];
   let domainAssociatedCredentials: Credential[] = [];
-
+  let selectedCredentialId: string | null = null;
   let searchData = [];
   let query = "";
-  let searchedCredential: any | null = null;
+  let scrollPosition = 0;
+  let clickedCredential: any | null = null;
+  let scrollableElement;
 
   const openFullscreenTab = async () => {
     await sendMessage("openFullscreenTab");
   };
-  onMount(async () => {
+
+  const fetchCredentialsOfCurrentDomin = async () => {
     const responseJson = await fetchAllUserUrls();
     const urls = responseJson.data;
-    const searchFieldSResponse = await getSearchFields();
-    searchData = searchFieldSResponse.data;
     const tabs = await browser.tabs.query({
       active: true,
       currentWindow: true,
@@ -47,55 +47,81 @@
       listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
         ),
       }));
     }
     const decyrptedResponse = await sendMessage(
       "decryptMeta",
-      listedCredentials
+      listedCredentials,
     );
     listedCredentials = decyrptedResponse.data;
     domainAssociatedCredentials = listedCredentials;
+  };
+  onMount(async () => {
+    query = await localStorage.getItem("query");
+    if (query.length >= 1) {
+      listedCredentials = searchObjects(query, searchData);
+      const searchFieldSResponse = await getSearchFields();
+      searchData = searchFieldSResponse.data;
+    } else {
+      await fetchCredentialsOfCurrentDomin();
+    }
     const user = await getUser();
     localStorage.setItem("user", JSON.stringify(user.data));
+    const storedCredentialId = localStorage.getItem("selectedCredentialId");
+    if (storedCredentialId != "") {
+      await dropDownClicked({ detail: { credentialId: storedCredentialId } });
+    }
+    const storedScrollPosition = localStorage.getItem("scrollPosition");
+    if (storedScrollPosition !== null) {
+      scrollPosition = parseInt(storedScrollPosition);
+      scrollableElement.scrollTop = scrollPosition;
+    }
   });
 
   const handleInputChange = async (e) => {
     const query = e.target.value;
     if (query.length >= 1) {
-      listedCredentials =
-        query.length !== 0 ? searchObjects(query, searchData) : [];
+      if (searchData.length === 0) {
+        const searchFieldSResponse = await getSearchFields();
+        searchData = searchFieldSResponse.data;
+      }
+      passwordFound = false;
+      listedCredentials = searchObjects(query, searchData);
     } else {
-      listedCredentials = [];
+      await fetchCredentialsOfCurrentDomin();
     }
+    await localStorage.setItem("query", query);
   };
 
   const dropDownClicked = async (e: any) => {
-    const index = e.detail.index;
-    const credential = e.detail.credential;
-    let credentialIdentification = credential.credentialId;
+    const credentialId = e.detail.credentialId;
     if (!credentialClicked) {
-      const credentialResponse: any = await fetchCredsByIds([
-        credentialIdentification,
-      ]);
-      searchedCredential = credentialResponse.data[0];
+      const credentialResponse: any = await fetchCredsByIds([credentialId]);
+      clickedCredential = credentialResponse.data[0];
       const decyrptedResponse = await sendMessage("decryptMeta", [
-        searchedCredential,
+        clickedCredential,
       ]);
-      searchedCredential = decyrptedResponse.data[0];
-      const sensitiveResponse = await fetchSensitiveFieldsByCredentialId(
-        credentialIdentification
-      );
-      searchedCredential.fields = [
-        ...searchedCredential.fields,
+      clickedCredential = decyrptedResponse.data[0];
+      const sensitiveResponse =
+        await fetchSensitiveFieldsByCredentialId(credentialId);
+      clickedCredential.fields = [
+        ...clickedCredential.fields,
         ...sensitiveResponse.data,
       ];
-      selectedCredentialIndex = index;
+      selectedCredentialId = credentialId;
+      localStorage.setItem("selectedCredentialId", selectedCredentialId);
     } else {
-      selectedCredentialIndex = null;
+      selectedCredentialId = null;
+      localStorage.setItem("selectedCredentialId", "");
     }
     credentialClicked = !credentialClicked;
+  };
+
+  const handleScroll = async (e) => {
+    scrollPosition = e.target.scrollTop;
+    await localStorage.setItem("scrollPosition", scrollPosition.toString());
   };
 </script>
 
@@ -141,29 +167,18 @@
 
     <div class="h-full p-0 scrollbar-thin">
       <div class="border-b border-osvauld-iconblack w-full mb-3"></div>
-      <div class="h-[25rem] overflow-y-scroll scrollbar-thin">
-        {#if query.length !== 0}
-          {#each listedCredentials as credential, index}
-            <ListedCredentials
-              {credential}
-              {index}
-              {selectedCredentialIndex}
-              {credentialClicked}
-              {searchedCredential}
-              on:select={dropDownClicked}
-            />
-          {/each}
-        {:else}
-          {#each domainAssociatedCredentials as credential, index}
-            <ListedCredentials
-              {credential}
-              {index}
-              {selectedCredentialIndex}
-              {credentialClicked}
-              {searchedCredential}
-              on:select={dropDownClicked}
-            />{/each}
-        {/if}
+      <div
+        class="h-[25rem] overflow-y-scroll scrollbar-thin"
+        on:scroll={handleScroll}
+        bind:this={scrollableElement}
+      >
+        {#each listedCredentials as credential}
+          <ListedCredentials
+            {credential}
+            {selectedCredentialId}
+            {clickedCredential}
+            on:select={dropDownClicked}
+          />{/each}
       </div>
     </div>
   </div>

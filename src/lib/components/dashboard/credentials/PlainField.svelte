@@ -29,7 +29,7 @@
     <span class="w-full text-left overflow-x-hidden font-normal text-sm"
       >{fieldValue}</span
     >
-    <button on:click|preventDefault={copyToClipboard}>
+    <button on:click|preventDefault|stopPropagation={copyToClipboard}>
       {#if hoverEffect}
         <ActiveCopy />
       {:else}
