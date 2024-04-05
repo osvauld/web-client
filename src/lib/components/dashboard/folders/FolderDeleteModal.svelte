@@ -5,9 +5,12 @@
     folderDeleteModal,
     showFolderMenu,
     folderOfInterest,
+    selectedFolder,
+    folderStore,
   } from "../store";
+  import { fly } from "svelte/transition";
   import { Warning } from "../icons";
-  import { removeFolder } from "../apis";
+  import { removeFolder, fetchAllFolders } from "../apis";
 
   function withdrawFolderDeleteModal() {
     showFolderMenu.set(false);
@@ -17,8 +20,15 @@
   }
 
   async function DeleteConfirmation() {
-    await removeFolder($menuForFolder);
-    withdrawFolderDeleteModal();
+    if ($menuForFolder) {
+      await removeFolder($menuForFolder);
+      withdrawFolderDeleteModal();
+    } else {
+      await removeFolder($selectedFolder.id);
+      selectedFolder.set(null);
+      const responseJson = await fetchAllFolders();
+      folderStore.set(responseJson.data);
+    }
   }
 </script>
 
@@ -28,6 +38,7 @@
 >
   <div
     class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[17.6rem] flex flex-col items-start justify-center gap-3"
+    in:fly
   >
     <div class="flex justify-between items-center w-full">
       <span class="text-[21px] font-medium text-osvauld-quarzowhite"

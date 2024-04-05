@@ -8,11 +8,8 @@
 
   import { Share, Add, InfoIcon, BinIcon } from "../icons";
   import {
-    fetchFolderUsers,
     fetchAllUsers,
     fetchAllUserGroups,
-    fetchAllFolders,
-    removeFolder,
     fetchCredentialsByFolder,
   } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
@@ -23,8 +20,9 @@
     showCredentialShareDrawer,
     selectedFolder,
     showCredentialDetailsDrawer,
-    folderStore,
     selectedCredential,
+    folderDeleteModal,
+    folderOfInterest,
   } from "../store";
   import { onDestroy } from "svelte";
   import { sendMessage } from "../helper";
@@ -41,7 +39,7 @@
   let showCreateCredentialModal = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -49,7 +47,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId,
+        (c) => c.credentialId !== card.credentialId
       );
     }
   }
@@ -78,7 +76,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential,
+    credential: Credential
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -101,11 +99,9 @@
     !noCardsSelected && showCredentialShareDrawer.set(true);
   };
 
-  const removeFolderHandler = async () => {
-    await removeFolder($selectedFolder.id);
-    selectedFolder.set(null);
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
+  const askingForConfirmation = () => {
+    folderOfInterest.set($selectedFolder.name);
+    folderDeleteModal.set(true);
   };
 
   const addCredentialManager = () => {
@@ -153,8 +149,11 @@
         >
           <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
         </button>
-        <button on:click={removeFolderHandler}>
-          <BinIcon />
+        <button
+          class="ml-4 cursor-pointer p-2 z-0"
+          on:click={askingForConfirmation}
+        >
+          <BinIcon color={"#FF6A6A"} />
         </button>
         {#if areCardsSelected}
           <span
@@ -242,7 +241,7 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId,
+            (c) => c.credentialId === credential.credentialId
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
