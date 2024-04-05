@@ -85,6 +85,7 @@ export default {
           fieldActive: "#16171F",
           fieldText: "#85889C",
           fieldTextActive: "#BFC0CC",
+          darkLineSeperator: "#21262D",
         },
       },
       fontFamily: {

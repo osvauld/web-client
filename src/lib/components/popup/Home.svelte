@@ -30,15 +30,20 @@
     await sendMessage("openFullscreenTab");
   };
 
-  const fetchCredentialsOfCurrentDomin = async () => {
-    const responseJson = await fetchAllUserUrls();
-    const urls = responseJson.data;
+  const readDomain = async () => {
     const tabs = await browser.tabs.query({
       active: true,
       currentWindow: true,
     });
     const activeTab = tabs[0];
     if (activeTab && activeTab.url) domain = new URL(activeTab.url).hostname;
+    return domain;
+  };
+
+  const fetchCredentialsOfCurrentDomin = async () => {
+    const responseJson = await fetchAllUserUrls();
+    const urls = responseJson.data;
+    await readDomain();
     const { credIds } = await sendMessage("updateAllUrls", { urls, domain });
     if (credIds.length > 0) {
       passwordFound = true;
@@ -47,13 +52,13 @@
       listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
         ),
       }));
     }
     const decyrptedResponse = await sendMessage(
       "decryptMeta",
-      listedCredentials,
+      listedCredentials
     );
     listedCredentials = decyrptedResponse.data;
     domainAssociatedCredentials = listedCredentials;
@@ -125,8 +130,8 @@
   };
 </script>
 
-<div class="w-full h-full">
-  <div class="flex justify-between items-center mb-3 px-4 py-0">
+<div class="w-full h-full px-2">
+  <div class="flex justify-between items-center mb-3 py-0">
     <h6 class="text-2xl font-medium text-osvauld-fieldText tracking-wide">
       osvauld
     </h6>
@@ -137,27 +142,29 @@
     </div>
   </div>
 
-  <div class="w-full h-[90%] p-3 overflow-hidden">
-    {#if passwordFound}
-      <div
-        class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm"
+  <div class="w-full h-[90%] overflow-hidden">
+    <div
+      class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm"
+    >
+      <span class="text-base text-osvauld-carolinablue">
+        {domain || readDomain()}
+      </span>
+      <span
+        class="text-osvauld-sheffieldgrey {passwordFound
+          ? 'visible'
+          : 'invisible'}"
       >
-        <span class="text-base text-osvauld-carolinablue">
-          {domain}
-        </span>
-        <span class="text-osvauld-sheffieldgrey">
-          {domainAssociatedCredentials.length}
-        </span>
-      </div>
-    {/if}
+        {domainAssociatedCredentials.length}
+      </span>
+    </div>
 
     <div
-      class="h-9 w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer mb-2"
+      class="h-9 w-full mx-auto flex justify-start items-center border focus-within:!border-osvauld-activeBorder border-osvauld-iconblack rounded-lg cursor-pointer mb-4 pl-2"
     >
       <Lens />
       <input
         type="text"
-        class="h-7 w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-sm font-light focus:border-transparent focus:ring-0 cursor-pointer"
+        class="h-6 w-[70%] bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-sm font-light focus:border-transparent focus:ring-0 cursor-pointer"
         placeholder="Find what you need faster.."
         on:keyup={handleInputChange}
         bind:value={query}
@@ -166,9 +173,11 @@
     </div>
 
     <div class="h-full p-0 scrollbar-thin">
-      <div class="border-b border-osvauld-iconblack w-full mb-3"></div>
       <div
-        class="h-[25rem] overflow-y-scroll scrollbar-thin"
+        class="border-b border-osvauld-darkLineSeperator mb-1 w-[calc(100%+1.5rem)] -translate-x-3"
+      ></div>
+      <div
+        class="h-[25rem] overflow-y-scroll scrollbar-thin pt-3"
         on:scroll={handleScroll}
         bind:this={scrollableElement}
       >
