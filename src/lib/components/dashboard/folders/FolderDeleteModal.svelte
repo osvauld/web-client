@@ -7,12 +7,18 @@
     folderOfInterest,
   } from "../store";
   import { Warning } from "../icons";
+  import { removeFolder } from "../apis";
 
   function withdrawFolderDeleteModal() {
     showFolderMenu.set(false);
     folderDeleteModal.set(false);
     menuForFolder.set(null);
     folderOfInterest.set(null);
+  }
+
+  async function DeleteConfirmation() {
+    await removeFolder($menuForFolder);
+    withdrawFolderDeleteModal();
   }
 </script>
 
@@ -45,10 +51,9 @@
       </div>
       <div class="text-osvauld-textActive text-left">
         Are you sure? <br /> All
-        <span class="font-semibold text-osvauld-quarzowhite"
-          >999 credentials</span
-        > within this folder will be permanently deleted. Users and groups with access
-        to this folder will no longer be able to view or manage the credentials
+        <span class="font-semibold text-osvauld-quarzowhite">credentials</span> within
+        this folder will be permanently deleted. Users and groups with access to
+        this folder will no longer be able to view or manage the credentials
       </div>
     </div>
     <div
@@ -61,7 +66,7 @@
       >
       <button
         class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md"
-        >Delete Folder</button
+        on:click|preventDefault={DeleteConfirmation}>Delete Folder</button
       >
     </div>
   </div>
