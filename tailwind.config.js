@@ -104,8 +104,8 @@ export default {
           '"Segoe UI Emoji"',
           '"Segoe UI Symbol"',
           '"Noto Color Emoji"',
-          '"Plus Jakarta Sans"',
         ],
+        Jakarta: ['"Plus Jakarta Sans"', "sans-serif"],
       },
       fontSize: {
         base: "16px",

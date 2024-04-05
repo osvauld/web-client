@@ -2,10 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+
 .scrollbar-thin::-webkit-scrollbar {
   width: 4px; /* width of the scrollbar */
   height: 130px;
 }
+
 
 .scrollbar-thin::-webkit-scrollbar-track {
   background: transparent; /* color of the track */
