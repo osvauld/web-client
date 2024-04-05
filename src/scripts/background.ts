@@ -147,7 +147,6 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
 function saveTimestamp() {
 
-  console.log('stroing timestamp')
   const timestamp = new Date().toISOString();
   browser.storage.local.set({ timestamp });
 }

@@ -26,8 +26,24 @@ export const sendMessage = async (action: string, data: any = {}) => {
         action,
         data,
     });
-    console.log(response, action, data);
     return response;
+}
+export const searchObjects = (query, objects) => {
+    const searchResults = [];
+
+    for (const obj of objects) {
+        for (const prop in obj) {
+            if (
+                typeof obj[prop] === "string" &&
+                obj[prop].toLowerCase().includes(query.toLowerCase())
+            ) {
+                searchResults.push(obj);
+                break;
+            }
+        }
+    }
+
+    return searchResults;
 }
 
 

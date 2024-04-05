@@ -29,6 +29,14 @@
       visibility = false;
     }, 3000);
   };
+
+  const copyToClipboard = async (e) => {
+    try {
+      await navigator.clipboard.writeText(decryptedValue);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  };
 </script>
 
 <div class="mb-2 mr-1 max-w-full" in:fly out:fly>
@@ -45,7 +53,7 @@
       ? 'text-osvauld-fieldTextActive'
       : 'text-osvauld-fieldText'}"
   >
-    <span class="w-3/5 text-left overflow-x-hidden"
+    <span class="w-3/5 text-left overflow-x-hidden font-normal text-sm"
       >{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
     >
     {#if !decrypted}
@@ -64,7 +72,7 @@
             <Eye />
           {/if}
         </button>
-        <button>
+        <button on:click|stopPropagation={copyToClipboard}>
           {#if hoverEffect}
             <ActiveCopy />
           {:else}

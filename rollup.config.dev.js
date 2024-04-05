@@ -5,11 +5,32 @@ import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import preprocess from "svelte-preprocess";
 import postcss from "rollup-plugin-postcss";
-import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
 import os from "os";
 
 
+function serve() {
+    return {
+      writeBundle() {
+        let command;
+        if (os.platform() === "linux") {
+          command = "brave -g --reload-extension=public/build";
+        } else {
+          command =
+          "'/Applications/Brave Browser.app/Contents/MacOS/Brave Browser' --reload-extension=public/build";
+          
+        }
+  
+        // Open Brave browser with the specified URL
+        exec(command, (err) => {
+          if (err) {
+            console.error("Failed to open Brave:", err);
+          }
+        });
+      },
+    };
+  }
 
 function buildConfig(inputFileName, outputFileName) {
   return {
@@ -20,28 +41,22 @@ function buildConfig(inputFileName, outputFileName) {
       name: "app",
     },
     plugins: [
+        postcss({
+            extract: `${outputFileName}.css`,
+            minimize: false,
+            plugins: [tailwindcss(), autoprefixer()],
+          }),
       svelte({
         compilerOptions: {
-          dev: false,
+          dev: true,
         },
         preprocess: preprocess({
           typescript: {
             tsconfigFile: "./tsconfig.app.json",
           },
-          postcss: {
-            plugins: [tailwindcss, autoprefixer],
-          },
         }),
       }),
-      postcss({
-        extract: `${outputFileName}.css`,
-        minimize: true,
-        sourceMap: false,
-        config: {
-          path: "./postcss.config.cjs",
-        },
-      }),
-      typescript({ sourceMap: true, tsconfig: "./tsconfig.app.json" }),
+      typescript({  tsconfig: "./tsconfig.app.json" }),
       resolve({ browser: true }),
       commonjs(),
     ],
@@ -50,6 +65,7 @@ function buildConfig(inputFileName, outputFileName) {
     },
   };
 }
+
 export default [
   buildConfig("popup", "popup"),
   buildConfig("dashboard", "dashboard"),
@@ -62,13 +78,14 @@ export default [
     },
     plugins: [
       typescript({
-        tsconfig: "./tsconfig.background.json", sourceMap: true
+        tsconfig: "./tsconfig.background.json",
       }),
       commonjs(),
       resolve({ browser: true, preferBuiltins: false }),
+      serve()
     ],
     watch: {
       clearScreen: false,
     },
-  }
+  },
 ];

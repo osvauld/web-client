@@ -5,7 +5,7 @@
   export let hoverEffect;
   export let bgColor;
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = async (e) => {
     try {
       await navigator.clipboard.writeText(fieldValue);
     } catch (err) {
@@ -26,8 +26,10 @@
       ? 'text-osvauld-fieldTextActive'
       : 'text-osvauld-fieldText'}"
   >
-    <span class="w-full text-left overflow-x-hidden">{fieldValue}</span>
-    <button on:click={copyToClipboard}>
+    <span class="w-full text-left overflow-x-hidden font-normal text-sm"
+      >{fieldValue}</span
+    >
+    <button on:click|preventDefault|stopPropagation={copyToClipboard}>
       {#if hoverEffect}
         <ActiveCopy />
       {:else}

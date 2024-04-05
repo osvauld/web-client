@@ -13,7 +13,6 @@
   } from "../store";
 
   import { fetchAllFolders } from "../apis";
-
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";
   import { onMount } from "svelte";

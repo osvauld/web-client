@@ -15,8 +15,7 @@
 },
   "permissions": [
     "storage",
-    "activeTab",
-    "webRequest"
+    "activeTab"
   ],
   
 "host_permissions": [
