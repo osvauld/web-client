@@ -9,6 +9,7 @@
     showFolderMenu,
     menuForFolder,
     folderDeleteModal,
+    folderOfInterest,
   } from "../store";
 
   import { fetchAllFolders } from "../apis";
@@ -30,12 +31,14 @@
     showAddFolderDrawer.set(false);
   };
 
-  const openFolderMenu = (e, folderId: string) => {
+  const openFolderMenu = (e, folderId: string, folderName: string) => {
     if ($menuForFolder) {
       showFolderMenu.set(false);
       buttonRef.set(null);
       menuForFolder.set(null);
+      folderOfInterest.set(null);
     } else {
+      folderOfInterest.set(folderName);
       showFolderMenu.set(true);
       buttonRef.set(e.currentTarget);
       menuForFolder.set(folderId);
@@ -104,7 +107,7 @@
           <button
             class="p-2"
             on:click={(e) => {
-              openFolderMenu(e, folder.id);
+              openFolderMenu(e, folder.id, folder.name);
             }}
           >
             <Menu />

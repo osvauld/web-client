@@ -3,7 +3,6 @@
   import EditIcon from "../../basic/icons/editIcon.svelte";
   import { FolderShare } from "../icons";
   import { buttonRef, showFolderMenu, folderDeleteModal } from "../store";
-  import FolderDeleteModal from "./FolderDeleteModal.svelte";
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
   import { onMount, onDestroy } from "svelte";
@@ -14,11 +13,6 @@
 
   function closeModal() {
     showFolderMenu.set(false);
-  }
-
-  function withdrawFolderDeleteModal() {
-    showFolderMenu.set(false);
-    folderDeleteModal.set(false);
   }
 
   export const buttonCoords = derived(buttonRef, ($buttonRef) => {

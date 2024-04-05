@@ -1,22 +1,38 @@
 <script>
   import ClosePanel from "../../basic/icons/closePanel.svelte";
-  import { menuForFolder } from "../store";
+  import {
+    menuForFolder,
+    folderDeleteModal,
+    showFolderMenu,
+    folderOfInterest,
+  } from "../store";
   import { Warning } from "../icons";
+
+  function withdrawFolderDeleteModal() {
+    showFolderMenu.set(false);
+    folderDeleteModal.set(false);
+    menuForFolder.set(null);
+    folderOfInterest.set(null);
+  }
 </script>
 
-<div
+<button
   class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
+  on:click|preventDefault={withdrawFolderDeleteModal}
 >
   <div
     class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[17.6rem] flex flex-col items-start justify-center gap-3"
   >
     <div class="flex justify-between items-center w-full">
       <span class="text-[21px] font-medium text-osvauld-quarzowhite"
-        >Delete "random" folder</span
+        >Delete {$folderOfInterest} folder</span
       >
-      <div class="cursor-pointer p-2">
+      <button
+        class="cursor-pointer p-2"
+        on:click|preventDefault={withdrawFolderDeleteModal}
+      >
         <ClosePanel />
-      </div>
+      </button>
     </div>
     <div
       class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
@@ -27,7 +43,7 @@
       <div class="w-16 h-9 justify-center items-center flex">
         <Warning />
       </div>
-      <div class="text-osvauld-textActive">
+      <div class="text-osvauld-textActive text-left">
         Are you sure? <br /> All
         <span class="font-semibold text-osvauld-quarzowhite"
           >999 credentials</span
@@ -39,8 +55,9 @@
       class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
     ></div>
     <div class="flex justify-end items-center gap-6 w-full">
-      <button class="text-osvauld-fadedCancel font-medium text-base"
-        >Cancel</button
+      <button
+        class="text-osvauld-fadedCancel font-medium text-base"
+        on:click|preventDefault={withdrawFolderDeleteModal}>Cancel</button
       >
       <button
         class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md"
@@ -48,4 +65,4 @@
       >
     </div>
   </div>
-</div>
+</button>
