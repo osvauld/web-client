@@ -140,7 +140,7 @@
       usersToShare = responseJson.data;
     } else {
       const responseJson = await fetchFolderUsersForDataSync(
-        $selectedFolder.id,
+        $selectedFolder.id
       );
       usersToShare = responseJson.data;
     }
@@ -186,7 +186,7 @@
     <div>
       {#if edit}
         <button class="bg-osvauld-frameblack p-4" on:click={deleteCredential}
-          ><BinIcon /></button
+          ><BinIcon color={null} /></button
         >
       {/if}
 

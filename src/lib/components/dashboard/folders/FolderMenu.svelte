@@ -2,7 +2,8 @@
   import BinIcon from "../../basic/icons/binIcon.svelte";
   import EditIcon from "../../basic/icons/editIcon.svelte";
   import { FolderShare } from "../icons";
-  import { buttonRef, showFolderMenu } from "../store";
+  import { buttonRef, showFolderMenu, folderDeleteModal } from "../store";
+  import FolderDeleteModal from "./FolderDeleteModal.svelte";
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
   import { onMount, onDestroy } from "svelte";
@@ -13,6 +14,11 @@
 
   function closeModal() {
     showFolderMenu.set(false);
+  }
+
+  function withdrawFolderDeleteModal() {
+    showFolderMenu.set(false);
+    folderDeleteModal.set(false);
   }
 
   export const buttonCoords = derived(buttonRef, ($buttonRef) => {
@@ -34,6 +40,12 @@
 
   const handleClickOutside = () => {
     closeModal();
+  };
+
+  const deleteFolder = () => {
+    showFolderMenu.set(false);
+    buttonRef.set(null);
+    folderDeleteModal.set(true);
   };
 
   onMount(() => {
@@ -77,6 +89,7 @@
         class="flex items-center p-2 gap-2 w-full h-12 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg"
         on:mouseenter={() => (isBinHovered = true)}
         on:mouseleave={() => (isBinHovered = false)}
+        on:click|preventDefault={deleteFolder}
       >
         <div class="w-6 h-6 flex items-center justify-center">
           <BinIcon color={isBinHovered ? "#F2F2F0" : "#85889C"} />

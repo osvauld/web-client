@@ -1,6 +1,6 @@
 <script lang="ts">
   import AddFolder from "./AddFolder.svelte";
-
+  import FolderDeleteModal from "./FolderDeleteModal.svelte";
   import {
     showAddFolderDrawer,
     folderStore,
@@ -8,6 +8,7 @@
     buttonRef,
     showFolderMenu,
     menuForFolder,
+    folderDeleteModal,
   } from "../store";
 
   import { fetchAllFolders } from "../apis";
@@ -46,6 +47,9 @@
   });
 </script>
 
+{#if $folderDeleteModal}
+  <FolderDeleteModal />
+{/if}
 <div>
   <button
     class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-10 mb-4 flex justify-center items-center"

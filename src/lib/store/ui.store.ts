@@ -19,6 +19,7 @@ export let accessSelectorIdentifier = writable(null);
 export let buttonRef = writable(null);
 export let showFolderMenu = writable(false);
 export let menuForFolder = writable(null);
+export let folderDeleteModal = writable(false);
 
 const storedPage = browser.storage.local.get("selectedPage");
 storedPage.then((value) => {
