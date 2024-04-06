@@ -19,21 +19,29 @@
   };
 </script>
 
-<div
+<form
   class="flex flex-col p-6 border-2 border-osvauld-iconblack bg-osvauld-frameblack rounded-lg"
+  on:submit|preventDefault={addGroupFunc}
 >
-  <button on:click={handleClose} class="ml-auto"><ClosePanel /></button>
+  <button type="button" on:click={handleClose} class="ml-auto"
+    ><ClosePanel /></button
+  >
+
   <label for="name" class="mb-2 font-bold text-lg">Name:</label>
   <input
     id="name"
     type="text"
     bind:value={name}
     autocomplete="off"
-    class=" py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0 mb-4"
+    required
+    class="py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0 mb-4 form-input"
   />
 
   <button
-    class="bg-osvauld-carolinablue text-black rounded-md p-2"
-    on:click={addGroupFunc}>Submit</button
+    type="submit"
+    class="bg-osvauld-carolinablue text-black rounded-md p-2 disabled:opacity-50"
+    disabled={!name}
   >
-</div>
+    Submit
+  </button>
+</form>
