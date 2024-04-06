@@ -43,7 +43,7 @@
   const fetchCredentialsOfCurrentDomin = async () => {
     const responseJson = await fetchAllUserUrls();
     const urls = responseJson.data;
-    await readDomain();
+    domain = await readDomain();
     const { credIds } = await sendMessage("updateAllUrls", { urls, domain });
     if (credIds.length > 0) {
       passwordFound = true;

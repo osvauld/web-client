@@ -24,8 +24,7 @@
   };
 
   onMount(async () => {
-    const user = await getUser();
-    username = user.data.username;
+    username = localStorage.getItem("username");
   });
 </script>
 
