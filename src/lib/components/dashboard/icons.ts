@@ -29,4 +29,4 @@ export { default as Tick } from "../basic/icons/tick.svelte";
 export { default as Menu } from "../basic/icons/Menu.svelte";
 export { default as FolderIcon } from "../basic/icons/folderIcon.svelte";
 export { default as FolderShare } from "../basic/icons/FolderShare.svelte";
-export { default as Warning } from "../basic/icons/Warning.svelte";
+export { default as Warning } from "../basic/icons/warning.svelte";
