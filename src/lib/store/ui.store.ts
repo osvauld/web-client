@@ -20,9 +20,7 @@ export let buttonRef = writable(null);
 export let showMoreOptions = writable(false);
 export let menuForFolder = writable({});
 export let DeleteConfirmationModal = writable(false);
-export let CredentialWillbeDeleted = writable(false);
-export let FolderWillBeDeleted = writable(false);
-
+export let CredentialWillbeDeleted = writable({});
 const storedPage = browser.storage.local.get("selectedPage");
 storedPage.then((value) => {
     if (value.selectedPage) {

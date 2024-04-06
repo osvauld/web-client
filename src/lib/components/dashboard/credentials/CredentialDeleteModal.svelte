@@ -4,16 +4,29 @@
     menuForFolder,
     DeleteConfirmationModal,
     showMoreOptions,
+    CredentialWillbeDeleted,
+    selectedFolder,
+    credentialStore,
   } from "../store";
   import { fly } from "svelte/transition";
+  import { sendMessage } from "../helper";
   import { Warning } from "../icons";
-
+  import { removeCredential, fetchCredentialsByFolder } from "../apis";
   function withdrawCredentialDeleteModal() {
     showMoreOptions.set(false);
     DeleteConfirmationModal.set(false);
+    CredentialWillbeDeleted.set({});
   }
 
+  const removeCredentialHandler = async (credentialId) => {
+    await removeCredential(credentialId);
+    const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
+    const response = await sendMessage("decryptMeta", responseJson.data);
+    credentialStore.set(response.data);
+  };
+
   async function DeleteConfirmation() {
+    await removeCredentialHandler($CredentialWillbeDeleted.credentialId);
     withdrawCredentialDeleteModal();
   }
 </script>
@@ -23,12 +36,13 @@
   on:click|preventDefault={withdrawCredentialDeleteModal}
 >
   <div
-    class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[17.6rem] flex flex-col items-start justify-center gap-3"
+    class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[14rem] flex flex-col items-start justify-center gap-3"
     in:fly
   >
     <div class="flex justify-between items-center w-full">
       <span class="text-[21px] font-medium text-osvauld-quarzowhite"
-        >Delete {$menuForFolder.folderName}</span
+        >Delete {$menuForFolder.folderName ||
+          $CredentialWillbeDeleted.name}</span
       >
       <button
         class="cursor-pointer p-2"

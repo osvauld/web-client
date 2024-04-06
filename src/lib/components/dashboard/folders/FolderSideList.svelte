@@ -11,7 +11,6 @@
     menuForFolder,
     DeleteConfirmationModal,
     CredentialWillbeDeleted,
-    FolderWillBeDeleted,
   } from "../store";
 
   import { fetchAllFolders } from "../apis";
@@ -44,9 +43,9 @@
   });
 </script>
 
-{#if $DeleteConfirmationModal && $CredentialWillbeDeleted}
+{#if $DeleteConfirmationModal && $CredentialWillbeDeleted.confirmation}
   <CredentialDeleteModal />
-{:else if $FolderWillBeDeleted}
+{:else if $menuForFolder.folderId}
   <FolderDeleteModal />
 {/if}
 <div>

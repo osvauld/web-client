@@ -3,20 +3,16 @@
   import { fetchSensitiveFieldsByCredentialId } from "../apis";
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
-  import { More, BinIcon } from "../icons";
+  import { More } from "../icons";
   import {
     showCredentialDetailsDrawer,
     searchedCredential,
-    credentialStore,
-    selectedFolder,
     showMoreOptions,
     buttonRef,
     CredentialWillbeDeleted,
   } from "../store";
-  import { removeCredential, fetchCredentialsByFolder } from "../apis";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";
-  import { sendMessage } from "../helper";
   const dispatch = createEventDispatcher();
   export let credential: Credential;
   export let checked = false;
@@ -58,17 +54,14 @@
     hoverEffect = false;
   }
 
-  const removeCredentialHandler = async () => {
-    await removeCredential(credential.credentialId);
-    const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const response = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(response.data);
-  };
-
   const triggerMoreActions = (e: any) => {
     showMoreOptions.set(true);
     buttonRef.set(e.currentTarget);
-    CredentialWillbeDeleted.set(true);
+    CredentialWillbeDeleted.set({
+      confirmation: true,
+      credentialId: credential.credentialId,
+      name: credential.name,
+    });
   };
 
   const handleClick = async () => {

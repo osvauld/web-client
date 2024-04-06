@@ -5,7 +5,6 @@
     DeleteConfirmationModal,
     showMoreOptions,
     folderStore,
-    FolderWillBeDeleted,
   } from "../store";
   import { fly } from "svelte/transition";
   import { Warning } from "../icons";
@@ -15,7 +14,6 @@
     showMoreOptions.set(false);
     DeleteConfirmationModal.set(false);
     menuForFolder.set({});
-    FolderWillBeDeleted.set(false);
   }
 
   async function DeleteConfirmation() {

@@ -8,7 +8,6 @@
     DeleteConfirmationModal,
     menuForFolder,
     CredentialWillbeDeleted,
-    FolderWillBeDeleted,
   } from "../store";
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
@@ -21,6 +20,7 @@
   function closeModal() {
     showMoreOptions.set(false);
     menuForFolder.set({});
+    CredentialWillbeDeleted.set({});
   }
 
   export const buttonCoords = derived(buttonRef, ($buttonRef) => {
@@ -48,11 +48,6 @@
   };
 
   const deleteInitiate = () => {
-    if ($menuForFolder.folderId) {
-      FolderWillBeDeleted.set(true);
-    } else {
-      CredentialWillbeDeleted.set(true);
-    }
     showMoreOptions.set(false);
     buttonRef.set(null);
     DeleteConfirmationModal.set(true);
