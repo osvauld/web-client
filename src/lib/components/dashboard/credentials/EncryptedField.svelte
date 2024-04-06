@@ -41,24 +41,22 @@
 
 <div class="mb-2 mr-1 max-w-full" in:fly out:fly>
   <div
-    class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
+    class="label block mb-2 text-left text-osvauld-dusklabel text-xs font-normal cursor-pointer"
   >
     {fieldName}
   </div>
 
   <div
-    class="py-1.5 px-3 w-full flex justify-between items-center rounded-lg text-base {bgColor
-      ? bgColor
-      : 'bg-osvauld-fieldActive '} {hoverEffect
-      ? 'text-osvauld-fieldTextActive'
-      : 'text-osvauld-fieldText'}"
+    class="py-1 px-3 w-full flex justify-between items-center text-base {hoverEffect
+      ? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md '
+      : 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}"
   >
     <span class="w-3/5 text-left overflow-x-hidden font-normal text-sm"
       >{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
     >
     {#if !decrypted}
       <button on:click|stopPropagation={decrypt}>
-        <Locked />
+        <Locked color={hoverEffect ? "#89B4FA" : "#4D4F60"} />
       </button>
     {:else}
       <div class="w-2/5 flex gap-2 items-center justify-end">
