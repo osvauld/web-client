@@ -58,7 +58,7 @@
 <div class="min-w-screen h-[48rem] flex overflow-">
   <div class="w-full">
     {#if adminStatus && $allUsersSelected}
-      <AllUsersList {allUsers} />
+      <AllUsersList />
     {:else if $selectedGroup}
       <OtherGroupsList {groupName} />
     {/if}
