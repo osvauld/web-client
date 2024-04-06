@@ -200,7 +200,7 @@
       <div>
         {#if edit}
           <button class="bg-osvauld-frameblack p-4" on:click={deleteCredential}
-            ><BinIcon color={null} /></button
+            ><BinIcon /></button
           >
         {/if}
 
