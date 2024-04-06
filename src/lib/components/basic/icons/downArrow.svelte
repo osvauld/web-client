@@ -4,6 +4,7 @@
     const typeToClassMap = {
       reader: "#F9E2AF",
       manager: "#F5C2E7",
+      owner: "#A6E3A1",
       common: "#6E7681",
     };
     return typeToClassMap[type] || "";

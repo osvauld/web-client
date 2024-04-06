@@ -5,6 +5,8 @@
   export let setbackground: any;
   export let showOptions: boolean;
 
+  let hoveredOverThisItem = false;
+
   import { BinIcon, DownArrow } from "../icons";
   import AccessSelector from "./AccessSelector.svelte";
 
@@ -27,10 +29,12 @@
 </script>
 
 <div
-  class="relative w-[99%] my-1 px-2 border border-osvauld-iconblack rounded-lg cursor-pointer flex items-center justify-between {isSelected
+  class="relative w-[99%] my-1 pl-2 pr-0.5 border border-osvauld-iconblack rounded-lg cursor-pointer flex items-center justify-between {isSelected
     ? 'bg-osvauld-bordergreen text-osvauld-plainwhite'
     : ''}"
   on:click={handleClick}
+  on:mouseenter={() => (hoveredOverThisItem = true)}
+  on:mouseleave={() => (hoveredOverThisItem = false)}
 >
   <div class="flex items-center space-x-4 max-w-full">
     <p
@@ -54,11 +58,17 @@
         <AccessSelector on:select={(e) => eventPasser(e)} />
       {/if}
       <button class="ml-2" on:click|stopPropagation={handleRemove}
-        ><BinIcon /></button
+        ><BinIcon color={null} /></button
       >
     </div>
   {/if}
   {#if !isTopList && showOptions && isSelected}
     <AccessSelector on:select={(e) => eventPasser(e)} />
+  {/if}
+  {#if !isTopList && !isSelected && hoveredOverThisItem}
+    <span
+      class="text-osvauld-ownerText bg-osvauld-ownerGreen rounded-md cursor-pointer px-2 py-0.5 w-[10rem] flex justify-between items-center text-base font-normal"
+      >Permissions <span><DownArrow type={"owner"} /></span></span
+    >
   {/if}
 </div>

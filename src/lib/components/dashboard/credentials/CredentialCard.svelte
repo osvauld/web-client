@@ -108,7 +108,7 @@
         <More />
       </span>
       <button on:click={removeCredentialHandler}>
-        <BinIcon />
+        <BinIcon color={"#FF0000"} />
       </button>
     </div>
     <div

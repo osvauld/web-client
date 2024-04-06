@@ -56,7 +56,7 @@
     </thead>
   </table>
   <div class="h-[40rem] overflow-y-auto scrollbar-thin px-2">
-    <div class="bg-red-200">
+    <div class="flex justify-end items-center p-3">
       <button on:click={handleGroupRemoval}>
         <BinIcon />
       </button>
