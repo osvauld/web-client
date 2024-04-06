@@ -5,19 +5,20 @@
   import AddUser from "./AddUser.svelte";
   import { onMount } from "svelte";
 
-  export let allUsers;
-
   let accountRole: string = "";
 
+  let allUsers = [];
   const deleteUserHandler = async (id) => {
     await deleteUser(id);
     const allUsersResponse = await fetchAllUsers();
     allUsers = allUsersResponse.data;
   };
 
-  onMount(() => {
+  onMount(async () => {
     const accountDetails = localStorage.getItem("user");
     accountRole = JSON.parse(accountDetails).type;
+    const fetchAllUsersResponse = await fetchAllUsers();
+    allUsers = fetchAllUsersResponse.data;
   });
 </script>
 
@@ -50,6 +51,8 @@
       <tr class="leading-normal text-lg">
         <th class="py-3 px-3 text-left whitespace-nowrap w-1/5 pl-6">Name</th>
         <th class="py-3 px-3 text-left whitespace-nowrap w-1/3">Username</th>
+        <th class="py-3 px-3 text-left whitespace-nowrap w-1/3">type</th>
+        <th class="py-3 px-3 text-left whitespace-nowrap w-1/3">status</th>
       </tr>
     </thead>
   </table>
@@ -63,6 +66,12 @@
             </td>
             <td class="py-6 px-6 text-left">
               {user.username}
+            </td>
+            <td class="py-6 px-6 text-left">
+              {user.type}
+            </td>
+            <td class="py-6 px-6 text-left">
+              {user.status}
             </td>
             <td
               class="flex justify-center items-center py-6 w-[4rem] cursor-pointer"

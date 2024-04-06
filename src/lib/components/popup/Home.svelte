@@ -55,14 +55,14 @@
           (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
         ),
       }));
+
+      const decyrptedResponse = await sendMessage(
+        "decryptMeta",
+        listedCredentials,
+      );
+      listedCredentials = decyrptedResponse.data;
+      domainAssociatedCredentials = listedCredentials;
     }
-    const decyrptedResponse = await sendMessage(
-      "decryptMeta",
-      listedCredentials
-    );
-    listedCredentials = decyrptedResponse.data;
-    domainAssociatedCredentials = listedCredentials;
-  };
   onMount(async () => {
     query = await localStorage.getItem("query");
     if (query.length >= 1) {
@@ -95,8 +95,10 @@
       passwordFound = false;
       listedCredentials = searchObjects(query, searchData);
     } else {
+      listedCredentials = [];
       await fetchCredentialsOfCurrentDomin();
     }
+    console.log("query", query);
     await localStorage.setItem("query", query);
   };
 

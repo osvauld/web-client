@@ -20,5 +20,5 @@ export {
 } from '../../apis/group.api';
 export {
     fetchAllUsers, createUser, fetchCredentialUsers, removeUserFromFolder,
-    removeUserFromCredential, deleteUser, checkUserNameExists,getUser
+    removeUserFromCredential, deleteUser, checkUserNameExists,getUser, fetchAllUsers
 } from '../../apis/user.api';
