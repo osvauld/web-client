@@ -6,9 +6,14 @@
     selectedGroup,
     showAddUserToGroupDrawer,
     allUsersSelected,
-    adminStatus,
   } from "../store";
 
+  const accountDetails = localStorage.getItem("user");
+  let accountRole = JSON.parse(accountDetails).type;
+  let adminStatus = false;
+  if (accountRole === "admin") {
+    adminStatus = true;
+  }
   import AddUserToGroup from "./AddUserToGroup.svelte";
 
   import { User } from "../dtos";
