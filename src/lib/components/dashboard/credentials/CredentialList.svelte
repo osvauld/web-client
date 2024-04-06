@@ -6,7 +6,7 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add, InfoIcon, BinIcon } from "../icons";
+  import { Share, Add, InfoIcon } from "../icons";
   import {
     fetchAllUsers,
     fetchAllUserGroups,
@@ -21,8 +21,6 @@
     selectedFolder,
     showCredentialDetailsDrawer,
     selectedCredential,
-    folderDeleteModal,
-    folderOfInterest,
   } from "../store";
   import { onDestroy } from "svelte";
   import { sendMessage } from "../helper";
@@ -99,11 +97,6 @@
     !noCardsSelected && showCredentialShareDrawer.set(true);
   };
 
-  const askingForConfirmation = () => {
-    folderOfInterest.set($selectedFolder.name);
-    folderDeleteModal.set(true);
-  };
-
   const addCredentialManager = () => {
     showCreateCredentialModal = true;
     checkedCards = [];
@@ -148,12 +141,6 @@
           on:click={credentialShareManager}
         >
           <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
-        </button>
-        <button
-          class="ml-4 cursor-pointer p-2 z-0"
-          on:click={askingForConfirmation}
-        >
-          <BinIcon color={"#FF6A6A"} />
         </button>
         {#if areCardsSelected}
           <span

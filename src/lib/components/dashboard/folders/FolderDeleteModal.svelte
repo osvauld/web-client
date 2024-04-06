@@ -17,18 +17,14 @@
     folderDeleteModal.set(false);
     menuForFolder.set(null);
     folderOfInterest.set(null);
+    selectedFolder.set(null);
   }
 
   async function DeleteConfirmation() {
-    if ($menuForFolder) {
-      await removeFolder($menuForFolder);
-      withdrawFolderDeleteModal();
-    } else {
-      await removeFolder($selectedFolder.id);
-      selectedFolder.set(null);
-      const responseJson = await fetchAllFolders();
-      folderStore.set(responseJson.data);
-    }
+    await removeFolder($selectedFolder.id);
+    withdrawFolderDeleteModal();
+    const responseJson = await fetchAllFolders();
+    folderStore.set(responseJson.data);
   }
 </script>
 

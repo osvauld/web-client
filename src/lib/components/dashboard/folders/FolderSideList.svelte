@@ -31,17 +31,10 @@
   };
 
   const openFolderMenu = (e, folderId: string, folderName: string) => {
-    if ($menuForFolder) {
-      showFolderMenu.set(false);
-      buttonRef.set(null);
-      menuForFolder.set(null);
-      folderOfInterest.set(null);
-    } else {
-      folderOfInterest.set(folderName);
-      showFolderMenu.set(true);
-      buttonRef.set(e.currentTarget);
-      menuForFolder.set(folderId);
-    }
+    folderOfInterest.set(folderName);
+    showFolderMenu.set(true);
+    buttonRef.set(e.currentTarget);
+    menuForFolder.set(folderId);
   };
   onMount(async () => {
     const responseJson = await fetchAllFolders();
