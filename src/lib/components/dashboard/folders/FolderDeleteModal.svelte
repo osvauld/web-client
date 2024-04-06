@@ -4,7 +4,6 @@
     menuForFolder,
     folderDeleteModal,
     showFolderMenu,
-    selectedFolder,
     folderStore,
   } from "../store";
   import { fly } from "svelte/transition";
@@ -18,7 +17,7 @@
   }
 
   async function DeleteConfirmation() {
-    await removeFolder($selectedFolder.id);
+    await removeFolder($menuForFolder.folderId);
     withdrawFolderDeleteModal();
     const responseJson = await fetchAllFolders();
     folderStore.set(responseJson.data);
