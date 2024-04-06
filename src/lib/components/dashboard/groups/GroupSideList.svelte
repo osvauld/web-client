@@ -6,14 +6,18 @@
     showAddGroupDrawer,
     showAddUserDrawer,
     allUsersSelected,
-    adminStatus,
   } from "../store";
   import { fetchAllUserGroups } from "../apis";
   import { Group } from "../dtos";
   import Add from "../../basic/icons/add.svelte";
   import { GroupIcon } from "../icons";
   import { onMount } from "svelte";
-
+  const accountDetails = localStorage.getItem("user");
+  let accountRole = JSON.parse(accountDetails).type;
+  let adminStatus = false;
+  if (accountRole === "admin") {
+    adminStatus = true;
+  }
   let iconColor = "#6E7681"; //sheffieldgrey:
 
   const selectGroup = (group: Group) => {

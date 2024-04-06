@@ -13,12 +13,7 @@
     editUserPermissionForCredential,
     fetchSensitiveFieldsByCredentialId,
   } from "../apis";
-  import {
-    showCredentialDetailsDrawer,
-    editPermissionTrigger,
-    isPermissionChanged,
-    accessSelectorIdentifier,
-  } from "../store";
+  import { showCredentialDetailsDrawer } from "../store";
   import { ClosePanel, EditIcon } from "../icons";
   import { onMount } from "svelte";
   import ExistingListItem from "../components/ExistingListItem.svelte";
@@ -40,6 +35,7 @@
   let permissionChangeAttemptMessage = "";
   let changeToast = false;
   let fieldsForEdit = [];
+  let editPermissionTrigger = false;
 
   let userPermissions: {
     credentialId: string;
@@ -111,7 +107,7 @@
 
   const permissionChangeHandler = async (e: any, id: string, type: string) => {
     accessChangeDetected = true;
-    accessSelectorIdentifier.set(null);
+
     if (type == "user") {
       userPermissions = {
         credentialId: credential.credentialId,
@@ -270,13 +266,11 @@
               </button>
             {/if}
             <button
-              class="p-2 rounded-lg {$editPermissionTrigger
+              class="p-2 rounded-lg {editPermissionTrigger
                 ? 'bg-osvauld-sensitivebgblue'
                 : ''}"
               on:click={() => {
-                editPermissionTrigger.set(!$editPermissionTrigger);
-                isPermissionChanged.set(false);
-                accessSelectorIdentifier.set(null);
+                editPermissionTrigger = !editPermissionTrigger;
               }}
             >
               <EditIcon />
@@ -289,6 +283,7 @@
               <ExistingListItem
                 item={group}
                 {index}
+                {editPermissionTrigger}
                 on:remove={() => removeGroupFromCredentialHandler(group)}
                 on:permissonChange={(e) =>
                   permissionChangeHandler(e, group.groupId, "group")}
@@ -299,6 +294,7 @@
               <ExistingListItem
                 item={user}
                 {index}
+                {editPermissionTrigger}
                 on:remove={() => removeUserFromCredentialHandler(user)}
                 on:permissonChange={(e) =>
                   permissionChangeHandler(e, user.id, "user")}

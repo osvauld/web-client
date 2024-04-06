@@ -52,7 +52,7 @@
       listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
         ),
       }));
 
@@ -63,6 +63,7 @@
       listedCredentials = decyrptedResponse.data;
       domainAssociatedCredentials = listedCredentials;
     }
+  };
   onMount(async () => {
     query = await localStorage.getItem("query");
     if (query.length >= 1) {
@@ -98,7 +99,6 @@
       listedCredentials = [];
       await fetchCredentialsOfCurrentDomin();
     }
-    console.log("query", query);
     await localStorage.setItem("query", query);
   };
 
