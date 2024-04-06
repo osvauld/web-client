@@ -2,9 +2,12 @@
   import browser from "webextension-polyfill";
   import Loader from "./Loader.svelte";
   import { getTokenAndBaseUrl } from "../helper";
+  import { getUser } from "../apis";
   import CopyIcon from "../../basic/icons/copyIcon.svelte";
+  import { onMount } from "svelte";
   let copiedToClipboard = false;
   let isLoaderActive = false;
+  let username = "";
 
   const exportManager = async () => {
     isLoaderActive = true;
@@ -19,18 +22,23 @@
     copiedToClipboard = true;
     isLoaderActive = false;
   };
+
+  onMount(async () => {
+    const user = await getUser();
+    username = user.data.username;
+  });
 </script>
 
 <div
   class="px-[11.30rem] py-[3.25rem] w-full h-[40rem] bg-osvauld-frameblack text-osvauld-sheffieldgrey font-normal text-xl flex flex-col gap-4 justify-center items-center"
 >
   <div class="font-Jakarta text-6xl text-osvauld-textActive">
-    <h1 class="font-Jakarta text-6xl">Welcome, Tony Antony</h1>
+    <h1 class="font-Jakarta text-6xl">Welcome, {username}</h1>
     <p class="font-sans text-base font-light mt-4">
       Lets Jump right onto things!
     </p>
   </div>
-  <div class="flex justify-around items-center gap-10 w-full h-[370px]">
+  <div class="flex justify-around items-center gap-10 w-full h-[440px]">
     <div
       class="bg-osvauld-cardshade h-[80%] w-[45%] rounded-2xl flex flex-col gap-7 justify-center items-start p-10"
     >
@@ -58,20 +66,19 @@
       >
     </div>
   </div>
-  <!-- <div>Select Folder to view your credentials...</div>
-  <div class="mt-60">
+  <div>
     <button
-      class="rounded-lg bg-osvauld-managerPurple text-osvauld-managerText px-10 py-4 cursor-pointer active:scale-95 flex justify-center items-center"
+      class="rounded-md font-normal text-base bg-osvauld-managerPurple text-osvauld-managerText px-4 py-2 cursor-pointer active:scale-95 flex justify-center items-center"
       on:click={exportManager}
     >
       {#if isLoaderActive}
         <Loader />
       {:else if copiedToClipboard}
-        <span> Copied to clipboard, Proceed with caution! </span>
+        <span>Proceed with caution!</span>
       {:else}
         <CopyIcon color={"#F5C2E7"} />
-        <span class="ml-2"> Copy Recovery Data </span>
+        <span class="ml-2">Copy Recovery Data </span>
       {/if}
     </button>
-  </div> -->
+  </div>
 </div>
