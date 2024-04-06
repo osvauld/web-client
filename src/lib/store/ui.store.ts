@@ -13,9 +13,13 @@ export let adminStatus = writable(true);
 export let showAddUserToGroupDrawer = writable(false);
 export let showCredentialDetailsDrawer = writable(false);
 export let credentialIdForEdit = writable(null);
-export const editPermissionTrigger = writable(false);
-export const isPermissionChanged = writable(false);
-export const accessSelectorIdentifier = writable(null);
+export let editPermissionTrigger = writable(false);
+export let isPermissionChanged = writable(false);
+export let accessSelectorIdentifier = writable(null);
+export let buttonRef = writable(null);
+export let showFolderMenu = writable(false);
+export let menuForFolder = writable({});
+export let folderDeleteModal = writable(false);
 
 const storedPage = browser.storage.local.get("selectedPage");
 storedPage.then((value) => {

@@ -6,13 +6,10 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add, InfoIcon, BinIcon } from "../icons";
+  import { Share, Add, InfoIcon } from "../icons";
   import {
-    fetchFolderUsers,
     fetchSignedUpUsers,
     fetchAllUserGroups,
-    fetchAllFolders,
-    removeFolder,
     fetchCredentialsByFolder,
   } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
@@ -23,7 +20,6 @@
     showCredentialShareDrawer,
     selectedFolder,
     showCredentialDetailsDrawer,
-    folderStore,
     selectedCredential,
   } from "../store";
   import { onDestroy } from "svelte";
@@ -101,13 +97,6 @@
     !noCardsSelected && showCredentialShareDrawer.set(true);
   };
 
-  const removeFolderHandler = async () => {
-    await removeFolder($selectedFolder.id);
-    selectedFolder.set(null);
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
-  };
-
   const addCredentialManager = () => {
     showCreateCredentialModal = true;
     checkedCards = [];
@@ -152,9 +141,6 @@
           on:click={credentialShareManager}
         >
           <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
-        </button>
-        <button on:click={removeFolderHandler}>
-          <BinIcon />
         </button>
         {#if areCardsSelected}
           <span
