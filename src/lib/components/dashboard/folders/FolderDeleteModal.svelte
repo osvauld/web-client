@@ -4,7 +4,6 @@
     menuForFolder,
     folderDeleteModal,
     showFolderMenu,
-    folderOfInterest,
     selectedFolder,
     folderStore,
   } from "../store";
@@ -15,9 +14,7 @@
   function withdrawFolderDeleteModal() {
     showFolderMenu.set(false);
     folderDeleteModal.set(false);
-    menuForFolder.set(null);
-    folderOfInterest.set(null);
-    selectedFolder.set(null);
+    menuForFolder.set({});
   }
 
   async function DeleteConfirmation() {
@@ -38,7 +35,7 @@
   >
     <div class="flex justify-between items-center w-full">
       <span class="text-[21px] font-medium text-osvauld-quarzowhite"
-        >Delete {$folderOfInterest} folder</span
+        >Delete {$menuForFolder.folderName} folder</span
       >
       <button
         class="cursor-pointer p-2"

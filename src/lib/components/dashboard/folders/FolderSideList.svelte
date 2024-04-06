@@ -9,7 +9,6 @@
     showFolderMenu,
     menuForFolder,
     folderDeleteModal,
-    folderOfInterest,
   } from "../store";
 
   import { fetchAllFolders } from "../apis";
@@ -31,10 +30,9 @@
   };
 
   const openFolderMenu = (e, folderId: string, folderName: string) => {
-    folderOfInterest.set(folderName);
     showFolderMenu.set(true);
     buttonRef.set(e.currentTarget);
-    menuForFolder.set(folderId);
+    menuForFolder.set({ folderId, folderName });
   };
   onMount(async () => {
     const responseJson = await fetchAllFolders();
