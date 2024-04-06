@@ -5,10 +5,10 @@
   import { showAddUserDrawer, allUsersSelected } from "../store";
   import { createUser, checkUserNameExists } from "../apis";
   import { ClosePanel, Tick } from "../icons";
+  import { generatePassword } from "../helper";
 
   let username = "";
   let name = "";
-  let tempPassword = "test@123";
   let copiedToClipboard = false;
   let isLoaderActive = false;
   let erroMessage = "";
@@ -25,6 +25,7 @@
       return;
     }
     const { baseUrl } = await getTokenAndBaseUrl();
+    const tempPassword = generatePassword(10);
     const payload = {
       username,
       name,

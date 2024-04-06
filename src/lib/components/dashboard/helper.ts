@@ -65,3 +65,21 @@ export const clickOutside = (node) => {
         }
     }
 }
+
+export const generatePassword = (length: number) => {
+    const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+    const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numberChars = "0123456789";
+    const symbolChars = "!@#$%^&*()_";
+
+    const charSet = lowercaseChars + uppercaseChars + numberChars + symbolChars;
+    const passwordArray = new Uint8Array(length); // For storing random bytes
+    window.crypto.getRandomValues(passwordArray);
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        const randomIndex = passwordArray[i] % charSet.length;
+        password += charSet[randomIndex];
+    }
+
+    return password;
+}
