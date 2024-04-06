@@ -45,9 +45,10 @@
 
 {#if $DeleteConfirmationModal && $CredentialWillbeDeleted.confirmation}
   <CredentialDeleteModal />
-{:else if $menuForFolder.folderId}
+{:else if $DeleteConfirmationModal && $menuForFolder.folderId}
   <FolderDeleteModal />
 {/if}
+
 <div>
   <button
     class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-10 mb-4 flex justify-center items-center"
