@@ -9,6 +9,8 @@
   import { Share, Add, InfoIcon } from "../icons";
   import {
     fetchAllUsers,
+    fetchFolderUsers,
+    fetchSignedUpUsers,
     fetchAllUserGroups,
     fetchCredentialsByFolder,
   } from "../apis";
@@ -60,7 +62,7 @@
     const response = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(response.data);
     let [allUsersResponse, allGroupResponse] = await Promise.all([
-      fetchAllUsers(),
+      fetchSignedUpUsers(),
       fetchAllUserGroups(),
     ]);
     allGroups = allGroupResponse.data;

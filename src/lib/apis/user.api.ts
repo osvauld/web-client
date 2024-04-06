@@ -1,12 +1,12 @@
 import { FetchAllUsersResponse, FetchCredentialUsersResponse } from "../dtos/response.dto";
 import { getTokenAndBaseUrl } from "../components/dashboard/helper";
 
-export const fetchAllUsers = async (): Promise<FetchAllUsersResponse> => {
+export const fetchSignedUpUsers = async (): Promise<FetchAllUsersResponse> => {
   const headers = new Headers();
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
 
-  return await fetch(`${baseUrl}/users`, {
+  return await fetch(`${baseUrl}/users/signed-up`, {
     method: "GET",
     headers,
   }).then(response => response.json());
@@ -100,3 +100,15 @@ export const getUser = async () => {
     headers,
   }).then(response => response.json());
 }
+
+
+export const fetchAllUsers = async (): Promise<any> => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/users/all`, {
+    method: "GET",
+    headers,
+  }).then(response => response.json());
+};

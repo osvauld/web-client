@@ -13,7 +13,7 @@
 
   import { User } from "../dtos";
   import { groupUsers, groupStore } from "../store";
-  import { fetchGroupUsers, fetchAllUsers } from "../apis";
+  import { fetchGroupUsers, fetchSignedUpUsers } from "../apis";
   import AllUsersList from "./AllUsersList.svelte";
   import OtherGroupsList from "./OtherGroupsList.svelte";
 
@@ -31,7 +31,7 @@
       }
     });
     if (adminStatus) {
-      fetchAllUsers().then((usersResponse) => {
+      fetchSignedUpUsers().then((usersResponse) => {
         allUsers = usersResponse.data;
       });
     }
