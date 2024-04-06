@@ -8,8 +8,6 @@
 
   import { Share, Add, InfoIcon } from "../icons";
   import {
-    fetchAllUsers,
-    fetchFolderUsers,
     fetchSignedUpUsers,
     fetchAllUserGroups,
     fetchCredentialsByFolder,
