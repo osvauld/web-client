@@ -1,20 +1,24 @@
 <script lang="ts">
   import AddFolder from "./AddFolder.svelte";
   import FolderDeleteModal from "./FolderDeleteModal.svelte";
+
   import {
     showAddFolderDrawer,
     folderStore,
     selectedFolder,
     buttonRef,
-    showFolderMenu,
+    showMoreOptions,
     menuForFolder,
-    folderDeleteModal,
+    DeleteConfirmationModal,
+    CredentialWillbeDeleted,
+    FolderWillBeDeleted,
   } from "../store";
 
   import { fetchAllFolders } from "../apis";
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";
   import { onMount } from "svelte";
+  import CredentialDeleteModal from "../credentials/CredentialDeleteModal.svelte";
   let iconColor = "#6E7681";
   let hoveringIndex = null;
   const selectFolder = async (folder: Folder) => {
@@ -30,7 +34,7 @@
   };
 
   const openFolderMenu = (e, folderId: string, folderName: string) => {
-    showFolderMenu.set(true);
+    showMoreOptions.set(true);
     buttonRef.set(e.currentTarget);
     menuForFolder.set({ folderId, folderName });
   };
@@ -40,7 +44,9 @@
   });
 </script>
 
-{#if $folderDeleteModal}
+{#if $DeleteConfirmationModal && $CredentialWillbeDeleted}
+  <CredentialDeleteModal />
+{:else if $FolderWillBeDeleted}
   <FolderDeleteModal />
 {/if}
 <div>

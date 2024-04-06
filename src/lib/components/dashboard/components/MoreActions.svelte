@@ -2,7 +2,14 @@
   import BinIcon from "../../basic/icons/binIcon.svelte";
   import EditIcon from "../../basic/icons/editIcon.svelte";
   import { FolderShare } from "../icons";
-  import { buttonRef, showFolderMenu, folderDeleteModal } from "../store";
+  import {
+    buttonRef,
+    showMoreOptions,
+    DeleteConfirmationModal,
+    menuForFolder,
+    CredentialWillbeDeleted,
+    FolderWillBeDeleted,
+  } from "../store";
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
   import { onMount, onDestroy } from "svelte";
@@ -12,15 +19,19 @@
   let isBinHovered = false;
 
   function closeModal() {
-    showFolderMenu.set(false);
+    showMoreOptions.set(false);
+    menuForFolder.set({});
   }
 
   export const buttonCoords = derived(buttonRef, ($buttonRef) => {
     if ($buttonRef) {
       const rect = $buttonRef.getBoundingClientRect();
+      const leftVal = $menuForFolder.folderId
+        ? rect.left + window.scrollX
+        : rect.left + window.scrollX - 3.5 * rect.width;
       return {
         top: rect.top + window.scrollY + rect.height,
-        left: rect.left + window.scrollX,
+        left: leftVal,
       };
     }
     return { top: 0, left: 0 };
@@ -36,10 +47,15 @@
     closeModal();
   };
 
-  const deleteFolder = () => {
-    showFolderMenu.set(false);
+  const deleteInitiate = () => {
+    if ($menuForFolder.folderId) {
+      FolderWillBeDeleted.set(true);
+    } else {
+      CredentialWillbeDeleted.set(true);
+    }
+    showMoreOptions.set(false);
     buttonRef.set(null);
-    folderDeleteModal.set(true);
+    DeleteConfirmationModal.set(true);
   };
 
   onMount(() => {
@@ -51,9 +67,11 @@
   });
 </script>
 
-{#if $showFolderMenu && $buttonRef}
+{#if $showMoreOptions && $buttonRef}
   <div
-    class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack w-[166px] rounded-2xl"
+    class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack {$menuForFolder.folderId
+      ? 'w-[166px]'
+      : 'w-[130px]'} rounded-2xl"
     style="top: {$buttonCoords.top}px; left: {$buttonCoords.left}px;"
     use:clickOutside
     on:clickedOutside={handleClickOutside}
@@ -65,7 +83,9 @@
         on:mouseleave={() => (isShareHovered = false)}
       >
         <FolderShare color={isShareHovered ? "#F2F2F0" : "#85889C"} />
-        <div class="font-inter text-base whitespace-nowrap">Share folder</div>
+        <div class="font-inter text-base whitespace-nowrap">
+          Share {$menuForFolder.folderId ? "folder" : ""}
+        </div>
       </button>
 
       <button
@@ -83,12 +103,14 @@
         class="flex items-center p-2 gap-2 w-full h-12 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg"
         on:mouseenter={() => (isBinHovered = true)}
         on:mouseleave={() => (isBinHovered = false)}
-        on:click|preventDefault={deleteFolder}
+        on:click|preventDefault={deleteInitiate}
       >
         <div class="w-6 h-6 flex items-center justify-center">
           <BinIcon color={isBinHovered ? "#F2F2F0" : "#85889C"} />
         </div>
-        <div class="font-inter text-base whitespace-nowrap">Delete folder</div>
+        <div class="font-inter text-base whitespace-nowrap">
+          Delete {$menuForFolder.folderId ? "folder" : ""}
+        </div>
       </button>
     </div>
   </div>

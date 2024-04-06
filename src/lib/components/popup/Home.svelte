@@ -58,11 +58,12 @@
 
       const decyrptedResponse = await sendMessage(
         "decryptMeta",
-        listedCredentials,
+        listedCredentials
       );
       listedCredentials = decyrptedResponse.data;
       domainAssociatedCredentials = listedCredentials;
     }
+  };
   onMount(async () => {
     query = await localStorage.getItem("query");
     if (query.length >= 1) {

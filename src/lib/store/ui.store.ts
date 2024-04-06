@@ -17,9 +17,11 @@ export let editPermissionTrigger = writable(false);
 export let isPermissionChanged = writable(false);
 export let accessSelectorIdentifier = writable(null);
 export let buttonRef = writable(null);
-export let showFolderMenu = writable(false);
+export let showMoreOptions = writable(false);
 export let menuForFolder = writable({});
-export let folderDeleteModal = writable(false);
+export let DeleteConfirmationModal = writable(false);
+export let CredentialWillbeDeleted = writable(false);
+export let FolderWillBeDeleted = writable(false);
 
 const storedPage = browser.storage.local.get("selectedPage");
 storedPage.then((value) => {

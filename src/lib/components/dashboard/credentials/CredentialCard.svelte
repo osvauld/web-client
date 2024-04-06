@@ -9,6 +9,9 @@
     searchedCredential,
     credentialStore,
     selectedFolder,
+    showMoreOptions,
+    buttonRef,
+    CredentialWillbeDeleted,
   } from "../store";
   import { removeCredential, fetchCredentialsByFolder } from "../apis";
   import { Credential, Fields } from "../dtos";
@@ -62,6 +65,12 @@
     credentialStore.set(response.data);
   };
 
+  const triggerMoreActions = (e: any) => {
+    showMoreOptions.set(true);
+    buttonRef.set(e.currentTarget);
+    CredentialWillbeDeleted.set(true);
+  };
+
   const handleClick = async () => {
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
@@ -104,12 +113,12 @@
       >
         {credential.name}
       </label>
-      <span class="pr-2">
+      <button class="pr-2" on:click={triggerMoreActions}>
         <More />
-      </span>
-      <button on:click={removeCredentialHandler}>
-        <BinIcon color={"#FF0000"} />
       </button>
+      <!-- <button on:click={removeCredentialHandler}>
+        <BinIcon color={"#FF0000"} />
+      </button> -->
     </div>
     <div
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"

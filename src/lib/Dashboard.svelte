@@ -4,8 +4,8 @@
   import RightContainer from "./components/dashboard/RightContainer.svelte";
   import { fetchAllFolders } from "./apis/folder.api";
   import { folderStore } from "./store/folder.store";
-  import FolderMenu from "./components/dashboard/folders/FolderMenu.svelte";
-  import { showFolderMenu } from "./store/ui.store";
+  import MoreActions from "./components/dashboard/components/MoreActions.svelte";
+  import { showMoreOptions } from "./store/ui.store";
   onMount(async () => {
     const responseJson = await fetchAllFolders();
     folderStore.set(responseJson.data);
@@ -29,7 +29,7 @@
     </div>
   </div>
 
-  {#if $showFolderMenu}
-    <FolderMenu />
+  {#if $showMoreOptions}
+    <MoreActions />
   {/if}
 </main>
