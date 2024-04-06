@@ -85,6 +85,10 @@ export default {
           fieldActive: "#16171F",
           fieldText: "#85889C",
           fieldTextActive: "#BFC0CC",
+          modalFieldActive: "#20212B",
+          sideListTextActive: "#F2F2F0",
+          fadedCancel: "#67697C",
+          dangerRed: "#FF6A6A",
         },
       },
       fontFamily: {

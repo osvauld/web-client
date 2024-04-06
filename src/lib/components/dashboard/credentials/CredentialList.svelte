@@ -6,13 +6,10 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add, InfoIcon, BinIcon } from "../icons";
+  import { Share, Add, InfoIcon } from "../icons";
   import {
-    fetchFolderUsers,
     fetchSignedUpUsers,
     fetchAllUserGroups,
-    fetchAllFolders,
-    removeFolder,
     fetchCredentialsByFolder,
   } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
@@ -23,7 +20,6 @@
     showCredentialShareDrawer,
     selectedFolder,
     showCredentialDetailsDrawer,
-    folderStore,
     selectedCredential,
   } from "../store";
   import { onDestroy } from "svelte";
@@ -41,7 +37,7 @@
   let showCreateCredentialModal = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -49,7 +45,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId,
+        (c) => c.credentialId !== card.credentialId
       );
     }
   }
@@ -78,7 +74,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential,
+    credential: Credential
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -99,13 +95,6 @@
       noCardsSelected = false;
     }, 1000);
     !noCardsSelected && showCredentialShareDrawer.set(true);
-  };
-
-  const removeFolderHandler = async () => {
-    await removeFolder($selectedFolder.id);
-    selectedFolder.set(null);
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
   };
 
   const addCredentialManager = () => {
@@ -152,9 +141,6 @@
           on:click={credentialShareManager}
         >
           <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
-        </button>
-        <button on:click={removeFolderHandler}>
-          <BinIcon />
         </button>
         {#if areCardsSelected}
           <span
@@ -242,7 +228,7 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId,
+            (c) => c.credentialId === credential.credentialId
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
