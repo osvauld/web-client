@@ -9,7 +9,7 @@
   import { Share, Add, InfoIcon, BinIcon } from "../icons";
   import {
     fetchFolderUsers,
-    fetchAllUsers,
+    fetchSignedUpUsers,
     fetchAllUserGroups,
     fetchAllFolders,
     removeFolder,
@@ -64,7 +64,7 @@
     const response = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(response.data);
     let [allUsersResponse, allGroupResponse] = await Promise.all([
-      fetchAllUsers(),
+      fetchSignedUpUsers(),
       fetchAllUserGroups(),
     ]);
     allGroups = allGroupResponse.data;
