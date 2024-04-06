@@ -55,7 +55,7 @@
       class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
     ></div>
     <div
-      class=" w-full font-normal text-base flex justify-center items-start bg-osvauld-fieldActive rounded-lg gap-3 p-2"
+      class=" w-full font-normal text-base flex justify-start items-center bg-osvauld-fieldActive rounded-lg gap-3 p-2"
     >
       <div class="justify-center items-center flex">
         <Warning />
