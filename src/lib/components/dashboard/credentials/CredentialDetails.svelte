@@ -144,7 +144,6 @@
     showEditCredentialModal = true;
   };
   onMount(async () => {
-    console.log(credential.accessType);
     const groupsResponse = await fetchCredentialGroups(credential.credentialId);
     groups = groupsResponse.data;
     if (sensitiveFields.length === 0) {

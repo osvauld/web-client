@@ -74,7 +74,6 @@
       await fetchCredentialsOfCurrentDomin();
     }
     const user = await getUser();
-    console.log(user.data);
     localStorage.setItem("user", JSON.stringify(user.data));
     const storedCredentialId = localStorage.getItem("selectedCredentialId");
     if (storedCredentialId != "") {
@@ -100,7 +99,6 @@
       listedCredentials = [];
       await fetchCredentialsOfCurrentDomin();
     }
-    console.log("query", query);
     await localStorage.setItem("query", query);
   };
 
