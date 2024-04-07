@@ -8,7 +8,6 @@
 </div>
 
 <Toggle />
-<!-- Add scrolbar style -->
 <div
   class="scroll-m-0 h-auto w-full scroll-smooth justify-center flex items-center mt-6"
 >

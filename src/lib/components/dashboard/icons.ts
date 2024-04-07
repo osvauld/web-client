@@ -26,3 +26,7 @@ export { default as EditIcon } from "../basic/icons/editIcon.svelte";
 export { default as UserPlus } from "../basic/icons/userPlus.svelte";
 export { default as UserCheck } from "../basic/icons/userCheck.svelte";
 export { default as Tick } from "../basic/icons/tick.svelte";
+export { default as Menu } from "../basic/icons/Menu.svelte";
+export { default as FolderIcon } from "../basic/icons/folderIcon.svelte";
+export { default as FolderShare } from "../basic/icons/FolderShare.svelte";
+export { default as Warning } from "../basic/icons/warning.svelte";

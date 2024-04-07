@@ -6,13 +6,10 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add, InfoIcon, BinIcon } from "../icons";
+  import { Share, Add, InfoIcon } from "../icons";
   import {
-    fetchFolderUsers,
-    fetchAllUsers,
+    fetchSignedUpUsers,
     fetchAllUserGroups,
-    fetchAllFolders,
-    removeFolder,
     fetchCredentialsByFolder,
   } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
@@ -23,7 +20,6 @@
     showCredentialShareDrawer,
     selectedFolder,
     showCredentialDetailsDrawer,
-    folderStore,
     selectedCredential,
   } from "../store";
   import { onDestroy } from "svelte";
@@ -41,7 +37,7 @@
   let showCreateCredentialModal = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -49,7 +45,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId,
+        (c) => c.credentialId !== card.credentialId
       );
     }
   }
@@ -64,7 +60,7 @@
     const response = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(response.data);
     let [allUsersResponse, allGroupResponse] = await Promise.all([
-      fetchAllUsers(),
+      fetchSignedUpUsers(),
       fetchAllUserGroups(),
     ]);
     allGroups = allGroupResponse.data;
@@ -78,7 +74,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential,
+    credential: Credential
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -99,13 +95,6 @@
       noCardsSelected = false;
     }, 1000);
     !noCardsSelected && showCredentialShareDrawer.set(true);
-  };
-
-  const removeFolderHandler = async () => {
-    await removeFolder($selectedFolder.id);
-    selectedFolder.set(null);
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
   };
 
   const addCredentialManager = () => {
@@ -142,19 +131,16 @@
         </h1>
         <!-- TODO: update to share credentials in the same api -->
         <button
-          class="rounded-md border border-osvauld-iconblack py-2 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90"
+          class="rounded-md border border-osvauld-iconblack py-1 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90"
           on:click={folderShareManager}
         >
           <Share color={"#A3A4B5"} /> <span class="ml-1">Share Folder</span>
         </button>
         <button
-          class=" bg-osvauld-carolinablue rounded-md py-2 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90"
+          class=" bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90"
           on:click={credentialShareManager}
         >
           <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
-        </button>
-        <button on:click={removeFolderHandler}>
-          <BinIcon />
         </button>
         {#if areCardsSelected}
           <span
@@ -175,13 +161,13 @@
           <InfoIcon />
         </button>
         <button
-          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-2 px-4 xl:scale-90 rounded-md ml-4"
+          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-1 px-4 xl:scale-90 rounded-md ml-4"
         >
           <span class="mr-1 pl-2">Latest</span>
           <DownArrow type={"common"} />
         </button>
         <button
-          class="rounded-md py-2 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 border text-osvauld-textActive border-osvauld-iconblack"
+          class="rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 border text-osvauld-textActive border-osvauld-iconblack"
           on:click={addCredentialManager}
           disabled={checkedCards.length !== 0}
           ><Add color={"#A3A4B5"} />
@@ -242,7 +228,7 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId,
+            (c) => c.credentialId === credential.credentialId
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}

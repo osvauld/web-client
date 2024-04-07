@@ -85,6 +85,12 @@ export default {
           fieldActive: "#16171F",
           fieldText: "#85889C",
           fieldTextActive: "#BFC0CC",
+          darkLineSeperator: "#21262D",
+          modalFieldActive: "#20212B",
+          sideListTextActive: "#F2F2F0",
+          fadedCancel: "#67697C",
+          dangerRed: "#FF6A6A",
+          sideListHighlight: "#292A36",
         },
       },
       fontFamily: {
@@ -103,8 +109,8 @@ export default {
           '"Segoe UI Emoji"',
           '"Segoe UI Symbol"',
           '"Noto Color Emoji"',
-          '"Plus Jakarta Sans"',
         ],
+        Jakarta: ['"Plus Jakarta Sans"', "sans-serif"],
       },
       fontSize: {
         base: "16px",

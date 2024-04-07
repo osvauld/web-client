@@ -6,11 +6,11 @@
 
   export let credential: Credential;
   let sensitiveFields = credential.fields.filter(
-    (field) => field.fieldType === "sensitive",
+    (field) => field.fieldType === "sensitive"
   );
 
   let nonSensitiveFields = credential.fields.filter(
-    (field) => field.fieldType !== "sensitive",
+    (field) => field.fieldType !== "sensitive"
   );
 </script>
 
@@ -18,7 +18,7 @@
   class="mb-1 w-full overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite"
 >
   <button
-    class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
+    class="container mx-auto py-0 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
   >
     <div
       class="w-full h-[90%] overflow-y-scroll scrollbar-thin pr-0 active mt-2"

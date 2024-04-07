@@ -23,6 +23,7 @@
   let users: User[] = [];
   let userDataForApproval: User;
   let searchInput = "";
+  let hoveredIndex = null;
   let selectedPermission = null;
   let selectedUserIndice = null;
   let finalBanner = false;
@@ -31,11 +32,11 @@
   onMount(async () => {
     if (!$selectedGroup) return;
     const userGroup = await fetchUsersWithoutGroupAccess(
-      $selectedGroup.groupId,
+      $selectedGroup.groupId
     );
     users = userGroup.data;
     const credentialFieldsResponse = await fetchCredentialFieldsByGroupId(
-      $selectedGroup.groupId,
+      $selectedGroup.groupId
     );
     credentialFields = credentialFieldsResponse.data;
   });
@@ -117,6 +118,8 @@
           {#each users as user, index}
             <li
               class="list-none my-1 py-1 mr-1 border border-osvauld-bordergreen rounded-lg hover:bg-osvauld-bordergreen"
+              on:mouseenter={() => (hoveredIndex = index)}
+              on:mouseleave={() => (hoveredIndex = null)}
             >
               <div class="flex items-center justify-between px-3">
                 <span class="text-base">{user.name}</span>
@@ -130,7 +133,11 @@
                       on:select={selectionMaker}
                     />
                   {:else}
-                    <UserPlus />
+                    <span
+                      class={hoveredIndex === index ? "visible" : "invisible"}
+                    >
+                      <UserPlus />
+                    </span>
                   {/if}
                 </button>
               </div>
@@ -140,7 +147,7 @@
       </div>
       <div class="p-2 flex justify-between items-center box-border">
         <button
-          class="w-[45%] px-4 py-2 bg-osvauld-iconblack border border-osvauld-placeholderblack rounded-md text-osvauld-sheffieldgrey"
+          class="w-[45%] px-4 py-2 bg-osvauld-frameblack border border-osvauld-iconblack rounded-md text-osvauld-sheffieldgrey"
           on:click={closeDrawer}>Cancel</button
         >
 

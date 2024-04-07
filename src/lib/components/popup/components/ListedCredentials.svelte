@@ -4,7 +4,7 @@
   export let credential;
   export let selectedCredentialId;
   export let clickedCredential;
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
   const dropDownClicked = () => {
     dispatch("select", { credentialId: credential.credentialId });
@@ -12,8 +12,8 @@
 </script>
 
 <button
-  class="rounded-2xl hover:border border-osvauld-iconblack hover:!text-osvauld-fieldTextActive bg-osvauld-cardshade px-1 py-2 font-bold text-osvauld-sheffieldgrey flex
-  flex-col justify-center items-center w-full mb-3 cursor-pointer {selectedCredentialId ===
+  class="rounded-xl hover:shadow-[0_0_0_1px_#B4BEFE] hover:!text-osvauld-fieldTextActive bg-osvauld-cardshade px-1 py-2 font-bold text-osvauld-sheffieldgrey flex
+  flex-col justify-center items-center w-[95%] mx-auto mb-3 cursor-pointer {selectedCredentialId ===
   credential.credentiaId
     ? 'border border-osvauld-iconblack'
     : ''}"
@@ -25,7 +25,9 @@
       ? 'text-osvauld-quarzowhite mb-2'
       : 'mb-0'}"
   >
-    <span class="text-base font-normal tracking-wide">{credential.name}</span>
+    <span class="text-base font-normal tracking-wide text-osvauld-fieldText"
+      >{credential.name}</span
+    >
     <button class="px-4 py-1 cursor-pointer">
       {#if selectedCredentialId === credential.credentialId}
         <DownArrow type={"common"} />

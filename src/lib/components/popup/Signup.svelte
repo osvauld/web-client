@@ -2,13 +2,14 @@
   import TempLogin from "./TempLogin.svelte";
   import SetPassPhrase from "./SetPassPhrase.svelte";
   import ImportPvtKey from "./ImportPvtKey.svelte";
-  import { isLoggedIn, isSignedUp } from "../../store/ui.store";
   import { sendMessage } from "../dashboard/helper";
+  import { createEventDispatcher } from "svelte";
 
   let isTempLoginVerified = false;
   let challenge = "";
   let username = "";
   let importPvtKeyFlag = false;
+  const dispatch = createEventDispatcher();
 
   const handleTempLogin = (e: any) => {
     challenge = e.detail.challenge;
@@ -26,8 +27,11 @@
       passphrase,
       privateKeys,
     });
-    isLoggedIn.set(true);
-    isSignedUp.set(true);
+    handleSignedUp();
+  };
+
+  const handleSignedUp = () => {
+    dispatch("signedUp");
   };
 </script>
 
@@ -37,7 +41,7 @@
   {#if importPvtKeyFlag}
     <ImportPvtKey on:submit={(e) => importPvtKey(e)} />
   {:else if isTempLoginVerified}
-    <SetPassPhrase {challenge} {username} />
+    <SetPassPhrase {challenge} {username} on:signedUp={handleSignedUp} />
   {:else}
     <TempLogin
       on:setPassPhrase={handleTempLogin}

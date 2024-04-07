@@ -3,17 +3,16 @@
   import { fetchSensitiveFieldsByCredentialId } from "../apis";
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
-  import { More, BinIcon } from "../icons";
+  import { More } from "../icons";
   import {
     showCredentialDetailsDrawer,
     searchedCredential,
-    credentialStore,
-    selectedFolder,
+    showMoreOptions,
+    buttonRef,
+    modalManager,
   } from "../store";
-  import { removeCredential, fetchCredentialsByFolder } from "../apis";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";
-  import { sendMessage } from "../helper";
   const dispatch = createEventDispatcher();
   export let credential: Credential;
   export let checked = false;
@@ -40,7 +39,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId
+          credential.credentialId,
         );
         sensitiveFields = response.data;
       }, 300);
@@ -55,18 +54,21 @@
     hoverEffect = false;
   }
 
-  const removeCredentialHandler = async () => {
-    await removeCredential(credential.credentialId);
-    const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const response = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(response.data);
+  const triggerMoreActions = (e: any) => {
+    buttonRef.set(e.currentTarget);
+    modalManager.set({
+      id: credential.credentialId,
+      name: credential.name,
+      type: "Credential",
+    });
+    showMoreOptions.set(true);
   };
 
   const handleClick = async () => {
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId
+        credential.credentialId,
       );
       sensitiveFields = response.data;
     }
@@ -75,8 +77,10 @@
 </script>
 
 <button
-  class="mb-1 max-w-[19rem] overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack {checked &&
-    'shadow-[0_0_0_1px_#B4BEFE]'}"
+  class="mb-1 overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack {checked &&
+    'shadow-[0_0_0_1px_#B4BEFE]'} {hoverEffect
+    ? 'shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)]'
+    : ''}"
   style="border: {$borderHighLight ? '1px solid #89B4FA' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
@@ -92,30 +96,35 @@
       <input
         type="checkbox"
         id={credential.credentialId}
-        class="bg-osvauld-cardshade mr-2 border-osvauld-activeBorder checked:bg-osvauld-activelavender focus:text-osvauld-activelavender hover:text-osvauld-activelavender active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
+        class="bg-osvauld-cardshade mr-2
+        {hoverEffect
+          ? 'border-osvauld-placeholderblack'
+          : 'border-osvauld-darkLineSeperator'} checked:bg-osvauld-activelavender focus:text-osvauld-activelavender hover:text-osvauld-activelavender active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
         on:change|stopPropagation={(e) => {
           toggleCheck();
         }}
         {checked}
       />
       <label
-        class="text-xl font-medium w-full text-left ml-2 cursor-pointer max-w-full text-osvauld-fieldTextActive overflow-x-hidden"
+        class="text-lg font-light w-full text-left ml-2 cursor-pointer max-w-full {hoverEffect
+          ? 'text-osvauld-sideListTextActive'
+          : 'text-osvauld-fieldTextActive '} overflow-x-hidden"
         for={credential.credentialId}
       >
         {credential.name}
       </label>
-      <span class="pr-2">
+      <button class="pr-2" on:click={triggerMoreActions}>
         <More />
-      </span>
-      <button on:click={removeCredentialHandler}>
-        <BinIcon />
       </button>
+      <!-- <button on:click={removeCredentialHandler}>
+        <BinIcon color={"#FF0000"} />
+      </button> -->
     </div>
     <div
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
     ></div>
     <div
-      class="w-[15rem] h-[14rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
+      class="w-[15rem] h-[11.5rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
         ? 'active'
         : ''} mt-2"
     >
@@ -140,14 +149,16 @@
     </div>
     <div class={credential.description.length !== 0 ? "visible" : "invisible"}>
       <label
-        class="text-osvauld-dusklabel block text-left text-sm font-normal"
+        class="text-osvauld-dusklabel block text-left text-xs font-normal"
         for="credential-description"
       >
         Description
       </label>
       <div
-        class="mt-4 w-[14.3rem] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin resize-none text-base
-    {hoverEffect ? 'text-osvauld-fieldTextActive' : 'text-osvauld-fieldText'}"
+        class="mt-1 w-[14.3rem] h-[4rem] py-1 px-2 overflow-y-scroll rounded-lg text-left scrollbar-thin resize-none text-sm
+    {hoverEffect
+          ? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive'
+          : 'text-osvauld-fieldText'}"
         id="credential-description"
       >
         {credential.description}

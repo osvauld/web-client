@@ -6,14 +6,13 @@
     selectedGroup,
     showAddUserToGroupDrawer,
     allUsersSelected,
-    adminStatus,
   } from "../store";
 
   import AddUserToGroup from "./AddUserToGroup.svelte";
 
   import { User } from "../dtos";
   import { groupUsers, groupStore } from "../store";
-  import { fetchGroupUsers, fetchAllUsers } from "../apis";
+  import { fetchGroupUsers, fetchSignedUpUsers } from "../apis";
   import AllUsersList from "./AllUsersList.svelte";
   import OtherGroupsList from "./OtherGroupsList.svelte";
 
@@ -21,18 +20,25 @@
   let groupName = "";
   let allUsers: User[] = [];
 
+  let adminStatus = false;
   onMount(() => {
-    unsubscribe = selectedGroup.subscribe((value) => {
-      if (value) {
-        groupName = value.name;
-        fetchGroupUsers(value.groupId).then((usersResponse) => {
-          groupUsers.set(usersResponse.data);
-        });
-      }
-    });
+    const accountDetails = localStorage.getItem("user");
+    let accountRole = JSON.parse(accountDetails).type;
+    if (accountRole === "admin") {
+      adminStatus = true;
+    }
     if (adminStatus) {
-      fetchAllUsers().then((usersResponse) => {
+      fetchSignedUpUsers().then((usersResponse) => {
         allUsers = usersResponse.data;
+      });
+    }
+  });
+
+  unsubscribe = selectedGroup.subscribe((value) => {
+    if (value) {
+      groupName = value.name;
+      fetchGroupUsers(value.groupId).then((usersResponse) => {
+        groupUsers.set(usersResponse.data);
       });
     }
   });
@@ -58,7 +64,7 @@
 <div class="min-w-screen h-[48rem] flex overflow-">
   <div class="w-full">
     {#if adminStatus && $allUsersSelected}
-      <AllUsersList {allUsers} />
+      <AllUsersList />
     {:else if $selectedGroup}
       <OtherGroupsList {groupName} />
     {/if}
