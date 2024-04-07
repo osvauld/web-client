@@ -1,14 +1,13 @@
 <script lang="ts">
   import AddFolder from "./AddFolder.svelte";
-  import FolderDeleteModal from "./FolderDeleteModal.svelte";
+
   import {
     showAddFolderDrawer,
     folderStore,
     selectedFolder,
     buttonRef,
-    showFolderMenu,
-    menuForFolder,
-    folderDeleteModal,
+    showMoreOptions,
+    modalManager,
   } from "../store";
 
   import { fetchAllFolders } from "../apis";
@@ -17,6 +16,7 @@
   import { onMount } from "svelte";
   let iconColor = "#6E7681";
   let hoveringIndex = null;
+
   const selectFolder = async (folder: Folder) => {
     selectedFolder.set(folder);
   };
@@ -30,19 +30,17 @@
   };
 
   const openFolderMenu = (e, folderId: string, folderName: string) => {
-    showFolderMenu.set(true);
     buttonRef.set(e.currentTarget);
-    menuForFolder.set({ folderId, folderName });
+    modalManager.set({ id: folderId, name: folderName, type: "Folder" });
+    showMoreOptions.set(true);
   };
+
   onMount(async () => {
     const responseJson = await fetchAllFolders();
     folderStore.set(responseJson.data);
   });
 </script>
 
-{#if $folderDeleteModal}
-  <FolderDeleteModal />
-{/if}
 <div>
   <button
     class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-10 mb-4 flex justify-center items-center"

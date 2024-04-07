@@ -11,11 +11,16 @@ export let showAddUserToGroupDrawer = writable(false);
 export let showCredentialDetailsDrawer = writable(false);
 export let credentialIdForEdit = writable(null);
 export let buttonRef = writable(null);
-export let showFolderMenu = writable(false);
-export let menuForFolder = writable({});
-export let folderDeleteModal = writable(false);
-
+export let showMoreOptions = writable(false);
+export let modalManager = writable<MoreActions | null>(null);
+export let DeleteConfirmationModal = writable(false);
 const storedPage = browser.storage.local.get("selectedPage");
+
+type MoreActions = {
+    id: string,
+    name: string,
+    type: string
+}
 storedPage.then((value) => {
     if (value.selectedPage) {
         selectedPage.set(value.selectedPage);

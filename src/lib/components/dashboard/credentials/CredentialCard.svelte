@@ -3,17 +3,16 @@
   import { fetchSensitiveFieldsByCredentialId } from "../apis";
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
-  import { More, BinIcon } from "../icons";
+  import { More } from "../icons";
   import {
     showCredentialDetailsDrawer,
     searchedCredential,
-    credentialStore,
-    selectedFolder,
+    showMoreOptions,
+    buttonRef,
+    modalManager,
   } from "../store";
-  import { removeCredential, fetchCredentialsByFolder } from "../apis";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";
-  import { sendMessage } from "../helper";
   const dispatch = createEventDispatcher();
   export let credential: Credential;
   export let checked = false;
@@ -40,7 +39,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId
+          credential.credentialId,
         );
         sensitiveFields = response.data;
       }, 300);
@@ -55,18 +54,21 @@
     hoverEffect = false;
   }
 
-  const removeCredentialHandler = async () => {
-    await removeCredential(credential.credentialId);
-    const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const response = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(response.data);
+  const triggerMoreActions = (e: any) => {
+    buttonRef.set(e.currentTarget);
+    modalManager.set({
+      id: credential.credentialId,
+      name: credential.name,
+      type: "Credential",
+    });
+    showMoreOptions.set(true);
   };
 
   const handleClick = async () => {
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId
+        credential.credentialId,
       );
       sensitiveFields = response.data;
     }
@@ -111,12 +113,12 @@
       >
         {credential.name}
       </label>
-      <span class="pr-2">
-        <More color={hoverEffect ? "#30363D" : "#21262D"} />
-      </span>
-      <button on:click={removeCredentialHandler}>
-        <BinIcon color={"#FF0000"} />
+      <button class="pr-2" on:click={triggerMoreActions}>
+        <More />
       </button>
+      <!-- <button on:click={removeCredentialHandler}>
+        <BinIcon color={"#FF0000"} />
+      </button> -->
     </div>
     <div
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
