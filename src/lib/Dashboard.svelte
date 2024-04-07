@@ -6,9 +6,16 @@
   import { folderStore } from "./store/folder.store";
   import FolderMenu from "./components/dashboard/folders/FolderMenu.svelte";
   import { showFolderMenu } from "./store/ui.store";
+  import { sendMessage } from "./components/dashboard/helper";
   onMount(async () => {
     const responseJson = await fetchAllFolders();
     folderStore.set(responseJson.data);
+    const response = await sendMessage("isSignedUp");
+    const checkPvtLoad = await sendMessage("checkPvtLoaded");
+
+    if (response.isSignedUp === false || !checkPvtLoad) {
+      window.location.href = "/popup.html";
+    }
   });
 </script>
 
