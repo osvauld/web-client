@@ -5,9 +5,13 @@
   import { fetchAllFolders } from "./apis/folder.api";
   import { folderStore } from "./store/folder.store";
   import MoreActions from "./components/dashboard/components/MoreActions.svelte";
-  import { showMoreOptions } from "./store/ui.store";
-  import FolderMenu from "./components/dashboard/folders/FolderMenu.svelte";
-  import { showFolderMenu } from "./store/ui.store";
+  import CredentialDeleteModal from "./components/dashboard/credentials/CredentialDeleteModal.svelte";
+  import FolderDeleteModal from "./components/dashboard/folders/FolderDeleteModal.svelte";
+  import {
+    showMoreOptions,
+    DeleteConfirmationModal,
+    modalManager,
+  } from "./store/ui.store";
   import { sendMessage } from "./components/dashboard/helper";
   import Welcome from "./components/popup/Welcome.svelte";
   import Signup from "./components/popup/Signup.svelte";
@@ -62,7 +66,13 @@
       </div>
     </div>
 
-  {#if $showMoreOptions}
-    <MoreActions />
+    {#if $showMoreOptions}
+      <MoreActions />
+    {/if}
+    {#if $DeleteConfirmationModal && $modalManager.type === "Credential"}
+      <CredentialDeleteModal />
+    {:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
+      <FolderDeleteModal />
+    {/if}
   {/if}
 </main>

@@ -65,12 +65,6 @@
   }
 </script>
 
-{#if $DeleteConfirmationModal && $modalManager.type === "Credential"}
-  <CredentialDeleteModal />
-{:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
-  <FolderDeleteModal />
-{/if}
-
 <div class="flex flex-col h-auto">
   <div
     class="h-[6rem] pr-4 flex justify-between items-center border-b border-osvauld-iconblack"
