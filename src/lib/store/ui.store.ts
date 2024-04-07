@@ -1,8 +1,6 @@
 import { writable } from "svelte/store";
 import browser from "webextension-polyfill";
 export let selectedPage = writable("");
-export let isLoggedIn = writable(false);
-export let isSignedUp = writable(false);
 export let showAddFolderDrawer = writable(false);
 export let showAddGroupDrawer = writable(false);
 export let showFolderShareDrawer = writable(false);

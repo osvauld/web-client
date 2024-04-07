@@ -8,20 +8,32 @@
   import { showFolderMenu } from "./store/ui.store";
   import { sendMessage } from "./components/dashboard/helper";
   import Welcome from "./components/popup/Welcome.svelte";
+  import Signup from "./components/popup/Signup.svelte";
+  import { getUser } from "./apis/user.api";
   let showWelcome = false;
+  let signedUp = false;
   onMount(async () => {
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
     const response = await sendMessage("isSignedUp");
     const checkPvtLoad = await sendMessage("checkPvtLoaded");
-
-    if (response.isSignedUp === false) {
-      window.location.href = "/popup.html";
-    }
+    signedUp = response.isSignedUp;
     if (checkPvtLoad === false) {
       showWelcome = true;
+    } else {
+      const responseJson = await fetchAllFolders();
+      folderStore.set(responseJson.data);
     }
   });
+
+  const handleSignedUp = () => {
+    signedUp = true;
+  };
+  const handleAuthenticated = async () => {
+    const user = await getUser();
+    localStorage.setItem("user", JSON.stringify(user.data));
+    const responseJson = await fetchAllFolders();
+    folderStore.set(responseJson.data);
+    showWelcome = false;
+  };
 </script>
 
 <main
@@ -29,8 +41,10 @@
     bg-osvauld-frameblack
    w-screen h-screen text-macchiato-text text-lg !font-sans"
 >
-  {#if showWelcome}
-    <Welcome on:authenticated={() => (showWelcome = false)} />
+  {#if !signedUp}
+    <Signup on:signedUp={handleSignedUp} />
+  {:else if showWelcome}
+    <Welcome on:authenticated={handleAuthenticated} />
   {:else}
     <div class="flex h-full">
       <div

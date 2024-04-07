@@ -1,12 +1,13 @@
 <script lang="ts">
   import Eye from "../basic/icons/eye.svelte";
-  import { isSignedUp } from "../../store/ui.store";
   import Loader from "../dashboard/components/Loader.svelte";
   import { sendMessage } from "../dashboard/helper";
+  import { createEventDispatcher } from "svelte";
 
   export let challenge;
   export let username;
 
+  const dispatch = createEventDispatcher();
   let passphrase = "";
   let confirmPassphrase = "";
   let showPassword = false;
@@ -23,8 +24,8 @@
         username,
       });
       if (response.isSaved) {
-        isSignedUp.set(true);
         isLoaderActive = false;
+        dispatch("signedUp");
       }
     } else showPassphraseMismatchError = true;
   };
