@@ -30,10 +30,11 @@
   };
 
   const openFolderMenu = (e, folderId: string, folderName: string) => {
-    showMoreOptions.set(true);
     buttonRef.set(e.currentTarget);
     modalManager.set({ id: folderId, name: folderName, type: "Folder" });
+    showMoreOptions.set(true);
   };
+
   onMount(async () => {
     const responseJson = await fetchAllFolders();
     folderStore.set(responseJson.data);

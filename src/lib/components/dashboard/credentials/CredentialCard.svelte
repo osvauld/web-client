@@ -39,7 +39,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId
+          credential.credentialId,
         );
         sensitiveFields = response.data;
       }, 300);
@@ -56,19 +56,19 @@
 
   const triggerMoreActions = (e: any) => {
     buttonRef.set(e.currentTarget);
-    showMoreOptions.set(true);
     modalManager.set({
       id: credential.credentialId,
       name: credential.name,
       type: "Credential",
     });
+    showMoreOptions.set(true);
   };
 
   const handleClick = async () => {
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId
+        credential.credentialId,
       );
       sensitiveFields = response.data;
     }
