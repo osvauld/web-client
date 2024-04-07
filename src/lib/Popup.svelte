@@ -3,7 +3,6 @@
   import Welcome from "./components/popup/Welcome.svelte";
   import Home from "./components/popup/Home.svelte";
   import { Logo } from "./components/dashboard/icons";
-  import { isSignedUp } from "../lib/store/ui.store";
   import Signup from "./components/popup/Signup.svelte";
   import Loader from "./components/dashboard/components/Loader.svelte";
   import { sendMessage } from "./components/dashboard/helper";
@@ -11,11 +10,12 @@
   let devType = "popup";
   let loggedIn = true;
   let isLoaderActive = false;
+  let isSignedUp = false;
   onMount(async () => {
     isLoaderActive = true;
     if (devType != "popup") openFullscreenTab();
     const response = await sendMessage("isSignedUp");
-    isSignedUp.set(response.isSignedUp);
+    isSignedUp = response.isSignedUp;
     const checkPvtLoad = await sendMessage("checkPvtLoaded");
     if (checkPvtLoad) {
       loggedIn = true;
@@ -38,15 +38,15 @@
 
 <main>
   <div
-    class="w-[22.5rem] h-[36.78rem] p-2 pt-3 flex flex-col !font-sans {$isSignedUp &&
+    class="w-[22.5rem] h-[36.78rem] p-2 pt-3 flex flex-col !font-sans {isSignedUp &&
     !loggedIn
       ? 'justify-center'
       : 'justify-start'} items-center bg-osvauld-frameblack"
   >
     {#if isLoaderActive}
       <Loader />
-    {:else if !$isSignedUp}
-      <Signup />
+    {:else if !isSignedUp}
+      <Signup on:signedUp={() => (isSignedUp = true)} />
     {:else if loggedIn}
       <Home />
     {:else}
