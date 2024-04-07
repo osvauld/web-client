@@ -31,6 +31,7 @@
 
   onMount(() => {
     unsubscribe = selectedGroup.subscribe((value) => {
+      if (value === null) return;
       groupAdmin = value.accessType === "admin";
     });
   });
