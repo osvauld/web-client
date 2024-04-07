@@ -61,10 +61,9 @@
       {/if}
     </button>
     {#if accessSelectorIdentifier === index}
-      <!-- Here check the index with editpermission trigger -->
       <AccessSelector on:select={(e) => eventPasser(e)} />
     {/if}
-    {#if editPermissionTrigger}
+    {#if editPermissionTrigger && item.accessSource === "acquired"}
       <button
         class="p-2 {permissionChanged && 'opacity-40'}"
         on:click={handleItemRemove}
