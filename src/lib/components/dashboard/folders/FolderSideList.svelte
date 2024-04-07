@@ -51,7 +51,7 @@
     on:click={openModal}
   >
     <Add color={iconColor} />
-    <span class="ml-1">Create new folder</span>
+    <span class="ml-1 text-base font-light">Create new folder</span>
   </button>
   {#if $showAddFolderDrawer}
     <button
@@ -67,8 +67,8 @@
     {#each $folderStore as folder, index}
       <li
         class="{$selectedFolder?.id == folder.id
-          ? 'bg-osvauld-bordergreen rounded-lg text-osvauld-sideListTextActive'
-          : 'hover:bg-osvauld-bordergreen text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 flex items-center"
+          ? 'bg-osvauld-sideListHighlight rounded-lg text-osvauld-sideListTextActive'
+          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 flex items-center"
         on:mouseenter={() => (hoveringIndex = index)}
         on:mouseleave={() => (hoveringIndex = null)}
       >

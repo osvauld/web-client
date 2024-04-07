@@ -35,6 +35,7 @@
       id={`value-${index}`}
       type="text"
       placeholder="Enter value"
+      autocomplete="off"
       required
       bind:value={field.fieldValue}
     />

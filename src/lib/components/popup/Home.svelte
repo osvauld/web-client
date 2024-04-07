@@ -13,6 +13,7 @@
   import { searchObjects } from "../dashboard/helper";
   import { getSearchFields } from "../dashboard/apis";
   import ListedCredentials from "./components/ListedCredentials.svelte";
+  import PasswordNotFound from "./components/PasswordNotFound.svelte";
 
   let passwordFound = false;
   let credentialClicked = false;
@@ -52,13 +53,13 @@
       listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
         ),
       }));
 
       const decyrptedResponse = await sendMessage(
         "decryptMeta",
-        listedCredentials,
+        listedCredentials
       );
       listedCredentials = decyrptedResponse.data;
       domainAssociatedCredentials = listedCredentials;
@@ -183,13 +184,17 @@
         on:scroll={handleScroll}
         bind:this={scrollableElement}
       >
-        {#each listedCredentials as credential}
-          <ListedCredentials
-            {credential}
-            {selectedCredentialId}
-            {clickedCredential}
-            on:select={dropDownClicked}
-          />{/each}
+        {#if listedCredentials.length !== 0}
+          {#each listedCredentials as credential}
+            <ListedCredentials
+              {credential}
+              {selectedCredentialId}
+              {clickedCredential}
+              on:select={dropDownClicked}
+            />{/each}
+        {:else}
+          <PasswordNotFound />
+        {/if}
       </div>
     </div>
   </div>

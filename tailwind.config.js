@@ -90,6 +90,7 @@ export default {
           sideListTextActive: "#F2F2F0",
           fadedCancel: "#67697C",
           dangerRed: "#FF6A6A",
+          sideListHighlight: "#292A36",
         },
       },
       fontFamily: {
