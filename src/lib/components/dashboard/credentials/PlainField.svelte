@@ -16,15 +16,13 @@
 
 <div class="mb-2.5 mr-1 max-w-full">
   <label
-    class="label block mb-1 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
+    class="label block mb-1 text-left text-osvauld-dusklabel text-xs font-normal cursor-pointer"
     for="field">{fieldName}</label
   >
   <div
-    class="py-2 px-3 w-full flex justify-between items-center rounded-lg text-base {bgColor
-      ? bgColor
-      : 'bg-osvauld-fieldActive '}{hoverEffect
-      ? 'text-osvauld-fieldTextActive'
-      : 'text-osvauld-fieldText'}"
+    class="py-1 px-3 w-full flex justify-between items-center text-base {hoverEffect
+      ? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md'
+      : 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}"
   >
     <span class="w-full text-left overflow-x-hidden font-normal text-sm"
       >{fieldValue}</span
@@ -33,7 +31,7 @@
       {#if hoverEffect}
         <ActiveCopy />
       {:else}
-        <CopyIcon color={null} />
+        <CopyIcon color={"#4D4F60"} />
       {/if}
     </button>
   </div>

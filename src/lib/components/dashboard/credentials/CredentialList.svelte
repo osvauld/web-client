@@ -131,13 +131,13 @@
         </h1>
         <!-- TODO: update to share credentials in the same api -->
         <button
-          class="rounded-md border border-osvauld-iconblack py-2 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90"
+          class="rounded-md border border-osvauld-iconblack py-1 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90"
           on:click={folderShareManager}
         >
           <Share color={"#A3A4B5"} /> <span class="ml-1">Share Folder</span>
         </button>
         <button
-          class=" bg-osvauld-carolinablue rounded-md py-2 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90"
+          class=" bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90"
           on:click={credentialShareManager}
         >
           <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
@@ -161,13 +161,13 @@
           <InfoIcon />
         </button>
         <button
-          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-2 px-4 xl:scale-90 rounded-md ml-4"
+          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-1 px-4 xl:scale-90 rounded-md ml-4"
         >
           <span class="mr-1 pl-2">Latest</span>
           <DownArrow type={"common"} />
         </button>
         <button
-          class="rounded-md py-2 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 border text-osvauld-textActive border-osvauld-iconblack"
+          class="rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 border text-osvauld-textActive border-osvauld-iconblack"
           on:click={addCredentialManager}
           disabled={checkedCards.length !== 0}
           ><Add color={"#A3A4B5"} />

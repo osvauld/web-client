@@ -6,14 +6,19 @@
     showAddGroupDrawer,
     showAddUserDrawer,
     allUsersSelected,
-    adminStatus,
   } from "../store";
   import { fetchAllUserGroups } from "../apis";
   import { Group } from "../dtos";
   import Add from "../../basic/icons/add.svelte";
-  import { GroupIcon } from "../icons";
+  import { GroupIcon, Menu } from "../icons";
   import { onMount } from "svelte";
-
+  const accountDetails = localStorage.getItem("user");
+  let accountRole = JSON.parse(accountDetails).type;
+  let adminStatus = false;
+  let hoveringIndex = null;
+  if (accountRole === "admin") {
+    adminStatus = true;
+  }
   let iconColor = "#6E7681"; //sheffieldgrey:
 
   const selectGroup = (group: Group) => {
@@ -51,7 +56,7 @@
     on:click={() => openModal("group")}
   >
     <Add color={iconColor} />
-    <span class="ml-1">Create new group</span>
+    <span class="ml-1 text-base font-light">Create new group</span>
   </button>
   {#if $showAddGroupDrawer}
     <button
@@ -62,7 +67,7 @@
       <AddGroup on:close={closeModal} />
     </button>
   {/if}
-  <ul class=" max-h-[40rem] overflow-y-scroll scrollbar-thin -pl-3 xl:scale-95">
+  <ul class=" max-h-[40rem] overflow-y-scroll scrollbar-thin -pl-3">
     {#if adminStatus}
       <li
         class="{$allUsersSelected
@@ -74,27 +79,43 @@
           class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
         >
           <GroupIcon color={$allUsersSelected ? "white" : "#85889C"} />
-          <span class="ml-2">All users</span>
+          <span class="ml-2 text-base font-light">All users</span>
         </button>
       </li>
     {/if}
-    {#each $groupStore as group}
+    {#each $groupStore as group, index}
       <li
-        class="{$selectedGroup && $selectedGroup.groupId === group.groupId
-          ? 'bg-osvauld-bordergreen rounded-lg text-osvauld-plainwhite'
-          : 'hover:bg-osvauld-bordergreen text-osvauld-quarzowhite'} rounded-md pl-3 my-0.5"
+        class="{($selectedGroup && $selectedGroup.groupId === group.groupId) ||
+        hoveringIndex === index
+          ? 'bg-osvauld-sideListHighlight text-osvauld-sideListTextActive'
+          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md pl-3 my-0.5 pr-3 flex items-center"
+        on:mouseenter={() => (hoveringIndex = index)}
+        on:mouseleave={() => (hoveringIndex = null)}
       >
         <button
           on:click={() => selectGroup(group)}
           class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
         >
           <GroupIcon
-            color={$selectedGroup && $selectedGroup.groupId === group.groupId
+            color={($selectedGroup &&
+              $selectedGroup.groupId === group.groupId) ||
+            hoveringIndex === index
               ? "white"
               : "#85889C"}
           />
-          <span class="ml-2">{group.name}</span>
+          <span class="ml-2 text-base font-light">{group.name}</span>
         </button>
+        <div
+          class="relative z-100 flex justify-center items-center {($selectedGroup &&
+            $selectedGroup.groupId === group.groupId) ||
+          hoveringIndex === index
+            ? 'visible'
+            : 'invisible'}"
+        >
+          <button class="p-2">
+            <Menu />
+          </button>
+        </div>
       </li>
     {/each}
   </ul>

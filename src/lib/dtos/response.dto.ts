@@ -1,4 +1,4 @@
-import { Group, GroupWithAccessType } from './group.dto'
+import { Group } from './group.dto'
 import { UserWithAccessType, User } from './user.dto';
 import { Folder } from './folder.dto';
 import { Credential, CredentialFields } from './credential.dto';
@@ -21,7 +21,7 @@ export type AuthResponse = BaseResponse & {
 }
 
 export type FolderGroupResponse = BaseResponse & {
-    data: GroupWithAccessType[];
+    data: Group[];
 }
 
 export type FolderUserResponse = BaseResponse & {
@@ -79,7 +79,7 @@ export type FetchAllUserGroupsResponse = BaseResponse & {
 }
 
 export type FetchGroupUsersResponse = BaseResponse & {
-    data: User[];
+    data: UserWithAccessType[];
 }
 
 export type fetchUsersByGroupIdsResponse = BaseResponse & {
@@ -105,7 +105,7 @@ export type FetchCredentialUsersResponse = BaseResponse & {
 }
 
 export type FetchCredentialGroupsResponse = BaseResponse & {
-    data: GroupWithAccessType[]
+    data: Group[]
 }
 export type FetchUsersWithoutGroupAccess = BaseResponse & {
     data: User[]

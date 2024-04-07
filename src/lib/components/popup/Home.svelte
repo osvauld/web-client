@@ -13,6 +13,7 @@
   import { searchObjects } from "../dashboard/helper";
   import { getSearchFields } from "../dashboard/apis";
   import ListedCredentials from "./components/ListedCredentials.svelte";
+  import PasswordNotFound from "./components/PasswordNotFound.svelte";
 
   let passwordFound = false;
   let credentialClicked = false;
@@ -99,7 +100,6 @@
       listedCredentials = [];
       await fetchCredentialsOfCurrentDomin();
     }
-    console.log("query", query);
     await localStorage.setItem("query", query);
   };
 
@@ -184,13 +184,17 @@
         on:scroll={handleScroll}
         bind:this={scrollableElement}
       >
-        {#each listedCredentials as credential}
-          <ListedCredentials
-            {credential}
-            {selectedCredentialId}
-            {clickedCredential}
-            on:select={dropDownClicked}
-          />{/each}
+        {#if listedCredentials.length !== 0}
+          {#each listedCredentials as credential}
+            <ListedCredentials
+              {credential}
+              {selectedCredentialId}
+              {clickedCredential}
+              on:select={dropDownClicked}
+            />{/each}
+        {:else}
+          <PasswordNotFound />
+        {/if}
       </div>
     </div>
   </div>

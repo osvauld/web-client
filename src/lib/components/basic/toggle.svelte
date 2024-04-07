@@ -19,7 +19,7 @@
       <button
         class="w-1/2 px-3 py-1.5 text-lg flex justify-center items-center rounded-lg focus:outline-none {$selectedPage ===
         item
-          ? 'bg-osvauld-bordergreen text-osvauld-plainwhite'
+          ? 'bg-osvauld-sideListHighlight text-osvauld-plainwhite'
           : 'text-osvauld-quarzowhite'} "
         on:click={() => select(item)}
       >
@@ -30,7 +30,7 @@
         {:else}
           <GroupIcon color={$selectedPage === item ? "white" : "#85889C"} />
         {/if}
-        <span class="ml-2">{item}</span>
+        <span class="ml-2 text-base font-light">{item}</span>
       </button>
     {/each}
   </div>

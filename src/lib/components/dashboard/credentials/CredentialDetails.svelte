@@ -13,24 +13,14 @@
     editUserPermissionForCredential,
     fetchSensitiveFieldsByCredentialId,
   } from "../apis";
-  import {
-    showCredentialDetailsDrawer,
-    editPermissionTrigger,
-    isPermissionChanged,
-    accessSelectorIdentifier,
-  } from "../store";
+  import { showCredentialDetailsDrawer } from "../store";
   import { ClosePanel, EditIcon } from "../icons";
   import { onMount } from "svelte";
   import ExistingListItem from "../components/ExistingListItem.svelte";
   import CredentialEditor from "./CredentialEditor.svelte";
   import { sendMessage } from "../helper";
 
-  import {
-    Credential,
-    Fields,
-    GroupWithAccessType,
-    UserWithAccessType,
-  } from "../dtos";
+  import { Credential, Fields, Group, UserWithAccessType } from "../dtos";
   import Tick from "../../basic/icons/tick.svelte";
   export let credential: Credential;
   export let sensitiveFields: Fields[];
@@ -40,6 +30,7 @@
   let permissionChangeAttemptMessage = "";
   let changeToast = false;
   let fieldsForEdit = [];
+  let editPermissionTrigger = false;
 
   let userPermissions: {
     credentialId: string;
@@ -53,7 +44,7 @@
   };
   let showEditCredentialModal = false;
   let users: UserWithAccessType[] = [];
-  let groups: GroupWithAccessType[] = [];
+  let groups: Group[] = [];
 
   const toggleSelect = async (e: any) => {
     selectedTab = e.detail;
@@ -68,9 +59,7 @@
     }
   };
 
-  const removeGroupFromCredentialHandler = async (
-    group: GroupWithAccessType,
-  ) => {
+  const removeGroupFromCredentialHandler = async (group: Group) => {
     await removeGroupFromCredential(credential.credentialId, group.groupId);
     await toggleSelect({ detail: "Groups" });
   };
@@ -111,7 +100,7 @@
 
   const permissionChangeHandler = async (e: any, id: string, type: string) => {
     accessChangeDetected = true;
-    accessSelectorIdentifier.set(null);
+
     if (type == "user") {
       userPermissions = {
         credentialId: credential.credentialId,
@@ -270,13 +259,11 @@
               </button>
             {/if}
             <button
-              class="p-2 rounded-lg {$editPermissionTrigger
+              class="p-2 rounded-lg {editPermissionTrigger
                 ? 'bg-osvauld-sensitivebgblue'
                 : ''}"
               on:click={() => {
-                editPermissionTrigger.set(!$editPermissionTrigger);
-                isPermissionChanged.set(false);
-                accessSelectorIdentifier.set(null);
+                editPermissionTrigger = !editPermissionTrigger;
               }}
             >
               <EditIcon />
@@ -289,6 +276,7 @@
               <ExistingListItem
                 item={group}
                 {index}
+                {editPermissionTrigger}
                 on:remove={() => removeGroupFromCredentialHandler(group)}
                 on:permissonChange={(e) =>
                   permissionChangeHandler(e, group.groupId, "group")}
@@ -299,6 +287,7 @@
               <ExistingListItem
                 item={user}
                 {index}
+                {editPermissionTrigger}
                 on:remove={() => removeUserFromCredentialHandler(user)}
                 on:permissonChange={(e) =>
                   permissionChangeHandler(e, user.id, "user")}

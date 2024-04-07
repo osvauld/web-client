@@ -76,7 +76,7 @@
     class="h-[6rem] pr-4 flex justify-between items-center border-b border-osvauld-iconblack"
   >
     <div
-      class="h-[2.2rem] w-[31.25rem] px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+      class="h-[2.2rem] w-[31.25rem] px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
     >
       <Lens />
       <input

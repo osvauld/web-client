@@ -1,12 +1,12 @@
 <script lang="ts">
   import { BinIcon } from "../icons";
   import { AddCredentialField } from "../dtos";
+  import { createEventDispatcher } from "svelte";
 
   export let field: AddCredentialField;
   export let index: Number;
   export let hoveredIndex: Number | null;
 
-  import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
   const sensitiveLabelMaker = (index: Number, identifier: Boolean) => {
@@ -26,6 +26,7 @@
       id={`key-${index}`}
       type="text"
       placeholder="Enter field name"
+      required
       autofocus
       bind:value={field.fieldName}
     />
@@ -34,6 +35,8 @@
       id={`value-${index}`}
       type="text"
       placeholder="Enter value"
+      autocomplete="off"
+      required
       bind:value={field.fieldValue}
     />
     <div

@@ -27,6 +27,10 @@
         username,
         password,
       );
+      if (challengeResponse.success === false) {
+        isLoaderActive = false;
+        showVerificationError = true;
+      }
       if (challengeResponse.data.challenge) {
         dispatch("setPassPhrase", {
           challenge: challengeResponse.data.challenge,
