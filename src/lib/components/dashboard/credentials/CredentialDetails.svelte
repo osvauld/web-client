@@ -58,14 +58,14 @@
       users = usersResponse.data;
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
-        credential.credentialId,
+        credential.credentialId
       );
       groups = groupsResponse.data;
     }
   };
 
   const removeGroupFromCredentialHandler = async (
-    group: GroupWithAccessType,
+    group: GroupWithAccessType
   ) => {
     await removeGroupFromCredential(credential.credentialId, group.groupId);
     await toggleSelect({ detail: "Groups" });
@@ -80,7 +80,7 @@
       const userPermissionSaveResponse = await editUserPermissionForCredential(
         userPermissions.credentialId,
         userPermissions.userId,
-        userPermissions.accessType,
+        userPermissions.accessType
       );
       await toggleSelect({ detail: "Users" });
       accessChangeDetected = false;
@@ -93,7 +93,7 @@
         await editGroupPermissionForCredential(
           groupPermissions.credentialId,
           groupPermissions.groupId,
-          groupPermissions.accessType,
+          groupPermissions.accessType
         );
       await toggleSelect({ detail: "Groups" });
       accessChangeDetected = false;
@@ -148,7 +148,7 @@
     groups = groupsResponse.data;
     if (sensitiveFields.length === 0) {
       const sensitiveFieldsResponse = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       sensitiveFields = sensitiveFieldsResponse.data;
     }

@@ -28,7 +28,7 @@
 
 <div class="flex items-center justify-between px-4 py-5 pb-0">
   <h1 class="text-4xl p-4 font-normal w-1/3 ml-3">{groupName}</h1>
-  <div
+  <!-- <div
     class="h-[2.1rem] w-1/3 px-2 flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
   >
     <Lens />
@@ -37,7 +37,7 @@
       class="h-[1.76rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
       placeholder="Search for group members.."
     />
-  </div>
+  </div> -->
   <button
     class="rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
     on:click={() => showAddUserToGroupDrawer.set(true)}
