@@ -9,7 +9,7 @@
     searchedCredential,
     showMoreOptions,
     buttonRef,
-    CredentialWillbeDeleted,
+    modalManager,
   } from "../store";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";
@@ -55,12 +55,12 @@
   }
 
   const triggerMoreActions = (e: any) => {
-    showMoreOptions.set(true);
     buttonRef.set(e.currentTarget);
-    CredentialWillbeDeleted.set({
-      confirmation: true,
-      credentialId: credential.credentialId,
+    showMoreOptions.set(true);
+    modalManager.set({
+      id: credential.credentialId,
       name: credential.name,
+      type: "Credential",
     });
   };
 

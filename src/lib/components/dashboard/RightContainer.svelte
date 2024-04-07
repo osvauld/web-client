@@ -1,6 +1,8 @@
 <script lang="ts">
   import CredentialList from "./credentials/CredentialList.svelte";
   import GroupList from "./groups/GroupList.svelte";
+  import CredentialDeleteModal from "./credentials/CredentialDeleteModal.svelte";
+  import FolderDeleteModal from "./folders/FolderDeleteModal.svelte";
   import SearchModal from "./SearchModal.svelte";
   import { searchObjects } from "./helper";
   import { getSearchFields } from "./apis";
@@ -10,6 +12,8 @@
     selectedPage,
     credentialStore,
     searchedCredential,
+    DeleteConfirmationModal,
+    modalManager,
   } from "./store";
 
   import { Folder } from "./dtos";
@@ -60,6 +64,12 @@
     node.focus();
   }
 </script>
+
+{#if $DeleteConfirmationModal && $modalManager.type === "Credential"}
+  <CredentialDeleteModal />
+{:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
+  <FolderDeleteModal />
+{/if}
 
 <div class="flex flex-col h-auto">
   <div

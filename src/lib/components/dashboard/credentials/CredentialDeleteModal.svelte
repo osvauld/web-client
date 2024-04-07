@@ -1,10 +1,9 @@
 <script>
   import ClosePanel from "../../basic/icons/closePanel.svelte";
   import {
-    menuForFolder,
+    modalManager,
     DeleteConfirmationModal,
     showMoreOptions,
-    CredentialWillbeDeleted,
     selectedFolder,
     credentialStore,
   } from "../store";
@@ -12,10 +11,11 @@
   import { sendMessage } from "../helper";
   import { Warning } from "../icons";
   import { removeCredential, fetchCredentialsByFolder } from "../apis";
+
   function withdrawCredentialDeleteModal() {
+    modalManager.set(null);
     showMoreOptions.set(false);
     DeleteConfirmationModal.set(false);
-    CredentialWillbeDeleted.set({});
   }
 
   const removeCredentialHandler = async (credentialId) => {
@@ -26,7 +26,7 @@
   };
 
   async function DeleteConfirmation() {
-    await removeCredentialHandler($CredentialWillbeDeleted.credentialId);
+    await removeCredentialHandler($modalManager.id);
     withdrawCredentialDeleteModal();
   }
 </script>
@@ -41,8 +41,7 @@
   >
     <div class="flex justify-between items-center w-full">
       <span class="text-[21px] font-medium text-osvauld-quarzowhite"
-        >Delete {$menuForFolder.folderName ||
-          $CredentialWillbeDeleted.name}</span
+        >Delete {$modalManager.name}</span
       >
       <button
         class="cursor-pointer p-2"

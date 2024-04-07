@@ -6,8 +6,7 @@
     buttonRef,
     showMoreOptions,
     DeleteConfirmationModal,
-    menuForFolder,
-    CredentialWillbeDeleted,
+    modalManager,
   } from "../store";
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
@@ -19,16 +18,16 @@
 
   function closeModal() {
     showMoreOptions.set(false);
-    menuForFolder.set({});
-    CredentialWillbeDeleted.set({});
+    modalManager.set(null);
   }
 
   export const buttonCoords = derived(buttonRef, ($buttonRef) => {
     if ($buttonRef) {
       const rect = $buttonRef.getBoundingClientRect();
-      const leftVal = $menuForFolder.folderId
-        ? rect.left + window.scrollX
-        : rect.left + window.scrollX - 3.5 * rect.width;
+      const leftVal =
+        $modalManager.type === "Folder"
+          ? rect.left + window.scrollX
+          : rect.left + window.scrollX - 3.5 * rect.width;
       return {
         top: rect.top + window.scrollY + rect.height,
         left: leftVal,
@@ -64,7 +63,8 @@
 
 {#if $showMoreOptions && $buttonRef}
   <div
-    class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack {$menuForFolder.folderId
+    class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack {$modalManager.type ===
+    'Folder'
       ? 'w-[166px]'
       : 'w-[130px]'} rounded-2xl"
     style="top: {$buttonCoords.top}px; left: {$buttonCoords.left}px;"
@@ -79,7 +79,7 @@
       >
         <FolderShare color={isShareHovered ? "#F2F2F0" : "#85889C"} />
         <div class="font-inter text-base whitespace-nowrap">
-          Share {$menuForFolder.folderId ? "folder" : ""}
+          Share {$modalManager.type === "Folder" ? "folder" : ""}
         </div>
       </button>
 
@@ -104,7 +104,7 @@
           <BinIcon color={isBinHovered ? "#F2F2F0" : "#85889C"} />
         </div>
         <div class="font-inter text-base whitespace-nowrap">
-          Delete {$menuForFolder.folderId ? "folder" : ""}
+          Delete {$modalManager.type === "Folder" ? "folder" : ""}
         </div>
       </button>
     </div>

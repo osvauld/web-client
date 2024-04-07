@@ -1,7 +1,7 @@
 <script>
   import ClosePanel from "../../basic/icons/closePanel.svelte";
   import {
-    menuForFolder,
+    modalManager,
     DeleteConfirmationModal,
     showMoreOptions,
     folderStore,
@@ -13,11 +13,11 @@
   function withdrawFolderDeleteModal() {
     showMoreOptions.set(false);
     DeleteConfirmationModal.set(false);
-    menuForFolder.set({});
+    modalManager.set(null);
   }
 
   async function DeleteConfirmation() {
-    await removeFolder($menuForFolder.folderId);
+    await removeFolder($modalManager.id);
     withdrawFolderDeleteModal();
     const responseJson = await fetchAllFolders();
     folderStore.set(responseJson.data);
@@ -34,7 +34,7 @@
   >
     <div class="flex justify-between items-center w-full">
       <span class="text-[21px] font-medium text-osvauld-quarzowhite"
-        >Delete {$menuForFolder.folderName} folder</span
+        >Delete {$modalManager.name} folder</span
       >
       <button
         class="cursor-pointer p-2"
