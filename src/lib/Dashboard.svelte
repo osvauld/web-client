@@ -11,7 +11,7 @@
   import Signup from "./components/popup/Signup.svelte";
   import { getUser } from "./apis/user.api";
   let showWelcome = false;
-  let signedUp = false;
+  let signedUp = true;
   onMount(async () => {
     const response = await sendMessage("isSignedUp");
     const checkPvtLoad = await sendMessage("checkPvtLoaded");

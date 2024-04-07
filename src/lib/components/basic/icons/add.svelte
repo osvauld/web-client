@@ -1,5 +1,5 @@
 <script>
-  export let color;
+  export let color = "#010409";
 </script>
 
 <svg
@@ -11,8 +11,8 @@
 >
   <path
     d="M13 11.25V11.5H13.25H20.25V12.5H13.25H13V12.75V19.75H12V12.75V12.5H11.75H4.75V11.5H11.75H12V11.25V4.25H13V11.25Z"
-    fill={color || "#010409"}
-    stroke={color || "#010409"}
+    fill={color}
+    stroke={color}
     stroke-width="1"
   />
 </svg>

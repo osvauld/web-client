@@ -8,12 +8,6 @@
     allUsersSelected,
   } from "../store";
 
-  const accountDetails = localStorage.getItem("user");
-  let accountRole = JSON.parse(accountDetails).type;
-  let adminStatus = false;
-  if (accountRole === "admin") {
-    adminStatus = true;
-  }
   import AddUserToGroup from "./AddUserToGroup.svelte";
 
   import { User } from "../dtos";
@@ -26,18 +20,25 @@
   let groupName = "";
   let allUsers: User[] = [];
 
+  let adminStatus = false;
   onMount(() => {
-    unsubscribe = selectedGroup.subscribe((value) => {
-      if (value) {
-        groupName = value.name;
-        fetchGroupUsers(value.groupId).then((usersResponse) => {
-          groupUsers.set(usersResponse.data);
-        });
-      }
-    });
+    const accountDetails = localStorage.getItem("user");
+    let accountRole = JSON.parse(accountDetails).type;
+    if (accountRole === "admin") {
+      adminStatus = true;
+    }
     if (adminStatus) {
       fetchSignedUpUsers().then((usersResponse) => {
         allUsers = usersResponse.data;
+      });
+    }
+  });
+
+  unsubscribe = selectedGroup.subscribe((value) => {
+    if (value) {
+      groupName = value.name;
+      fetchGroupUsers(value.groupId).then((usersResponse) => {
+        groupUsers.set(usersResponse.data);
       });
     }
   });

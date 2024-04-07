@@ -1,7 +1,7 @@
 <script lang="ts">
   import {
     Group,
-    GroupWithAccessType,
+    Group,
     CredentialFields,
     ShareFolderWithGroupsPayload,
   } from "../dtos";
@@ -26,14 +26,14 @@
   let groups: Group[] = [];
   export let credentialsFields: CredentialFields[];
 
-  let selectedGroups = writable(new Map<string, GroupWithAccessType>());
+  let selectedGroups = writable(new Map<string, Group>());
   let showOptions = false;
   let selectionIndex: number | null = null;
   let topList = false;
   let searchInput = "";
   let shareToast = false;
   let existingItemDropdown = false;
-  let existingGroupsData: GroupWithAccessType[] = [];
+  let existingGroupsData: Group[] = [];
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
@@ -86,7 +86,7 @@
   }
 
   function handleItemRemove(id: string) {
-    let removedGroup: GroupWithAccessType | undefined;
+    let removedGroup: Group | undefined;
     selectedGroups.update((currentGroups) => {
       removedGroup = currentGroups.get(id);
       currentGroups.delete(id);

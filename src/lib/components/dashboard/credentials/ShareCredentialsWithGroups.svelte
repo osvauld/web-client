@@ -1,7 +1,7 @@
 <script lang="ts">
   import {
     Group,
-    GroupWithAccessType,
+    Group,
     CredentialFields,
     ShareCredentialsWithGroupsPayload,
   } from "../dtos";
@@ -15,7 +15,7 @@
   import ShareToast from "../components/ShareToast.svelte";
   export let groups: Group[];
   export let credentialsFields: CredentialFields[];
-  let selectedGroups = writable(new Map<string, GroupWithAccessType>());
+  let selectedGroups = writable(new Map<string, Group>());
   let showOptions = false;
   let selectionIndex: number | null = null;
   let topList = false;
@@ -24,7 +24,7 @@
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase())
+        group.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : groups;
 
@@ -60,7 +60,7 @@
   }
 
   function handleItemRemove(id: string) {
-    let removedGroup: GroupWithAccessType | undefined;
+    let removedGroup: Group | undefined;
     selectedGroups.update((currentGroups) => {
       if (currentGroups.has(id)) {
         removedGroup = currentGroups.get(id);
