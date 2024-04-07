@@ -18,6 +18,9 @@
     signedUp = response.isSignedUp;
     if (checkPvtLoad === false) {
       showWelcome = true;
+    } else {
+      const responseJson = await fetchAllFolders();
+      folderStore.set(responseJson.data);
     }
   });
 
