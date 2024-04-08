@@ -15,7 +15,7 @@
   <div
     class="inline-flex w-full justify-center space-x-1 p-0.5 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl font-normal text-sm"
   >
-    {#each ["Groups", "Users"] as item}
+    {#each ["Users", "Groups"] as item}
       <button
         class="w-1/2 px-6 py-2 flex justify-center items-center rounded-lg focus:outline-none {selectedItem ===
         item

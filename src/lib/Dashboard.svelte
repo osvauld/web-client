@@ -11,11 +11,13 @@
     showMoreOptions,
     DeleteConfirmationModal,
     modalManager,
+    accessListSelected,
   } from "./store/ui.store";
   import { sendMessage } from "./components/dashboard/helper";
   import Welcome from "./components/popup/Welcome.svelte";
   import Signup from "./components/popup/Signup.svelte";
   import { getUser } from "./apis/user.api";
+  import AccessListModal from "./components/dashboard/credentials/AccessListModal.svelte";
   let showWelcome = false;
   let signedUp = true;
   onMount(async () => {
@@ -73,6 +75,9 @@
       <CredentialDeleteModal />
     {:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
       <FolderDeleteModal />
+    {/if}
+    {#if $accessListSelected}
+      <AccessListModal />
     {/if}
   {/if}
 </main>
