@@ -92,14 +92,16 @@
             ? 'visible'
             : 'invisible'}"
         >
-          <button
-            class="p-2"
-            on:click={(e) => {
-              openFolderMenu(e, folder.id, folder.name);
-            }}
-          >
-            <Menu />
-          </button>
+          {#if folder.accessType === "manager"}
+            <button
+              class="p-2"
+              on:click={(e) => {
+                openFolderMenu(e, folder.id, folder.name);
+              }}
+            >
+              <Menu />
+            </button>
+          {/if}
         </div>
       </li>
     {/each}

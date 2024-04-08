@@ -37,7 +37,7 @@
   let showCreateCredentialModal = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -45,7 +45,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId
+        (c) => c.credentialId !== card.credentialId,
       );
     }
   }
@@ -74,7 +74,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential
+    credential: Credential,
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -130,6 +130,7 @@
           {$selectedFolder.name}
         </h1>
         <!-- TODO: update to share credentials in the same api -->
+       {#if $selectedFolder.accessType === "manager"}
         <button
           class="rounded-md border border-osvauld-iconblack py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2"
           on:click={folderShareManager}
@@ -137,6 +138,7 @@
           <Share color={"#A3A4B5"} />
           <span class="ml-1 text-sm">Share Folder</span>
         </button>
+       {/if}
         <button
           class=" bg-osvauld-carolinablue rounded-md py-1.5 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap"
           on:click={credentialShareManager}
@@ -233,7 +235,7 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId
+            (c) => c.credentialId === credential.credentialId,
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
