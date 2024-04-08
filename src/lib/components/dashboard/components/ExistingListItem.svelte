@@ -47,29 +47,31 @@
     <button
       class="w-[10rem] rounded-md cursor-pointer px-1 py-0.5 {permissionChanged &&
         'opacity-40'} flex justify-around items-center {setbackground(
-        item.accessType,
+        item.accessType
       )}"
       on:click={() => {
-        if (editPermissionTrigger) {
+        if (editPermissionTrigger && item.accessSource === "acquired") {
           changePermissionHandler();
         }
       }}
     >
       <span>{item.accessType}</span>
-      {#if editPermissionTrigger}
+      {#if editPermissionTrigger && item.accessSource === "acquired"}
         <DownArrow type={item.accessType} />
       {/if}
     </button>
-    {#if accessSelectorIdentifier === index}
-      <AccessSelector on:select={(e) => eventPasser(e)} />
-    {/if}
-    {#if editPermissionTrigger && item.accessSource === "acquired"}
-      <button
-        class="p-2 {permissionChanged && 'opacity-40'}"
-        on:click={handleItemRemove}
-      >
-        <BinIcon />
-      </button>
+    {#if item.accessSource === "acquired"}
+      {#if accessSelectorIdentifier === index}
+        <AccessSelector on:select={(e) => eventPasser(e)} />
+      {/if}
+      {#if editPermissionTrigger}
+        <button
+          class="p-2 {permissionChanged && 'opacity-40'}"
+          on:click={handleItemRemove}
+        >
+          <BinIcon />
+        </button>
+      {/if}
     {/if}
   </div>
 </div>

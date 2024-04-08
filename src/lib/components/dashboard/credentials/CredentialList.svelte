@@ -172,7 +172,12 @@
           class="text-osvauld-sideListTextActive bg-osvauld-modalFieldActive rounded-md flex justify-around items-center px-4 py-1.5 text-sm"
           on:click={handleAccessListSelection}
         >
-          <EyeScan color={"#fff"} /> <span class="ml-2">Access List</span>
+          <EyeScan color={$accessListSelected ? "#89B4FA" : "#F2F2F0"} />
+          <span
+            class="ml-2 {$accessListSelected
+              ? 'text-osvauld-carolinablue'
+              : 'text-osvauld-sideListTextActive'}">Access List</span
+          >
         </button>
         <button
           class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-1.5 px-4 text-sm rounded-md ml-4"

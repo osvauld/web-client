@@ -22,48 +22,31 @@
   };
 </script>
 
-<div
-  class="p-2 my-2 border border-osvauld-iconblack rounded-lg min-h-min max-h-[50vh] mb-2"
->
+<div class="flex justify-end items-center w-full">
   <button
-    class="flex justify-between items-center p-1 w-full bg-osvauld-frameblack text-osvauld-sheffieldgrey text-base font-semibold cursor-pointer border border-osvauld-iconblack rounded-lg"
-    on:click={dispatchClick}
+    class="p-2 mt-2 rounded-lg {editPermissionTrigger
+      ? 'bg-osvauld-sensitivebgblue'
+      : ''}"
+    on:click={() => {
+      editPermissionTrigger = !editPermissionTrigger;
+    }}
   >
-    <span class="ml-3 text-base font-normal">
-      {user ? "Users" : "Groups"} with Access</span
-    >
-    <span class="bg-osvauld-bordergreen px-4 py-1 rounded-[4px] z-0">
-      {#if existingItemDropdown}
-        <DownArrow type={"common"} />
-      {:else}
-        <RightArrow />
-      {/if}
-    </span>
+    <EditIcon />
   </button>
+</div>
+<div class="p-2 my-2 w-full rounded-lg min-h-0 max-h-[50vh] mb-2">
   <div
-    class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[18vh] bg-osvauld-frameblack w-full"
+    class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[30vh] bg-osvauld-frameblack w-full"
   >
-    {#if existingItemDropdown}
-      <button
-        class="p-2 rounded-lg {editPermissionTrigger
-          ? 'bg-osvauld-sensitivebgblue'
-          : ''}"
-        on:click={() => {
-          editPermissionTrigger = !editPermissionTrigger;
-        }}
-      >
-        <EditIcon />
-      </button>
-      {#each existingItemsData as item, index}
-        <!-- TODO: user should not be able to remove themselves -->
-        <ExistingListItem
-          {index}
-          {item}
-          {editPermissionTrigger}
-          on:remove={() => handleRemoval(item)}
-          on:permissonChange={(e) => handlePermissionChange(e, item)}
-        />
-      {/each}
-    {/if}
+    {#each existingItemsData as item, index}
+      <!-- TODO: user should not be able to remove themselves -->
+      <ExistingListItem
+        {index}
+        {item}
+        {editPermissionTrigger}
+        on:remove={() => handleRemoval(item)}
+        on:permissonChange={(e) => handlePermissionChange(e, item)}
+      />
+    {/each}
   </div>
 </div>
