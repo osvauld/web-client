@@ -37,7 +37,7 @@
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase()),
+        group.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : groups;
 
@@ -126,7 +126,7 @@
     await editFolderPermissionForGroup(
       $selectedFolder.id,
       e.detail.item.id,
-      e.detail.permission,
+      e.detail.permission
     );
     await existingGroups(false);
   };
@@ -143,7 +143,7 @@
   }
 </script>
 
-<div class="p-2 border border-osvauld-bordergreen rounded-lg max-h-[65vh]">
+<div class="p-2 rounded-lg max-h-[65vh]">
   <div
     class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
   >

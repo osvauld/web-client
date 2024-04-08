@@ -143,7 +143,7 @@
     </div>
   {/if}
   <div
-    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[35vh] bg-osvauld-frameblack w-full"
+    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[35vh] bg-osvauld-frameblack w-full flex flex-col justify-center items-center"
   >
     {#each filteredUsers as user, index}
       <ListItem
