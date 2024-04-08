@@ -27,10 +27,7 @@ export type FolderGroupResponse = BaseResponse & {
 export type FolderUserResponse = BaseResponse & {
     data: UserWithAccessType[];
 }
-// TODO: change fetchallfolders api 
-export type FetchFoldersResponse = BaseResponse & {
-    data: Folder[];
-}
+
 
 
 export type FetchAllUsersResponse = BaseResponse & {
