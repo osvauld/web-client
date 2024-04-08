@@ -6,7 +6,7 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add, InfoIcon } from "../icons";
+  import { Share, Add, InfoIcon, EyeScan } from "../icons";
   import {
     fetchSignedUpUsers,
     fetchAllUserGroups,
@@ -131,16 +131,19 @@
         </h1>
         <!-- TODO: update to share credentials in the same api -->
         <button
-          class="rounded-md border border-osvauld-iconblack py-1 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90"
+          class="rounded-md border border-osvauld-iconblack py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2"
           on:click={folderShareManager}
         >
-          <Share color={"#A3A4B5"} /> <span class="ml-1">Share Folder</span>
+          <Share color={"#A3A4B5"} />
+          <span class="ml-1 text-sm">Share Folder</span>
         </button>
         <button
-          class=" bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90"
+          class=" bg-osvauld-carolinablue rounded-md py-1.5 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap"
           on:click={credentialShareManager}
         >
-          <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
+          <Share color={"#0D0E13"} /><span class="ml-1 text-sm"
+            >Share Credentials</span
+          >
         </button>
         {#if areCardsSelected}
           <span
@@ -157,21 +160,23 @@
         {/if}
       </div>
       <div class="w-1/2 flex justify-end items-center">
-        <button disabled class="scale-110">
-          <InfoIcon />
+        <button
+          class="text-osvauld-sideListTextActive bg-osvauld-modalFieldActive rounded-md flex justify-around items-center px-4 py-1.5 text-sm"
+        >
+          <EyeScan color={"#fff"} /> <span class="ml-2">Access List</span>
         </button>
         <button
-          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-1 px-4 xl:scale-90 rounded-md ml-4"
+          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-1.5 px-4 text-sm rounded-md ml-4"
         >
-          <span class="mr-1 pl-2">Latest</span>
+          <span class="mr-2 pl-2">Latest</span>
           <DownArrow type={"common"} />
         </button>
         <button
-          class="rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 border text-osvauld-textActive border-osvauld-iconblack"
+          class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack"
           on:click={addCredentialManager}
           disabled={checkedCards.length !== 0}
           ><Add color={"#A3A4B5"} />
-          <span class="ml-1">Add New Credential</span>
+          <span class="ml-2">Add New Credential</span>
         </button>
       </div>
     </div>

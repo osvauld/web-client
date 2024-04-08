@@ -22,7 +22,7 @@
   import ListItem from "../components/ListItem.svelte";
   import ExistingListParent from "../components/ExistingListParent.svelte";
   import ShareToast from "../components/ShareToast.svelte";
-
+  const dispatch = createEventDispatcher();
   let groups: Group[] = [];
   export let credentialsFields: CredentialFields[];
 
@@ -138,7 +138,6 @@
   });
 
   function handleCancel() {
-    const dispatch = createEventDispatcher();
     dispatch("cancel", true);
   }
 </script>
