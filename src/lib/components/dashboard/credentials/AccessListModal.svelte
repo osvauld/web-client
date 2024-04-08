@@ -2,18 +2,21 @@
   import { Lens, ClosePanel } from "../icons";
   import ExistingListParent from "../components/ExistingListParent.svelte";
   import UserGroupToggle from "../UserGroupToggle.svelte";
-  import {} from "../../../store/ui.store";
   import { accessListSelected, selectedFolder, buttonRef } from "../store";
   import {
     fetchFolderUsers,
     removeUserFromFolder,
     editFolderPermissionForUser,
+    fetchFolderGroups,
+    removeGroupFromFolder,
+    editFolderPermissionForGroup,
   } from "../apis";
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
   import { onMount } from "svelte";
   let existingUserData = [];
-  let selectedTab = "Users";
+  let existingGroupsData = [];
+  let selectedTab = "Groups";
   let existingItemDropdown = false;
 
   export const buttonCoords = derived(buttonRef, ($buttonRef) => {
@@ -33,35 +36,56 @@
     buttonRef.set(null);
   }
 
-  const toggleSelect = (e: any) => {
+  const toggleSelect = async (e: any) => {
     selectedTab = e.detail;
+    await existingItems();
   };
 
-  const existingUsers = async () => {
-    if ($selectedFolder !== null) {
+  const existingItems = async () => {
+    if ($selectedFolder !== null && selectedTab === "Users") {
       const responseJson = await fetchFolderUsers($selectedFolder.id);
+      console.log("folder users...");
       existingUserData = responseJson.data;
     } else {
       existingUserData.length = 0;
+    }
+    if ($selectedFolder !== null && selectedTab === "Groups") {
+      const reponseJson = await fetchFolderGroups($selectedFolder.id);
+      existingGroupsData = reponseJson.data;
+    } else {
+      existingGroupsData.length = 0;
     }
   };
 
   const removeExistingUser = async (e: any) => {
     await removeUserFromFolder($selectedFolder.id, e.detail.id);
-    await existingUsers();
+    await existingItems();
+  };
+
+  const removeExistingGroup = async (e: any) => {
+    await removeGroupFromFolder($selectedFolder.id, e.detail.groupId);
+    await existingItems();
   };
 
   const handlePermissionChange = async (e: any) => {
-    await editFolderPermissionForUser(
-      $selectedFolder.id,
-      e.detail.item.id,
-      e.detail.permission
-    );
-    await existingUsers();
+    if (selectedTab === "Users") {
+      await editFolderPermissionForUser(
+        $selectedFolder.id,
+        e.detail.item.id,
+        e.detail.permission,
+      );
+    } else {
+      await editFolderPermissionForGroup(
+        $selectedFolder.id,
+        e.detail.item.groupId,
+        e.detail.permission,
+      );
+    }
+    await existingItems();
   };
 
   onMount(async () => {
-    await existingUsers();
+    await existingItems();
   });
 </script>
 
@@ -101,19 +125,19 @@
     <div
       class="overflow-y-auto scrollbar-thin min-h-0 max-h-[35vh] bg-osvauld-frameblack w-full flex flex-col justify-center items-center"
     >
-      <ExistingListParent
-        {existingItemDropdown}
-        existingItemsData={existingUserData}
-        user={true}
-        on:remove={(e) => removeExistingUser(e)}
-        on:permissionChange={(e) => handlePermissionChange(e)}
-      />
+      {#if selectedTab === "Users"}
+        <ExistingListParent
+          existingItemsData={existingUserData}
+          on:remove={(e) => removeExistingUser(e)}
+          on:permissionChange={(e) => handlePermissionChange(e)}
+        />
+      {:else}
+        <ExistingListParent
+          existingItemsData={existingGroupsData}
+          on:remove={(e) => removeExistingGroup(e)}
+          on:permissionChange={(e) => handlePermissionChange(e)}
+        />
+      {/if}
     </div>
-    <!-- {#if shareToast}
-      <ShareToast
-        message={"Shared Folder with user"}
-        on:close={() => (shareToast = !shareToast)}
-      />
-    {/if} -->
   </div>
 </div>

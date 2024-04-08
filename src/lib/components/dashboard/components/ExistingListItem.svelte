@@ -17,14 +17,22 @@
   };
 
   const eventPasser = (e) => {
+    console.log("firing event parser");
     item = { ...item, accessType: e.detail.permission };
     permissionChanged = !permissionChanged;
     dispatch("permissonChange", e.detail.permission);
     accessSelectorIdentifier = null;
   };
   const changePermissionHandler = () => {
-    permissionChanged = !permissionChanged;
-    accessSelectorIdentifier = index;
+    if (editPermissionTrigger) {
+      if (
+        (item.accessSource && item.accessSource === "acquired") ||
+        !item.accessSource
+      ) {
+        permissionChanged = !permissionChanged;
+        accessSelectorIdentifier = index;
+      }
+    }
   };
 </script>
 
@@ -47,20 +55,16 @@
     <button
       class="w-[10rem] rounded-md cursor-pointer px-1 py-0.5 {permissionChanged &&
         'opacity-40'} flex justify-around items-center {setbackground(
-        item.accessType
+        item.accessType,
       )}"
-      on:click={() => {
-        if (editPermissionTrigger && item.accessSource === "acquired") {
-          changePermissionHandler();
-        }
-      }}
+      on:click={changePermissionHandler}
     >
       <span>{item.accessType}</span>
-      {#if editPermissionTrigger && item.accessSource === "acquired"}
+      {#if editPermissionTrigger && ((item.accessSource && item.accessSource === "acquired") || !item.accessSource)}
         <DownArrow type={item.accessType} />
       {/if}
     </button>
-    {#if item.accessSource === "acquired"}
+    {#if (item.accessSource && item.accessSource === "acquired") || !item.accessSource}
       {#if accessSelectorIdentifier === index}
         <AccessSelector on:select={(e) => eventPasser(e)} />
       {/if}
