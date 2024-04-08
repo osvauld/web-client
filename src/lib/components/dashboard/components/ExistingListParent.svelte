@@ -1,10 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import ExistingListItem from "./ExistingListItem.svelte";
-  import { EditIcon } from "../icons";
 
   export let existingItemsData;
-  let editPermissionTrigger = false;
+  export let editPermissionTrigger;
+
   const dispatch = createEventDispatcher();
 
   const handleRemoval = (item) => {
@@ -16,18 +16,6 @@
   };
 </script>
 
-<div class="flex justify-end items-center w-full">
-  <button
-    class="p-2 mt-2 rounded-lg {editPermissionTrigger
-      ? 'bg-osvauld-sensitivebgblue'
-      : ''}"
-    on:click={() => {
-      editPermissionTrigger = !editPermissionTrigger;
-    }}
-  >
-    <EditIcon />
-  </button>
-</div>
 <div class="p-2 my-2 w-full rounded-lg min-h-0 max-h-[50vh] mb-2">
   <div
     class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[30vh] bg-osvauld-frameblack w-full"

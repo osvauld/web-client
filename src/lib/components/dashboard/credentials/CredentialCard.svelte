@@ -39,7 +39,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId,
+          credential.credentialId
         );
         sensitiveFields = response.data;
       }, 300);
@@ -68,7 +68,7 @@
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       sensitiveFields = response.data;
     }
@@ -106,9 +106,9 @@
         {checked}
       />
       <label
-        class="text-lg font-light w-full text-left ml-2 cursor-pointer max-w-full {hoverEffect
+        class="text-lg font-light text-left ml-2 cursor-pointer w-[10rem] overflow-x-hidden whitespace-nowrap {hoverEffect
           ? 'text-osvauld-sideListTextActive'
-          : 'text-osvauld-fieldTextActive '} overflow-x-hidden"
+          : 'text-osvauld-fieldTextActive '} "
         for={credential.credentialId}
       >
         {credential.name}

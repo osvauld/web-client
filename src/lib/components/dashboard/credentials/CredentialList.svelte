@@ -167,9 +167,13 @@
           >
         {/if}
       </div>
+
       <div class="w-1/2 flex justify-end items-center">
         <button
-          class="text-osvauld-sideListTextActive bg-osvauld-modalFieldActive rounded-md flex justify-around items-center px-4 py-1.5 text-sm"
+          class="text-osvauld-sideListTextActive bg-osvauld-modalFieldActive rounded-md flex justify-around items-center px-4 py-1.5 text-sm {$selectedFolder.accessType ===
+          'reader'
+            ? 'hidden'
+            : 'visible'}"
           on:click={handleAccessListSelection}
         >
           <EyeScan color={$accessListSelected ? "#89B4FA" : "#F2F2F0"} />
