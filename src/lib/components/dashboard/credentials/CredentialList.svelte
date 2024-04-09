@@ -147,14 +147,16 @@
             <FolderShare color={isShareHovered ? "#F2F2F0" : "#85889C"} />
           </button>
         {/if}
-        <button
-          class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap"
-          on:click={credentialShareManager}
-        >
-          <Share color={"#85889C"} /><span class="ml-1 text-sm"
-            >Share Credentials</span
+        {#if checkedCards.length !== 0}
+          <button
+            class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap"
+            on:click={credentialShareManager}
           >
-        </button>
+            <Share color={"#85889C"} /><span class="ml-1 text-sm"
+              >Share Credentials</span
+            >
+          </button>
+        {/if}
         {#if areCardsSelected}
           <span
             class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"

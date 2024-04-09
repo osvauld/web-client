@@ -180,7 +180,7 @@
       >
         <span class="">{credential.name}</span>
       </div>
-      {#if credential.accessType === "manager"}
+      {#if credential.accessType === "manager" && !accessListSelected}
         <button
           class="p-2 mr-3 rounded-lg {showEditCredentialModal
             ? 'bg-osvauld-sensitivebgblue'

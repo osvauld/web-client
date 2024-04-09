@@ -94,7 +94,7 @@
         class="{($selectedGroup && $selectedGroup.groupId === group.groupId) ||
         hoveringIndex === index
           ? 'bg-osvauld-sideListHighlight text-osvauld-sideListTextActive'
-          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md pl-3 my-0.5 pr-3 flex items-center"
+          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md pl-3 my-0.5 pr-3 flex items-center transition-colors duration-100"
         on:mouseenter={() => (hoveringIndex = index)}
         on:mouseleave={() => (hoveringIndex = null)}
       >

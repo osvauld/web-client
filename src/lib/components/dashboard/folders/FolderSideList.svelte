@@ -66,7 +66,7 @@
       <li
         class="{$selectedFolder?.id == folder.id
           ? 'bg-osvauld-sideListHighlight rounded-lg text-osvauld-sideListTextActive'
-          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 flex items-center"
+          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 flex items-center transition-colors duration-100"
         on:mouseenter={() => (hoveringIndex = index)}
         on:mouseleave={() => (hoveringIndex = null)}
       >

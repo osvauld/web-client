@@ -17,7 +17,7 @@
   >
     {#each ["Groups", "Users"] as item}
       <button
-        class="w-1/2 px-6 py-2 flex justify-center items-center rounded-lg focus:outline-none {selectedItem ===
+        class="w-1/2 px-6 py-2 flex justify-center items-center rounded-lg focus:outline-none transition-colors duration-75 ease-in {selectedItem ===
         item
           ? 'bg-osvauld-sideListHighlight text-osvauld-plainwhite'
           : 'text-osvauld-quarzowhite'} "

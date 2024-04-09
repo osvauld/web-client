@@ -42,11 +42,11 @@
   <h1 class="text-4xl p-4 font-normal w-1/3 ml-3">{groupName}</h1>
   {#if groupAdmin}
     <button
-      class="rounded-md py-1 px-4 mr-2 bg-osvauld-carolinablue text-macchiato-surface0 flex justify-center items-center whitespace-nowrap xl:scale-90 lg:scale-95 md:scale-90 sm:scale-75"
+      class="rounded-md py-1 px-4 mr-2 border border-osvauld-iconblack flex justify-center items-center whitespace-nowrap text-base font-light text-osvauld-textActive"
       on:click={() => showAddUserToGroupDrawer.set(true)}
     >
       <span class="mr-1">Add new user</span>
-      <Add />
+      <Add color={"#85889C"} />
     </button>
   {/if}
 </div>
@@ -73,17 +73,18 @@
       <tbody class="text-xlfont-normal text-sm">
         {#each $groupUsers as user}
           <tr
-            class="border border-transparent hover:bg-osvauld-modalFieldActive text-osvauld-dusklabel hover:text-osvauld-sideListTextActive text-base font-light border-b border-b-osvauld-iconblack"
+            class="border border-transparent hover:bg-osvauld-modalFieldActive text-osvauld-dusklabel hover:text-osvauld-sideListTextActive text-base font-light border-b border-b-osvauld-iconblack
+            transition-colors duration-300"
           >
-            <td class="py-6 px-6 text-left whitespace-nowrap w-1/4">
+            <td class="py-5 px-6 text-left whitespace-nowrap w-1/4">
               {user.name}
             </td>
-            <td class="py-6 px-6 text-left w-1/4">
+            <td class="py-5 px-6 text-left w-1/4">
               {user.username}
             </td>
-            <td class="py-6 px-6 text-left w-1/4">
+            <td class="py-5 px-6 text-left w-1/4">
               <span
-                class="inline-block w-[70%] px-4 py-2 rounded-md text-center {user.accessType ===
+                class="inline-block w-[70%] px-4 py-1 rounded-md text-center {user.accessType ===
                 'admin'
                   ? 'bg-osvauld-ownerGreen text-osvauld-ownerText'
                   : 'bg-osvauld-readerOrange text-osvauld-readerText'}"
@@ -92,7 +93,7 @@
               </span>
             </td>
             <td
-              class="flex justify-center items-center py-6 w-1/4 cursor-pointer"
+              class="flex justify-center items-center py-5 w-1/4 cursor-pointer"
             >
               {#if groupAdmin}
                 <button on:click={() => handleRemoveUserFromGroup(user.id)}>
