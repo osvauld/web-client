@@ -91,7 +91,7 @@
 </script>
 
 <div
-  class="absolute w-[30vw] min-h-[30rem] max-h-[40rem] p-4 z-50 bg-osvauld-frameblack border border-osvauld-iconblack rounded-2xl"
+  class="absolute w-[29rem] min-h-[30rem] max-h-[40rem] p-4 z-50 bg-osvauld-frameblack border border-osvauld-iconblack rounded-2xl"
   style="top: {$buttonCoords.top}px; left: {$buttonCoords.left}px;"
   use:clickOutside
   on:clickedOutside={handleClickOutside}

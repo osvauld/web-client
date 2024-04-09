@@ -78,9 +78,7 @@
 
 <button
   class="mb-1 overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack {checked &&
-    'shadow-[0_0_0_1px_#B4BEFE]'} {hoverEffect
-    ? 'shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)]'
-    : ''}"
+    'shadow-[0_0_0_1px_#B4BEFE]'}"
   style="border: {$borderHighLight ? '1px solid #89B4FA' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}

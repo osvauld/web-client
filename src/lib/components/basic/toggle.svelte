@@ -17,7 +17,7 @@
   >
     {#each ["Folders", "Groups"] as item}
       <button
-        class="w-1/2 px-3 py-1.5 text-lg flex justify-center items-center rounded-lg focus:outline-none {$selectedPage ===
+        class="transition-colors duration-75 ease-in w-1/2 px-3 py-1.5 text-lg flex justify-center items-center rounded-lg focus:outline-none {$selectedPage ===
         item
           ? 'bg-osvauld-sideListHighlight text-osvauld-plainwhite'
           : 'text-osvauld-quarzowhite'} "
