@@ -109,7 +109,10 @@
               ? "white"
               : "#85889C"}
           />
-          <span class="ml-2 text-base font-light">{group.name}</span>
+          <span
+            class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap"
+            >{group.name}</span
+          >
         </button>
         <div
           class="relative z-100 flex justify-center items-center {($selectedGroup &&

@@ -174,7 +174,7 @@
 
 <form on:submit|preventDefault={saveCredential}>
   <div
-    class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack"
+    class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack z-50"
     in:fly
   >
     <div class="flex justify-between items-center px-12 py-6">
@@ -194,7 +194,7 @@
             : 'text-osvauld-sheffieldgrey '}"
           on:click={() => credentialTypeSelection(false)}
         >
-          {edit ? "Edit other credential" : "Add other credential"}
+          {edit ? "Edit other" : "Add other"}
         </button>
       </div>
       <div>

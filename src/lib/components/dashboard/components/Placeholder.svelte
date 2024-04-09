@@ -52,7 +52,7 @@
   </div>
   <div class="flex justify-around items-center gap-0 w-full h-[440px]">
     <div
-      class="bg-osvauld-cardshade h-[80%] w-[45%] rounded-2xl flex flex-col gap-7 justify-center items-start p-10 border border-transparent hover:border-osvauld-iconblack hover:translate-y-[-2px] hover:translate-x-[-2px] cursor-pointer"
+      class="bg-osvauld-cardshade h-[80%] w-[45%] rounded-2xl flex flex-col gap-7 justify-center items-start p-10 border border-transparent transition duration-300 ease-in-out hover:border-osvauld-iconblack hover:-translate-y-1 hover:scale-105 cursor-pointer hover:shadow-[0_14px_15px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)]"
     >
       <h2 class="text-3xl">Organize your credentials</h2>
       <p class="text-base">
@@ -64,8 +64,9 @@
         on:click={createFolderManager}>Create new folder</button
       >
     </div>
+
     <div
-      class="bg-osvauld-cardshade h-[80%] w-[45%] rounded-2xl flex flex-col justify-center gap-7 items-start p-10 border border-transparent hover:border-osvauld-iconblack hover:translate-y-[-2px] hover:translate-x-[-2px] cursor-pointer"
+      class="bg-osvauld-cardshade h-[80%] w-[45%] rounded-2xl flex flex-col justify-center gap-7 items-start p-10 border border-transparent transition duration-300 ease-in-out hover:border-osvauld-iconblack hover:-translate-y-1 hover:scale-105 cursor-pointer hover:shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)]"
     >
       <h2 class="text-3xl">Collaborate with teams</h2>
       <p class="text-base">
@@ -85,12 +86,13 @@
     >
       {#if isLoaderActive}
         <Loader />
-      {:else if copiedToClipboard}
-        <Warning />
-        <span>Proceed with caution!</span>
       {:else}
-        <Warning />
-        <span class="ml-2">Copy Recovery Data </span>
+        <Warning {copiedToClipboard} />
+        {#if copiedToClipboard}
+          <span class="ml-2">Proceed with caution!</span>
+        {:else}
+          <span class="ml-2">Copy Recovery Data</span>
+        {/if}
       {/if}
     </button>
   </div>
