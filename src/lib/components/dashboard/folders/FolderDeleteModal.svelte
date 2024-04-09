@@ -5,6 +5,7 @@
     DeleteConfirmationModal,
     showMoreOptions,
     folderStore,
+    selectedFolder,
   } from "../store";
   import { fly } from "svelte/transition";
   import { Warning } from "../icons";
@@ -17,6 +18,9 @@
   }
 
   async function DeleteConfirmation() {
+    if ($selectedFolder && $selectedFolder.id === $modalManager.id) {
+      selectedFolder.set(null);
+    }
     await removeFolder($modalManager.id);
     withdrawFolderDeleteModal();
     const responseJson = await fetchAllFolders();

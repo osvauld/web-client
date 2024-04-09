@@ -53,7 +53,7 @@
       users = usersResponse.data;
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
-        credential.credentialId
+        credential.credentialId,
       );
       groups = groupsResponse.data;
     }
@@ -73,7 +73,7 @@
       const userPermissionSaveResponse = await editUserPermissionForCredential(
         userPermissions.credentialId,
         userPermissions.userId,
-        userPermissions.accessType
+        userPermissions.accessType,
       );
       await toggleSelect({ detail: "Users" });
       accessChangeDetected = false;
@@ -86,7 +86,7 @@
         await editGroupPermissionForCredential(
           groupPermissions.credentialId,
           groupPermissions.groupId,
-          groupPermissions.accessType
+          groupPermissions.accessType,
         );
       await toggleSelect({ detail: "Groups" });
       accessChangeDetected = false;
@@ -135,12 +135,17 @@
     }
     showEditCredentialModal = true;
   };
+
+  const closeCredentialEditor = async () => {
+    showEditCredentialModal = false;
+    showCredentialDetailsDrawer.set(false);
+  };
   onMount(async () => {
     const groupsResponse = await fetchCredentialGroups(credential.credentialId);
     groups = groupsResponse.data;
     if (sensitiveFields.length === 0) {
       const sensitiveFieldsResponse = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId
+        credential.credentialId,
       );
       sensitiveFields = sensitiveFieldsResponse.data;
     }
@@ -153,9 +158,7 @@
   >
     <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
       <CredentialEditor
-        on:close={() => {
-          showEditCredentialModal = !showEditCredentialModal;
-        }}
+        on:close={closeCredentialEditor}
         edit={true}
         credentialId={credential.credentialId}
         name={credential.name}
@@ -259,16 +262,18 @@
                 <Tick />
               </button>
             {/if}
-            <button
-              class="p-2 rounded-lg {editPermissionTrigger
-                ? 'bg-osvauld-sensitivebgblue'
-                : ''}"
-              on:click={() => {
-                editPermissionTrigger = !editPermissionTrigger;
-              }}
-            >
-              <EditIcon />
-            </button>
+            {#if credential.accessType === "manager"}
+              <button
+                class="p-2 rounded-lg {editPermissionTrigger
+                  ? 'bg-osvauld-sensitivebgblue'
+                  : ''}"
+                on:click={() => {
+                  editPermissionTrigger = !editPermissionTrigger;
+                }}
+              >
+                <EditIcon />
+              </button>
+            {/if}
           </div>
         </div>
         <div class="items-left">

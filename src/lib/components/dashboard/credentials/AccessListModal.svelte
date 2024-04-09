@@ -45,7 +45,6 @@
   const existingItems = async () => {
     if ($selectedFolder !== null && selectedTab === "Users") {
       const responseJson = await fetchFolderUsers($selectedFolder.id);
-      console.log("folder users...");
       existingUserData = responseJson.data;
     } else {
       existingUserData.length = 0;
@@ -73,13 +72,13 @@
       await editFolderPermissionForUser(
         $selectedFolder.id,
         e.detail.item.id,
-        e.detail.permission
+        e.detail.permission,
       );
     } else {
       await editFolderPermissionForGroup(
         $selectedFolder.id,
         e.detail.item.groupId,
-        e.detail.permission
+        e.detail.permission,
       );
     }
     await existingItems();

@@ -49,17 +49,18 @@
     if (credIds.length > 0) {
       passwordFound = true;
       const responseJson = await fetchCredsByIds(credIds);
+
       listedCredentials = responseJson.data;
       listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
         ),
       }));
 
       const decyrptedResponse = await sendMessage(
         "decryptMeta",
-        listedCredentials
+        listedCredentials,
       );
       listedCredentials = decyrptedResponse.data;
       domainAssociatedCredentials = listedCredentials;
