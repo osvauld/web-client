@@ -12,18 +12,12 @@
     removeGroup,
   } from "../apis";
   import { onMount, onDestroy } from "svelte";
-  import { setbackground } from "../helper";
   export let groupName;
   const handleRemoveUserFromGroup = async (userId) => {
     await removeUserFromGroup($selectedGroup.groupId, userId);
     selectedGroup.set($selectedGroup);
   };
-  const handleGroupRemoval = async () => {
-    await removeGroup($selectedGroup.groupId);
-    selectedGroup.set(null);
-    const responseJson = await fetchAllUserGroups();
-    groupStore.set(responseJson.data);
-  };
+
   let user;
   let groupAdmin = false;
   let unsubscribe;
@@ -64,11 +58,6 @@
     </thead>
   </table>
   <div class="h-[40rem] overflow-y-auto scrollbar-thin px-2">
-    {#if groupAdmin}
-      <div class="flex justify-end items-center p-3">
-        <button on:click={handleGroupRemoval}> <BinIcon /> </button>
-      </div>
-    {/if}
     <table class="min-w-max w-full table-auto table-layout-fixed">
       <tbody class="text-xlfont-normal text-sm">
         {#each $groupUsers as user}
