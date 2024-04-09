@@ -20,7 +20,7 @@
   <div
     class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[30vh] bg-osvauld-frameblack w-full"
   >
-    {#if ExistingListItem}
+    {#if existingItemsData && existingItemsData.length > 0}
       {#each existingItemsData as item, index}
         <!-- TODO: user should not be able to remove themselves -->
         <ExistingListItem

@@ -73,20 +73,25 @@
       await editFolderPermissionForUser(
         $selectedFolder.id,
         e.detail.item.id,
-        e.detail.permission
+        e.detail.permission,
       );
     } else {
       await editFolderPermissionForGroup(
         $selectedFolder.id,
         e.detail.item.groupId,
-        e.detail.permission
+        e.detail.permission,
       );
     }
     await existingItems();
   };
-
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      closeModal();
+    }
+  };
   onMount(async () => {
     await existingItems();
+    window.addEventListener("keydown", handleKeyDown);
   });
 </script>
 

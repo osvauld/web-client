@@ -2,7 +2,7 @@
   import { setbackground } from "../helper";
   import BinIcon from "../../basic/icons/binIcon.svelte";
   import DownArrow from "../../basic/icons/downArrow.svelte";
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import AccessSelector from "./AccessSelector.svelte";
   import InfoIcon from "../../basic/icons/infoIcon.svelte";
 
@@ -35,9 +35,6 @@
       }
     }
   };
-  onMount(() => {
-    console.log(item.accessSource);
-  });
 </script>
 
 <div
@@ -76,7 +73,7 @@
     <button
       class="w-[7rem] rounded-md cursor-pointer px-1 py-0.5 {permissionChanged &&
         'opacity-40'} flex justify-around items-center {setbackground(
-        item.accessType
+        item.accessType,
       )}"
       on:click={changePermissionHandler}
     >
