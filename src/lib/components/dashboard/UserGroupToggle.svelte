@@ -11,15 +11,15 @@
   };
 </script>
 
-<div class="flex justify-start my-2">
+<div class="flex my-2 justify-center items-center">
   <div
-    class="inline-flex justify-center space-x-1 p-1 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl"
+    class="inline-flex w-full justify-center space-x-1 p-1 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl font-normal text-sm"
   >
     {#each ["Groups", "Users"] as item}
       <button
-        class="w-1/2 px-6 py-2 text-lg flex justify-center items-center rounded-lg focus:outline-none {selectedItem ===
+        class="w-1/2 px-6 py-2 flex justify-center items-center rounded-lg focus:outline-none {selectedItem ===
         item
-          ? 'bg-osvauld-bordergreen text-osvauld-plainwhite'
+          ? 'bg-osvauld-sideListHighlight text-osvauld-plainwhite'
           : 'text-osvauld-quarzowhite'} "
         on:click={() => select(item)}
       >

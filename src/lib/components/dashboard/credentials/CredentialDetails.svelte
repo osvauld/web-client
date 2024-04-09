@@ -53,7 +53,7 @@
       users = usersResponse.data;
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
-        credential.credentialId,
+        credential.credentialId
       );
       groups = groupsResponse.data;
     }
@@ -73,7 +73,7 @@
       const userPermissionSaveResponse = await editUserPermissionForCredential(
         userPermissions.credentialId,
         userPermissions.userId,
-        userPermissions.accessType,
+        userPermissions.accessType
       );
       await toggleSelect({ detail: "Users" });
       accessChangeDetected = false;
@@ -86,7 +86,7 @@
         await editGroupPermissionForCredential(
           groupPermissions.credentialId,
           groupPermissions.groupId,
-          groupPermissions.accessType,
+          groupPermissions.accessType
         );
       await toggleSelect({ detail: "Groups" });
       accessChangeDetected = false;
@@ -133,7 +133,6 @@
         sensitive: false,
       });
     }
-
     showEditCredentialModal = true;
   };
   onMount(async () => {
@@ -141,7 +140,7 @@
     groups = groupsResponse.data;
     if (sensitiveFields.length === 0) {
       const sensitiveFieldsResponse = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       sensitiveFields = sensitiveFieldsResponse.data;
     }
@@ -176,8 +175,10 @@
     class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6 overflow-y-auto scrollbar-thin"
   >
     <div class="flex pb-4">
-      <div class="text-3xl font-semibold w-full text-left ml-2">
-        {credential.name}
+      <div
+        class="text-3xl font-semibold w-full text-left ml-2 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+      >
+        <span class="">{credential.name}</span>
       </div>
       {#if credential.accessType === "manager"}
         <button
@@ -198,13 +199,13 @@
     <div class="flex justify-start items-center mb-6">
       <button
         on:click={() => (accessListSelected = false)}
-        class="p-2 font-medium border-transparent text-osvauld-chalkwhite mr-2 {!accessListSelected &&
+        class="p-2 font-light border-transparent text-osvauld-chalkwhite mr-2 {!accessListSelected &&
           'border-2 border-b-osvauld-carolinablue text-osvauld-plainwhite'}"
         >Details</button
       >
       <button
         on:click={() => (accessListSelected = true)}
-        class="p-2 font-medium border-transparent text-osvauld-chalkwhite {accessListSelected &&
+        class="p-2 font-light border-transparent text-osvauld-chalkwhite {accessListSelected &&
           'border-2 border-b-osvauld-carolinablue text-osvauld-plainwhite'}"
         >Access List</button
       >

@@ -29,9 +29,11 @@
 </script>
 
 <div
-  class="relative w-[99%] my-1 pl-2 pr-0.5 border border-osvauld-iconblack rounded-lg cursor-pointer flex items-center justify-between {isSelected
-    ? 'bg-osvauld-bordergreen text-osvauld-plainwhite'
-    : ''}"
+  class="relative w-[99%] my-1 pl-2 pr-0.5 rounded-lg cursor-pointer flex items-center justify-between {(isSelected &&
+    !isTopList) ||
+  (hoveredOverThisItem && !isTopList)
+    ? 'shadow-[0_0_0_1px_#292A36] text-osvauld-plainwhite'
+    : ''} "
   on:click={handleClick}
   on:mouseenter={() => (hoveredOverThisItem = true)}
   on:mouseleave={() => (hoveredOverThisItem = false)}
@@ -48,7 +50,7 @@
   {#if isTopList}
     <div class="flex justify-center items-center">
       <button
-        class="w-[6.25rem] rounded-md font-normal cursor-pointer px-2 py-0 pl-2 text-base flex justify-between items-center {setbackground(
+        class="w-[10rem] rounded-md font-normal cursor-pointer px-2 py-0.5 pl-2 text-base flex justify-around items-center {setbackground(
           item.accessType
         )}"
         >{item.accessType}
@@ -58,7 +60,7 @@
         <AccessSelector on:select={(e) => eventPasser(e)} />
       {/if}
       <button class="ml-2" on:click|stopPropagation={handleRemove}
-        ><BinIcon color={null} /></button
+        ><BinIcon color={"#67697C"} /></button
       >
     </div>
   {/if}
@@ -67,8 +69,8 @@
   {/if}
   {#if !isTopList && !isSelected && hoveredOverThisItem}
     <span
-      class="text-osvauld-ownerText bg-osvauld-ownerGreen rounded-md cursor-pointer px-2 py-0.5 w-[10rem] flex justify-between items-center text-base font-normal"
-      >Permissions <span><DownArrow type={"owner"} /></span></span
+      class="text-osvauld-permissionGreenText bg-osvauld-permissionsGreen rounded-md cursor-pointer px-2 py-0.5 w-[10rem] flex justify-around items-center text-base font-normal"
+      >Permissions <span><DownArrow type={"indicator"} /></span></span
     >
   {/if}
 </div>
