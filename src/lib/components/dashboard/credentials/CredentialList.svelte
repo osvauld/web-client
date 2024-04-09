@@ -38,7 +38,7 @@
   let showCreateCredentialModal = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -46,7 +46,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId
+        (c) => c.credentialId !== card.credentialId,
       );
     }
   }
@@ -75,7 +75,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential
+    credential: Credential,
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -171,7 +171,7 @@
       <div class="w-1/2 flex justify-end items-center">
         <button
           class="text-osvauld-sideListTextActive bg-osvauld-modalFieldActive rounded-md flex justify-around items-center px-4 py-1.5 text-sm {$selectedFolder.accessType ===
-          'reader'
+          'none'
             ? 'hidden'
             : 'visible'}"
           on:click={handleAccessListSelection}
@@ -251,7 +251,7 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId
+            (c) => c.credentialId === credential.credentialId,
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
