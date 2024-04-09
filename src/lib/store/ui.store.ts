@@ -14,9 +14,7 @@ export let buttonRef = writable(null);
 export let showMoreOptions = writable(false);
 export let modalManager = writable<MoreActions | null>(null);
 export let DeleteConfirmationModal = writable(false);
-export let accessListSelected = writable(false);
 const storedPage = browser.storage.local.get("selectedPage");
-
 
 type MoreActions = {
     id: string,

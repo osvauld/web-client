@@ -19,7 +19,7 @@
     {message ? message : " Successfully Shared"}!</span
   >
   <button
-    class="border-0 bg-osvauld-toastCloseBlue rounded-lg flex justify-center items-center p-2 mr-5 z-[9999]"
+    class="border-0 bg-osvauld-toastCloseBlue rounded-lg flex justify-center items-center p-2 mr-5"
     on:click={triggerCloseEvent}
   >
     <BlueClose /></button
