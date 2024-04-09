@@ -39,7 +39,7 @@
   let isShareHovered = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -47,12 +47,11 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId
+        (c) => c.credentialId !== card.credentialId,
       );
     }
   }
   const subscribe = selectedFolder.subscribe(async (folder) => {
-    //TODO: fetch shared groups.
     if (folder === null) {
       selectedFolder.set(null);
       return;
@@ -76,7 +75,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential
+    credential: Credential,
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -193,13 +192,15 @@
           <span class="mr-2 pl-2">Latest</span>
           <DownArrow type={"common"} />
         </button>
-        <button
-          class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack"
-          on:click={addCredentialManager}
-          disabled={checkedCards.length !== 0}
-          ><Add color={"#A3A4B5"} />
-          <span class="ml-2">Add New Credential</span>
-        </button>
+        {#if $selectedFolder.accessType === "manager"}
+          <button
+            class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack"
+            on:click={addCredentialManager}
+            disabled={checkedCards.length !== 0}
+            ><Add color={"#A3A4B5"} />
+            <span class="ml-2">Add New Credential</span>
+          </button>
+        {/if}
       </div>
     </div>
   {:else}
@@ -255,7 +256,7 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId
+            (c) => c.credentialId === credential.credentialId,
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}

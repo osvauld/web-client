@@ -24,9 +24,7 @@
   };
 </script>
 
-<div
-  class="fixed z-10 inset-0 overflow-y-auto backdrop-filter backdrop-blur-[2px]"
->
+<div class="fixed z-10 inset-0 backdrop-filter backdrop-blur-[2px]">
   <div class="flex items-start justify-center min-h-screen mt-[2.6vh]">
     <button class="fixed inset-0 bg-black opacity-50" on:click={closeModal}>
     </button>

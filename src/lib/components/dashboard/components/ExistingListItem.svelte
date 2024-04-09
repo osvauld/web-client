@@ -2,7 +2,7 @@
   import { setbackground } from "../helper";
   import BinIcon from "../../basic/icons/binIcon.svelte";
   import DownArrow from "../../basic/icons/downArrow.svelte";
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import AccessSelector from "./AccessSelector.svelte";
   import InfoIcon from "../../basic/icons/infoIcon.svelte";
 
@@ -34,9 +34,6 @@
       }
     }
   };
-  onMount(() => {
-    console.log(item.accessSource);
-  });
 </script>
 
 <div
