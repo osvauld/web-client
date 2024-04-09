@@ -14,7 +14,7 @@
     fetchSensitiveFieldsByCredentialId,
   } from "../apis";
   import { showCredentialDetailsDrawer } from "../store";
-  import { ClosePanel, EditIcon } from "../icons";
+  import { ClosePanel, EditIcon, EyeScan } from "../icons";
   import { onMount } from "svelte";
   import ExistingListItem from "../components/ExistingListItem.svelte";
   import CredentialEditor from "./CredentialEditor.svelte";
@@ -22,6 +22,7 @@
 
   import { Credential, Fields, Group, UserWithAccessType } from "../dtos";
   import Tick from "../../basic/icons/tick.svelte";
+  import FileText from "../../basic/icons/fileText.svelte";
   export let credential: Credential;
   export let sensitiveFields: Fields[];
   let selectedTab = "Groups";
@@ -202,16 +203,29 @@
     <div class="flex justify-start items-center mb-6">
       <button
         on:click={() => (accessListSelected = false)}
-        class="p-2 font-light border-transparent text-osvauld-chalkwhite mr-2 {!accessListSelected &&
-          'border-2 border-b-osvauld-carolinablue text-osvauld-plainwhite'}"
-        >Details</button
+        class="px-4 py-1.5 flex items-center text-sm font-light rounded-md mr-2 {!accessListSelected &&
+          ' text-osvauld-carolinablue bg-osvauld-modalFieldActive'}"
+      >
+        <FileText color={!accessListSelected ? "#89B4FA" : "#85889C"} />
+        <span
+          class="{!accessListSelected
+            ? 'text-osvauld-carolinablue'
+            : 'text-osvauld-fieldText '} ml-2">Details</span
+        ></button
       >
       <button
+        class="rounded-md flex justify-around items-center px-4 py-1.5 text-sm {accessListSelected &&
+          'bg-osvauld-modalFieldActive'}
+          ''}"
         on:click={() => (accessListSelected = true)}
-        class="p-2 font-light border-transparent text-osvauld-chalkwhite {accessListSelected &&
-          'border-2 border-b-osvauld-carolinablue text-osvauld-plainwhite'}"
-        >Access List</button
       >
+        <EyeScan color={accessListSelected ? "#89B4FA" : "#85889C"} />
+        <span
+          class="ml-2 {accessListSelected
+            ? 'text-osvauld-carolinablue'
+            : 'text-osvauld-fieldText '}">Access List</span
+        >
+      </button>
     </div>
     <div class="border border-osvauld-iconblack rounded-xl p-3">
       {#if !accessListSelected}
