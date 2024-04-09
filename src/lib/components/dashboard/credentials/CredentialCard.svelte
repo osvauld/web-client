@@ -124,7 +124,9 @@
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
     ></div>
     <div
-      class="w-[15rem] h-[11.5rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
+      class="w-[15rem] {credential.description.length !== 0
+        ? 'h-[11.5rem]'
+        : 'h-[15rem]'} overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
         ? 'active'
         : ''} mt-2"
     >
@@ -155,7 +157,9 @@
         Description
       </label>
       <div
-        class="mt-1 w-[14.3rem] h-[4rem] py-1 px-2 overflow-y-scroll rounded-lg text-left scrollbar-thin resize-none text-sm
+        class="mt-1 w-[14.3rem] {credential.description.length !== 0
+          ? 'h-[4rem]'
+          : ''} py-1 px-2 overflow-y-scroll rounded-lg text-left scrollbar-thin resize-none text-sm
     {hoverEffect
           ? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive'
           : 'text-osvauld-fieldText'}"

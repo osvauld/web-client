@@ -80,7 +80,7 @@
               : "#85889C"}
           />
           <span
-            class="ml-2 text-base font-light {$selectedFolder?.id ==
+            class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap {$selectedFolder?.id ==
               folder.id || hoveringIndex === index
               ? 'text-osvauld-sideListTextActive'
               : 'text-osvauld-fieldText'}">{folder.name}</span
