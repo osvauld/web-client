@@ -26,7 +26,6 @@
   };
 
   async function DeleteConfirmation() {
-    console.log("Delete Confirmation credential");
     await removeCredentialHandler($modalManager.id);
     withdrawCredentialDeleteModal();
   }

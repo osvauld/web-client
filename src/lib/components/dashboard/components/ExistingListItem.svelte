@@ -18,7 +18,6 @@
   };
 
   const eventPasser = (e) => {
-    console.log("firing event parser");
     item = { ...item, accessType: e.detail.permission };
     permissionChanged = !permissionChanged;
     dispatch("permissonChange", e.detail.permission);
@@ -76,7 +75,7 @@
     <button
       class="w-[7rem] rounded-md cursor-pointer px-1 py-0.5 {permissionChanged &&
         'opacity-40'} flex justify-around items-center {setbackground(
-        item.accessType
+        item.accessType,
       )}"
       on:click={changePermissionHandler}
     >
