@@ -32,27 +32,27 @@
 </script>
 
 <div
-  class="fixed top-[7.6rem] right-[30rem] z-50 flex justify-end rounded-2xl border border-osvauld-activeBorder blur-none"
+  class="fixed top-0 right-0 z-50 flex justify-end rounded-xl blur-none"
   in:fly
   out:fly
 >
   <div
-    class="w-[32.25rem] min-h-[64vh] max-h-[82vh] rounded-2xl translate-x-0 bg-osvauld-frameblack px-6 py-2"
+    class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6"
   >
     <div class="flex justify-between items-center p-3">
-      <span class="font-sans text-osvauld-quarzowhite text-28 font-normal"
-        >Share Folder</span
-      >
+      <span class="font-sans text-white text-28 font-normal">Share Folder</span>
       <button class="p-2" on:click={() => showFolderShareDrawer.set(false)}
         ><ClosePanel /></button
       >
     </div>
     <div
-      class="relative h-auto w-full px-4 py-2 mx-auto flex justify-between items-center rounded-lg cursor-pointer mb-3 bg-osvauld-fieldActive"
+      class="relative h-auto w-full px-4 py-1 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown
+        ? 'bg-osvauld-bordergreen'
+        : ''}"
       on:click={() => (infoDropdown = !infoDropdown)}
     >
       <p
-        class="text-sm text-osvauld-sheffieldgrey font-normal {infoDropdown
+        class="text-base text-osvauld-sheffieldgrey font-normal {infoDropdown
           ? 'text-osvauld-highlightwhite'
           : ''}"
       >

@@ -1,5 +1,5 @@
 <div
-  class="absolute top-[1.88rem] left-0 w-[100%] h-auto bg-osvauld-frameblack border-2 border-osvauld-bordergreen font-normal text-sm px-2 rounded flex flex-col justify-center items-center z-[9999]"
+  class="absolute top-[1.88rem] left-0 w-full h-auto bg-osvauld-frameblack border-2 border-osvauld-bordergreen px-2 rounded flex flex-col justify-center items-center z-[9999]"
 >
   <div
     class="w-full my-2 rounded-lg bg-osvauld-managerPurple text-osvauld-managerText text-left pl-4 py-2"

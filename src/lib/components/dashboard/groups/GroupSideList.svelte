@@ -70,21 +70,15 @@
   <ul class=" max-h-[40rem] overflow-y-scroll scrollbar-thin -pl-3">
     {#if adminStatus}
       <li
-        class="{$allUsersSelected || hoveringIndex === 999
-          ? 'bg-osvauld-sideListHighlight text-osvauld-sideListTextActive'
-          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md pl-3 my-0.5 pr-3 flex items-center"
-        on:mouseenter={() => (hoveringIndex = 999)}
-        on:mouseleave={() => (hoveringIndex = null)}
+        class="{$allUsersSelected
+          ? 'bg-osvauld-bordergreen rounded-lg'
+          : 'hover:bg-osvauld-bordergreen'} rounded-md pl-3"
       >
         <button
           on:click={() => selectingAllUsers()}
           class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
         >
-          <GroupIcon
-            color={$allUsersSelected || hoveringIndex === 999
-              ? "white"
-              : "#85889C"}
-          />
+          <GroupIcon color={$allUsersSelected ? "white" : "#85889C"} />
           <span class="ml-2 text-base font-light">All users</span>
         </button>
       </li>
