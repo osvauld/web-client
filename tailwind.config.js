@@ -91,6 +91,8 @@ export default {
           fadedCancel: "#67697C",
           dangerRed: "#FF6A6A",
           sideListHighlight: "#292A36",
+          permissionsGreen: "#263A47",
+          permissionGreenText: "#74C7EC",
         },
       },
       fontFamily: {
