@@ -12,12 +12,15 @@
     DeleteConfirmationModal,
     modalManager,
     accessListSelected,
+    showMoreGroupOptions,
   } from "./store/ui.store";
   import { sendMessage } from "./components/dashboard/helper";
   import Welcome from "./components/popup/Welcome.svelte";
   import Signup from "./components/popup/Signup.svelte";
   import { getUser } from "./apis/user.api";
   import AccessListModal from "./components/dashboard/credentials/AccessListModal.svelte";
+  import MoreActionsGroup from "./components/dashboard/components/MoreActionsGroup.svelte";
+  import GroupDeleteModal from "./components/dashboard/groups/GroupDeleteModal.svelte";
   let showWelcome = false;
   let signedUp = true;
   onMount(async () => {
@@ -75,9 +78,14 @@
       <CredentialDeleteModal />
     {:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
       <FolderDeleteModal />
+    {:else if $DeleteConfirmationModal && $modalManager.type === "Group"}
+      <GroupDeleteModal />
     {/if}
     {#if $accessListSelected}
       <AccessListModal />
+    {/if}
+    {#if $showMoreGroupOptions}
+      <MoreActionsGroup />
     {/if}
   {/if}
 </main>

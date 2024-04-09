@@ -4,6 +4,7 @@ export { groupList, groupStore, selectedGroup, groupUsers } from '../../store/gr
 export {
     showAddUserDrawer, selectedPage, showAddFolderDrawer, showAddGroupDrawer, showFolderShareDrawer,
     showCredentialShareDrawer, showAddUserToGroupDrawer, allUsersSelected, showCredentialDetailsDrawer,
-    credentialIdForEdit, buttonRef, showMoreOptions, modalManager, DeleteConfirmationModal,accessListSelected
+    credentialIdForEdit, buttonRef, showMoreOptions, modalManager, DeleteConfirmationModal, accessListSelected,
+    showMoreGroupOptions
 } from '../../store/ui.store';
 

@@ -6,6 +6,9 @@
     showAddGroupDrawer,
     showAddUserDrawer,
     allUsersSelected,
+    showMoreGroupOptions,
+    buttonRef,
+    modalManager,
   } from "../store";
   import { fetchAllUserGroups } from "../apis";
   import { Group } from "../dtos";
@@ -41,6 +44,12 @@
   const selectingAllUsers = () => {
     selectedGroup.set(null);
     allUsersSelected.set(true);
+  };
+
+  const showMoreOptionsHandler = (e, group) => {
+    buttonRef.set(e.target);
+    modalManager.set({ id: group.groupId, name: group.name, type: "Group" });
+    showMoreGroupOptions.set(true);
   };
   onMount(async () => {
     const responseJson = await fetchAllUserGroups();
@@ -121,9 +130,16 @@
             ? 'visible'
             : 'invisible'}"
         >
-          <button class="p-2">
-            <Menu />
-          </button>
+          {#if group.accessType === "admin"}
+            <button
+              class="p-2"
+              on:click|preventDefault={(e) => {
+                showMoreOptionsHandler(e, group);
+              }}
+            >
+              <Menu />
+            </button>
+          {/if}
         </div>
       </li>
     {/each}
