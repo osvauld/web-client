@@ -6,7 +6,7 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add, InfoIcon, EyeScan } from "../icons";
+  import { Share, Add, InfoIcon, EyeScan, FolderShare } from "../icons";
   import {
     fetchSignedUpUsers,
     fetchAllUserGroups,
@@ -36,9 +36,10 @@
   let areCardsSelected = false;
   let noCardsSelected = false;
   let showCreateCredentialModal = false;
+  let isShareHovered = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -46,7 +47,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId,
+        (c) => c.credentialId !== card.credentialId
       );
     }
   }
@@ -75,7 +76,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential,
+    credential: Credential
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -138,18 +139,19 @@
         <!-- TODO: update to share credentials in the same api -->
         {#if $selectedFolder.accessType === "manager"}
           <button
-            class="rounded-md border border-osvauld-iconblack py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2"
+            class="py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2"
             on:click={folderShareManager}
+            on:mouseenter={() => (isShareHovered = true)}
+            on:mouseleave={() => (isShareHovered = false)}
           >
-            <Share color={"#A3A4B5"} />
-            <span class="ml-1 text-sm">Share Folder</span>
+            <FolderShare color={isShareHovered ? "#F2F2F0" : "#85889C"} />
           </button>
         {/if}
         <button
-          class=" bg-osvauld-carolinablue rounded-md py-1.5 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap"
+          class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap"
           on:click={credentialShareManager}
         >
-          <Share color={"#0D0E13"} /><span class="ml-1 text-sm"
+          <Share color={"#85889C"} /><span class="ml-1 text-sm"
             >Share Credentials</span
           >
         </button>
@@ -251,7 +253,7 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId,
+            (c) => c.credentialId === credential.credentialId
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
