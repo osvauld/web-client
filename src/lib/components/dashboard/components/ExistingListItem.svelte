@@ -2,8 +2,9 @@
   import { setbackground } from "../helper";
   import BinIcon from "../../basic/icons/binIcon.svelte";
   import DownArrow from "../../basic/icons/downArrow.svelte";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import AccessSelector from "./AccessSelector.svelte";
+  import InfoIcon from "../../basic/icons/infoIcon.svelte";
 
   const dispatch = createEventDispatcher();
   export let item;
@@ -17,21 +18,32 @@
   };
 
   const eventPasser = (e) => {
+    console.log("firing event parser");
     item = { ...item, accessType: e.detail.permission };
     permissionChanged = !permissionChanged;
     dispatch("permissonChange", e.detail.permission);
     accessSelectorIdentifier = null;
   };
   const changePermissionHandler = () => {
-    permissionChanged = !permissionChanged;
-    accessSelectorIdentifier = index;
+    if (editPermissionTrigger) {
+      if (
+        (item.accessSource && item.accessSource === "acquired") ||
+        !item.accessSource
+      ) {
+        permissionChanged = !permissionChanged;
+        accessSelectorIdentifier = index;
+      }
+    }
   };
+  onMount(() => {
+    console.log(item.accessSource);
+  });
 </script>
 
 <div
-  class="relative w-full my-2 px-2 border border-osvauld-iconblack rounded-lg cursor-pointer flex items-center justify-between text-osvauld-sheffieldgrey font-normal text-base"
+  class="relative w-full my-2 pl-2 pr-0.5 border border-osvauld-iconblack rounded-lg cursor-pointer flex items-center justify-between text-osvauld-sheffieldgrey font-normal text-base"
 >
-  <div class="flex items-center space-x-4">
+  <div class="flex items-center justify-center">
     <p
       class="p-1 w-3/4 whitespace-nowrap {permissionChanged &&
         accessSelectorIdentifier !== index &&
@@ -40,36 +52,38 @@
       {item.name}
     </p>
     {#if item.accessSource}
-      {item.accessSource}
+      <span class="text-xs ml-auto">*{item.accessSource}</span>
     {/if}
   </div>
-  <div class="flex justify-center items-center">
-    <button
-      class="w-[10rem] rounded-md cursor-pointer px-1 py-0.5 {permissionChanged &&
-        'opacity-40'} flex justify-around items-center {setbackground(
-        item.accessType,
-      )}"
-      on:click={() => {
-        if (editPermissionTrigger) {
-          changePermissionHandler();
-        }
-      }}
-    >
-      <span>{item.accessType}</span>
-      {#if editPermissionTrigger}
-        <DownArrow type={item.accessType} />
-      {/if}
-    </button>
+  {#if (item.accessSource && item.accessSource === "acquired") || !item.accessSource}
     {#if accessSelectorIdentifier === index}
       <AccessSelector on:select={(e) => eventPasser(e)} />
     {/if}
-    {#if editPermissionTrigger && item.accessSource === "acquired"}
+    {#if editPermissionTrigger}
       <button
-        class="p-2 {permissionChanged && 'opacity-40'}"
+        class="ml-auto {permissionChanged && 'opacity-40'}"
         on:click={handleItemRemove}
       >
-        <BinIcon />
+        {#if item.accessSource === "acquired"}
+          <BinIcon />
+        {:else if item.accessSource === "inherited"}
+          <InfoIcon />
+        {/if}
       </button>
     {/if}
+  {/if}
+  <div class="flex justify-center items-center ml-2">
+    <button
+      class="w-[7rem] rounded-md cursor-pointer px-1 py-0.5 {permissionChanged &&
+        'opacity-40'} flex justify-around items-center {setbackground(
+        item.accessType
+      )}"
+      on:click={changePermissionHandler}
+    >
+      <span>{item.accessType}</span>
+      {#if editPermissionTrigger && ((item.accessSource && item.accessSource === "acquired") || !item.accessSource)}
+        <DownArrow type={item.accessType} />
+      {/if}
+    </button>
   </div>
 </div>
