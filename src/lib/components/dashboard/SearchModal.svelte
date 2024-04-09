@@ -68,7 +68,9 @@
               >
                 <Key />
               </div>
-              <div class="w-full flex flex-col justify-center items-start pl-2">
+              <div
+                class="w-full flex flex-col justify-center items-start pl-2 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+              >
                 <div class="text-base flex font-semibold">
                   <Highlight text={result.name} {query} />&nbsp;
                   <span>in folder</span>&nbsp;
@@ -86,10 +88,10 @@
         </div>
         {#if searchResults.length === 0}
           <div
-            class="bg-osvauld-frameblack w-full flex justify-center items-center px-4 mb-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+            class="bg-osvauld-frameblack w-full flex justify-center items-center px-4 mb-4 py-0 sm:px-6 sm:flex sm:flex-row-reverse"
           >
             <p
-              class="text-osvauld-placeholderblack text-base text-center w-1/2"
+              class="text-osvauld-placeholderblack text-base text-center w-[80%]"
             >
               Try searching for keywords in credentials, folders, groups,
               descriptions and more

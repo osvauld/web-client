@@ -15,6 +15,7 @@
   import { fetchGroupUsers, fetchSignedUpUsers } from "../apis";
   import AllUsersList from "./AllUsersList.svelte";
   import OtherGroupsList from "./OtherGroupsList.svelte";
+  import Placeholder from "../components/Placeholder.svelte";
 
   let unsubscribe: Unsubscriber;
   let groupName = "";
@@ -67,6 +68,10 @@
       <AllUsersList />
     {:else if $selectedGroup}
       <OtherGroupsList {groupName} />
+    {:else}
+      <div class="mt-20">
+        <Placeholder />
+      </div>
     {/if}
   </div>
 </div>
