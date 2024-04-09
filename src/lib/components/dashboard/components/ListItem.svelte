@@ -29,7 +29,7 @@
 </script>
 
 <div
-  class="relative w-[99%] my-1 pl-2 pr-0.5 rounded-lg cursor-pointer flex items-center justify-between {(isSelected &&
+  class="relative w-[98%] my-1 ml-1 pl-2 pr-0.5 rounded-lg cursor-pointer flex items-center justify-between {(isSelected &&
     !isTopList) ||
   (hoveredOverThisItem && !isTopList)
     ? 'shadow-[0_0_0_1px_#292A36] text-osvauld-plainwhite'

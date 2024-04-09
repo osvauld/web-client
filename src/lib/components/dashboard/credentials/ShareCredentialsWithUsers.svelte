@@ -72,7 +72,7 @@
   }
 </script>
 
-<div class="p-2rounded-lg max-h-[65vh]">
+<div class="p-2 rounded-lg pl-2 max-h-[65vh] border border-osvauld-iconblack">
   <div
     class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
   >
