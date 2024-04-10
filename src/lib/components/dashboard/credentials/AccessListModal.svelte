@@ -141,6 +141,7 @@
     >
       {#if selectedTab === "Users"}
         <ExistingListParent
+          isUser={true}
           {editPermissionTrigger}
           existingItemsData={existingUserData}
           on:remove={(e) => removeExistingUser(e)}
@@ -149,6 +150,7 @@
       {:else}
         <ExistingListParent
           {editPermissionTrigger}
+          isUser={false}
           existingItemsData={existingGroupsData}
           on:remove={(e) => removeExistingGroup(e)}
           on:permissionChange={(e) => handlePermissionChange(e)}

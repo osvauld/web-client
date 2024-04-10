@@ -9,6 +9,7 @@
   const dispatch = createEventDispatcher();
   export let item;
   export let index;
+  export let isUser;
   export let editPermissionTrigger;
   let permissionChanged = false;
   let accessSelectorIdentifier = null;
@@ -60,7 +61,7 @@
         class="ml-auto {permissionChanged && 'opacity-40'}"
         on:click={handleItemRemove}
       >
-        {#if item.accessSource === "acquired"}
+        {#if item.accessSource === "acquired" || !isUser}
           <BinIcon />
         {:else if item.accessSource === "inherited"}
           <InfoIcon />
@@ -72,7 +73,7 @@
     <button
       class="w-[7rem] rounded-md cursor-pointer px-1 py-0.5 {permissionChanged &&
         'opacity-40'} flex justify-around items-center {setbackground(
-        item.accessType
+        item.accessType,
       )}"
       on:click={changePermissionHandler}
     >
