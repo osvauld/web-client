@@ -73,6 +73,7 @@
   const selectionMaker = async (e) => {
     selectedPermission = e.detail.permission;
     roleSelectionPrompt = false;
+    await approveSelections();
   };
 
   const closeDrawer = () => {
@@ -145,7 +146,7 @@
           {/each}
         </div>
       </div>
-      <div class="p-2 flex justify-between items-center box-border">
+      <!-- <div class="p-2 flex justify-between items-center box-border">
         <button
           class="w-[45%] px-4 py-2 bg-osvauld-frameblack border border-osvauld-iconblack rounded-md text-osvauld-sheffieldgrey"
           on:click={closeDrawer}>Cancel</button
@@ -157,7 +158,7 @@
             approveSelections();
           }}>Add</button
         >
-      </div>
+      </div> -->
       {#if finalBanner}
         <ShareToast
           message={"Added to group"}
