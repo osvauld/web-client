@@ -64,8 +64,8 @@
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={() => openModal("group")}
   >
+    <span class="mr-1 text-base font-light">Create new group</span>
     <Add color={iconColor} />
-    <span class="ml-1 text-base font-light">Create new group</span>
   </button>
   {#if $showAddGroupDrawer}
     <button

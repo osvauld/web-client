@@ -9,8 +9,11 @@
     showAddGroupDrawer,
     selectedPage,
   } from "../store";
+  import { Add } from "../icons";
   let copiedToClipboard = false;
   let isLoaderActive = false;
+  let isFirstCardHovered = false;
+  let isSecondCardHovered = false;
   let username = "";
 
   const exportManager = async () => {
@@ -44,15 +47,22 @@
 <div
   class="px-[11.30rem] py-[3.25rem] w-full h-[40rem] bg-osvauld-frameblack text-osvauld-sheffieldgrey font-normal text-xl flex flex-col gap-4 justify-center items-center"
 >
-  <div class="font-Jakarta text-6xl text-osvauld-textActive">
-    <h1 class="font-Jakarta text-6xl">Welcome, {username}</h1>
+  <div
+    class="w-full flex flex-col justify-center items-start font-Jakarta text-6xl text-osvauld-textActive"
+  >
+    <h1 class="font-Jakarta text-5xl">Welcome, {username}</h1>
     <p class="font-sans text-base font-light mt-4">
       Lets Jump right onto things!
     </p>
   </div>
-  <div class="flex justify-around items-center gap-0 w-full h-[440px]">
+  <div class="flex justify-around items-center gap-4 w-[110%] h-[30rem]">
     <div
-      class="bg-osvauld-cardshade h-[80%] w-[45%] rounded-2xl flex flex-col gap-7 justify-center items-start p-10 border border-transparent transition duration-300 ease-in-out hover:border-osvauld-iconblack hover:-translate-y-1 hover:scale-105 cursor-pointer hover:shadow-[0_14px_15px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)]"
+      class="bg-osvauld-cardshade h-[80%] w-[48%] rounded-3xl flex flex-col gap-7 justify-center items-start p-14 border border-transparent transition duration-300 ease-in-out hover:border-osvauld-iconblack hover:-translate-y-1 hover:scale-101 cursor-pointer hover:shadow-[0_14px_15px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] text-osvauld-textActive"
+      role="option"
+      tabindex="0"
+      aria-selected={isFirstCardHovered}
+      on:mouseenter={() => (isFirstCardHovered = true)}
+      on:mouseleave={() => (isFirstCardHovered = false)}
     >
       <h2 class="text-3xl">Organize your credentials</h2>
       <p class="text-base">
@@ -60,13 +70,22 @@
         and access them easily whenever you need.
       </p>
       <button
-        class="text-base border border-osvauld-iconblack rounded-md px-4 py-1 hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack"
-        on:click={createFolderManager}>Create new folder</button
+        class="flex justify-center items-center text-base border text-osvauld-textActive border-osvauld-iconblack rounded-md px-4 py-1 {isFirstCardHovered &&
+          'bg-osvauld-carolinablue !text-osvauld-frameblack'} transition-colors duration-300 !ease-in"
+        on:click={createFolderManager}
+      >
+        <span class="mr-1">Create new folder</span>
+        <Add color={isFirstCardHovered ? "#000" : "#A3A4B5"} /></button
       >
     </div>
 
     <div
-      class="bg-osvauld-cardshade h-[80%] w-[45%] rounded-2xl flex flex-col justify-center gap-7 items-start p-10 border border-transparent transition duration-300 ease-in-out hover:border-osvauld-iconblack hover:-translate-y-1 hover:scale-105 cursor-pointer hover:shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)]"
+      class="bg-osvauld-cardshade h-[80%] w-[48%] rounded-3xl flex flex-col justify-center gap-7 items-start p-14 border border-transparent transition duration-300 ease-in-out hover:border-osvauld-iconblack hover:-translate-y-1 hover:scale-101 cursor-pointer hover:shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] text-osvauld-textActive"
+      role="option"
+      tabindex="0"
+      aria-selected={isSecondCardHovered}
+      on:mouseenter={() => (isSecondCardHovered = true)}
+      on:mouseleave={() => (isSecondCardHovered = false)}
     >
       <h2 class="text-3xl">Collaborate with teams</h2>
       <p class="text-base">
@@ -74,9 +93,13 @@
         and streamline your workflows.
       </p>
       <button
-        class="text-base border border-osvauld-iconblack rounded-md px-4 py-1 hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack"
-        on:click={createGroupManager}>Start new group</button
+        class="flex justify-center items-center text-base border text-osvauld-textActive border-osvauld-iconblack rounded-md px-4 py-1 {isSecondCardHovered &&
+          'bg-osvauld-carolinablue !text-osvauld-frameblack'} transition-colors duration-300 !ease-in"
+        on:click={createGroupManager}
       >
+        <span class="mr-1">Start new group</span>
+        <Add color={isSecondCardHovered ? "#000" : "#A3A4B5"} />
+      </button>
     </div>
   </div>
   <div>

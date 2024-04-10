@@ -48,8 +48,8 @@
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={openModal}
   >
+    <span class="mr-1 text-base font-light">Create new folder</span>
     <Add color={iconColor} />
-    <span class="ml-1 text-base font-light">Create new folder</span>
   </button>
   {#if $showAddFolderDrawer}
     <button
