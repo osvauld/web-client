@@ -22,7 +22,9 @@
     }
   };
 
-  const handleClickOutside = () => {
+  const handleClickOutside = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
     closeModal();
   };
 

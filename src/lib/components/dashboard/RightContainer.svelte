@@ -2,7 +2,7 @@
   import CredentialList from "./credentials/CredentialList.svelte";
   import GroupList from "./groups/GroupList.svelte";
   import SearchModal from "./SearchModal.svelte";
-  import { searchObjects } from "./helper";
+  import { clickOutside, searchObjects } from "./helper";
   import { getSearchFields } from "./apis";
   import { Profile, Lens, DownArrow } from "./icons";
   import { writable } from "svelte/store";
@@ -19,6 +19,7 @@
   let searchData = [];
   let showModal = false;
   let isProfileClicked = false;
+  let clickedOutside = false;
   let top = 0;
   let left = 0;
   let query = "";
@@ -61,17 +62,25 @@
     }
   }
 
-  function profileSelectionManager(e: any) {
-    console.log("profileSelectionManager called =>", isProfileClicked);
-    const rect = e.currentTarget.getBoundingClientRect();
-    top = rect.top + window.scrollY + rect.height;
-    left = rect.left + window.scrollX;
-    isProfileClicked = !isProfileClicked;
+  function profileSelectionManager(e: any, called: boolean = false) {
+    if (!clickOutside) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      top = rect.top + window.scrollY + rect.height;
+      left = rect.left + window.scrollX;
+      isProfileClicked = !isProfileClicked;
+    }
   }
 
   function autofocus(node) {
     node.focus();
   }
+  const handleProfileClose = () => {
+    isProfileClicked = false;
+    clickedOutside = true;
+    setTimeout(() => {
+      clickedOutside = false;
+    }, 100);
+  };
 </script>
 
 <div class="flex flex-col h-auto">
@@ -94,8 +103,8 @@
       />
     </div>
     <button
-      class="w-[10rem] bg-osvauld-cardshade rounded-md flex justify-around text-osvauld-fieldText text-base font-light items-center cursor-pointer py-1"
-      on:click={(e) => profileSelectionManager(e)}
+      class="profile-button w-[10rem] bg-osvauld-cardshade rounded-md flex justify-around text-osvauld-fieldText text-base font-light items-center cursor-pointer py-1"
+      on:click|stopPropagation={profileSelectionManager}
     >
       <div class="flex justify-center items-center">
         <Profile /><span>usersname</span>
@@ -111,13 +120,7 @@
   </div>
 
   {#if isProfileClicked}
-    <ProfileModal
-      {top}
-      {left}
-      on:close={() => {
-        isProfileClicked = false;
-      }}
-    />
+    <ProfileModal {top} {left} on:close={handleProfileClose} />
   {/if}
 
   {#if showModal}
