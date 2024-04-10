@@ -4,7 +4,8 @@
   import SearchModal from "./SearchModal.svelte";
   import { searchObjects } from "./helper";
   import { getSearchFields } from "./apis";
-  import { Profile, Lens } from "./icons";
+  import { Profile, Lens, DownArrow } from "./icons";
+  import { writable } from "svelte/store";
   import {
     selectedFolder,
     selectedPage,
@@ -13,9 +14,13 @@
   } from "./store";
 
   import { Folder } from "./dtos";
+  import ProfileModal from "./components/ProfileModal.svelte";
   let searchResults = [];
   let searchData = [];
   let showModal = false;
+  let isProfileClicked = false;
+  let top = 0;
+  let left = 0;
   let query = "";
 
   const getSearchData = async () => {
@@ -35,7 +40,7 @@
     query = "";
     searchResults = [];
   };
-  const selectFolder = async (folder: Folder) => {
+  const selectFolder = (folder: Folder) => {
     selectedFolder.set(folder);
   };
 
@@ -54,6 +59,14 @@
     if (event.key === "Enter") {
       getSearchData();
     }
+  }
+
+  function profileSelectionManager(e: any) {
+    console.log("profileSelectionManager called =>", isProfileClicked);
+    const rect = e.currentTarget.getBoundingClientRect();
+    top = rect.top + window.scrollY + rect.height;
+    left = rect.left + window.scrollX;
+    isProfileClicked = !isProfileClicked;
   }
 
   function autofocus(node) {
@@ -80,8 +93,32 @@
         on:keyup={handleKeyDown}
       />
     </div>
-    <div><Profile /></div>
+    <button
+      class="w-[10rem] bg-osvauld-cardshade rounded-md flex justify-around text-osvauld-fieldText text-base font-light items-center cursor-pointer py-1"
+      on:click={(e) => profileSelectionManager(e)}
+    >
+      <div class="flex justify-center items-center">
+        <Profile /><span>usersname</span>
+      </div>
+      <span
+        class="transition-transform duration-100 ease-linear {isProfileClicked
+          ? 'rotate-180'
+          : 'rotate-0'}"
+      >
+        <DownArrow type={"common"} />
+      </span>
+    </button>
   </div>
+
+  {#if isProfileClicked}
+    <ProfileModal
+      {top}
+      {left}
+      on:close={() => {
+        isProfileClicked = false;
+      }}
+    />
+  {/if}
 
   {#if showModal}
     <SearchModal

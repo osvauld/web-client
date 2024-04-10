@@ -7,6 +7,7 @@
       owner: "#A6E3A1",
       common: "#6E7681",
       indicator: "#74C7EC",
+      profile: "#85889C",
     };
     return typeToClassMap[type] || "";
   }
