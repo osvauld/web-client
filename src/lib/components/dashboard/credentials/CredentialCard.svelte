@@ -39,7 +39,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId
+          credential.credentialId,
         );
         sensitiveFields = response.data;
       }, 300);
@@ -68,7 +68,7 @@
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId
+        credential.credentialId,
       );
       sensitiveFields = response.data;
     }
@@ -91,18 +91,20 @@
       class="flex justify-center items-center border-osvauld-iconblack pb-2"
       on:click|stopPropagation
     >
-      <input
-        type="checkbox"
-        id={credential.credentialId}
-        class="bg-osvauld-cardshade mr-2
+      {#if credential.accessType === "manager"}
+        <input
+          type="checkbox"
+          id={credential.credentialId}
+          class="bg-osvauld-cardshade mr-2
         {hoverEffect
-          ? 'border-osvauld-placeholderblack'
-          : 'border-osvauld-darkLineSeperator'} checked:bg-osvauld-activelavender focus:text-osvauld-activelavender hover:text-osvauld-activelavender active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
-        on:change|stopPropagation={(e) => {
-          toggleCheck();
-        }}
-        {checked}
-      />
+            ? 'border-osvauld-placeholderblack'
+            : 'border-osvauld-darkLineSeperator'} checked:bg-osvauld-activelavender focus:text-osvauld-activelavender hover:text-osvauld-activelavender active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
+          on:change|stopPropagation={(e) => {
+            toggleCheck();
+          }}
+          {checked}
+        />
+      {/if}
       <label
         class="text-lg font-light text-left ml-2 cursor-pointer w-[10rem] overflow-x-hidden whitespace-nowrap {hoverEffect
           ? 'text-osvauld-sideListTextActive'
@@ -111,12 +113,11 @@
       >
         {credential.name}
       </label>
-      <button class="pr-2" on:click={triggerMoreActions}>
-        <More />
-      </button>
-      <!-- <button on:click={removeCredentialHandler}>
-        <BinIcon color={"#FF0000"} />
-      </button> -->
+      {#if credential.accessType === "manager"}
+        <button class="pr-2" on:click={triggerMoreActions}>
+          <More />
+        </button>
+      {/if}
     </div>
     <div
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
