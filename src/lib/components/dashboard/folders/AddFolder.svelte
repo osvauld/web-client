@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createFolder, fetchAllFolders } from "../apis";
-  import { showAddFolderDrawer, folderStore } from "../store";
+  import { showAddFolderDrawer, folderStore, selectedFolder } from "../store";
   import { ClosePanel } from "../icons";
 
   let name = "";
@@ -15,9 +15,16 @@
       name: name,
       description: description,
     };
-    await createFolder(payload);
+    const folderResponse = await createFolder(payload);
+
     const responseJson = await fetchAllFolders();
     folderStore.set(responseJson.data);
+    for (const folder of responseJson.data) {
+      if (folder.id == folderResponse.data.folderId) {
+        selectedFolder.set(folder);
+        break;
+      }
+    }
     showAddFolderDrawer.set(false);
   };
 

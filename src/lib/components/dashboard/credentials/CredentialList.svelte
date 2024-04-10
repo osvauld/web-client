@@ -40,7 +40,7 @@
   let accesslistHovered = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -48,7 +48,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId
+        (c) => c.credentialId !== card.credentialId,
       );
     }
   }
@@ -59,8 +59,12 @@
     }
     selectedCredential.set(null);
     const responseJson = await fetchCredentialsByFolder(folder.id);
-    const response = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(response.data);
+    if (responseJson.data.length != 0) {
+      const response = await sendMessage("decryptMeta", responseJson.data);
+      credentialStore.set(response.data);
+    } else {
+      credentialStore.set([]);
+    }
     let [allUsersResponse, allGroupResponse] = await Promise.all([
       fetchSignedUpUsers(),
       fetchAllUserGroups(),
@@ -76,7 +80,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential
+    credential: Credential,
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -270,7 +274,7 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId
+            (c) => c.credentialId === credential.credentialId,
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}

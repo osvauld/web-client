@@ -6,6 +6,7 @@ import { Credential, CredentialFields } from './credential.dto';
 export type BaseResponse = {
     success: boolean;
     message: string;
+    data: any
 }
 
 export type ChallengeResponse = BaseResponse & {
