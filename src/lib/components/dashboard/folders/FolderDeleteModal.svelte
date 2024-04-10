@@ -9,7 +9,8 @@
   } from "../store";
   import { fly } from "svelte/transition";
   import { Warning } from "../icons";
-  import { removeFolder, fetchAllFolders } from "../apis";
+  import { removeFolder } from "../apis";
+  import { setFolderStore } from "../../../store/storeHelper";
 
   function withdrawFolderDeleteModal() {
     showMoreOptions.set(false);
@@ -23,8 +24,7 @@
     }
     await removeFolder($modalManager.id);
     withdrawFolderDeleteModal();
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
+    await setFolderStore();
   }
 </script>
 

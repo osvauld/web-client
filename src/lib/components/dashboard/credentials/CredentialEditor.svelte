@@ -22,6 +22,7 @@
   } from "../dtos";
   import AddLoginFields from "./AddLoginFields.svelte";
   import { sendMessage } from "../helper";
+  import { setCredentialStore } from "../../../store/storeHelper";
 
   export let edit = false;
   export let credentialFields = [
@@ -121,9 +122,7 @@
     } else {
       await addCredential(addCredentialPaylod);
     }
-    const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const decryptedData = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(decryptedData.data);
+    await setCredentialStore();
     isLoaderActive = false;
     dispatcher("close");
   };
@@ -153,7 +152,7 @@
       usersToShare = responseJson.data;
     } else {
       const responseJson = await fetchFolderUsersForDataSync(
-        $selectedFolder.id
+        $selectedFolder.id,
       );
       usersToShare = responseJson.data;
     }

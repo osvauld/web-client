@@ -27,6 +27,7 @@
   import DownArrow from "../../basic/icons/downArrow.svelte";
   import Placeholder from "../components/Placeholder.svelte";
   import { accessListSelected, buttonRef } from "../../../store/ui.store";
+  import { setCredentialStore } from "../../../store/storeHelper";
 
   let checkedCards: Credential[] = [];
   let users: User[] = [];
@@ -58,13 +59,7 @@
       return;
     }
     selectedCredential.set(null);
-    const responseJson = await fetchCredentialsByFolder(folder.id);
-    if (responseJson.data.length != 0) {
-      const response = await sendMessage("decryptMeta", responseJson.data);
-      credentialStore.set(response.data);
-    } else {
-      credentialStore.set([]);
-    }
+    await setCredentialStore();
     let [allUsersResponse, allGroupResponse] = await Promise.all([
       fetchSignedUpUsers(),
       fetchAllUserGroups(),

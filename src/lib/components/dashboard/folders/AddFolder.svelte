@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { createFolder, fetchAllFolders } from "../apis";
+  import { createFolder } from "../apis";
   import { showAddFolderDrawer, folderStore, selectedFolder } from "../store";
   import { ClosePanel } from "../icons";
+  import { setFolderStore } from "../../../store/storeHelper";
 
   let name = "";
   let description = "";
@@ -16,10 +17,8 @@
       description: description,
     };
     const folderResponse = await createFolder(payload);
-
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
-    for (const folder of responseJson.data) {
+    await setFolderStore();
+    for (const folder of $folderStore) {
       if (folder.id == folderResponse.data.folderId) {
         selectedFolder.set(folder);
         break;

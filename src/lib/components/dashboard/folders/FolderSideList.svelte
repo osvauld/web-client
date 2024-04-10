@@ -10,10 +10,10 @@
     modalManager,
   } from "../store";
 
-  import { fetchAllFolders } from "../apis";
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";
   import { onMount } from "svelte";
+  import { setFolderStore } from "../../../store/storeHelper";
   let iconColor = "#6E7681";
   let hoveringIndex = null;
 
@@ -36,8 +36,7 @@
   };
 
   onMount(async () => {
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
+    await setFolderStore();
   });
 </script>
 

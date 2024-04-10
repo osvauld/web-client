@@ -11,6 +11,7 @@
     selectedPage,
     credentialStore,
     searchedCredential,
+    folderStore,
   } from "./store";
 
   import { Folder } from "./dtos";
@@ -41,14 +42,16 @@
     query = "";
     searchResults = [];
   };
-  const selectFolder = (folder: Folder) => {
-    selectedFolder.set(folder);
-  };
 
   const handleSearchClick = (e: any) => {
     searchedCredential.set(e.detail);
     selectedPage.set("Folders");
-    selectFolder({ id: e.detail.folderId, name: e.detail.folderName });
+    for (const folder of $folderStore) {
+      if (folder.id === e.detail.folderId) {
+        selectedFolder.set(folder);
+        break;
+      }
+    }
     closeModal();
   };
 

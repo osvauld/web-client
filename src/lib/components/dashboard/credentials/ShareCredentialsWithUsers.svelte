@@ -11,7 +11,7 @@
 
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
-  import ShareToast from "../components/ShareToast.svelte";
+  import { toastStore } from "../store";
 
   export let users: User[];
   export let credentialsFields: CredentialFields[] = [];
@@ -19,12 +19,11 @@
   let showOptions = false;
   let selectionIndex: number | null = null;
   let topList = false;
-  let shareToast = false;
   let searchInput = "";
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase())
+        user.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : users;
 
@@ -36,7 +35,11 @@
 
     const payload: ShareCredentialsWithUsersPayload = { userData };
     const shareStatus = await shareCredentialsWithUsers(payload);
-    shareToast = shareStatus.success === true;
+    toastStore.set({
+      type: "success",
+      message: shareStatus.message,
+      show: true,
+    });
   };
 
   function handleClick(index: number, isSelectedList: boolean) {
@@ -130,11 +133,5 @@
         on:click={shareCredentialHandler}>Share</button
       >
     </div>
-  {/if}
-  {#if shareToast}
-    <ShareToast
-      message={"Shared with Users"}
-      on:close={() => (shareToast = !shareToast)}
-    />
   {/if}
 </div>
