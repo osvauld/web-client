@@ -102,8 +102,24 @@
       </button>
     </div>
   </div>
-  <div>
-    <button
+  <div class="w-full flex justify-center items-center">
+    <div
+      class="w-1/2 h-10 flex justify-end items-center text-sm text-osvauld-textActive pr-4"
+    >
+      <a href="https://osvauld.com" target="_blank" rel="noopener noreferrer"
+        >Visit osvauld.com</a
+      >
+    </div>
+    <div
+      class="w-1/2 h-10 flex justify-start items-center border-l border-osvauld-iconblack text-sm text-osvauld-textActive pl-4"
+    >
+      <a
+        href="https://docs.osvauld.com/introduction/overview/"
+        target="_blank"
+        rel="noopener noreferrer">Read osvauld docs</a
+      >
+    </div>
+    <!-- <button
       class="rounded-md font-normal text-base border border-osvauld-dangerRed text-osvauld-dangerRed px-4 py-2 cursor-pointer active:scale-95 flex justify-center items-center"
       on:click={exportManager}
     >
@@ -117,6 +133,6 @@
           <span class="ml-2">Copy Recovery Data</span>
         {/if}
       {/if}
-    </button>
+    </button> -->
   </div>
 </div>
