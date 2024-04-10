@@ -28,6 +28,7 @@ export const setCredentialStore = async () => {
     }
     const responseJson = await fetchCredentialsByFolder(selectedFolderValue.id);
     if (!responseJson.data) {
+        credentialStore.set([])
         return;
     }
     const response = await sendMessage("decryptMeta", responseJson.data);
