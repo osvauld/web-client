@@ -17,7 +17,9 @@
   class="fixed inset-0 flex items-end justify-end px-4 py-5 my-2 rounded-lg bg-transparent font-normal text-xl !z-[1000] mr-4 mb-4"
 >
   <div
-    class="justify-between items-center rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack font-normal text-xl pl-4 pr-2 py-5 my-2 bg-osvauld-cardshade"
+    class="justify-between items-center rounded-xl border {$toastStore.type
+      ? 'border-osvauld-iconblack text-osvauld-chalkwhite '
+      : 'border-osvauld-dangerRed text-osvauld-dangerRed'} font-normal text-xl pl-4 pr-2 py-5 my-2 bg-osvauld-cardshade"
   >
     <span class="ml-2 text-base font-sans"> {$toastStore.message}!</span>
     <button

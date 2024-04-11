@@ -1,6 +1,11 @@
 <script lang="ts">
   import { createFolder } from "../apis";
-  import { showAddFolderDrawer, folderStore, selectedFolder } from "../store";
+  import {
+    showAddFolderDrawer,
+    folderStore,
+    selectedFolder,
+    toastStore,
+  } from "../store";
   import { ClosePanel } from "../icons";
   import { setFolderStore } from "../../../store/storeHelper";
 
@@ -25,6 +30,15 @@
       }
     }
     showAddFolderDrawer.set(false);
+    console.log("folder response", folderResponse);
+    const actionMessage = folderResponse.success
+      ? "Folder Successfully Created"
+      : "Failed to Create folder";
+    toastStore.set({
+      type: folderResponse.success,
+      message: actionMessage,
+      show: true,
+    });
   };
 
   const handleClose = () => {

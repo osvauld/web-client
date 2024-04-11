@@ -2,7 +2,7 @@
   import { createGroup } from "../apis";
   import { selectedGroup, showAddGroupDrawer } from "../store";
   import ClosePanel from "../../basic/icons/closePanel.svelte";
-  import { groupStore } from "../store";
+  import { groupStore, toastStore } from "../store";
   import { setGroupStore } from "../../../store/storeHelper";
   let name = "";
   const addGroupFunc = async () => {
@@ -19,6 +19,14 @@
       }
     }
     showAddGroupDrawer.set(false);
+    const actionMessage = groupResponse.success
+      ? "Group Successfully Created"
+      : "Failed to Create group";
+    toastStore.set({
+      type: groupResponse.success,
+      message: actionMessage,
+      show: true,
+    });
   };
 
   function autofocus(node: any) {

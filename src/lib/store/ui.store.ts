@@ -16,7 +16,7 @@ export let modalManager = writable<MoreActions | null>(null);
 export let DeleteConfirmationModal = writable(false);
 export let accessListSelected = writable(false);
 export let showMoreGroupOptions = writable(false);
-export let toastStore = writable({ show: false, message: "", type: "" });
+export let toastStore = writable({ show: false, message: "", type: true });
 
 
 
