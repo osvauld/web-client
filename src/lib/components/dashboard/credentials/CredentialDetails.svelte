@@ -3,7 +3,6 @@
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
   import UserGroupToggle from "../UserGroupToggle.svelte";
-  import ShareToast from "../components/ShareToast.svelte";
   import {
     fetchCredentialUsers,
     fetchCredentialGroups,
@@ -13,7 +12,7 @@
     editUserPermissionForCredential,
     fetchSensitiveFieldsByCredentialId,
   } from "../apis";
-  import { showCredentialDetailsDrawer } from "../store";
+  import { showCredentialDetailsDrawer, toastStore } from "../store";
   import { ClosePanel, EditIcon, EyeScan } from "../icons";
   import { onMount } from "svelte";
   import ExistingListItem from "../components/ExistingListItem.svelte";
@@ -28,8 +27,6 @@
   let selectedTab = "Groups";
   let accessListSelected = false;
   let accessChangeDetected = false;
-  let permissionChangeAttemptMessage = "";
-  let changeToast = false;
   let fieldsForEdit = [];
   let editPermissionTrigger = false;
 
@@ -78,10 +75,10 @@
       );
       await toggleSelect({ detail: "Users" });
       accessChangeDetected = false;
-      changeToast = true;
-      permissionChangeAttemptMessage = userPermissionSaveResponse.message
+      const message = userPermissionSaveResponse.message
         ? userPermissionSaveResponse.message
         : "Does not have access";
+      toastStore.set({ message, type: "success", show: true });
     } else if (Object.keys(groupPermissions).length !== 0) {
       const groupPermissionSaveResponse =
         await editGroupPermissionForCredential(
@@ -91,10 +88,10 @@
         );
       await toggleSelect({ detail: "Groups" });
       accessChangeDetected = false;
-      changeToast = true;
-      permissionChangeAttemptMessage = groupPermissionSaveResponse.message
+      const message = groupPermissionSaveResponse.message
         ? groupPermissionSaveResponse.message
         : "Does not have access";
+      toastStore.set({ message, type: "success", show: true });
     }
     accessChangeDetected = false;
   };
@@ -294,6 +291,7 @@
           {#if selectedTab == "Groups"}
             {#each groups as group, index}
               <ExistingListItem
+                isUser={false}
                 item={group}
                 {index}
                 {editPermissionTrigger}
@@ -305,6 +303,7 @@
           {:else if selectedTab == "Users"}
             {#each users as user, index}
               <ExistingListItem
+                isUser={true}
                 item={user}
                 {index}
                 {editPermissionTrigger}
@@ -313,12 +312,6 @@
                   permissionChangeHandler(e, user.id, "user")}
               />
             {/each}
-          {/if}
-          {#if changeToast}
-            <ShareToast
-              message={permissionChangeAttemptMessage}
-              on:close={() => (changeToast = !changeToast)}
-            />
           {/if}
         </div>
       {/if}

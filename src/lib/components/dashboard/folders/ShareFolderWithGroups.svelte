@@ -1,7 +1,6 @@
 <script lang="ts">
   import {
     Group,
-    Group,
     CredentialFields,
     ShareFolderWithGroupsPayload,
   } from "../dtos";
@@ -10,18 +9,14 @@
     shareFolderWithGroups,
     fetchGroupsWithoutAccess,
     fetchFolderGroups,
-    removeGroupFromFolder,
-    editFolderPermissionForGroup,
   } from "../apis";
   import { createEventDispatcher } from "svelte";
   import { sendMessage, setbackground } from "../helper";
   import { writable } from "svelte/store";
-  import { selectedFolder } from "../store";
+  import { selectedFolder, toastStore } from "../store";
   import { onMount } from "svelte";
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
-  import ExistingListParent from "../components/ExistingListParent.svelte";
-  import ShareToast from "../components/ShareToast.svelte";
   const dispatch = createEventDispatcher();
   let groups: Group[] = [];
   export let credentialsFields: CredentialFields[];
@@ -31,13 +26,12 @@
   let selectionIndex: number | null = null;
   let topList = false;
   let searchInput = "";
-  let shareToast = false;
   let existingItemDropdown = false;
   let existingGroupsData: Group[] = [];
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase())
+        group.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : groups;
 
@@ -76,7 +70,11 @@
       });
     }
     const shareStatus = await shareFolderWithGroups(payload);
-    shareToast = shareStatus.success === true;
+    toastStore.set({
+      type: "success",
+      message: shareStatus.message,
+      show: true,
+    });
   };
 
   function handleClick(index: number, isSelectedList: boolean) {
@@ -117,19 +115,6 @@
     }
   }
 
-  const removeExistingGroup = async (e: any) => {
-    await removeGroupFromFolder($selectedFolder.id, e.detail.id);
-    await existingGroups(false);
-  };
-
-  const handlePermissionChange = async (e: any) => {
-    await editFolderPermissionForGroup(
-      $selectedFolder.id,
-      e.detail.item.id,
-      e.detail.permission
-    );
-    await existingGroups(false);
-  };
   onMount(async () => {
     // TODO: change fetch all groups to fetch groups where folder not shared.
     if ($selectedFolder === null) throw new Error("Folder not selected");
@@ -170,13 +155,6 @@
       />
     {/each}
   </div>
-
-  {#if shareToast}
-    <ShareToast
-      message={"Shared with groups"}
-      on:close={() => (shareToast = !shareToast)}
-    />
-  {/if}
 </div>
 
 {#if $selectedGroups.size !== 0}

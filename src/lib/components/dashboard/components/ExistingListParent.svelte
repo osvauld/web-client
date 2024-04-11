@@ -4,6 +4,7 @@
 
   export let existingItemsData;
   export let editPermissionTrigger;
+  export let isUser;
 
   const dispatch = createEventDispatcher();
 
@@ -20,12 +21,13 @@
   <div
     class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[30vh] bg-osvauld-frameblack w-full"
   >
-    {#if ExistingListItem}
+    {#if existingItemsData}
       {#each existingItemsData as item, index}
         <!-- TODO: user should not be able to remove themselves -->
         <ExistingListItem
           {index}
           {item}
+          {isUser}
           {editPermissionTrigger}
           on:remove={() => handleRemoval(item)}
           on:permissonChange={(e) => handlePermissionChange(e, item)}

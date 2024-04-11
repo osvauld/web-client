@@ -1,7 +1,6 @@
 <script lang="ts">
   import {
     Group,
-    Group,
     CredentialFields,
     ShareCredentialsWithGroupsPayload,
   } from "../dtos";
@@ -12,7 +11,7 @@
 
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
-  import ShareToast from "../components/ShareToast.svelte";
+  import { toastStore } from "../store";
   export let groups: Group[];
   export let credentialsFields: CredentialFields[];
   let selectedGroups = writable(new Map<string, Group>());
@@ -20,11 +19,10 @@
   let selectionIndex: number | null = null;
   let topList = false;
   let searchInput = "";
-  let shareToast = false;
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase())
+        group.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : groups;
 
@@ -51,7 +49,11 @@
     }
     const shareStatus = await shareCredentialsWithGroups(payload);
 
-    shareToast = shareStatus.success === true;
+    toastStore.set({
+      type: shareStatus.success,
+      message: shareStatus.message,
+      show: true,
+    });
   };
   function handleClick(index: number, isSelectedList: boolean) {
     showOptions = !showOptions;
@@ -157,11 +159,5 @@
         on:click={shareCredentialHandler}>Share</button
       >
     </div>
-  {/if}
-  {#if shareToast}
-    <ShareToast
-      message={"Shared with groups"}
-      on:close={() => (shareToast = !shareToast)}
-    />
   {/if}
 </div>

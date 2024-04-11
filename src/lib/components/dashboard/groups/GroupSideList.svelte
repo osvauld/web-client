@@ -15,6 +15,7 @@
   import Add from "../../basic/icons/add.svelte";
   import { GroupIcon, Menu } from "../icons";
   import { onMount } from "svelte";
+  import { setGroupStore } from "../../../store/storeHelper";
   const accountDetails = localStorage.getItem("user");
   let accountRole = JSON.parse(accountDetails).type;
   let adminStatus = false;
@@ -52,8 +53,7 @@
     showMoreGroupOptions.set(true);
   };
   onMount(async () => {
-    const responseJson = await fetchAllUserGroups();
-    groupStore.set(responseJson.data);
+    await setGroupStore();
   });
 </script>
 

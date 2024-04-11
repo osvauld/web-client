@@ -10,6 +10,7 @@
   import { fly } from "svelte/transition";
   import { Warning } from "../icons";
   import { removeGroup, fetchAllUserGroups } from "../apis";
+  import { setGroupStore } from "../../../store/storeHelper";
 
   function withdrawGroupDeleteModal() {
     showMoreGroupOptions.set(false);
@@ -22,8 +23,7 @@
       selectedGroup.set(null);
     }
     await removeGroup($modalManager.id);
-    const responseJson = await fetchAllUserGroups();
-    groupStore.set(responseJson.data);
+    await setGroupStore();
     DeleteConfirmationModal.set(false);
     showMoreGroupOptions.set(false);
 

@@ -2,18 +2,18 @@
   import CredentialList from "./credentials/CredentialList.svelte";
   import GroupList from "./groups/GroupList.svelte";
   import SearchModal from "./SearchModal.svelte";
-  import { clickOutside, searchObjects } from "./helper";
+  import { searchObjects } from "./helper";
   import { getSearchFields } from "./apis";
   import { Profile, Lens, DownArrow } from "./icons";
-  import { writable } from "svelte/store";
+  import { onMount } from "svelte";
   import {
     selectedFolder,
     selectedPage,
     credentialStore,
     searchedCredential,
+    folderStore,
   } from "./store";
 
-  import { Folder } from "./dtos";
   import ProfileModal from "./components/ProfileModal.svelte";
   let searchResults = [];
   let searchData = [];
@@ -23,6 +23,7 @@
   let top = 0;
   let left = 0;
   let query = "";
+  let username = "";
 
   const getSearchData = async () => {
     showModal = true;
@@ -41,14 +42,16 @@
     query = "";
     searchResults = [];
   };
-  const selectFolder = (folder: Folder) => {
-    selectedFolder.set(folder);
-  };
 
   const handleSearchClick = (e: any) => {
     searchedCredential.set(e.detail);
     selectedPage.set("Folders");
-    selectFolder({ id: e.detail.folderId, name: e.detail.folderName });
+    for (const folder of $folderStore) {
+      if (folder.id === e.detail.folderId) {
+        selectedFolder.set(folder);
+        break;
+      }
+    }
     closeModal();
   };
 
@@ -62,8 +65,8 @@
     }
   }
 
-  function profileSelectionManager(e: any, called: boolean = false) {
-    if (!clickOutside) {
+  function profileSelectionManager(e: any) {
+    if (!clickedOutside) {
       const rect = e.currentTarget.getBoundingClientRect();
       top = rect.top + window.scrollY + rect.height;
       left = rect.left + window.scrollX;
@@ -81,6 +84,10 @@
       clickedOutside = false;
     }, 100);
   };
+
+  onMount(() => {
+    username = localStorage.getItem("username");
+  });
 </script>
 
 <div class="flex flex-col h-auto">
@@ -103,24 +110,28 @@
       />
     </div>
     <button
-      class="profile-button w-[10rem] bg-osvauld-cardshade rounded-md flex justify-around text-osvauld-fieldText text-base font-light items-center cursor-pointer py-1"
+      class="profile-button w-[10rem] bg-osvauld-cardshade rounded-md flex justify-around text-osvauld-fieldText items-center cursor-pointer py-1"
       on:click|stopPropagation={profileSelectionManager}
     >
       <div class="flex justify-center items-center">
-        <Profile /><span>usersname</span>
+        <Profile color={isProfileClicked ? "#F2F2F0" : "#85889C"} /><span
+          class="font-inter text-base {isProfileClicked
+            ? 'text-osvauld-sideListTextActive'
+            : 'text-osvauld-fieldText'} ">{username}</span
+        >
       </div>
       <span
         class="transition-transform duration-100 ease-linear {isProfileClicked
           ? 'rotate-180'
           : 'rotate-0'}"
       >
-        <DownArrow type={"common"} />
+        <DownArrow type={isProfileClicked ? "profileActive" : "profile"} />
       </span>
     </button>
   </div>
 
   {#if isProfileClicked}
-    <ProfileModal {top} {left} on:close={handleProfileClose} />
+    <ProfileModal {top} {left} {username} on:close={handleProfileClose} />
   {/if}
 
   {#if showModal}
