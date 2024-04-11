@@ -40,7 +40,7 @@
   });
 </script>
 
-<div class="h-full flex flex-col justify-start items-center">
+<div class="h-full w-[75%] flex flex-col justify-start items-center">
   <button
     class="w-[90%] bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-2 mb-4 flex justify-center items-center"
     on:mouseenter={() => (iconColor = "#000")}
@@ -60,7 +60,7 @@
       </button>
     </button>
   {/if}
-  <ul class="overflow-y-scroll overflow-x-hidden scrollbar-thin h-full">
+  <ul class="overflow-y-scroll w-[90%] overflow-x-hidden scrollbar-thin h-full">
     {#each $folderStore as folder, index}
       <li
         class="{$selectedFolder?.id == folder.id

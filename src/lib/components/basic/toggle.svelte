@@ -11,9 +11,9 @@
   };
 </script>
 
-<div class="flex justify-center">
+<div class="flex justify-center w-[70%]">
   <div
-    class="inline-flex justify-center space-x-1 p-1 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl"
+    class="inline-flex justify-center space-x-1 p-1 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl w-full"
   >
     {#each ["Folders", "Groups"] as item}
       <button

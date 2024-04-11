@@ -7,7 +7,7 @@
   <Logo />
 </div>
 
-<div class="flex justify-center items-center">
+<div class="flex justify-center items-center w-full">
   <Toggle />
 </div>
 <div
