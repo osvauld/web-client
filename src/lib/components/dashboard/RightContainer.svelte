@@ -110,12 +110,12 @@
       />
     </div>
     <button
-      class="profile-button w-[10rem] bg-osvauld-cardshade rounded-md flex justify-around text-osvauld-fieldText items-center cursor-pointer py-1"
+      class="profile-button min-w-[8rem] max-w-[12rem] bg-osvauld-cardshade rounded-md flex justify-around text-osvauld-fieldText items-center cursor-pointer py-1"
       on:click|stopPropagation={profileSelectionManager}
     >
       <div class="flex justify-center items-center">
         <Profile color={isProfileClicked ? "#F2F2F0" : "#85889C"} /><span
-          class="font-inter text-base {isProfileClicked
+          class="font-inter text-base overflow-hidden text-ellipsis whitespace-nowrap {isProfileClicked
             ? 'text-osvauld-sideListTextActive'
             : 'text-osvauld-fieldText'} ">{username}</span
         >

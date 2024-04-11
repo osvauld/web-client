@@ -6,7 +6,7 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add, InfoIcon, EyeScan, FolderShare } from "../icons";
+  import { Share, Add, EyeScan } from "../icons";
   import {
     fetchSignedUpUsers,
     fetchAllUserGroups,
@@ -39,9 +39,11 @@
   let showCreateCredentialModal = false;
   let isShareHovered = false;
   let accesslistHovered = false;
+  let addCredentialHovered = false;
+  let isShareCredHovered = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -49,7 +51,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId,
+        (c) => c.credentialId !== card.credentialId
       );
     }
   }
@@ -75,7 +77,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential,
+    credential: Credential
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -143,17 +145,20 @@
             on:mouseenter={() => (isShareHovered = true)}
             on:mouseleave={() => (isShareHovered = false)}
           >
-            <FolderShare color={isShareHovered ? "#F2F2F0" : "#85889C"} />
+            <Share color={isShareHovered ? "#F2F2F0" : "#85889C"} size={28} />
           </button>
         {/if}
         {#if checkedCards.length !== 0}
           <button
-            class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap"
+            class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue"
             on:click={credentialShareManager}
+            on:mouseenter={() => (isShareCredHovered = true)}
+            on:mouseleave={() => (isShareCredHovered = false)}
           >
-            <Share color={"#85889C"} /><span class="ml-1 text-sm"
-              >Share Credentials</span
-            >
+            <Share
+              color={isShareCredHovered ? "#0D0E13" : "#A3A4B5"}
+              size={16}
+            /><span class="ml-1 text-sm">Share Credentials</span>
           </button>
         {/if}
         {#if areCardsSelected}
@@ -171,7 +176,7 @@
         {/if}
       </div>
 
-      <div class="w-[40%] flex justify-start items-center">
+      <div class="w-[40%] flex justify-end items-center">
         <button
           class="hover:bg-osvauld-modalFieldActive {$accessListSelected
             ? 'bg-osvauld-modalFieldActive text-osvauld-carolinablue'
@@ -191,7 +196,7 @@
                 : "#85889C"}
           />
           <span
-            class="ml-2 {$accessListSelected
+            class="ml-2 whitespace-nowrap {$accessListSelected
               ? 'text-osvauld-carolinablue'
               : accesslistHovered
                 ? 'text-osvauld-sideListTextActive'
@@ -205,13 +210,15 @@
           <DownArrow type={"common"} />
         </button>
         <button
-          class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack {$selectedFolder.accessType ===
+          class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue {$selectedFolder.accessType ===
           'manager'
             ? 'visible'
-            : 'invisible'}"
+            : 'hidden'}"
+          on:mouseenter={() => (addCredentialHovered = true)}
+          on:mouseleave={() => (addCredentialHovered = false)}
           on:click={addCredentialManager}
           disabled={checkedCards.length !== 0}
-          ><Add color={"#A3A4B5"} />
+          ><Add color={addCredentialHovered ? "#0D0E13" : "#A3A4B5"} />
           <span class="ml-2">Add New Credential</span>
         </button>
       </div>
@@ -269,7 +276,7 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId,
+            (c) => c.credentialId === credential.credentialId
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}

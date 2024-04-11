@@ -39,7 +39,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId,
+          credential.credentialId
         );
         sensitiveFields = response.data;
       }, 300);
@@ -68,7 +68,7 @@
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       sensitiveFields = response.data;
     }
@@ -88,7 +88,9 @@
     class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
   >
     <div
-      class="flex justify-center items-center border-osvauld-iconblack pb-2"
+      class="flex {credential.accessType !== 'manager'
+        ? 'justify-start'
+        : 'justify-center'} items-center border-osvauld-iconblack pb-2"
       on:click|stopPropagation
     >
       {#if credential.accessType === "manager"}

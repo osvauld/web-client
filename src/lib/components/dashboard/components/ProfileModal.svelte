@@ -56,7 +56,7 @@
 
 <div
   class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack w-[14rem] rounded-2xl"
-  style="top: {top + 10}px; left: {left - 60}px;"
+  style="top: {top + 10}px; left: {left - 100}px;"
   use:clickOutside
   on:clickedOutside={handleClickOutside}
 >
