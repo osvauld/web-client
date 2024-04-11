@@ -13,6 +13,7 @@
     modalManager,
     accessListSelected,
     showMoreGroupOptions,
+    toastStore,
   } from "./store/ui.store";
   import { sendMessage } from "./components/dashboard/helper";
   import Welcome from "./components/popup/Welcome.svelte";
@@ -21,6 +22,8 @@
   import AccessListModal from "./components/dashboard/credentials/AccessListModal.svelte";
   import MoreActionsGroup from "./components/dashboard/components/MoreActionsGroup.svelte";
   import GroupDeleteModal from "./components/dashboard/groups/GroupDeleteModal.svelte";
+  import ShareToast from "./components/dashboard/components/ShareToast.svelte";
+  import { setFolderStore } from "./store/storeHelper";
   let showWelcome = false;
   let signedUp = true;
   onMount(async () => {
@@ -30,8 +33,7 @@
     if (checkPvtLoad === false) {
       showWelcome = true;
     } else {
-      const responseJson = await fetchAllFolders();
-      folderStore.set(responseJson.data);
+      await setFolderStore();
     }
   });
 
@@ -41,8 +43,7 @@
   const handleAuthenticated = async () => {
     const user = await getUser();
     localStorage.setItem("user", JSON.stringify(user.data));
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
+    await setFolderStore();
     showWelcome = false;
   };
 </script>
@@ -88,6 +89,11 @@
     {/if}
     {#if $showMoreGroupOptions}
       <MoreActionsGroup />
+    {/if}
+    {#if $toastStore.show}
+      <div class="z-100">
+        <ShareToast />
+      </div>
     {/if}
   {/if}
 </main>

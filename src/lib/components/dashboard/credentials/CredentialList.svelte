@@ -27,6 +27,7 @@
   import DownArrow from "../../basic/icons/downArrow.svelte";
   import Placeholder from "../components/Placeholder.svelte";
   import { accessListSelected, buttonRef } from "../../../store/ui.store";
+  import { setCredentialStore } from "../../../store/storeHelper";
 
   let checkedCards: Credential[] = [];
   let users: User[] = [];
@@ -37,6 +38,7 @@
   let noCardsSelected = false;
   let showCreateCredentialModal = false;
   let isShareHovered = false;
+  let accesslistHovered = false;
 
   $: sortedCredentials = $credentialStore.sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
@@ -57,9 +59,7 @@
       return;
     }
     selectedCredential.set(null);
-    const responseJson = await fetchCredentialsByFolder(folder.id);
-    const response = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(response.data);
+    await setCredentialStore();
     let [allUsersResponse, allGroupResponse] = await Promise.all([
       fetchSignedUpUsers(),
       fetchAllUserGroups(),
@@ -171,36 +171,49 @@
         {/if}
       </div>
 
-      <div class="w-1/2 flex justify-end items-center">
+      <div class="w-[40%] flex justify-start items-center">
         <button
-          class="text-osvauld-sideListTextActive bg-osvauld-modalFieldActive rounded-md flex justify-around items-center px-4 py-1.5 text-sm {$selectedFolder.accessType ===
+          class="hover:bg-osvauld-modalFieldActive {$accessListSelected
+            ? 'bg-osvauld-modalFieldActive text-osvauld-carolinablue'
+            : 'bg-osvauld-frameblack text-osvauld-fieldText'} rounded-md flex justify-around items-center px-4 py-1.5 text-sm {$selectedFolder.accessType ===
           'none'
             ? 'hidden'
             : 'visible'}"
           on:click={handleAccessListSelection}
+          on:mouseenter={() => (accesslistHovered = true)}
+          on:mouseleave={() => (accesslistHovered = false)}
         >
-          <EyeScan color={$accessListSelected ? "#89B4FA" : "#F2F2F0"} />
+          <EyeScan
+            color={$accessListSelected
+              ? "#89B4FA"
+              : accesslistHovered
+                ? "#F2F2F0"
+                : "#85889C"}
+          />
           <span
             class="ml-2 {$accessListSelected
               ? 'text-osvauld-carolinablue'
-              : 'text-osvauld-sideListTextActive'}">Access List</span
+              : accesslistHovered
+                ? 'text-osvauld-sideListTextActive'
+                : 'text-osvauld-fieldText'} ">Access List</span
           >
         </button>
         <button
-          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-1.5 px-4 text-sm rounded-md ml-4"
+          class="border border-osvauld-iconblack text-osvauld-textPassive hidden justify-center items-center py-1.5 px-4 text-sm rounded-md ml-4"
         >
           <span class="mr-2 pl-2">Latest</span>
           <DownArrow type={"common"} />
         </button>
-        {#if $selectedFolder.accessType === "manager"}
-          <button
-            class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack"
-            on:click={addCredentialManager}
-            disabled={checkedCards.length !== 0}
-            ><Add color={"#A3A4B5"} />
-            <span class="ml-2">Add New Credential</span>
-          </button>
-        {/if}
+        <button
+          class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack {$selectedFolder.accessType ===
+          'manager'
+            ? 'visible'
+            : 'invisible'}"
+          on:click={addCredentialManager}
+          disabled={checkedCards.length !== 0}
+          ><Add color={"#A3A4B5"} />
+          <span class="ml-2">Add New Credential</span>
+        </button>
       </div>
     </div>
   {:else}

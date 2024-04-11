@@ -12,12 +12,10 @@
     CredentialFields,
   } from "../dtos";
   import { createEventDispatcher } from "svelte";
-  import { selectedFolder } from "../store";
+  import { selectedFolder, toastStore } from "../store";
   import { sendMessage, setbackground } from "../helper";
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
-  import ShareToast from "../components/ShareToast.svelte";
-  import ExistingListParent from "../components/ExistingListParent.svelte";
 
   const dispatch = createEventDispatcher();
   export let users: User[];
@@ -33,7 +31,7 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase())
+        user.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : users;
 
@@ -64,7 +62,11 @@
       userData,
     };
     const shareStatus = await shareFolderWithUsers(shareFolderPayload);
-    shareToast = shareStatus.success === true;
+    toastStore.set({
+      type: "success",
+      message: shareStatus.message,
+      show: true,
+    });
   };
 
   function handleClick(index: number, isSelectedList: boolean) {
@@ -93,19 +95,6 @@
       users = users.filter((u) => u.id !== user.id);
     }
   }
-
-  const removeExistingUser = async (e: any) => {
-    await removeUserFromFolder($selectedFolder.id, e.detail.id);
-    await existingUsers(false);
-  };
-  const handlePermissionChange = async (e: any) => {
-    await editFolderPermissionForUser(
-      $selectedFolder.id,
-      e.detail.item.id,
-      e.detail.permission
-    );
-    await existingUsers(false);
-  };
 
   function handleCancel() {
     dispatch("cancel", true);
@@ -140,12 +129,6 @@
       />
     {/each}
   </div>
-  {#if shareToast}
-    <ShareToast
-      message={"Shared Folder with user"}
-      on:close={() => (shareToast = !shareToast)}
-    />
-  {/if}
 </div>
 
 {#if selectedUsers.length !== 0}
@@ -182,12 +165,3 @@
     >
   </div>
 {/if}
-
-<!-- <ExistingListParent
-  {existingItemDropdown}
-  existingItemsData={existingUserData}
-  user={true}
-  on:click={() => existingUsers()}
-  on:remove={(e) => removeExistingUser(e)}
-  on:permissionChange={(e) => handlePermissionChange(e)}
-/> -->

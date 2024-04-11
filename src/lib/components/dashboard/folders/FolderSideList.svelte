@@ -10,10 +10,10 @@
     modalManager,
   } from "../store";
 
-  import { fetchAllFolders } from "../apis";
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";
   import { onMount } from "svelte";
+  import { setFolderStore } from "../../../store/storeHelper";
   let iconColor = "#6E7681";
   let hoveringIndex = null;
 
@@ -36,8 +36,7 @@
   };
 
   onMount(async () => {
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
+    await setFolderStore();
   });
 </script>
 
@@ -48,8 +47,8 @@
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={openModal}
   >
+    <span class="mr-1 text-base font-light">Create new folder</span>
     <Add color={iconColor} />
-    <span class="ml-1 text-base font-light">Create new folder</span>
   </button>
   {#if $showAddFolderDrawer}
     <button

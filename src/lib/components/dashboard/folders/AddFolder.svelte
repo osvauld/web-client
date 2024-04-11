@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { createFolder, fetchAllFolders } from "../apis";
-  import { showAddFolderDrawer, folderStore } from "../store";
+  import { createFolder } from "../apis";
+  import { showAddFolderDrawer, folderStore, selectedFolder } from "../store";
   import { ClosePanel } from "../icons";
+  import { setFolderStore } from "../../../store/storeHelper";
 
   let name = "";
   let description = "";
@@ -15,9 +16,14 @@
       name: name,
       description: description,
     };
-    await createFolder(payload);
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
+    const folderResponse = await createFolder(payload);
+    await setFolderStore();
+    for (const folder of $folderStore) {
+      if (folder.id == folderResponse.data.folderId) {
+        selectedFolder.set(folder);
+        break;
+      }
+    }
     showAddFolderDrawer.set(false);
   };
 
@@ -73,7 +79,7 @@
       on:click|preventDefault={handleClose}>Cancel</button
     >
     <button
-      class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md"
+      class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md"
       type="submit"
       disabled={!name}>Add Folder</button
     >

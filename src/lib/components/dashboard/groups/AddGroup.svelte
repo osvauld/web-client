@@ -1,16 +1,23 @@
 <script lang="ts">
-  import { fetchAllUserGroups, createGroup } from "../apis";
-  import { showAddGroupDrawer } from "../store";
+  import { createGroup } from "../apis";
+  import { selectedGroup, showAddGroupDrawer } from "../store";
   import ClosePanel from "../../basic/icons/closePanel.svelte";
   import { groupStore } from "../store";
+  import { setGroupStore } from "../../../store/storeHelper";
   let name = "";
   const addGroupFunc = async () => {
     const payload = {
       name: name,
     };
-    await createGroup(payload);
-    const responseJson = await fetchAllUserGroups();
-    groupStore.set(responseJson.data);
+    const groupResponse = await createGroup(payload);
+
+    await setGroupStore();
+    for (const group of $groupStore) {
+      if (group.groupId === groupResponse.data.groupId) {
+        selectedGroup.set(group);
+        break;
+      }
+    }
     showAddGroupDrawer.set(false);
   };
 
@@ -62,7 +69,7 @@
       on:click|preventDefault={handleClose}>Cancel</button
     >
     <button
-      class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md"
+      class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md"
       type="submit"
       disabled={name === ""}
     >
