@@ -23,10 +23,10 @@
   export const buttonCoords = derived(buttonRef, ($buttonRef) => {
     if ($buttonRef) {
       const rect = $buttonRef.getBoundingClientRect();
-      const leftVal = rect.left + window.scrollX;
+      const rightVal = rect.right + window.scrollX;
       return {
         top: rect.top + window.scrollY + rect.height + 10,
-        left: leftVal,
+        right: rightVal,
       };
     }
     return { top: 0, left: 0 };
@@ -72,13 +72,13 @@
       await editFolderPermissionForUser(
         $selectedFolder.id,
         e.detail.item.id,
-        e.detail.permission,
+        e.detail.permission
       );
     } else {
       await editFolderPermissionForGroup(
         $selectedFolder.id,
         e.detail.item.groupId,
-        e.detail.permission,
+        e.detail.permission
       );
     }
     await existingItems();
@@ -91,7 +91,8 @@
 
 <div
   class="absolute w-[29rem] min-h-[30rem] max-h-[40rem] p-4 z-50 bg-osvauld-frameblack border border-osvauld-iconblack rounded-2xl"
-  style="top: {$buttonCoords.top}px; left: {$buttonCoords.left}px;"
+  style="top: {$buttonCoords.top}px; right: {window.innerWidth -
+    $buttonCoords.right}px;"
   use:clickOutside
   on:clickedOutside={handleClickOutside}
 >
