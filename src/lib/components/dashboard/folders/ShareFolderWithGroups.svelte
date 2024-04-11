@@ -75,6 +75,7 @@
       message: shareStatus.message,
       show: true,
     });
+    dispatch("cancel", true);
   };
 
   function handleClick(index: number, isSelectedList: boolean) {
@@ -139,7 +140,7 @@
         type="text"
         bind:value={searchInput}
         class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-        placeholder="Search for users"
+        placeholder="Search for groups"
       />
     </div>
   </div>

@@ -32,12 +32,12 @@
 </script>
 
 <div
-  class="fixed top-[7.6rem] right-[30rem] z-50 flex justify-end rounded-2xl border border-osvauld-activeBorder blur-none"
+  class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 flex justify-end rounded-2xl border border-osvauld-activeBorder blur-none"
   in:fly
   out:fly
 >
   <div
-    class="w-[32.25rem] min-h-[55vh] max-h-[82vh] rounded-2xl translate-x-0 bg-osvauld-frameblack p-7 pb-2"
+    class="w-[32.25rem] min-h-[28rem] max-h-[41rem] rounded-2xl translate-x-0 bg-osvauld-frameblack p-7 pb-2"
   >
     <div class="flex justify-between items-center p-3 pt-0">
       <span class="font-sans text-osvauld-quarzowhite text-28 font-normal"
