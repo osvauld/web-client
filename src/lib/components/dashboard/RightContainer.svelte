@@ -66,12 +66,14 @@
   }
 
   function profileSelectionManager(e: any, called: boolean = false) {
-    if (!clickOutside) {
+    if (!clickedOutside) {
       const rect = e.currentTarget.getBoundingClientRect();
       top = rect.top + window.scrollY + rect.height;
       left = rect.left + window.scrollX;
       isProfileClicked = !isProfileClicked;
+      console.log(isProfileClicked, "isProfileClicked");
     }
+    console.log(isProfileClicked, "isProfileClicked");
   }
 
   function autofocus(node) {
