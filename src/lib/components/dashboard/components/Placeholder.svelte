@@ -1,34 +1,14 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
-  import Loader from "./Loader.svelte";
-  import { getTokenAndBaseUrl } from "../helper";
   import { onMount } from "svelte";
-  import Warning from "../../basic/icons/warning.svelte";
   import {
     showAddFolderDrawer,
     showAddGroupDrawer,
     selectedPage,
   } from "../store";
   import { Add } from "../icons";
-  let copiedToClipboard = false;
-  let isLoaderActive = false;
   let isFirstCardHovered = false;
   let isSecondCardHovered = false;
   let username = "";
-
-  const exportManager = async () => {
-    isLoaderActive = true;
-    const { baseUrl } = await getTokenAndBaseUrl();
-    const encryptionPvtKeyObj =
-      await browser.storage.local.get("encryptionPvtKey");
-    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
-    const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
-    const signKey = signPvtKeyObj.signPvtKey;
-    const exporter = JSON.stringify({ encryptionKey, signKey, baseUrl });
-    await navigator.clipboard.writeText(exporter);
-    copiedToClipboard = true;
-    isLoaderActive = false;
-  };
 
   const createGroupManager = () => {
     selectedPage.set("Groups");
@@ -119,20 +99,5 @@
         rel="noopener noreferrer">Read osvauld docs</a
       >
     </div>
-    <!-- <button
-      class="rounded-md font-normal text-base border border-osvauld-dangerRed text-osvauld-dangerRed px-4 py-2 cursor-pointer active:scale-95 flex justify-center items-center"
-      on:click={exportManager}
-    >
-      {#if isLoaderActive}
-        <Loader />
-      {:else}
-        <Warning {copiedToClipboard} />
-        {#if copiedToClipboard}
-          <span class="ml-2">Proceed with caution!</span>
-        {:else}
-          <span class="ml-2">Copy Recovery Data</span>
-        {/if}
-      {/if}
-    </button> -->
   </div>
 </div>

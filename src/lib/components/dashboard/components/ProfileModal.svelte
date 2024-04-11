@@ -1,6 +1,6 @@
 <script lang="ts">
-  import EditIcon from "../../basic/icons/editIcon.svelte";
-  import { clickOutside } from "../helper";
+  import browser from "webextension-polyfill";
+  import { clickOutside, getTokenAndBaseUrl } from "../helper";
   import { onMount, onDestroy } from "svelte";
   import { CopyIcon } from "../icons";
   import { createEventDispatcher } from "svelte";
@@ -9,6 +9,7 @@
 
   export let top;
   export let left;
+  export let username;
   let isUsernameHovered = false;
   let isRecoveryHovered = false;
 
@@ -28,9 +29,21 @@
     closeModal();
   };
 
-  const copyUsername = () => {};
+  const copyUsername = async () => {
+    await navigator.clipboard.writeText(username);
+  };
 
-  const initiateRecovery = () => {};
+  const initiateRecovery = async () => {
+    const { baseUrl } = await getTokenAndBaseUrl();
+    const encryptionPvtKeyObj =
+      await browser.storage.local.get("encryptionPvtKey");
+    const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+    const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
+    const signKey = signPvtKeyObj.signPvtKey;
+    const exporter = JSON.stringify({ encryptionKey, signKey, baseUrl });
+    await navigator.clipboard.writeText(exporter);
+    closeModal();
+  };
 
   onMount(() => {
     window.addEventListener("keydown", handleKeyDown);
