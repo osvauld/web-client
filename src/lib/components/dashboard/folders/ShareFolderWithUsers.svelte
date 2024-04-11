@@ -63,8 +63,8 @@
     };
     const shareStatus = await shareFolderWithUsers(shareFolderPayload);
     toastStore.set({
-      type: "success",
-      message: shareStatus.message,
+      type: shareStatus.success,
+      message: "Successfully shared",
       show: true,
     });
     dispatch("cancel", true);
