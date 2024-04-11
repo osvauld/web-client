@@ -37,9 +37,9 @@
   out:fly
 >
   <div
-    class="w-[32.25rem] min-h-[64vh] max-h-[82vh] rounded-2xl translate-x-0 bg-osvauld-frameblack px-6 py-2"
+    class="w-[32.25rem] min-h-[55vh] max-h-[82vh] rounded-2xl translate-x-0 bg-osvauld-frameblack p-7 pb-2"
   >
-    <div class="flex justify-between items-center p-3">
+    <div class="flex justify-between items-center p-3 pt-0">
       <span class="font-sans text-osvauld-quarzowhite text-28 font-normal"
         >Share Folder</span
       >
@@ -48,9 +48,12 @@
       >
     </div>
     <div
-      class="relative h-auto w-full px-4 py-2 mx-auto flex justify-between items-center rounded-lg cursor-pointer mb-3 bg-osvauld-fieldActive"
+      class="relative h-auto w-full px-4 py-2 mx-auto flex justify-start items-center rounded-lg cursor-pointer mb-3 bg-osvauld-fieldActive"
       on:click={() => (infoDropdown = !infoDropdown)}
     >
+      <span class="mr-2">
+        <InfoIcon />
+      </span>
       <p
         class="text-sm text-osvauld-sheffieldgrey font-normal {infoDropdown
           ? 'text-osvauld-highlightwhite'
@@ -59,9 +62,6 @@
         Select groups/users and choose access type
       </p>
 
-      <span class="">
-        <InfoIcon />
-      </span>
       {#if infoDropdown}
         <InfoOverlay />
       {/if}

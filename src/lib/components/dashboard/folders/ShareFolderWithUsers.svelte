@@ -31,7 +31,7 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase()),
+        user.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : users;
 
@@ -102,16 +102,18 @@
 </script>
 
 <div class="p-2 border border-osvauld-iconblack rounded-lg max-h-[65vh]">
-  <div
-    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
-  >
-    <Lens />
-    <input
-      type="text"
-      bind:value={searchInput}
-      class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-      placeholder="Search for users"
-    />
+  <div class="bg-osvauld-frameblack flex justify-center items-center pb-3">
+    <div
+      class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+    >
+      <Lens />
+      <input
+        type="text"
+        bind:value={searchInput}
+        class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+        placeholder="Search for users"
+      />
+    </div>
   </div>
 
   <div
@@ -153,15 +155,17 @@
       {/each}
     </div>
   </div>
-  <div class="p-2 w-full flex justify-end items-center box-border">
-    <button
-      class=" ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
-      on:click={handleCancel}>Cancel</button
-    >
-
-    <button
-      class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
-      on:click={shareFolderHandler}>Save changes</button
-    >
-  </div>
 {/if}
+<div class="p-2 w-full flex justify-end items-center box-border">
+  <button
+    class=" ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
+    disabled={selectedUsers.length === 0}
+    on:click={handleCancel}>Cancel</button
+  >
+
+  <button
+    class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
+    disabled={selectedUsers.length === 0}
+    on:click={shareFolderHandler}>Save changes</button
+  >
+</div>
