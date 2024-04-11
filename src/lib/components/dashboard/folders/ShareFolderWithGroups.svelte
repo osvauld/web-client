@@ -31,7 +31,7 @@
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase()),
+        group.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : groups;
 
@@ -75,6 +75,7 @@
       message: shareStatus.message,
       show: true,
     });
+    dispatch("cancel", true);
   };
 
   function handleClick(index: number, isSelectedList: boolean) {
@@ -127,21 +128,25 @@
   }
 </script>
 
-<div class="p-2 border border-osvauld-iconblack rounded-lg max-h-[65vh]">
-  <div
-    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
-  >
-    <Lens />
-    <input
-      type="text"
-      bind:value={searchInput}
-      class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-      placeholder="Search for users"
-    />
+<div
+  class="p-2 border border-osvauld-iconblack rounded-lg min-h-[10rem] max-h-[15rem]"
+>
+  <div class="bg-osvauld-frameblack flex justify-center items-center">
+    <div
+      class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+    >
+      <Lens />
+      <input
+        type="text"
+        bind:value={searchInput}
+        class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+        placeholder="Search for groups"
+      />
+    </div>
   </div>
 
   <div
-    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[35vh] bg-osvauld-frameblack w-full flex flex-col justify-center items-center"
+    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[11rem] bg-osvauld-frameblack w-full flex flex-col justify-center items-center"
   >
     {#each filteredGroups as group, index}
       <ListItem
@@ -159,10 +164,10 @@
 
 {#if $selectedGroups.size !== 0}
   <div
-    class="my-2 border border-osvauld-iconblack rounded-lg min-h-0 max-h-[30vh] mb-2"
+    class="my-2 border border-osvauld-iconblack rounded-lg min-h-0 max-h-[8rem] mb-2"
   >
     <div
-      class="overflow-y-auto scrollbar-thin min-h-0 max-h-[17.5vh] rounded-lg w-full px-2 mt-1"
+      class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[6rem] rounded-lg w-full px-2 mt-1"
     >
       {#each Array.from($selectedGroups) as [groupId, group], index}
         <ListItem
@@ -175,27 +180,19 @@
           {showOptions}
           on:select={(e) => handleRoleChange(e, index, "selectedGroups")}
         />
-        <div class="border-b border-osvauld-iconblack w-full"></div>
+        <div class=" border-osvauld-iconblack w-full"></div>
       {/each}
     </div>
   </div>
-  <div class="p-2 w-full flex justify-end items-center box-border">
-    <button
-      class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
-      on:click={handleCancel}>Cancel</button
-    >
-
-    <button
-      class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
-      on:click={shareFolderHandler}>Save changes</button
-    >
-  </div>
 {/if}
-<!-- <ExistingListParent
-  {existingItemDropdown}
-  existingItemsData={existingGroupsData}
-  user={false}
-  on:click={() => existingGroups()}
-  on:remove={(e) => removeExistingGroup(e)}
-  on:permissionChange={(e) => handlePermissionChange(e)}
-/> -->
+<div class="p-2 w-full flex justify-end items-center box-border">
+  <button
+    class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
+    on:click={handleCancel}>Cancel</button
+  >
+
+  <button
+    class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
+    on:click={shareFolderHandler}>Save changes</button
+  >
+</div>

@@ -40,9 +40,9 @@
   });
 </script>
 
-<div>
+<div class="h-full flex flex-col justify-start items-center">
   <button
-    class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-10 mb-4 flex justify-center items-center"
+    class="w-[90%] bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-2 mb-4 flex justify-center items-center"
     on:mouseenter={() => (iconColor = "#000")}
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={openModal}
@@ -60,12 +60,12 @@
       </button>
     </button>
   {/if}
-  <ul class="">
+  <ul class="overflow-y-scroll overflow-x-hidden scrollbar-thin h-full">
     {#each $folderStore as folder, index}
       <li
         class="{$selectedFolder?.id == folder.id
           ? 'bg-osvauld-sideListHighlight rounded-lg text-osvauld-sideListTextActive'
-          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 flex items-center transition-colors duration-100"
+          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center transition-colors duration-100"
         on:mouseenter={() => (hoveringIndex = index)}
         on:mouseleave={() => (hoveringIndex = null)}
       >

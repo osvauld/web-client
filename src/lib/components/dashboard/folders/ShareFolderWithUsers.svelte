@@ -31,7 +31,7 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase()),
+        user.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : users;
 
@@ -67,6 +67,7 @@
       message: shareStatus.message,
       show: true,
     });
+    dispatch("cancel", true);
   };
 
   function handleClick(index: number, isSelectedList: boolean) {
@@ -101,21 +102,25 @@
   }
 </script>
 
-<div class="p-2 border border-osvauld-iconblack rounded-lg max-h-[65vh]">
-  <div
-    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
-  >
-    <Lens />
-    <input
-      type="text"
-      bind:value={searchInput}
-      class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-      placeholder="Search for users"
-    />
+<div
+  class="p-2 border border-osvauld-iconblack rounded-lg min-h-[10rem] max-h-[15rem]"
+>
+  <div class="bg-osvauld-frameblack flex justify-center items-center">
+    <div
+      class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+    >
+      <Lens />
+      <input
+        type="text"
+        bind:value={searchInput}
+        class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+        placeholder="Search for users"
+      />
+    </div>
   </div>
 
   <div
-    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[35vh] bg-osvauld-frameblack w-full flex flex-col justify-center items-center"
+    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[11rem] bg-osvauld-frameblack w-full flex flex-col justify-center items-center"
   >
     {#each filteredUsers as user, index}
       <ListItem
@@ -133,10 +138,10 @@
 
 {#if selectedUsers.length !== 0}
   <div
-    class="my-2 border border-osvauld-iconblack rounded-lg min-h-0 max-h-[30vh] mb-2"
+    class="my-2 border border-osvauld-iconblack rounded-lg min-h-0 max-h-[8rem] mb-2"
   >
     <div
-      class="overflow-y-auto scrollbar-thin min-h-0 max-h-[17.5vh] rounded-lg w-full px-2 mt-1"
+      class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[6rem] rounded-lg w-full px-2 mt-1"
     >
       {#each selectedUsers as user, index}
         <ListItem
@@ -153,15 +158,15 @@
       {/each}
     </div>
   </div>
-  <div class="p-2 w-full flex justify-end items-center box-border">
-    <button
-      class=" ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
-      on:click={handleCancel}>Cancel</button
-    >
-
-    <button
-      class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
-      on:click={shareFolderHandler}>Save changes</button
-    >
-  </div>
 {/if}
+<div class="p-2 w-full flex justify-end items-center box-border">
+  <button
+    class=" ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
+    on:click={handleCancel}>Cancel</button
+  >
+
+  <button
+    class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
+    on:click={shareFolderHandler}>Save changes</button
+  >
+</div>

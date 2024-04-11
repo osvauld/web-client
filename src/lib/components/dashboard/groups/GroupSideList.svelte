@@ -57,9 +57,9 @@
   });
 </script>
 
-<div>
+<div class="h-full flex flex-col justify-start items-center">
   <button
-    class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-10 mb-4 flex justify-center items-center"
+    class="w-[90%] bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-2 mb-4 flex justify-center items-center"
     on:mouseenter={() => (iconColor = "#000")}
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={() => openModal("group")}
@@ -76,12 +76,12 @@
       <AddGroup on:close={closeModal} />
     </button>
   {/if}
-  <ul class=" max-h-[40rem] overflow-y-scroll scrollbar-thin -pl-3">
+  <ul class="h-full overflow-y-scroll scrollbar-thin -pl-3">
     {#if adminStatus}
       <li
         class="{$allUsersSelected || hoveringIndex === 999
           ? 'bg-osvauld-sideListHighlight text-osvauld-sideListTextActive'
-          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md pl-3 my-0.5 pr-3 flex items-center"
+          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md pl-3 my-0.5 mr-1 pr-3 flex items-center"
         on:mouseenter={() => (hoveringIndex = 999)}
         on:mouseleave={() => (hoveringIndex = null)}
       >
@@ -103,7 +103,7 @@
         class="{($selectedGroup && $selectedGroup.groupId === group.groupId) ||
         hoveringIndex === index
           ? 'bg-osvauld-sideListHighlight text-osvauld-sideListTextActive'
-          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md pl-3 my-0.5 pr-3 flex items-center transition-colors duration-100"
+          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md pl-3 my-0.5 pr-3 mr-1 flex items-center transition-colors duration-100"
         on:mouseenter={() => (hoveringIndex = index)}
         on:mouseleave={() => (hoveringIndex = null)}
       >
@@ -128,7 +128,7 @@
             $selectedGroup.groupId === group.groupId) ||
           hoveringIndex === index
             ? 'visible'
-            : 'invisible'}"
+            : 'hidden'}"
         >
           {#if group.accessType === "admin"}
             <button

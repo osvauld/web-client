@@ -69,7 +69,7 @@
   {/if}
   {#if !isTopList && !isSelected && hoveredOverThisItem}
     <span
-      class="text-osvauld-permissionGreenText bg-osvauld-permissionsGreen rounded-md cursor-pointer px-2 py-0.5 w-[10rem] flex justify-around items-center text-base font-normal"
+      class="cursor-pointer text-osvauld-permissionGreenText bg-osvauld-permissionsGreen rounded-md px-2 py-0.5 w-[10rem] flex justify-around items-center text-base font-normal"
       >Permissions <span><DownArrow type={"indicator"} /></span></span
     >
   {/if}

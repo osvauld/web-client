@@ -51,7 +51,7 @@
 <main
   class="
     bg-osvauld-frameblack
-   w-screen h-screen text-macchiato-text text-lg !font-sans"
+   w-screen h-screen text-macchiato-text text-lg overflow-hidden !font-sans"
 >
   {#if !signedUp}
     <Signup on:signedUp={handleSignedUp} />
@@ -62,7 +62,7 @@
   {:else}
     <div class="flex h-full">
       <div
-        class="w-1/5 h-full overflow-y-scroll overflow-x-hidden scrollbar-thin relative z-10"
+        class="w-1/5 h-full scrollbar-thin overflow-y-hidden overflow-x-hidden relative z-10"
       >
         <LeftContainer />
       </div>
