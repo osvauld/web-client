@@ -8,6 +8,7 @@
   } from "../store";
   import { ClosePanel } from "../icons";
   import { setFolderStore } from "../../../store/storeHelper";
+  import { fly } from "svelte/transition";
 
   let name = "";
   let description = "";
@@ -49,6 +50,8 @@
 <form
   class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[25rem] flex flex-col items-start justify-center gap-3"
   on:submit|preventDefault={addFolderFunc}
+  in:fly
+  out:fly
 >
   <div class="flex justify-between items-center w-full">
     <span class="text-[21px] font-medium text-osvauld-quarzowhite"

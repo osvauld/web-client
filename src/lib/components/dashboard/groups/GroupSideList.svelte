@@ -10,8 +10,9 @@
     buttonRef,
     modalManager,
   } from "../store";
-  import { fetchAllUserGroups } from "../apis";
   import { Group } from "../dtos";
+  import { fade, scale } from "svelte/transition";
+
   import Add from "../../basic/icons/add.svelte";
   import { GroupIcon, Menu } from "../icons";
   import { onMount } from "svelte";
@@ -57,7 +58,7 @@
   });
 </script>
 
-<div class="h-full flex w-[75%] flex-col justify-start items-center">
+<div class="h-full flex w-[75%] flex-col justify-start items-center" in:scale>
   <button
     class="w-[90%] bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-2 mb-4 flex justify-center items-center"
     on:mouseenter={() => (iconColor = "#000")}
@@ -69,7 +70,7 @@
   </button>
   {#if $showAddGroupDrawer}
     <button
-      class="fixed inset-0 flex items-center justify-center z-50 bg- backdrop-filter backdrop-blur-[2px]"
+      class="fixed inset-0 flex items-center justify-center z-50 backdrop-filter backdrop-blur-[2px]"
       on:click|stopPropagation
       on:keydown|stopPropagation
     >

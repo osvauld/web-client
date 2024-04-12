@@ -13,6 +13,7 @@
   } from "../store";
   import { Credential, Fields } from "../dtos";
   import { tweened } from "svelte/motion";
+  import { blur, scale } from "svelte/transition";
   const dispatch = createEventDispatcher();
   export let credential: Credential;
   export let checked = false;
@@ -39,7 +40,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId
+          credential.credentialId,
         );
         sensitiveFields = response.data;
       }, 300);
@@ -68,7 +69,7 @@
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId
+        credential.credentialId,
       );
       sensitiveFields = response.data;
     }
@@ -92,6 +93,7 @@
         ? 'justify-start'
         : 'justify-center'} items-center border-osvauld-iconblack pb-2"
       on:click|stopPropagation
+      in:scale
     >
       {#if credential.accessType === "manager"}
         <input

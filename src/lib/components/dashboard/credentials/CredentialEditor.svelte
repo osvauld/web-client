@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { fly } from "svelte/transition";
+  import { fly, blur } from "svelte/transition";
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
@@ -175,6 +175,7 @@
   <div
     class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack z-50"
     in:fly
+    out:blur
   >
     <div class="flex justify-between items-center px-12 py-6">
       <div>

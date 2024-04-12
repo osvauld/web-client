@@ -14,6 +14,7 @@
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
   import { onMount } from "svelte";
+  import { blur, fly } from "svelte/transition";
   let existingUserData = [];
   let existingGroupsData = [];
   let selectedTab = "Groups";
@@ -72,13 +73,13 @@
       await editFolderPermissionForUser(
         $selectedFolder.id,
         e.detail.item.id,
-        e.detail.permission
+        e.detail.permission,
       );
     } else {
       await editFolderPermissionForGroup(
         $selectedFolder.id,
         e.detail.item.groupId,
-        e.detail.permission
+        e.detail.permission,
       );
     }
     await existingItems();
@@ -95,6 +96,7 @@
     $buttonCoords.right}px;"
   use:clickOutside
   on:clickedOutside={handleClickOutside}
+  in:fly
 >
   <div class="flex justify-between items-center p-3">
     <span class="font-sans text-osvauld-quarzowhite text-2xl font-normal"

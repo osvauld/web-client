@@ -68,7 +68,7 @@
   };
   onMount(async () => {
     query = await localStorage.getItem("query");
-    if (query.length >= 1) {
+    if (query && query.length >= 1) {
       const searchFieldSResponse = await getSearchFields();
       searchData = searchFieldSResponse.data;
       listedCredentials = searchObjects(query, searchData);

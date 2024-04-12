@@ -9,6 +9,7 @@
     showMoreOptions,
     modalManager,
   } from "../store";
+  import { fade, scale } from "svelte/transition";
 
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";
@@ -40,7 +41,7 @@
   });
 </script>
 
-<div class="h-full w-[75%] flex flex-col justify-start items-center">
+<div class="h-full w-[75%] flex flex-col justify-start items-center" in:scale>
   <button
     class="w-[90%] bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-2 mb-4 flex justify-center items-center"
     on:mouseenter={() => (iconColor = "#000")}
@@ -60,7 +61,9 @@
       </button>
     </button>
   {/if}
-  <ul class="overflow-y-scroll w-[90%] overflow-x-hidden scrollbar-thin h-full">
+  <ul
+    class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin h-full -pl-3"
+  >
     {#each $folderStore as folder, index}
       <li
         class="{$selectedFolder?.id == folder.id
