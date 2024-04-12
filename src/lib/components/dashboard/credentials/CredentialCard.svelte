@@ -40,7 +40,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId,
+          credential.credentialId
         );
         sensitiveFields = response.data;
       }, 300);
@@ -69,7 +69,7 @@
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       sensitiveFields = response.data;
     }
@@ -93,7 +93,6 @@
         ? 'justify-start'
         : 'justify-center'} items-center border-osvauld-iconblack pb-2"
       on:click|stopPropagation
-      in:scale
     >
       {#if credential.accessType === "manager"}
         <input
