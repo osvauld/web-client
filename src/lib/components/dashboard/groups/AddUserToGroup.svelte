@@ -31,11 +31,11 @@
   onMount(async () => {
     if (!$selectedGroup) return;
     const userGroup = await fetchUsersWithoutGroupAccess(
-      $selectedGroup.groupId,
+      $selectedGroup.groupId
     );
     users = userGroup.data;
     const credentialFieldsResponse = await fetchCredentialFieldsByGroupId(
-      $selectedGroup.groupId,
+      $selectedGroup.groupId
     );
     credentialFields = credentialFieldsResponse.data;
   });
@@ -56,7 +56,7 @@
     selectedUserIndice = null;
     if (userAdditionResponse.success) {
       toastStore.set({
-        type: "success",
+        type: true,
         message: userAdditionResponse.message,
         show: true,
       });
