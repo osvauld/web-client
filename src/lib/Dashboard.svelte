@@ -2,8 +2,6 @@
   import { onMount } from "svelte";
   import LeftContainer from "./components/dashboard/LeftContainer.svelte";
   import RightContainer from "./components/dashboard/RightContainer.svelte";
-  import { fetchAllFolders } from "./apis/folder.api";
-  import { folderStore } from "./store/folder.store";
   import MoreActions from "./components/dashboard/components/MoreActions.svelte";
   import CredentialDeleteModal from "./components/dashboard/credentials/CredentialDeleteModal.svelte";
   import FolderDeleteModal from "./components/dashboard/folders/FolderDeleteModal.svelte";
