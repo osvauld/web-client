@@ -23,7 +23,7 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase()),
+        user.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : users;
 
@@ -36,7 +36,7 @@
     const payload: ShareCredentialsWithUsersPayload = { userData };
     const shareStatus = await shareCredentialsWithUsers(payload);
     toastStore.set({
-      type: "success",
+      type: true,
       message: shareStatus.message,
       show: true,
     });

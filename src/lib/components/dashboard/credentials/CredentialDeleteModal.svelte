@@ -4,13 +4,10 @@
     modalManager,
     DeleteConfirmationModal,
     showMoreOptions,
-    selectedFolder,
-    credentialStore,
   } from "../store";
   import { fly } from "svelte/transition";
-  import { sendMessage } from "../helper";
   import { Warning } from "../icons";
-  import { removeCredential, fetchCredentialsByFolder } from "../apis";
+  import { removeCredential } from "../apis";
   import { setCredentialStore } from "../../../store/storeHelper";
 
   function withdrawCredentialDeleteModal() {

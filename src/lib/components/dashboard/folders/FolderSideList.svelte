@@ -9,6 +9,7 @@
     showMoreOptions,
     modalManager,
   } from "../store";
+  import { fade, scale } from "svelte/transition";
 
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";
@@ -60,7 +61,9 @@
       </button>
     </button>
   {/if}
-  <ul class="overflow-y-scroll w-[90%] overflow-x-hidden scrollbar-thin h-full">
+  <ul
+    class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin h-full -pl-3"
+  >
     {#each $folderStore as folder, index}
       <li
         class="{$selectedFolder?.id == folder.id

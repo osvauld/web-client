@@ -51,7 +51,7 @@
       users = usersResponse.data;
     } else if (selectedTab == "Groups") {
       const groupsResponse = await fetchCredentialGroups(
-        credential.credentialId,
+        credential.credentialId
       );
       groups = groupsResponse.data;
     }
@@ -71,27 +71,27 @@
       const userPermissionSaveResponse = await editUserPermissionForCredential(
         userPermissions.credentialId,
         userPermissions.userId,
-        userPermissions.accessType,
+        userPermissions.accessType
       );
       await toggleSelect({ detail: "Users" });
       accessChangeDetected = false;
       const message = userPermissionSaveResponse.message
         ? userPermissionSaveResponse.message
         : "Does not have access";
-      toastStore.set({ message, type: "success", show: true });
+      toastStore.set({ message, type: true, show: true });
     } else if (Object.keys(groupPermissions).length !== 0) {
       const groupPermissionSaveResponse =
         await editGroupPermissionForCredential(
           groupPermissions.credentialId,
           groupPermissions.groupId,
-          groupPermissions.accessType,
+          groupPermissions.accessType
         );
       await toggleSelect({ detail: "Groups" });
       accessChangeDetected = false;
       const message = groupPermissionSaveResponse.message
         ? groupPermissionSaveResponse.message
         : "Does not have access";
-      toastStore.set({ message, type: "success", show: true });
+      toastStore.set({ message, type: true, show: true });
     }
     accessChangeDetected = false;
   };
@@ -143,7 +143,7 @@
     groups = groupsResponse.data;
     if (sensitiveFields.length === 0) {
       const sensitiveFieldsResponse = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       sensitiveFields = sensitiveFieldsResponse.data;
     }
@@ -267,7 +267,7 @@
                 class="p-2 mr-1 rounded-lg bg-osvauld-sensitivebgblue"
                 on:click={() => {
                   savePermissions();
-                  accessChangeDetected = !accessChangeDetected;
+                  editPermissionTrigger = false;
                 }}
               >
                 <Tick />

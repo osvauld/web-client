@@ -7,11 +7,7 @@
   import CredentialDetails from "./CredentialDetails.svelte";
 
   import { Share, Add, EyeScan } from "../icons";
-  import {
-    fetchSignedUpUsers,
-    fetchAllUserGroups,
-    fetchCredentialsByFolder,
-  } from "../apis";
+  import { fetchSignedUpUsers, fetchAllUserGroups } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
 
   import {
@@ -23,7 +19,6 @@
     selectedCredential,
   } from "../store";
   import { onDestroy } from "svelte";
-  import { sendMessage } from "../helper";
   import DownArrow from "../../basic/icons/downArrow.svelte";
   import Placeholder from "../components/Placeholder.svelte";
   import { accessListSelected, buttonRef } from "../../../store/ui.store";
@@ -43,7 +38,7 @@
   let isShareCredHovered = false;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -51,7 +46,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId
+        (c) => c.credentialId !== card.credentialId,
       );
     }
   }
@@ -77,7 +72,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential
+    credential: Credential,
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -276,7 +271,7 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId
+            (c) => c.credentialId === credential.credentialId,
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
