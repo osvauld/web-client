@@ -74,6 +74,7 @@
       sensitiveFields = response.data;
     }
     dispatch("select", sensitiveFields);
+    sensitiveFields = [];
   }; /* eslint-disable */
 </script>
 
