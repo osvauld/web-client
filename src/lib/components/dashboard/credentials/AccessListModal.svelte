@@ -14,8 +14,7 @@
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
   import { onMount } from "svelte";
-  import { blur, fly } from "svelte/transition";
-  import { spawn } from "child_process";
+  import { fly } from "svelte/transition";
   let existingUserData = [];
   let existingGroupsData = [];
   let selectedTab = "Groups";
@@ -110,8 +109,8 @@
   >
     <span class="w-[12%]"> <InfoIcon /> </span>
     <p class="text-sm text-osvauld-sheffieldgrey font-normal">
-      This folder contains credentials you already have access through the
-      following permission roles.
+      This folder contains credentials you have access directly or indirectly
+      through below assignments
     </p>
   </div>
   <div class="flex justify-around items-center">
