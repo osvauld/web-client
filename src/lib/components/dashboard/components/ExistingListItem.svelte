@@ -75,7 +75,7 @@
       >
         <InfoIcon />
         {#if showTooltip}
-          <div class="tooltip">Read access only</div>
+          <div class="tooltip">Inherited Access</div>
         {/if}
       </span>
     {/if}
