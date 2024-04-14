@@ -135,7 +135,7 @@
         <!-- TODO: update to share credentials in the same api -->
         {#if $selectedFolder.accessType === "manager"}
           <button
-            class="py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2"
+            class="py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2 relative"
             on:click={folderShareManager}
             on:mouseenter={() => (isShareHovered = true)}
             on:mouseleave={() => (isShareHovered = false)}
@@ -144,6 +144,9 @@
               color={isShareHovered ? "#F2F2F0" : "#85889C"}
               size={28}
             />
+            {#if isShareHovered}
+              <div class="tooltip">Share Folder</div>
+            {/if}
           </button>
         {/if}
         <button
@@ -281,3 +284,19 @@
     </div>
   {/if}
 </div>
+
+<style>
+  .tooltip {
+    position: absolute;
+    top: -20px;
+    right: 40px;
+    border: 1px solid #2f303e;
+    background-color: #0d0e13;
+    color: #6e7681;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10;
+  }
+</style>
