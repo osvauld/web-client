@@ -59,7 +59,7 @@
           {#each searchResults as result}
             <button
               on:click={() => handleSearchClick(result)}
-              class="p-2 border rounded-lg border-osvauld-iconblack hover:bg-osvauld-iconblack w-full my-1 flex justify-start items-center"
+              class="p-2 border rounded-lg border-osvauld-iconblack hover:bg-osvauld-iconblack w-full my-1 flex justify-start items-center min-h-[60px]"
             >
               <div
                 class="h-full flex justify-center items-center scale-150 px-2"

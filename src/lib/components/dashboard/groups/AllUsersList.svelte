@@ -5,6 +5,7 @@
   import AddUser from "./AddUser.svelte";
   import { onMount } from "svelte";
   let accountRole: string = "";
+  let addUserHovered = false;
   let allUsers = [];
   const deleteUserHandler = async (id) => {
     await deleteUser(id);
@@ -22,14 +23,16 @@
 <div class="flex items-center justify-between px-4 py-5 pb-0">
   <h1 class="text-4xl p-4 font-normal w-1/3 ml-3">All Users</h1>
   <button
-    class="border border-osvauld-iconblack rounded-md py-1 px-4 mr-2 text-osvauld-textActive flex justify-center items-center whitespace-nowrap font-light text-base {accountRole ===
+    class="border border-osvauld-iconblack rounded-md py-1 px-4 mr-2 text-osvauld-textActive flex justify-center items-center whitespace-nowrap font-light text-base hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue {accountRole ===
     'user'
       ? 'invisible'
       : ''}"
+    on:mouseenter={() => (addUserHovered = true)}
+    on:mouseleave={() => (addUserHovered = false)}
     on:click={() => showAddUserDrawer.set(true)}
   >
     <span class="mr-1">Add new user</span>
-    <Add color={"#85889C"} />
+    <Add color={addUserHovered ? "#0D0E13" : "#A3A4B5"} />
   </button>
 </div>
 <div class="rounded my-6 px-10">
