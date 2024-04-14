@@ -155,10 +155,8 @@
             : 'text-osvauld-textActive bg-osvauld-frameblack'}"
           on:click={credentialShareManager}
         >
-          <Share
-            color={isShareCredActive ? "#0D0E13" : "#A3A4B5"}
-            size={16}
-          /><span class="ml-1 text-sm">Share Credentials</span>
+          <span class="mr-1 text-sm">Share Credentials</span>
+          <Share color={isShareCredActive ? "#0D0E13" : "#A3A4B5"} size={16} />
         </button>
         {#if areCardsSelected}
           <span
@@ -217,8 +215,9 @@
           on:mouseleave={() => (addCredentialHovered = false)}
           on:click={addCredentialManager}
           disabled={checkedCards.length !== 0}
-          ><Add color={addCredentialHovered ? "#0D0E13" : "#A3A4B5"} />
-          <span class="ml-2">Add New Credential</span>
+        >
+          <span class="mr-2">Add New Credential</span>
+          <Add color={addCredentialHovered ? "#0D0E13" : "#A3A4B5"} />
         </button>
       </div>
     </div>
