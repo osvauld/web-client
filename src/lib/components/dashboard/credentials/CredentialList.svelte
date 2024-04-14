@@ -51,8 +51,8 @@
     }
   }
   const subscribe = selectedFolder.subscribe(async (folder) => {
+    console.log(folder, "folder");
     if (folder === null) {
-      selectedFolder.set(null);
       return;
     }
     selectedCredential.set(null);

@@ -31,7 +31,6 @@
       }
     }
     showAddFolderDrawer.set(false);
-    console.log("folder response", folderResponse);
     const actionMessage = folderResponse.success
       ? "Folder Successfully Created"
       : "Failed to Create folder";
