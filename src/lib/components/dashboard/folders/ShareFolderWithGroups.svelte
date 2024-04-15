@@ -122,14 +122,10 @@
     const responseJson = await fetchGroupsWithoutAccess($selectedFolder.id);
     groups = responseJson.data;
   });
-
-  function handleCancel() {
-    dispatch("cancel", true);
-  }
 </script>
 
 <div
-  class="p-2 border border-osvauld-iconblack rounded-lg min-h-[10rem] max-h-[15rem]"
+  class="p-2 w-full max-h-full border border-b border-osvauld-iconblack overflow-hidden"
 >
   <div class="bg-osvauld-frameblack flex justify-center items-center">
     <div
@@ -146,7 +142,7 @@
   </div>
 
   <div
-    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[11rem] bg-osvauld-frameblack w-full flex flex-col justify-center items-center"
+    class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full min-h-[6rem] max-h-[10rem] flex flex-col justify-start items-center"
   >
     {#each filteredGroups as group, index}
       <ListItem
@@ -164,11 +160,9 @@
 
 {#if $selectedGroups.size !== 0}
   <div
-    class="my-2 border border-osvauld-iconblack rounded-lg min-h-0 max-h-[8rem] mb-2"
+    class="my-2 w-full overflow-y-scroll border border-osvauld-iconblack rounded-lg min-h-0 max-h-[8rem] mb-2 hello"
   >
-    <div
-      class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[6rem] rounded-lg w-full px-2 mt-1"
-    >
+    <div class=" rounded-lg w-full px-2 mt-1">
       {#each Array.from($selectedGroups) as [groupId, group], index}
         <ListItem
           item={group}
@@ -185,14 +179,3 @@
     </div>
   </div>
 {/if}
-<div class="p-2 w-full flex justify-end items-center box-border">
-  <button
-    class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
-    on:click={handleCancel}>Cancel</button
-  >
-
-  <button
-    class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
-    on:click={shareFolderHandler}>Save changes</button
-  >
-</div>

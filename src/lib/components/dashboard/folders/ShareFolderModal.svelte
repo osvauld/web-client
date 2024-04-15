@@ -37,7 +37,7 @@
   out:fly
 >
   <div
-    class="w-[32.25rem] min-h-[28rem] max-h-[41rem] rounded-2xl translate-x-0 bg-osvauld-frameblack p-7 pb-2"
+    class="w-[32.25rem] min-h-[34.375rem] max-h-[37rem] rounded-2xl translate-x-0 bg-osvauld-frameblack px-7 py-3 flex flex-col"
   >
     <div class="flex justify-between items-center p-3 pt-0">
       <span class="font-sans text-osvauld-quarzowhite text-28 font-normal"
@@ -48,7 +48,7 @@
       >
     </div>
     <div
-      class="relative h-auto w-full px-4 py-2 mx-auto flex justify-start items-center rounded-lg cursor-pointer mb-3 bg-osvauld-fieldActive"
+      class="relative h-auto w-full px-4 py-2 mx-auto flex justify-start items-center rounded-lg cursor-pointer bg-osvauld-fieldActive"
       on:click={() => (infoDropdown = !infoDropdown)}
     >
       <span class="mr-2">
@@ -66,8 +66,13 @@
         <InfoOverlay />
       {/if}
     </div>
+    <div
+      class="border-b mt-2 mb-4 border-osvauld-iconblack w-[calc(100%+3.5rem)] -translate-x-7"
+    ></div>
 
-    <div class="flex-grow max-h-[85vh]">
+    <div
+      class="flex flex-col justify-start items-center border border-osvauld-iconblack rounded-2xl px-2 overflow-hidden min-h-[22rem] max-h-[28rem]"
+    >
       <UserGroupToggle on:select={toggleSelect} />
       {#if selectedTab === "Users"}
         <ShareFolderWithUsers
@@ -76,11 +81,22 @@
           on:cancel={() => showFolderShareDrawer.set(false)}
         />
       {:else}
-        <ShareFolderWithGroups
-          {credentialsFields}
-          on:cancel={() => showFolderShareDrawer.set(false)}
-        />
+        <ShareFolderWithGroups {credentialsFields} />
       {/if}
+    </div>
+    <div
+      class="border-b mt-4 mb-2 border-osvauld-iconblack w-[calc(100%+3.5rem)] -translate-x-7"
+    ></div>
+    <div class="p-2 w-full flex justify-end items-center box-border mt-auto">
+      <button
+        class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
+        on:click={() => showFolderShareDrawer.set(false)}>Cancel</button
+      >
+
+      <button
+        class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
+        on:click={() => {}}>Save changes</button
+      >
     </div>
   </div>
 </div>

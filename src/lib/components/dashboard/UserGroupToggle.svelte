@@ -11,7 +11,7 @@
   };
 </script>
 
-<div class="flex my-2 justify-center items-center">
+<div class="flex my-2 w-full justify-center items-center">
   <div
     class="inline-flex w-full justify-center space-x-1 p-1 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl font-normal text-sm"
   >

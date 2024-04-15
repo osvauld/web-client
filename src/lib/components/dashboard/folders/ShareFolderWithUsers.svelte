@@ -96,10 +96,6 @@
       users = users.filter((u) => u.id !== user.id);
     }
   }
-
-  function handleCancel() {
-    dispatch("cancel", true);
-  }
 </script>
 
 <div
@@ -159,14 +155,3 @@
     </div>
   </div>
 {/if}
-<div class="p-2 w-full flex justify-end items-center box-border">
-  <button
-    class=" ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
-    on:click={handleCancel}>Cancel</button
-  >
-
-  <button
-    class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
-    on:click={shareFolderHandler}>Save changes</button
-  >
-</div>
