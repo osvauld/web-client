@@ -142,7 +142,7 @@
   </div>
 
   <div
-    class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full min-h-[6rem] max-h-[10rem] flex flex-col justify-start items-center"
+    class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full h-[8rem] flex flex-col justify-start items-center"
   >
     {#each filteredGroups as group, index}
       <ListItem
