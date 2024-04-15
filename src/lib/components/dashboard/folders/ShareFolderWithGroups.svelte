@@ -47,7 +47,7 @@
     }
   };
 
-  const shareFolderHandler = async () => {
+  export const shareFolderHandler = async () => {
     const groupIds = Array.from($selectedGroups.keys());
     const response = await fetchUsersByGroupIds(groupIds);
     const groupUsersList = response.data;

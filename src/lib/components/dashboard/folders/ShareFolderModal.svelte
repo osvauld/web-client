@@ -28,6 +28,8 @@
     selectedTab = e.detail;
   };
 
+  let saveChanges;
+
   /*eslint-disable*/
 </script>
 
@@ -81,7 +83,7 @@
           on:cancel={() => showFolderShareDrawer.set(false)}
         />
       {:else}
-        <ShareFolderWithGroups {credentialsFields} />
+        <ShareFolderWithGroups {credentialsFields} bind:this={saveChanges} />
       {/if}
     </div>
     <div
@@ -95,7 +97,7 @@
 
       <button
         class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
-        on:click={() => {}}>Save changes</button
+        on:click={() => saveChanges.shareFolderHandler()}>save</button
       >
     </div>
   </div>
