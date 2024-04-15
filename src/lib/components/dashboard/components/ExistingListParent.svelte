@@ -17,7 +17,7 @@
   };
 </script>
 
-<div class="p-2 my-2 w-full rounded-lg min-h-0 max-h-[50vh] mb-2">
+<div class="p-2 mt-0 mb-2 w-full rounded-lg min-h-0 max-h-[50vh]">
   <div
     class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[30vh] bg-osvauld-frameblack w-full"
   >

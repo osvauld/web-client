@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Lens, ClosePanel, EditIcon } from "../icons";
+  import { Lens, ClosePanel, EditIcon, InfoIcon } from "../icons";
   import ExistingListParent from "../components/ExistingListParent.svelte";
   import UserGroupToggle from "../UserGroupToggle.svelte";
   import { accessListSelected, selectedFolder, buttonRef } from "../store";
@@ -14,7 +14,7 @@
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
   import { onMount } from "svelte";
-  import { blur, fly } from "svelte/transition";
+  import { fly } from "svelte/transition";
   let existingUserData = [];
   let existingGroupsData = [];
   let selectedTab = "Groups";
@@ -73,13 +73,13 @@
       await editFolderPermissionForUser(
         $selectedFolder.id,
         e.detail.item.id,
-        e.detail.permission,
+        e.detail.permission
       );
     } else {
       await editFolderPermissionForGroup(
         $selectedFolder.id,
         e.detail.item.groupId,
-        e.detail.permission,
+        e.detail.permission
       );
     }
     await existingItems();
@@ -100,16 +100,17 @@
 >
   <div class="flex justify-between items-center p-3">
     <span class="font-sans text-osvauld-quarzowhite text-2xl font-normal"
-      >AccessList of current folder</span
+      >Access List</span
     >
     <button class="p-2" on:click={handleClickOutside}><ClosePanel /></button>
   </div>
   <div
     class="relative h-auto w-full px-4 py-2 mx-auto flex justify-between items-center rounded-lg cursor-pointer mb-3 bg-osvauld-fieldActive"
   >
+    <span class="w-[12%]"> <InfoIcon /> </span>
     <p class="text-sm text-osvauld-sheffieldgrey font-normal">
-      This folder contains credentials you already have access through the
-      following permission roles.
+      This folder contains credentials you have access directly or indirectly
+      through below assignments
     </p>
   </div>
   <div class="flex justify-around items-center">
@@ -117,13 +118,13 @@
     <div class="flex justify-end items-center w-full">
       <button
         class="p-2 rounded-lg {editPermissionTrigger
-          ? 'bg-osvauld-sensitivebgblue'
+          ? 'bg-osvauld-cardshade'
           : ''}"
         on:click={() => {
           editPermissionTrigger = !editPermissionTrigger;
         }}
       >
-        <EditIcon />
+        <EditIcon color={editPermissionTrigger ? "#89B4FA" : "#6E7681"} />
       </button>
     </div>
   </div>

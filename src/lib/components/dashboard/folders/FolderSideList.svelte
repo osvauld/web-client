@@ -9,7 +9,6 @@
     showMoreOptions,
     modalManager,
   } from "../store";
-  import { fade, scale } from "svelte/transition";
 
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";

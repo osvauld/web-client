@@ -77,14 +77,14 @@
         on:mouseenter={() => (isShareHovered = true)}
         on:mouseleave={() => (isShareHovered = false)}
       >
-        <FolderShare color={isShareHovered ? "#F2F2F0" : "#85889C"} />
+        <FolderShare size={24} color={isShareHovered ? "#F2F2F0" : "#85889C"} />
         <div class="font-inter text-base whitespace-nowrap">
           Share {$modalManager.type === "Folder" ? "folder" : ""}
         </div>
       </button>
 
       <button
-        class="flex items-center p-2 gap-2 w-full h-12 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg"
+        class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
         on:mouseenter={() => (isEditHovered = true)}
         on:mouseleave={() => (isEditHovered = false)}
       >
@@ -95,7 +95,7 @@
       </button>
 
       <button
-        class="flex items-center p-2 gap-2 w-full h-12 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg"
+        class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
         on:mouseenter={() => (isBinHovered = true)}
         on:mouseleave={() => (isBinHovered = false)}
         on:click|preventDefault={deleteInitiate}

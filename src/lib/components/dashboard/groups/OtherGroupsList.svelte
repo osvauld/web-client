@@ -20,6 +20,7 @@
 
   let user;
   let groupAdmin = false;
+  let addUserHovered = false;
   let unsubscribe;
   onMount(() => {
     unsubscribe = selectedGroup.subscribe((value) => {
@@ -36,11 +37,13 @@
   <h1 class="text-4xl p-4 font-normal w-1/3 ml-3">{groupName}</h1>
   {#if groupAdmin}
     <button
-      class="rounded-md py-1 px-4 mr-2 border border-osvauld-iconblack flex justify-center items-center whitespace-nowrap text-base font-light text-osvauld-textActive"
+      class="rounded-md py-1 px-4 mr-2 border border-osvauld-iconblack flex justify-center items-center whitespace-nowrap text-base font-light text-osvauld-textActive hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue"
+      on:mouseenter={() => (addUserHovered = true)}
+      on:mouseleave={() => (addUserHovered = false)}
       on:click={() => showAddUserToGroupDrawer.set(true)}
     >
       <span class="mr-1">Add new user</span>
-      <Add color={"#85889C"} />
+      <Add color={addUserHovered ? "#0D0E13" : "#A3A4B5"} />
     </button>
   {/if}
 </div>

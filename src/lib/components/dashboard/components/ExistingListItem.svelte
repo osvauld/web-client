@@ -39,9 +39,9 @@
 </script>
 
 <div
-  class="relative w-full my-2 pl-2 pr-0.5 border border-osvauld-iconblack rounded-lg cursor-pointer flex items-center justify-between text-osvauld-sheffieldgrey font-normal text-base"
+  class="relative w-full my-2 pl-1 pr-0.5 border border-osvauld-iconblack rounded-lg cursor-pointer flex items-center justify-between text-osvauld-sheffieldgrey font-normal text-base"
 >
-  <div class="flex items-center justify-center">
+  <div class="flex items-center justify-start">
     <p
       class="p-1 w-3/4 whitespace-nowrap {permissionChanged &&
         accessSelectorIdentifier !== index &&
@@ -75,7 +75,7 @@
       >
         <InfoIcon />
         {#if showTooltip}
-          <div class="tooltip">Read access only</div>
+          <div class="tooltip">Inherited Access</div>
         {/if}
       </span>
     {/if}

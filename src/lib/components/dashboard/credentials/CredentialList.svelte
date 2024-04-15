@@ -6,7 +6,7 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add, EyeScan } from "../icons";
+  import { Share, Add, EyeScan, FolderShare } from "../icons";
   import { fetchSignedUpUsers, fetchAllUserGroups } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
 
@@ -35,10 +35,10 @@
   let isShareHovered = false;
   let accesslistHovered = false;
   let addCredentialHovered = false;
-  let isShareCredHovered = false;
+  $: isShareCredActive = checkedCards.length !== 0;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -46,7 +46,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId,
+        (c) => c.credentialId !== card.credentialId
       );
     }
   }
@@ -72,7 +72,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential,
+    credential: Credential
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -135,27 +135,29 @@
         <!-- TODO: update to share credentials in the same api -->
         {#if $selectedFolder.accessType === "manager"}
           <button
-            class="py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2"
+            class="py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2 relative"
             on:click={folderShareManager}
             on:mouseenter={() => (isShareHovered = true)}
             on:mouseleave={() => (isShareHovered = false)}
           >
-            <Share color={isShareHovered ? "#F2F2F0" : "#85889C"} size={28} />
+            <FolderShare
+              color={isShareHovered ? "#F2F2F0" : "#85889C"}
+              size={28}
+            />
+            {#if isShareHovered}
+              <div class="tooltip">Share Folder</div>
+            {/if}
           </button>
         {/if}
-        {#if checkedCards.length !== 0}
-          <button
-            class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue"
-            on:click={credentialShareManager}
-            on:mouseenter={() => (isShareCredHovered = true)}
-            on:mouseleave={() => (isShareCredHovered = false)}
-          >
-            <Share
-              color={isShareCredHovered ? "#0D0E13" : "#A3A4B5"}
-              size={16}
-            /><span class="ml-1 text-sm">Share Credentials</span>
-          </button>
-        {/if}
+        <button
+          class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg flex justify-between items-center whitespace-nowrap {isShareCredActive
+            ? 'text-osvauld-frameblack bg-osvauld-carolinablue'
+            : 'text-osvauld-textActive bg-osvauld-frameblack'}"
+          on:click={credentialShareManager}
+        >
+          <span class="mr-1 text-sm">Share Credentials</span>
+          <Share color={isShareCredActive ? "#0D0E13" : "#A3A4B5"} size={16} />
+        </button>
         {#if areCardsSelected}
           <span
             class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"
@@ -213,8 +215,9 @@
           on:mouseleave={() => (addCredentialHovered = false)}
           on:click={addCredentialManager}
           disabled={checkedCards.length !== 0}
-          ><Add color={addCredentialHovered ? "#0D0E13" : "#A3A4B5"} />
-          <span class="ml-2">Add New Credential</span>
+        >
+          <span class="mr-2">Add New Credential</span>
+          <Add color={addCredentialHovered ? "#0D0E13" : "#A3A4B5"} />
         </button>
       </div>
     </div>
@@ -265,13 +268,13 @@
   {/if}
   {#if sortedCredentials.length !== 0}
     <div
-      class="flex flex-wrap p-3 pl-7 gap-4 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
+      class="flex flex-wrap pt-3 pb-7 px-7 gap-4 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
     >
       {#each sortedCredentials as credential}
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId,
+            (c) => c.credentialId === credential.credentialId
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
@@ -280,3 +283,19 @@
     </div>
   {/if}
 </div>
+
+<style>
+  .tooltip {
+    position: absolute;
+    top: -20px;
+    right: 40px;
+    border: 1px solid #2f303e;
+    background-color: #0d0e13;
+    color: #6e7681;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10;
+  }
+</style>
