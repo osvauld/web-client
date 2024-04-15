@@ -71,7 +71,7 @@
     ></div>
 
     <div
-      class="flex flex-col justify-start items-center border border-osvauld-iconblack rounded-2xl px-2 overflow-hidden min-h-[22rem] max-h-[28rem]"
+      class="flex flex-col justify-start items-center px-2 overflow-hidden min-h-[22rem] max-h-[28rem]"
     >
       <UserGroupToggle on:select={toggleSelect} />
       {#if selectedTab === "Users"}

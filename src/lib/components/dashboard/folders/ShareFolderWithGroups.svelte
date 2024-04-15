@@ -125,7 +125,7 @@
 </script>
 
 <div
-  class="p-2 w-full max-h-full border border-b border-osvauld-iconblack overflow-hidden"
+  class="p-2 w-full max-h-full border rounded-lg border-osvauld-iconblack overflow-hidden"
 >
   <div class="bg-osvauld-frameblack flex justify-center items-center">
     <div
@@ -148,7 +148,7 @@
       <ListItem
         item={group}
         isSelected={index === selectionIndex && !topList}
-        isTopList={false}
+        isBottomList={false}
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}
@@ -160,14 +160,14 @@
 
 {#if $selectedGroups.size !== 0}
   <div
-    class="my-2 w-full overflow-y-scroll border border-osvauld-iconblack rounded-lg min-h-0 max-h-[8rem] mb-2 hello"
+    class="my-2 w-full overflow-y-scroll border border-osvauld-iconblack rounded-lg h-[8rem] mb-2"
   >
     <div class=" rounded-lg w-full px-2 mt-1">
       {#each Array.from($selectedGroups) as [groupId, group], index}
         <ListItem
           item={group}
           isSelected={index === selectionIndex && topList}
-          isTopList={true}
+          isBottomList={true}
           on:click={() => handleClick(index, true)}
           on:remove={() => handleItemRemove(groupId)}
           {setbackground}
