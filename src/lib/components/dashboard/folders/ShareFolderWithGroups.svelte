@@ -160,9 +160,11 @@
 
 {#if $selectedGroups.size !== 0}
   <div
-    class="my-2 w-full overflow-y-scroll border border-osvauld-iconblack rounded-lg h-[8rem] mb-2"
+    class="my-2 w-full border border-osvauld-iconblack rounded-lg h-[8rem] mb-2"
   >
-    <div class=" rounded-lg w-full px-2 mt-1">
+    <div
+      class="overflow-y-scroll h-[90%] scrollbar-thin rounded-lg w-full px-2 mt-1"
+    >
       {#each Array.from($selectedGroups) as [groupId, group], index}
         <ListItem
           item={group}
