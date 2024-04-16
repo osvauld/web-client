@@ -287,8 +287,8 @@
 <style>
   .tooltip {
     position: absolute;
-    top: -20px;
-    right: 40px;
+    top: 45px;
+    right: -20px;
     border: 1px solid #2f303e;
     background-color: #0d0e13;
     color: #6e7681;
