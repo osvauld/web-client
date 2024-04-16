@@ -4,6 +4,7 @@
   export let isBottomList: boolean;
   export let setbackground: any;
   export let showOptions: boolean;
+  export let reverseModal: boolean = false;
 
   let hoveredOverThisItem = false;
 
@@ -64,7 +65,7 @@
     </div>
   {/if}
   {#if !isBottomList && showOptions && isSelected}
-    <AccessSelector on:select={(e) => eventPasser(e)} />
+    <AccessSelector on:select={(e) => eventPasser(e)} {reverseModal} />
   {/if}
   {#if !isBottomList && hoveredOverThisItem}
     <span

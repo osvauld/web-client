@@ -108,6 +108,9 @@
   onMount(async () => {
     // TODO: change fetch all groups to fetch groups where folder not shared.
     if ($selectedFolder === null) throw new Error("Folder not selected");
+    //Below will disable save changes button when group/user button switched
+    dispatch("enable", false);
+
     const responseJson = await fetchGroupsWithoutAccess($selectedFolder.id);
     groups = responseJson.data;
   });
@@ -141,6 +144,8 @@
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}
+        reverseModal={filteredGroups.length > 3 &&
+          index > filteredGroups.length - 3}
         on:select={(e) => handleRoleChange(e, index, "groups")}
       />
     {/each}
@@ -163,6 +168,8 @@
           on:remove={() => handleItemRemove(groupId)}
           {setbackground}
           {showOptions}
+          reverseModal={$selectedGroups.size > 3 &&
+            index > $selectedGroups.size - 3}
           on:select={(e) => handleRoleChange(e, index, "selectedGroups")}
         />
         <div class=" border-osvauld-iconblack w-full"></div>

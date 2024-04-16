@@ -6,11 +6,12 @@
     ShareFolderWithUsersPayload,
     CredentialFields,
   } from "../dtos";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { selectedFolder, toastStore } from "../store";
   import { sendMessage, setbackground } from "../helper";
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
+  import { on } from "events";
 
   const dispatch = createEventDispatcher();
   export let users: User[];
@@ -79,6 +80,11 @@
     }
     selectedUsers.length !== 0 && dispatch("enable", true);
   }
+
+  onMount(() => {
+    //Below will disable save changes button when group/user button switched
+    dispatch("enable", false);
+  });
 </script>
 
 <div
@@ -109,6 +115,8 @@
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}
+        reverseModal={filteredUsers.length > 3 &&
+          index > filteredUsers.length - 3}
         on:select={(e) => handleRoleChange(e, index, "users")}
       />
     {/each}
@@ -131,6 +139,8 @@
           on:remove={() => handleItemRemove(index)}
           {setbackground}
           {showOptions}
+          reverseModal={selectedUsers.length > 3 &&
+            index > selectedUsers.length - 3}
           on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
         />
         <div class=" border-osvauld-iconblack w-full"></div>
