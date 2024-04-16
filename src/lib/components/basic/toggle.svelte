@@ -13,7 +13,7 @@
 
 <div class="flex justify-center w-[90%]">
   <div
-    class="inline-flex justify-center space-x-1 p-1 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl w-full"
+    class="inline-flex justify-center space-x-1 p-0.5 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl w-full"
   >
     {#each ["Folders", "Groups"] as item}
       <button

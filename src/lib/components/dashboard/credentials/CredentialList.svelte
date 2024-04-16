@@ -129,7 +129,7 @@
   {#if $selectedFolder}
     <div class="flex justify-between items-center px-4 py-2">
       <div class="max-w-[50%] min-w-[30%] flex items-center">
-        <h1 class="text-4xl p-4 font-normal whitespace-nowrap">
+        <h1 class="text-3xl p-4 font-normal whitespace-nowrap">
           {$selectedFolder.name}
         </h1>
         <!-- TODO: update to share credentials in the same api -->

@@ -60,12 +60,12 @@
 
 <div class="h-full flex w-full flex-col justify-start items-center">
   <button
-    class="w-[90%] bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-2 mb-4 flex justify-center items-center"
+    class="w-[90%] bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-1.5 px-2 mb-4 flex justify-center items-center font-normal"
     on:mouseenter={() => (iconColor = "#000")}
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={() => openModal("group")}
   >
-    <span class="mr-1 text-base font-light">Create new group</span>
+    <span class="mr-1 text-base font-normal">Create new group</span>
     <Add color={iconColor} />
   </button>
   {#if $showAddGroupDrawer}
