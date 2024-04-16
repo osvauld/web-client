@@ -15,6 +15,7 @@
   export let users: User[];
   let credentialsFields: CredentialFields[];
   let infoDropdown = false;
+  $: saveEnabled = false;
   let selectedTab = "Groups";
 
   onMount(async () => {
@@ -82,12 +83,17 @@
           {credentialsFields}
           bind:this={saveChanges}
           on:cancel={() => showFolderShareDrawer.set(false)}
+          on:enable={(e) => (saveEnabled = e.detail)}
         />
       {:else}
         <ShareFolderWithGroups
           {credentialsFields}
           bind:this={saveChanges}
           on:cancel={() => showFolderShareDrawer.set(false)}
+          on:enable={(e) => {
+            saveEnabled = e.detail;
+            console.log("Enable from group", e.detail);
+          }}
         />
       {/if}
     </div>
@@ -101,7 +107,10 @@
       >
 
       <button
-        class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
+        class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium rounded-md {saveEnabled
+          ? 'bg-osvauld-carolinablue text-osvauld-frameblack border-transparent'
+          : 'border border-osvauld-iconblack text-osvauld-textActive'}"
+        disabled={!saveEnabled}
         on:click={() => saveChanges.shareFolderHandler()}>Save changes</button
       >
     </div>

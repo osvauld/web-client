@@ -21,6 +21,8 @@
   let topList = false;
   let searchInput = "";
 
+  $: selectedUsers.length === 0 && dispatch("enable", false);
+
   $: filteredUsers = searchInput
     ? users.filter((user) =>
         user.name.toLowerCase().includes(searchInput.toLowerCase())
@@ -75,6 +77,9 @@
       selectedUsers = [...selectedUsers, { ...user, accessType: option }];
       users = users.filter((u) => u.id !== user.id);
     }
+    selectedUsers.length !== 0
+      ? dispatch("enable", true)
+      : dispatch("enable", false);
   }
 </script>
 

@@ -26,6 +26,7 @@
   let selectionIndex: number | null = null;
   let topList = false;
   let searchInput = "";
+  $: $selectedGroups.size == 0 && dispatch("enable", false);
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
@@ -100,6 +101,10 @@
       $selectedGroups.set(item.groupId, { ...item, accessType: option });
       groups = groups.filter((u) => u.groupId !== item.groupId);
     }
+
+    $selectedGroups.size !== 0
+      ? dispatch("enable", true)
+      : dispatch("enable", false);
   }
 
   onMount(async () => {
