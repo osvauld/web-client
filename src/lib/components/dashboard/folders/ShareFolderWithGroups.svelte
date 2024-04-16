@@ -102,9 +102,7 @@
       groups = groups.filter((u) => u.groupId !== item.groupId);
     }
 
-    $selectedGroups.size !== 0
-      ? dispatch("enable", true)
-      : dispatch("enable", false);
+    $selectedGroups.size !== 0 && dispatch("enable", true);
   }
 
   onMount(async () => {

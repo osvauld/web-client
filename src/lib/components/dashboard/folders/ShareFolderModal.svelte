@@ -15,6 +15,8 @@
   export let users: User[];
   let credentialsFields: CredentialFields[];
   let infoDropdown = false;
+  let infoOnHover = false;
+  let showInfoTab = false;
   $: saveEnabled = false;
   let selectedTab = "Groups";
 
@@ -43,32 +45,43 @@
     class="w-[32.25rem] min-h-[34.375rem] max-h-[37rem] rounded-2xl translate-x-0 bg-osvauld-frameblack px-7 py-3 flex flex-col"
   >
     <div class="flex justify-between items-center p-3 pt-0">
-      <span class="font-sans text-osvauld-quarzowhite text-28 font-normal"
-        >Share Folder</span
+      <span
+        class="font-sans text-osvauld-quarzowhite text-28 font-normal flex justify-center items-center"
+        >Share Folder <button
+          class="ml-2"
+          on:mouseenter={() => (infoOnHover = true)}
+          on:mouseleave={() => (infoOnHover = false)}
+          on:click={() => (showInfoTab = !showInfoTab)}
+          ><InfoIcon color={infoOnHover ? "#BFC0CC" : "#4D4F60"} /></button
+        ></span
       >
+
       <button class="p-2" on:click={() => showFolderShareDrawer.set(false)}
         ><ClosePanel /></button
       >
     </div>
-    <div
-      class="relative h-auto w-full px-4 py-2 mx-auto flex justify-start items-center rounded-lg cursor-pointer bg-osvauld-fieldActive"
-      on:click={() => (infoDropdown = !infoDropdown)}
-    >
-      <span class="mr-2">
-        <InfoIcon />
-      </span>
-      <p
-        class="text-sm text-osvauld-sheffieldgrey font-normal {infoDropdown
-          ? 'text-osvauld-highlightwhite'
-          : ''}"
-      >
-        Select groups/users and choose access type
-      </p>
 
-      {#if infoDropdown}
-        <InfoOverlay />
-      {/if}
-    </div>
+    {#if showInfoTab}
+      <div
+        class="relative h-auto w-full px-4 py-2 mx-auto flex justify-start items-center rounded-lg cursor-pointer bg-osvauld-fieldActive"
+        on:click={() => (infoDropdown = !infoDropdown)}
+      >
+        <span class="mr-2">
+          <InfoIcon />
+        </span>
+        <p
+          class="text-sm text-osvauld-sheffieldgrey font-normal {infoDropdown
+            ? 'text-osvauld-highlightwhite'
+            : ''}"
+        >
+          Select groups/users and choose access type
+        </p>
+
+        {#if infoDropdown}
+          <InfoOverlay />
+        {/if}
+      </div>
+    {/if}
     <div
       class="border-b mt-2 mb-4 border-osvauld-iconblack w-[calc(100%+3.5rem)] -translate-x-7"
     ></div>

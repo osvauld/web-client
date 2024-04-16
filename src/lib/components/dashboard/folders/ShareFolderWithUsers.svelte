@@ -77,9 +77,7 @@
       selectedUsers = [...selectedUsers, { ...user, accessType: option }];
       users = users.filter((u) => u.id !== user.id);
     }
-    selectedUsers.length !== 0
-      ? dispatch("enable", true)
-      : dispatch("enable", false);
+    selectedUsers.length !== 0 && dispatch("enable", true);
   }
 </script>
 
