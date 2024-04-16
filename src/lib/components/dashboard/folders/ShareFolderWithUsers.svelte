@@ -1,10 +1,5 @@
 <script lang="ts">
-  import {
-    shareFolderWithUsers,
-    fetchFolderUsers,
-    removeUserFromFolder,
-    editFolderPermissionForUser,
-  } from "../apis";
+  import { shareFolderWithUsers } from "../apis";
   import {
     User,
     UserWithAccessType,
@@ -25,9 +20,6 @@
   let selectionIndex: number | null = null;
   let topList = false;
   let searchInput = "";
-  let existingItemDropdown = false;
-  let shareToast = false;
-  let existingUserData: UserWithAccessType[] = [];
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
@@ -35,19 +27,7 @@
       )
     : users;
 
-  const existingUsers = async (toggle = true) => {
-    if (toggle) {
-      existingItemDropdown = !existingItemDropdown;
-    }
-    if ($selectedFolder !== null) {
-      const responseJson = await fetchFolderUsers($selectedFolder.id);
-      existingUserData = responseJson.data;
-    } else {
-      existingUserData.length = 0;
-    }
-  };
-
-  const shareFolderHandler = async () => {
+  export const shareFolderHandler = async () => {
     if ($selectedFolder === null) {
       throw new Error("Folder not selected");
     }
@@ -99,7 +79,7 @@
 </script>
 
 <div
-  class="p-2 border border-osvauld-iconblack rounded-lg min-h-[10rem] max-h-[15rem]"
+  class="p-2 w-full max-h-full border rounded-lg border-osvauld-iconblack overflow-hidden"
 >
   <div class="bg-osvauld-frameblack flex justify-center items-center">
     <div
@@ -110,19 +90,19 @@
         type="text"
         bind:value={searchInput}
         class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-        placeholder="Search for users"
+        placeholder=""
       />
     </div>
   </div>
 
   <div
-    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[11rem] bg-osvauld-frameblack w-full flex flex-col justify-center items-center"
+    class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full h-[8rem] flex flex-col justify-start items-center"
   >
     {#each filteredUsers as user, index}
       <ListItem
         item={user}
         isSelected={index === selectionIndex && !topList}
-        isTopList={false}
+        isBottomList={false}
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}
@@ -134,23 +114,23 @@
 
 {#if selectedUsers.length !== 0}
   <div
-    class="my-2 border border-osvauld-iconblack rounded-lg min-h-0 max-h-[8rem] mb-2"
+    class="my-2 w-full border border-osvauld-iconblack rounded-lg h-[8rem] mb-2"
   >
     <div
-      class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[6rem] rounded-lg w-full px-2 mt-1"
+      class="overflow-y-scroll h-[90%] scrollbar-thin rounded-lg w-full px-2 mt-1"
     >
       {#each selectedUsers as user, index}
         <ListItem
           item={user}
           isSelected={index === selectionIndex && topList}
-          isTopList={true}
+          isBottomList={true}
           on:click={() => handleClick(index, true)}
           on:remove={() => handleItemRemove(index)}
           {setbackground}
           {showOptions}
           on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
         />
-        <div class="border-b border-osvauld-iconblack w-full"></div>
+        <div class=" border-osvauld-iconblack w-full"></div>
       {/each}
     </div>
   </div>

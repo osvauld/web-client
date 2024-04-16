@@ -26,26 +26,12 @@
   let selectionIndex: number | null = null;
   let topList = false;
   let searchInput = "";
-  let existingItemDropdown = false;
-  let existingGroupsData: Group[] = [];
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
         group.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : groups;
-
-  const existingGroups = async (toggle = true) => {
-    if (toggle) {
-      existingItemDropdown = !existingItemDropdown;
-    }
-    if ($selectedFolder !== null) {
-      const reponseJson = await fetchFolderGroups($selectedFolder.id);
-      existingGroupsData = reponseJson.data;
-    } else {
-      existingGroupsData.length = 0;
-    }
-  };
 
   export const shareFolderHandler = async () => {
     const groupIds = Array.from($selectedGroups.keys());
@@ -136,7 +122,7 @@
         type="text"
         bind:value={searchInput}
         class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-        placeholder="Search for groups"
+        placeholder=""
       />
     </div>
   </div>

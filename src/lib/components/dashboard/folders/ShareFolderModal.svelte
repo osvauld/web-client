@@ -80,10 +80,15 @@
         <ShareFolderWithUsers
           {users}
           {credentialsFields}
+          bind:this={saveChanges}
           on:cancel={() => showFolderShareDrawer.set(false)}
         />
       {:else}
-        <ShareFolderWithGroups {credentialsFields} bind:this={saveChanges} />
+        <ShareFolderWithGroups
+          {credentialsFields}
+          bind:this={saveChanges}
+          on:cancel={() => showFolderShareDrawer.set(false)}
+        />
       {/if}
     </div>
     <div
@@ -97,7 +102,7 @@
 
       <button
         class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
-        on:click={() => saveChanges.shareFolderHandler()}>save</button
+        on:click={() => saveChanges.shareFolderHandler()}>Save changes</button
       >
     </div>
   </div>
