@@ -15,6 +15,9 @@
   export let users: User[];
   let credentialsFields: CredentialFields[];
   let infoDropdown = false;
+  let infoOnHover = false;
+  let showInfoTab = false;
+  $: saveEnabled = false;
   let selectedTab = "Groups";
 
   onMount(async () => {
@@ -28,6 +31,8 @@
     selectedTab = e.detail;
   };
 
+  let saveChanges;
+
   /*eslint-disable*/
 </script>
 
@@ -37,50 +42,90 @@
   out:fly
 >
   <div
-    class="w-[32.25rem] min-h-[28rem] max-h-[41rem] rounded-2xl translate-x-0 bg-osvauld-frameblack p-7 pb-2"
+    class="w-[32.25rem] min-h-[34.375rem] max-h-[37rem] rounded-2xl translate-x-0 bg-osvauld-frameblack px-7 py-3 flex flex-col"
   >
     <div class="flex justify-between items-center p-3 pt-0">
-      <span class="font-sans text-osvauld-quarzowhite text-28 font-normal"
-        >Share Folder</span
+      <span
+        class="font-sans text-osvauld-quarzowhite text-28 font-normal flex justify-center items-center"
+        >Share Folder <button
+          class="ml-2"
+          on:mouseenter={() => (infoOnHover = true)}
+          on:mouseleave={() => (infoOnHover = false)}
+          on:click={() => (showInfoTab = !showInfoTab)}
+          ><InfoIcon color={infoOnHover ? "#BFC0CC" : "#4D4F60"} /></button
+        ></span
       >
+
       <button class="p-2" on:click={() => showFolderShareDrawer.set(false)}
         ><ClosePanel /></button
       >
     </div>
-    <div
-      class="relative h-auto w-full px-4 py-2 mx-auto flex justify-start items-center rounded-lg cursor-pointer mb-3 bg-osvauld-fieldActive"
-      on:click={() => (infoDropdown = !infoDropdown)}
-    >
-      <span class="mr-2">
-        <InfoIcon />
-      </span>
-      <p
-        class="text-sm text-osvauld-sheffieldgrey font-normal {infoDropdown
-          ? 'text-osvauld-highlightwhite'
-          : ''}"
+
+    {#if showInfoTab}
+      <div
+        class="relative h-auto w-full px-4 py-2 mx-auto flex justify-start items-center rounded-lg cursor-pointer bg-osvauld-fieldActive"
+        on:click={() => (infoDropdown = !infoDropdown)}
       >
-        Select groups/users and choose access type
-      </p>
+        <span class="mr-2">
+          <InfoIcon />
+        </span>
+        <p
+          class="text-sm text-osvauld-sheffieldgrey font-normal {infoDropdown
+            ? 'text-osvauld-highlightwhite'
+            : ''}"
+        >
+          Select groups/users and choose access type
+        </p>
 
-      {#if infoDropdown}
-        <InfoOverlay />
-      {/if}
-    </div>
+        {#if infoDropdown}
+          <InfoOverlay />
+        {/if}
+      </div>
+    {/if}
+    <div
+      class="border-b mt-2 mb-4 border-osvauld-iconblack w-[calc(100%+3.5rem)] -translate-x-7"
+    ></div>
 
-    <div class="flex-grow max-h-[85vh]">
+    <div
+      class="flex flex-col justify-start items-center px-2 overflow-hidden min-h-[22rem] max-h-[28rem]"
+    >
       <UserGroupToggle on:select={toggleSelect} />
       {#if selectedTab === "Users"}
         <ShareFolderWithUsers
           {users}
           {credentialsFields}
+          bind:this={saveChanges}
           on:cancel={() => showFolderShareDrawer.set(false)}
+          on:enable={(e) => (saveEnabled = e.detail)}
         />
       {:else}
         <ShareFolderWithGroups
           {credentialsFields}
+          bind:this={saveChanges}
           on:cancel={() => showFolderShareDrawer.set(false)}
+          on:enable={(e) => {
+            saveEnabled = e.detail;
+            console.log("Enable from group", e.detail);
+          }}
         />
       {/if}
+    </div>
+    <div
+      class="border-b mt-4 mb-2 border-osvauld-iconblack w-[calc(100%+3.5rem)] -translate-x-7"
+    ></div>
+    <div class="p-2 w-full flex justify-end items-center box-border mt-auto">
+      <button
+        class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
+        on:click={() => showFolderShareDrawer.set(false)}>Cancel</button
+      >
+
+      <button
+        class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium rounded-md {saveEnabled
+          ? 'bg-osvauld-carolinablue text-osvauld-frameblack border-transparent'
+          : 'border border-osvauld-iconblack text-osvauld-textActive'}"
+        disabled={!saveEnabled}
+        on:click={() => saveChanges.shareFolderHandler()}>Save changes</button
+      >
     </div>
   </div>
 </div>

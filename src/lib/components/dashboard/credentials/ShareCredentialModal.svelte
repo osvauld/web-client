@@ -18,6 +18,8 @@
   export let groups: Group[];
   let credentialsFields: CredentialFields[] = [];
   let infoDropdown = false;
+  let showInfoTab = false;
+  let infoOnHover = false;
 
   const credIds = credentials.map((cred) => cred.credentialId);
   onMount(async () => {
@@ -42,33 +44,46 @@
     class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6"
   >
     <div class="flex justify-between items-center p-3">
-      <span class="font-sans text-white text-28 font-normal"
-        >Share Credentials</span
+      <span
+        class="font-sans text-white text-28 font-normal flex justify-between items-center"
+      >
+        <span>Share Credentials</span>
+        <button
+          class="ml-2"
+          on:mouseenter={() => (infoOnHover = true)}
+          on:mouseleave={() => (infoOnHover = false)}
+          on:click={() => (showInfoTab = !showInfoTab)}
+          ><InfoIcon color={infoOnHover ? "#BFC0CC" : "#4D4F60"} /></button
+        ></span
       >
       <button class="p-2" on:click={() => showCredentialShareDrawer.set(false)}
         ><ClosePanel /></button
       >
     </div>
-    <div
-      class="relative h-[1.875rem] w-full px-4 py-2 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown
-        ? 'bg-osvauld-bordergreen'
-        : ''}"
-      on:click={() => (infoDropdown = !infoDropdown)}
-    >
-      <p
-        class="whitespace-nowrap text-base text-osvauld-sheffieldgrey font-normal {infoDropdown
-          ? 'text-osvauld-highlightwhite'
+
+    {#if showInfoTab}
+      <div
+        class="relative h-[1.875rem] w-full px-4 py-2 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown
+          ? 'bg-osvauld-bordergreen'
           : ''}"
+        on:click={() => (infoDropdown = !infoDropdown)}
       >
-        Select groups/users and choose access type
-      </p>
-      <span class="">
-        <InfoIcon />
-      </span>
-      {#if infoDropdown}
-        <InfoOverlay />
-      {/if}
-    </div>
+        <span class="">
+          <InfoIcon />
+        </span>
+        <p
+          class="whitespace-nowrap text-base text-osvauld-sheffieldgrey font-normal {infoDropdown
+            ? 'text-osvauld-highlightwhite'
+            : ''}"
+        >
+          Select groups/users and choose access type
+        </p>
+
+        {#if infoDropdown}
+          <InfoOverlay />
+        {/if}
+      </div>
+    {/if}
 
     <div class="flex-grow max-h-[85vh]">
       <UserGroupToggle on:select={toggleSelect} />

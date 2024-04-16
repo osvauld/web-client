@@ -26,8 +26,7 @@
   let selectionIndex: number | null = null;
   let topList = false;
   let searchInput = "";
-  let existingItemDropdown = false;
-  let existingGroupsData: Group[] = [];
+  $: $selectedGroups.size == 0 && dispatch("enable", false);
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
@@ -35,19 +34,7 @@
       )
     : groups;
 
-  const existingGroups = async (toggle = true) => {
-    if (toggle) {
-      existingItemDropdown = !existingItemDropdown;
-    }
-    if ($selectedFolder !== null) {
-      const reponseJson = await fetchFolderGroups($selectedFolder.id);
-      existingGroupsData = reponseJson.data;
-    } else {
-      existingGroupsData.length = 0;
-    }
-  };
-
-  const shareFolderHandler = async () => {
+  export const shareFolderHandler = async () => {
     const groupIds = Array.from($selectedGroups.keys());
     const response = await fetchUsersByGroupIds(groupIds);
     const groupUsersList = response.data;
@@ -114,22 +101,23 @@
       $selectedGroups.set(item.groupId, { ...item, accessType: option });
       groups = groups.filter((u) => u.groupId !== item.groupId);
     }
+
+    $selectedGroups.size !== 0 && dispatch("enable", true);
   }
 
   onMount(async () => {
     // TODO: change fetch all groups to fetch groups where folder not shared.
     if ($selectedFolder === null) throw new Error("Folder not selected");
+    //Below will disable save changes button when group/user button switched
+    dispatch("enable", false);
+
     const responseJson = await fetchGroupsWithoutAccess($selectedFolder.id);
     groups = responseJson.data;
   });
-
-  function handleCancel() {
-    dispatch("cancel", true);
-  }
 </script>
 
 <div
-  class="p-2 border border-osvauld-iconblack rounded-lg min-h-[10rem] max-h-[15rem]"
+  class="p-2 w-full max-h-full border rounded-lg border-osvauld-iconblack overflow-hidden"
 >
   <div class="bg-osvauld-frameblack flex justify-center items-center">
     <div
@@ -140,22 +128,24 @@
         type="text"
         bind:value={searchInput}
         class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-        placeholder="Search for groups"
+        placeholder=""
       />
     </div>
   </div>
 
   <div
-    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[11rem] bg-osvauld-frameblack w-full flex flex-col justify-center items-center"
+    class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full h-[8rem] flex flex-col justify-start items-center"
   >
     {#each filteredGroups as group, index}
       <ListItem
         item={group}
         isSelected={index === selectionIndex && !topList}
-        isTopList={false}
+        isBottomList={false}
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}
+        reverseModal={filteredGroups.length > 3 &&
+          index > filteredGroups.length - 3}
         on:select={(e) => handleRoleChange(e, index, "groups")}
       />
     {/each}
@@ -164,20 +154,22 @@
 
 {#if $selectedGroups.size !== 0}
   <div
-    class="my-2 border border-osvauld-iconblack rounded-lg min-h-0 max-h-[8rem] mb-2"
+    class="my-2 w-full border border-osvauld-iconblack rounded-lg h-[8rem] mb-2"
   >
     <div
-      class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[6rem] rounded-lg w-full px-2 mt-1"
+      class="overflow-y-scroll h-[90%] scrollbar-thin rounded-lg w-full px-2 mt-1"
     >
       {#each Array.from($selectedGroups) as [groupId, group], index}
         <ListItem
           item={group}
           isSelected={index === selectionIndex && topList}
-          isTopList={true}
+          isBottomList={true}
           on:click={() => handleClick(index, true)}
           on:remove={() => handleItemRemove(groupId)}
           {setbackground}
           {showOptions}
+          reverseModal={$selectedGroups.size > 3 &&
+            index > $selectedGroups.size - 3}
           on:select={(e) => handleRoleChange(e, index, "selectedGroups")}
         />
         <div class=" border-osvauld-iconblack w-full"></div>
@@ -185,14 +177,3 @@
     </div>
   </div>
 {/if}
-<div class="p-2 w-full flex justify-end items-center box-border">
-  <button
-    class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
-    on:click={handleCancel}>Cancel</button
-  >
-
-  <button
-    class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
-    on:click={shareFolderHandler}>Save changes</button
-  >
-</div>

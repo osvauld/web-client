@@ -1,21 +1,17 @@
 <script lang="ts">
-  import {
-    shareFolderWithUsers,
-    fetchFolderUsers,
-    removeUserFromFolder,
-    editFolderPermissionForUser,
-  } from "../apis";
+  import { shareFolderWithUsers } from "../apis";
   import {
     User,
     UserWithAccessType,
     ShareFolderWithUsersPayload,
     CredentialFields,
   } from "../dtos";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { selectedFolder, toastStore } from "../store";
   import { sendMessage, setbackground } from "../helper";
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
+  import { on } from "events";
 
   const dispatch = createEventDispatcher();
   export let users: User[];
@@ -25,9 +21,8 @@
   let selectionIndex: number | null = null;
   let topList = false;
   let searchInput = "";
-  let existingItemDropdown = false;
-  let shareToast = false;
-  let existingUserData: UserWithAccessType[] = [];
+
+  $: selectedUsers.length === 0 && dispatch("enable", false);
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
@@ -35,19 +30,7 @@
       )
     : users;
 
-  const existingUsers = async (toggle = true) => {
-    if (toggle) {
-      existingItemDropdown = !existingItemDropdown;
-    }
-    if ($selectedFolder !== null) {
-      const responseJson = await fetchFolderUsers($selectedFolder.id);
-      existingUserData = responseJson.data;
-    } else {
-      existingUserData.length = 0;
-    }
-  };
-
-  const shareFolderHandler = async () => {
+  export const shareFolderHandler = async () => {
     if ($selectedFolder === null) {
       throw new Error("Folder not selected");
     }
@@ -95,15 +78,17 @@
       selectedUsers = [...selectedUsers, { ...user, accessType: option }];
       users = users.filter((u) => u.id !== user.id);
     }
+    selectedUsers.length !== 0 && dispatch("enable", true);
   }
 
-  function handleCancel() {
-    dispatch("cancel", true);
-  }
+  onMount(() => {
+    //Below will disable save changes button when group/user button switched
+    dispatch("enable", false);
+  });
 </script>
 
 <div
-  class="p-2 border border-osvauld-iconblack rounded-lg min-h-[10rem] max-h-[15rem]"
+  class="p-2 w-full max-h-full border rounded-lg border-osvauld-iconblack overflow-hidden"
 >
   <div class="bg-osvauld-frameblack flex justify-center items-center">
     <div
@@ -114,22 +99,24 @@
         type="text"
         bind:value={searchInput}
         class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-        placeholder="Search for users"
+        placeholder=""
       />
     </div>
   </div>
 
   <div
-    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[11rem] bg-osvauld-frameblack w-full flex flex-col justify-center items-center"
+    class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full h-[8rem] flex flex-col justify-start items-center"
   >
     {#each filteredUsers as user, index}
       <ListItem
         item={user}
         isSelected={index === selectionIndex && !topList}
-        isTopList={false}
+        isBottomList={false}
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}
+        reverseModal={filteredUsers.length > 3 &&
+          index > filteredUsers.length - 3}
         on:select={(e) => handleRoleChange(e, index, "users")}
       />
     {/each}
@@ -138,35 +125,26 @@
 
 {#if selectedUsers.length !== 0}
   <div
-    class="my-2 border border-osvauld-iconblack rounded-lg min-h-0 max-h-[8rem] mb-2"
+    class="my-2 w-full border border-osvauld-iconblack rounded-lg h-[8rem] mb-2"
   >
     <div
-      class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[6rem] rounded-lg w-full px-2 mt-1"
+      class="overflow-y-scroll h-[90%] scrollbar-thin rounded-lg w-full px-2 mt-1"
     >
       {#each selectedUsers as user, index}
         <ListItem
           item={user}
           isSelected={index === selectionIndex && topList}
-          isTopList={true}
+          isBottomList={true}
           on:click={() => handleClick(index, true)}
           on:remove={() => handleItemRemove(index)}
           {setbackground}
           {showOptions}
+          reverseModal={selectedUsers.length > 3 &&
+            index > selectedUsers.length - 3}
           on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
         />
-        <div class="border-b border-osvauld-iconblack w-full"></div>
+        <div class=" border-osvauld-iconblack w-full"></div>
       {/each}
     </div>
   </div>
 {/if}
-<div class="p-2 w-full flex justify-end items-center box-border">
-  <button
-    class=" ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
-    on:click={handleCancel}>Cancel</button
-  >
-
-  <button
-    class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium border border-osvauld-iconblack text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack rounded-md hover:border-transparent"
-    on:click={shareFolderHandler}>Save changes</button
-  >
-</div>
