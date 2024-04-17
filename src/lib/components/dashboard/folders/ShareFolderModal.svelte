@@ -42,13 +42,13 @@
   out:fly
 >
   <div
-    class="w-[32.25rem] min-h-[34.375rem] max-h-[37rem] rounded-2xl translate-x-0 bg-osvauld-frameblack px-7 py-3 flex flex-col"
+    class="w-[32.25rem] min-h-[34.375rem] max-h-[37rem] rounded-2xl translate-x-0 bg-osvauld-frameblack p-7 flex flex-col"
   >
     <div class="flex justify-between items-center p-3 pt-0">
       <span
         class="font-sans text-osvauld-quarzowhite text-xl font-normal flex justify-center items-center"
         >Share Folder <button
-          class="ml-2"
+          class="ml-2 pt-1"
           on:mouseenter={() => (infoOnHover = true)}
           on:mouseleave={() => (infoOnHover = false)}
           on:click={() => (showInfoTab = !showInfoTab)}
@@ -108,7 +108,7 @@
     <div
       class="border-b mt-auto mb-2 border-osvauld-iconblack w-[calc(100%+3.5rem)] -translate-x-7"
     ></div>
-    <div class="p-2 w-full flex justify-end items-center box-border mt-4">
+    <div class="p-2 w-full flex justify-end items-center box-border mt-0">
       <button
         class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
         on:click={() => showFolderShareDrawer.set(false)}>Cancel</button
