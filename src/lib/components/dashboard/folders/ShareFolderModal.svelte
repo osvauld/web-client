@@ -86,9 +86,7 @@
       class="border-b mt-2 mb-4 border-osvauld-iconblack w-[calc(100%+3.5rem)] -translate-x-7"
     ></div>
 
-    <div
-      class=""
-    >
+    <div class="">
       <UserGroupToggle on:select={toggleSelect} />
       {#if selectedTab === "Users"}
         <ShareFolderWithUsers
@@ -108,9 +106,9 @@
       {/if}
     </div>
     <div
-      class="border-b mt-4 mb-2 border-osvauld-iconblack w-[calc(100%+3.5rem)] -translate-x-7"
+      class="border-b mt-auto mb-2 border-osvauld-iconblack w-[calc(100%+3.5rem)] -translate-x-7"
     ></div>
-    <div class="p-2 w-full flex justify-end items-center box-border mt-auto">
+    <div class="p-2 w-full flex justify-end items-center box-border mt-4">
       <button
         class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
         on:click={() => showFolderShareDrawer.set(false)}>Cancel</button

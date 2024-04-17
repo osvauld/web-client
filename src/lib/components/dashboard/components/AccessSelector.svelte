@@ -6,8 +6,6 @@
   const select = (permission) => {
     dispatch("select", { permission });
   };
-
-  console.log("From access Selector =>", reverseModal);
 </script>
 
 <div

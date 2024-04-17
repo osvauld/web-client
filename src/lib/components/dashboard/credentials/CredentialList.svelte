@@ -51,7 +51,6 @@
     }
   }
   const subscribe = selectedFolder.subscribe(async (folder) => {
-    console.log(folder, "folder");
     if (folder === null) {
       return;
     }
