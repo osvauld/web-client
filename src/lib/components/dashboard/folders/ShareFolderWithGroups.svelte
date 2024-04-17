@@ -8,7 +8,6 @@
     fetchUsersByGroupIds,
     shareFolderWithGroups,
     fetchGroupsWithoutAccess,
-    fetchFolderGroups,
   } from "../apis";
   import { createEventDispatcher } from "svelte";
   import { sendMessage, setbackground } from "../helper";
@@ -26,8 +25,7 @@
   let selectionIndex: number | null = null;
   let topList = false;
   let searchInput = "";
-  $: $selectedGroups.size == 0 && dispatch("enable", false);
-
+  $: $selectedGroups.size === 0 && dispatch("enable", false);
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
         group.name.toLowerCase().includes(searchInput.toLowerCase())
@@ -116,9 +114,7 @@
   });
 </script>
 
-<div
-  class="p-2 w-full max-h-full border rounded-lg border-osvauld-iconblack overflow-hidden"
->
+<div class="p-2 w-full max-h-full rounded-lg overflow-hidden">
   <div class="bg-osvauld-frameblack flex justify-center items-center">
     <div
       class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
@@ -134,7 +130,7 @@
   </div>
 
   <div
-    class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full h-[8rem] flex flex-col justify-start items-center"
+    class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full max-h-[15rem] min-h-[8rem] flex flex-col justify-start items-center"
   >
     {#each filteredGroups as group, index}
       <ListItem
@@ -144,7 +140,7 @@
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}
-        reverseModal={filteredGroups.length > 3 &&
+        reverseModal={filteredGroups.length > 4 &&
           index > filteredGroups.length - 3}
         on:select={(e) => handleRoleChange(e, index, "groups")}
       />
@@ -168,11 +164,10 @@
           on:remove={() => handleItemRemove(groupId)}
           {setbackground}
           {showOptions}
-          reverseModal={$selectedGroups.size > 3 &&
-            index > $selectedGroups.size - 3}
+          reverseModal={$selectedGroups.size > 1 && index > 1}
           on:select={(e) => handleRoleChange(e, index, "selectedGroups")}
         />
-        <div class=" border-osvauld-iconblack w-full"></div>
+        <div class="border-b border-osvauld-iconblack w-full"></div>
       {/each}
     </div>
   </div>

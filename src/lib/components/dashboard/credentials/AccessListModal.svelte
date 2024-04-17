@@ -119,7 +119,9 @@
       <button
         class="p-2 rounded-lg {editPermissionTrigger
           ? 'bg-osvauld-cardshade'
-          : ''}"
+          : ''}  {$selectedFolder.accessType === 'manager'
+          ? 'visible'
+          : 'hidden'}"
         on:click={() => {
           editPermissionTrigger = !editPermissionTrigger;
         }}

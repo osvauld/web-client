@@ -51,7 +51,6 @@
     }
   }
   const subscribe = selectedFolder.subscribe(async (folder) => {
-    console.log(folder, "folder");
     if (folder === null) {
       return;
     }
@@ -268,7 +267,7 @@
   {/if}
   {#if sortedCredentials.length !== 0}
     <div
-      class="flex flex-wrap pt-3 pb-7 px-7 gap-4 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
+      class="flex flex-wrap pt-3 pb-7 px-7 gap-3.5 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
     >
       {#each sortedCredentials as credential}
         <CredentialCard

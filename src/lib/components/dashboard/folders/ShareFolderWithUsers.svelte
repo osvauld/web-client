@@ -105,7 +105,10 @@
   </div>
 
   <div
-    class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full h-[8rem] flex flex-col justify-start items-center"
+    class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full {selectedUsers.length !==
+    0
+      ? 'h-[8rem]'
+      : 'h-[15rem]'} flex flex-col justify-start items-center"
   >
     {#each filteredUsers as user, index}
       <ListItem
@@ -143,7 +146,7 @@
             index > selectedUsers.length - 3}
           on:select={(e) => handleRoleChange(e, index, "selectedUsers")}
         />
-        <div class=" border-osvauld-iconblack w-full"></div>
+        <div class="border-b border-osvauld-iconblack w-full"></div>
       {/each}
     </div>
   </div>
