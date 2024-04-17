@@ -46,7 +46,7 @@
   >
     <div class="flex justify-between items-center p-3 pt-0">
       <span
-        class="font-sans text-osvauld-quarzowhite text-28 font-normal flex justify-center items-center"
+        class="font-sans text-osvauld-quarzowhite text-xl font-normal flex justify-center items-center"
         >Share Folder <button
           class="ml-2"
           on:mouseenter={() => (infoOnHover = true)}
@@ -87,7 +87,7 @@
     ></div>
 
     <div
-      class="flex flex-col justify-start items-center px-2 overflow-hidden min-h-[22rem] max-h-[28rem]"
+      class=""
     >
       <UserGroupToggle on:select={toggleSelect} />
       {#if selectedTab === "Users"}
@@ -103,10 +103,7 @@
           {credentialsFields}
           bind:this={saveChanges}
           on:cancel={() => showFolderShareDrawer.set(false)}
-          on:enable={(e) => {
-            saveEnabled = e.detail;
-            console.log("Enable from group", e.detail);
-          }}
+          on:enable={(e) => (saveEnabled = e.detail)}
         />
       {/if}
     </div>

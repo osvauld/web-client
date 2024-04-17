@@ -34,15 +34,19 @@
   class="relative w-[98%] my-1 ml-1 pl-2 pr-0.5 rounded-lg cursor-pointer flex items-center justify-between text-osvauld-sheffieldgrey text-base font-normal {(isSelected &&
     !isBottomList) ||
   (hoveredOverThisItem && !isBottomList)
-    ? 'shadow-[0_0_0_1px_#292A36] '
-    : ''}{showOptions && isSelected ? 'bg-osvauld-cardshade' : ''}"
+    ? 'shadow-[0_0_0_1px_#292A36] text-osvauld-textActive'
+    : ''}{showOptions && isSelected
+    ? 'bg-osvauld-cardshade text-osvauld-textActive'
+    : ''}"
   on:click={handleClick}
   on:mouseenter={() => (hoveredOverThisItem = true)}
   on:mouseleave={() => (hoveredOverThisItem = false)}
 >
   <div class="flex items-center space-x-4 max-w-full">
     <p
-      class="py-1 px-1 max-w-full whitespace-nowrap text-basetext-osvauld-sheffieldgrey"
+      class="py-1 px-1 max-w-full whitespace-nowrap text-base {isBottomList
+        ? 'text-osvauld-textActive'
+        : 'text-osvauld-sheffieldgrey'}"
     >
       {item.name}
     </p>
@@ -60,7 +64,7 @@
         <span> <DownArrow type={item.accessType} /></span>
       </button>
       {#if showOptions && isSelected}
-        <AccessSelector on:select={(e) => eventPasser(e)} />
+        <AccessSelector on:select={(e) => eventPasser(e)} {reverseModal} />
       {/if}
     </div>
   {/if}
