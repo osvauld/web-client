@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Lens, Add, BinIcon } from "../icons";
+  import { Add, BinIcon } from "../icons";
   import {
     groupUsers,
     selectedGroup,
-    groupStore,
     showAddUserToGroupDrawer,
   } from "../store";
   import { removeUserFromGroup } from "../apis";
   import { onMount, onDestroy } from "svelte";
+  import { setGroupStore } from "../../../store/storeHelper";
   export let groupName;
   const handleRemoveUserFromGroup = async (userId) => {
     await removeUserFromGroup($selectedGroup.groupId, userId);
@@ -15,6 +15,7 @@
     const user = JSON.parse(accountDetails);
     if (user.id === userId) {
       selectedGroup.set(null);
+      await setGroupStore();
     } else {
       selectedGroup.set($selectedGroup);
     }
