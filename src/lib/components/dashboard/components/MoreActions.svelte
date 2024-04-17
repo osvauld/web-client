@@ -27,7 +27,7 @@
       const leftVal =
         $modalManager.type === "Folder"
           ? rect.left + window.scrollX
-          : rect.left + window.scrollX - 3.5 * rect.width;
+          : rect.left + window.scrollX - 2.7 * rect.width;
       return {
         top: rect.top + window.scrollY + rect.height,
         left: leftVal,
