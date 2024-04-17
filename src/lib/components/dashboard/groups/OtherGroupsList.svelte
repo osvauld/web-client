@@ -6,19 +6,20 @@
     groupStore,
     showAddUserToGroupDrawer,
   } from "../store";
-  import {
-    removeUserFromGroup,
-    fetchAllUserGroups,
-    removeGroup,
-  } from "../apis";
+  import { removeUserFromGroup } from "../apis";
   import { onMount, onDestroy } from "svelte";
   export let groupName;
   const handleRemoveUserFromGroup = async (userId) => {
     await removeUserFromGroup($selectedGroup.groupId, userId);
-    selectedGroup.set($selectedGroup);
+    const accountDetails = localStorage.getItem("user");
+    const user = JSON.parse(accountDetails);
+    if (user.id === userId) {
+      selectedGroup.set(null);
+    } else {
+      selectedGroup.set($selectedGroup);
+    }
   };
 
-  let user;
   let groupAdmin = false;
   let addUserHovered = false;
   let unsubscribe;
