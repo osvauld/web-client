@@ -20,6 +20,8 @@
   let infoDropdown = false;
   let showInfoTab = false;
   let infoOnHover = false;
+  let saveChanges;
+  let saveEnabled = false;
 
   const credIds = credentials.map((cred) => cred.credentialId);
   onMount(async () => {
@@ -41,11 +43,11 @@
   out:fly
 >
   <div
-    class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6"
+    class="w-[28rem] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack py-6 px-3 flex flex-col"
   >
     <div class="flex justify-between items-center p-3">
       <span
-        class="font-sans text-white text-28 font-normal flex justify-between items-center"
+        class="font-sans text-white text-xl font-normal flex justify-between items-center"
       >
         <span>Share Credentials</span>
         <button
@@ -84,22 +86,49 @@
         {/if}
       </div>
     {/if}
+    <div
+      class="border-b mt-2 mb-4 border-osvauld-iconblack w-[calc(100%+2.8rem)] -translate-x-3"
+    ></div>
 
-    <div class="flex-grow max-h-[85vh]">
+    <div
+      class="flex flex-col justify-start items-center overflow-hidden h-full"
+    >
       <UserGroupToggle on:select={toggleSelect} />
       {#if selectedTab === "Users"}
         <ShareCredentialsWithUser
           {users}
           {credentialsFields}
+          bind:this={saveChanges}
           on:cancel={() => showCredentialShareDrawer.set(false)}
+          on:enable={(e) => (saveEnabled = e.detail)}
         />
       {:else}
         <ShareCredentialsWithGroups
           {groups}
           {credentialsFields}
+          bind:this={saveChanges}
           on:cancel={() => showCredentialShareDrawer.set(false)}
+          on:enable={(e) => (saveEnabled = e.detail)}
         />
       {/if}
+    </div>
+    <div
+      class="border-b mt-2 mb-4 border-osvauld-iconblack w-[calc(100%+2.8rem)] -translate-x-3"
+    ></div>
+    <div class="p-2 w-full flex justify-end items-center box-border mt-4">
+      <button
+        class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
+        on:click={() => showCredentialShareDrawer.set(false)}>Cancel</button
+      >
+
+      <button
+        class="ml-4 px-3 py-2 whitespace-nowrap text-sm font-medium rounded-md {saveEnabled
+          ? 'bg-osvauld-carolinablue text-osvauld-frameblack border-transparent'
+          : 'border border-osvauld-iconblack text-osvauld-textActive'}"
+        disabled={!saveEnabled}
+        on:click={() => saveChanges.shareCredentialHandler()}
+        >Save changes</button
+      >
     </div>
   </div>
 </div>
