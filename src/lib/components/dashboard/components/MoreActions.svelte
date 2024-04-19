@@ -7,6 +7,7 @@
     showMoreOptions,
     DeleteConfirmationModal,
     modalManager,
+    showFolderShareDrawer,
   } from "../store";
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
@@ -46,6 +47,11 @@
     closeModal();
   };
 
+  const callShareFolderModal = () => {
+    closeModal();
+    showFolderShareDrawer.set(true);
+  };
+
   const deleteInitiate = () => {
     showMoreOptions.set(false);
     buttonRef.set(null);
@@ -78,15 +84,19 @@
         on:mouseleave={() => (isShareHovered = false)}
       >
         <FolderShare size={24} color={isShareHovered ? "#F2F2F0" : "#85889C"} />
-        <div class="font-inter text-base whitespace-nowrap">
+        <button
+          class="font-inter text-base whitespace-nowrap"
+          on:click|stopPropagation={callShareFolderModal}
+        >
           Share {$modalManager.type === "Folder" ? "folder" : ""}
-        </div>
+        </button>
       </button>
 
       <button
         class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
         on:mouseenter={() => (isEditHovered = true)}
         on:mouseleave={() => (isEditHovered = false)}
+        disabled
       >
         <div class="w-6 h-6 flex items-center justify-center">
           <EditIcon color={isEditHovered ? "#F2F2F0" : "#85889C"} />

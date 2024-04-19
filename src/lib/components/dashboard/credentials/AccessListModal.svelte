@@ -20,6 +20,8 @@
   let selectedTab = "Groups";
   let existingItemDropdown = false;
   let editPermissionTrigger = false;
+  let infoOnHover = false;
+  let showInfoTab = false;
 
   export const buttonCoords = derived(buttonRef, ($buttonRef) => {
     if ($buttonRef) {
@@ -100,19 +102,29 @@
 >
   <div class="flex justify-between items-center p-3">
     <span class="font-sans text-osvauld-quarzowhite text-2xl font-normal"
-      >Access List</span
+      >Access List
+      <button
+        class="ml-2 pt-1"
+        on:mouseenter={() => (infoOnHover = true)}
+        on:mouseleave={() => (infoOnHover = false)}
+        on:click={() => (showInfoTab = !showInfoTab)}
+        ><InfoIcon color={infoOnHover ? "#BFC0CC" : "#4D4F60"} /></button
+      ></span
     >
     <button class="p-2" on:click={handleClickOutside}><ClosePanel /></button>
   </div>
-  <div
-    class="relative h-auto w-full px-4 py-2 mx-auto flex justify-between items-center rounded-lg cursor-pointer mb-3 bg-osvauld-fieldActive"
-  >
-    <span class="w-[12%]"> <InfoIcon /> </span>
-    <p class="text-sm text-osvauld-sheffieldgrey font-normal">
-      This folder contains credentials you have access directly or indirectly
-      through below assignments
-    </p>
-  </div>
+
+  {#if showInfoTab}
+    <div
+      class="relative h-auto w-full px-4 py-2 mx-auto flex justify-between items-start rounded-lg cursor-pointer mb-3 bg-osvauld-fieldActive"
+    >
+      <span class="w-[12%] mt-1"> <InfoIcon /> </span>
+      <p class="text-sm text-osvauld-sheffieldgrey font-normal">
+        This folder contains credentials you have access directly or indirectly
+        through below assignments
+      </p>
+    </div>
+  {/if}
   <div class="flex justify-around items-center">
     <UserGroupToggle on:select={toggleSelect} />
     <div class="flex justify-end items-center w-full">

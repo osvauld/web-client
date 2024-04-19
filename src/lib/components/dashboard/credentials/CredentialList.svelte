@@ -41,6 +41,10 @@
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
 
+  $: minOneCredentialManager = sortedCredentials.some(
+    (credential) => credential.accessType === "manager"
+  );
+
   function handleCheck(isChecked: boolean, card: Credential) {
     if (isChecked) {
       checkedCards = [...checkedCards, card];
@@ -128,7 +132,9 @@
   {#if $selectedFolder}
     <div class="flex justify-between items-center px-4 py-2">
       <div class="max-w-[50%] min-w-[30%] flex items-center">
-        <h1 class="text-3xl p-4 font-normal whitespace-nowrap">
+        <h1
+          class="text-3xl p-4 font-normal whitespace-nowrap text-osvauld-sideListTextActive"
+        >
           {$selectedFolder.name}
         </h1>
         <!-- TODO: update to share credentials in the same api -->
@@ -148,15 +154,20 @@
             {/if}
           </button>
         {/if}
-        <button
-          class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg flex justify-between items-center whitespace-nowrap {isShareCredActive
-            ? 'text-osvauld-frameblack bg-osvauld-carolinablue'
-            : 'text-osvauld-textActive bg-osvauld-frameblack'}"
-          on:click={credentialShareManager}
-        >
-          <span class="mr-1 text-sm">Share Credentials</span>
-          <Share color={isShareCredActive ? "#0D0E13" : "#A3A4B5"} size={16} />
-        </button>
+        {#if minOneCredentialManager}
+          <button
+            class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg flex justify-between items-center whitespace-nowrap {isShareCredActive
+              ? 'text-osvauld-frameblack bg-osvauld-carolinablue'
+              : 'text-osvauld-textActive bg-osvauld-frameblack'}"
+            on:click={credentialShareManager}
+          >
+            <span class="mr-1 text-sm">Share Credentials</span>
+            <Share
+              color={isShareCredActive ? "#0D0E13" : "#A3A4B5"}
+              size={16}
+            />
+          </button>
+        {/if}
         {#if areCardsSelected}
           <span
             class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"

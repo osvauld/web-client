@@ -17,7 +17,6 @@
   export let users: User[];
   export let groups: Group[];
   let credentialsFields: CredentialFields[] = [];
-  let infoDropdown = false;
   let showInfoTab = false;
   let infoOnHover = false;
   let saveChanges;
@@ -68,22 +67,18 @@
         class="relative h-[1.875rem] w-full px-4 py-2 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown
           ? 'bg-osvauld-bordergreen'
           : ''}"
-        on:click={() => (infoDropdown = !infoDropdown)}
       >
         <span class="">
           <InfoIcon />
         </span>
         <p
-          class="whitespace-nowrap text-base text-osvauld-sheffieldgrey font-normal {infoDropdown
-            ? 'text-osvauld-highlightwhite'
-            : ''}"
+          class="whitespace-nowrap text-base font-normal text-osvauld-highlightwhite
+ "
         >
           Select groups/users and choose access type
         </p>
 
-        {#if infoDropdown}
-          <InfoOverlay />
-        {/if}
+        <InfoOverlay />
       </div>
     {/if}
     <div

@@ -3,13 +3,11 @@
   import LinkIcon from "../basic/icons/linkIcon.svelte";
   import Highlight from "./components/Highlight.svelte";
   import Lens from "../basic/icons/lens.svelte";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
+
   export let searchResults = [];
   export let query = "";
   const dispatch = createEventDispatcher();
-  function autofocus(node) {
-    node.focus();
-  }
 
   const closeModal = () => {
     dispatch("close", true);
@@ -22,14 +20,27 @@
   const handleSearchClick = (result) => {
     dispatch("select", result);
   };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      closeModal();
+    }
+  };
+
+  function autofocus(node) {
+    node.focus();
+  }
 </script>
 
-<div class="fixed z-10 inset-0 backdrop-filter backdrop-blur-[2px]">
+<button
+  class="fixed z-10 inset-0 backdrop-filter backdrop-blur-[2px]"
+  on:keydown={handleKeyDown}
+>
   <div class="flex items-start justify-center min-h-screen mt-[2.6vh]">
     <button class="fixed inset-0 bg-black opacity-50" on:click={closeModal}>
     </button>
     <div
-      class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw] ml-[16vw]"
+      class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw] ml-[10vw]"
     >
       <div
         class="h-[2.2rem] w-[31.25rem] px-2 flex m-auto mt-2 justify-center items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
@@ -99,4 +110,4 @@
       </div>
     </div>
   </div>
-</div>
+</button>

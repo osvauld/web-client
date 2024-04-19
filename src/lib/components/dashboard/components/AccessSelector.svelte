@@ -14,10 +14,11 @@
     : 'top-0 right-0'} !z-[100] w-[10rem] px-0.5 py-0 rounded-md bg-osvauld-frameblack border-[0.5px] border-osvauld-iconblack ml-auto text-base font-normal flex flex-col justify-center items-center"
 >
   {#if !reverseModal}
-    <span
+    <button
       class=" text-osvauld-permissionGreenText bg-osvauld-permissionsGreen w-full rounded-md cursor-pointer px-2 py-0.5 mt-0.5 flex justify-around items-center"
+      on:click|stopPropagation={() => dispatch("closeSelector", true)}
       >Permissions <span><DownArrow type={"indicator"} /></span>
-    </span>
+    </button>
   {/if}
   <button
     class="w-full rounded-md cursor-pointer px-2 py-0.5 bg-osvauld-readerOrange text-osvauld-readerText mt-0.5"
@@ -28,11 +29,12 @@
     on:click|stopPropagation={() => select("manager")}>Manager</button
   >
   {#if reverseModal}
-    <span
+    <button
       class=" text-osvauld-permissionGreenText bg-osvauld-permissionsGreen w-full rounded-md cursor-pointer px-2 py-0.5 flex justify-around items-center"
+      on:click|stopPropagation={() => dispatch("closeSelector", true)}
       >Permissions <span class="rotate-180"
         ><DownArrow type={"indicator"} /></span
       >
-    </span>
+    </button>
   {/if}
 </div>
