@@ -8,6 +8,7 @@
     buttonRef,
     showMoreOptions,
     modalManager,
+    credentialStore,
   } from "../store";
 
   import { Folder } from "../dtos";
@@ -81,29 +82,36 @@
               : "#85889C"}
           />
           <span
-            class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap {$selectedFolder?.id ==
+            class="max-w-[75%] ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap {$selectedFolder?.id ==
               folder.id || hoveringIndex === index
               ? 'text-osvauld-sideListTextActive'
-              : 'text-osvauld-fieldText'}">{folder.name}</span
+              : 'text-osvauld-fieldText'}"
+            >{folder.name}
+            <span
+              class="ml-2 text-osvauld-plainwhite {$selectedFolder?.id ===
+              folder.id
+                ? 'visible delay-200'
+                : 'invisible'}">{$credentialStore.length}</span
+            ></span
           >
+          <div
+            class="relative z-100 ml-auto flex justify-center items-center {$selectedFolder?.id ==
+              folder.id || hoveringIndex === index
+              ? 'visible'
+              : 'invisible'}"
+          >
+            {#if folder.accessType === "manager"}
+              <button
+                class="p-2"
+                on:click={(e) => {
+                  openFolderMenu(e, folder.id, folder.name);
+                }}
+              >
+                <Menu />
+              </button>
+            {/if}
+          </div>
         </button>
-        <div
-          class="relative z-100 flex justify-center items-center {$selectedFolder?.id ==
-            folder.id || hoveringIndex === index
-            ? 'visible'
-            : 'invisible'}"
-        >
-          {#if folder.accessType === "manager"}
-            <button
-              class="p-2"
-              on:click={(e) => {
-                openFolderMenu(e, folder.id, folder.name);
-              }}
-            >
-              <Menu />
-            </button>
-          {/if}
-        </div>
       </li>
     {/each}
   </ul>

@@ -64,22 +64,18 @@
     {#if showInfoTab}
       <div
         class="relative h-auto w-full px-4 py-2 mx-auto flex justify-start items-center rounded-lg cursor-pointer bg-osvauld-fieldActive"
-        on:click={() => (infoDropdown = !infoDropdown)}
       >
         <span class="mr-2">
           <InfoIcon />
         </span>
         <p
-          class="text-sm text-osvauld-sheffieldgrey font-normal {infoDropdown
-            ? 'text-osvauld-highlightwhite'
-            : ''}"
+          class="text-sm font-normal text-osvauld-highlightwhite
+            "
         >
           Select groups/users and choose access type
         </p>
 
-        {#if infoDropdown}
-          <InfoOverlay />
-        {/if}
+        <InfoOverlay />
       </div>
     {/if}
     <div
