@@ -87,9 +87,7 @@
   });
 </script>
 
-<div
-  class="p-2 w-full max-h-full border rounded-lg border-osvauld-iconblack overflow-hidden"
->
+<div class="p-2 w-full max-h-full overflow-hidden">
   <div class="bg-osvauld-frameblack flex justify-center items-center">
     <div
       class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
