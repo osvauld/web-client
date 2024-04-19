@@ -105,9 +105,9 @@
     <button class="p-2" on:click={handleClickOutside}><ClosePanel /></button>
   </div>
   <div
-    class="relative h-auto w-full px-4 py-2 mx-auto flex justify-between items-center rounded-lg cursor-pointer mb-3 bg-osvauld-fieldActive"
+    class="relative h-auto w-full px-4 py-2 mx-auto flex justify-between items-start rounded-lg cursor-pointer mb-3 bg-osvauld-fieldActive"
   >
-    <span class="w-[12%]"> <InfoIcon /> </span>
+    <span class="w-[12%] mt-1"> <InfoIcon /> </span>
     <p class="text-sm text-osvauld-sheffieldgrey font-normal">
       This folder contains credentials you have access directly or indirectly
       through below assignments

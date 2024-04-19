@@ -17,9 +17,9 @@
   };
 </script>
 
-<div class="p-2 mt-0 mb-2 w-full rounded-lg min-h-0 max-h-[50vh]">
+<div class="py-2 px-0 mt-0 mb-2 w-full rounded-lg min-h-0 max-h-[50vh]">
   <div
-    class="overflow-y-scroll scrollbar-thin min-h-0 max-h-[30vh] bg-osvauld-frameblack w-full"
+    class="overflow-y-scroll scrollbar-thin h-[16rem] pr-1 bg-osvauld-frameblack w-full"
   >
     {#if existingItemsData}
       {#each existingItemsData as item, index}
@@ -29,6 +29,8 @@
           {item}
           {isUser}
           {editPermissionTrigger}
+          reverseModal={existingItemsData.length > 3 &&
+            index > existingItemsData.length - 3}
           on:remove={() => handleRemoval(item)}
           on:permissonChange={(e) => handlePermissionChange(e, item)}
         />
