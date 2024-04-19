@@ -16,8 +16,13 @@
         width="100%"
       />
     </a>
-
-
+       <a href="https://app.osvauld.com/#gh-light-mode-only" target="_blank">
+      <img
+        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Dashboardnew.png"
+        alt="Osvauld Screens"
+        width="100%"
+      />
+    </a>
 </p>
 
 
