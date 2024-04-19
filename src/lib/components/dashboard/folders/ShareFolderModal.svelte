@@ -14,7 +14,6 @@
 
   export let users: User[];
   let credentialsFields: CredentialFields[];
-  let infoDropdown = false;
   let infoOnHover = false;
   let showInfoTab = false;
   $: saveEnabled = false;
