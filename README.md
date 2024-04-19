@@ -11,14 +11,14 @@
 <p>
    <a href="https://app.osvauld.com/#gh-light-mode-only" target="_blank">
       <img
-        src="https://raw.githubusercontent.com/osvauld/Docs/assets/Dashboardnew.png"
+        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Dashboardnew.png"
         alt="Osvauld Screens"
         width="100%"
       />
     </a>
         <a href="https://osvauld.com" target="_blank">
       <img
-        src="https://raw.githubusercontent.com/osvauld/Docs/assets/Cardonclick.png"
+        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Cardonclick.png"
         alt="Osvauld Issue Details"
         width="100%"
       />
@@ -74,14 +74,14 @@ For self hosting environment setup, visit the [On-Prem](https://docs.osvauld.com
 <p>
     <a href="https://app.osvauld.com/#gh-dark-mode-only" target="_blank">
       <img
-        src="https://raw.githubusercontent.com/osvauld/Docs/assets/FolderAccessListEdit.png"
+        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/FolderAccessListEdit.png"
         alt="Osvauld Folder access edit"
         width="100%"
       />
     </a>
     <a href="https://osvauld.com" target="_blank">
       <img
-        src="https://raw.githubusercontent.com/osvauld/Docs/assets/Groups.png"
+        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Groups.png"
         alt="Osvauld Group view"
         width="100%"
       />
@@ -90,7 +90,7 @@ For self hosting environment setup, visit the [On-Prem](https://docs.osvauld.com
 <p>
     <a href="https://osvauld.com" target="_blank">
       <img
-        src="https://raw.githubusercontent.com/osvauld/Docs/assets/ShareFolder.png"
+        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/ShareFolder.png"
         alt="Osvauld Sharing folder"
         width="100%"
       />
