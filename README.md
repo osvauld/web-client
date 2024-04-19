@@ -41,7 +41,7 @@ Meet [osvauld](https://osvauld.com). An open-source credential management tool i
 - **Audit logs**: Admin can view which credentials are being accessed at what frequency.
 - **Easy Password rotation**: Credentials can be tied to an expiray date as per company policies admin has the transparency to view and change production keys when required.
 
-## 🔒 Security Features
+## 🔒 Security 
 
 - **Zero-knowledge Architecture**: all your credentials including meta data never leaves your browser unencrypted and only you and to whom you shared can decrypt it using corresponding secret password.
 - **Open-PGP sharing**: Quickly share credentials with your team with open-PGP sharing mechanism, It is a 40-year old battle tested cryptography protocol suit.
@@ -58,7 +58,7 @@ osvauld is meant to be an on-prem first solution, this give you more control ove
 ## 🛠️ Tech
 
 Its UI is written in [Svelte](https://svelte.dev) using [TypeScript](https://www.typescriptlang.org) and its backend is written in [Go](https://go.dev).
-It utilizes a WebAssembly [WASM](https://webassembly.org) module, compiled from [Rust](https://www.rust-lang.org), for the fastest, memory-safe crypto operations possible.
+It utilizes [WASM](https://webassembly.org) module, compiled from [Rust](https://www.rust-lang.org), for the fastest, memory-safe crypto operations possible.
 
 
 ## 🚢 Onboard osvauld
