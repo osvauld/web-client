@@ -67,8 +67,8 @@
     {#each $folderStore as folder, index}
       <li
         class="{$selectedFolder?.id == folder.id
-          ? 'bg-osvauld-sideListHighlight rounded-lg text-osvauld-sideListTextActive'
-          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center transition-colors duration-100"
+          ? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
+          : 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center transition-colors duration-100"
         on:mouseenter={() => (hoveringIndex = index)}
         on:mouseleave={() => (hoveringIndex = null)}
       >
@@ -88,7 +88,7 @@
               : 'text-osvauld-fieldText'}"
             >{folder.name}
             <span
-              class="ml-2 text-osvauld-plainwhite {$selectedFolder?.id ===
+              class="ml-2 text-osvauld-fieldText font-light {$selectedFolder?.id ===
               folder.id
                 ? 'visible delay-200'
                 : 'invisible'}">{$credentialStore.length}</span
