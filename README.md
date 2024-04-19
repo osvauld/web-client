@@ -16,10 +16,11 @@
         width="100%"
       />
     </a>
-       <a href="https://app.osvauld.com/#gh-light-mode-only" target="_blank">
+      </a>
+            <a href="https://osvauld.com" target="_blank">
       <img
-        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Dashboardnew.png"
-        alt="Osvauld Screens"
+        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Cardonclick.png"
+        alt="Osvauld Issue Details"
         width="100%"
       />
     </a>
@@ -98,14 +99,7 @@ Join our Discord server [Discord](https://discord.gg/u43atWCS), let us help you 
         alt="Osvauld Sharing folder"
         width="100%"
       />
-    </a>
-            <a href="https://osvauld.com" target="_blank">
-      <img
-        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Cardonclick.png"
-        alt="Osvauld Issue Details"
-        width="100%"
-      />
-    </a>
+
 </p>
 
  
