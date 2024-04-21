@@ -8,23 +8,10 @@
 <p align="center"><b>Share credentials the most secure way</b></p>
 
 
-<p>
-   <a href="https://app.osvauld.com/#gh-light-mode-only" target="_blank">
-      <img
-        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Dashboardnew.png"
-        alt="Osvauld Screens"
-        width="100%"
-      />
-    </a>
-      </a>
-            <a href="https://osvauld.com" target="_blank">
-      <img
-        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Cardonclick.png"
-        alt="Osvauld Issue Details"
-        width="100%"
-      />
-    </a>
-</p>
+
+
+<a href="https://osvauld.com/"><img src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Dashboardnew.png" width="100%" alt="osvauld - An open-source, on-prem shared credential manager"></a>
+
 
 
 Meet [osvauld](https://osvauld.com). An open-source credential management tool intended to solve password problem teams face. Osvauld helps to enforce password/token hygiene and visibilty across your team thus resulting in better overall security. osvauld is built from ground up with security in mind. 
@@ -75,6 +62,23 @@ Join our Discord server [Discord](https://discord.gg/u43atWCS), let us help you 
 
 
 ## 📸 Screenshots
+
+<p>
+   <a href="https://app.osvauld.com/#gh-light-mode-only" target="_blank">
+      <img
+        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Dashboardnew.png"
+        alt="Osvauld Screens"
+        width="100%"
+      />
+    </a>
+    <a href="https://osvauld.com" target="_blank">
+      <img
+        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/Cardonclick.png"
+        alt="Osvauld Issue Details"
+        width="100%"
+      />
+    </a>
+</p>
 
 <p>
     <a href="https://app.osvauld.com/#gh-dark-mode-only" target="_blank">
