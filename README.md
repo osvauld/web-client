@@ -1,4 +1,4 @@
-<br /><br />
+<br />
 <p align="center">
 <a href="https://osvauld.com">
   <img src="https://raw.githubusercontent.com/tonyantony300/crispy-guacamole/master/assets/logo.png" alt="Osvauld Logo" width="70">
