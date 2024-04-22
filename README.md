@@ -30,11 +30,11 @@ Meet [osvauld](https://osvauld.com). An open-source credential management tool i
 
 ## 🔒 Security 
 
-- **Zero-knowledge Architecture**: all your credentials including meta data never leaves your browser unencrypted and only you and to whom you shared can decrypt it using corresponding secret password.
+- **End-to-End Encryption**: All your credentials including meta data never leaves your browser unencrypted and only you and to whom you shared can decrypt it using corresponding secret password - strictly adhering to zero-knowledge architecture.
 - **Open-PGP sharing**: Quickly share credentials with your team with open-PGP sharing mechanism, It is a 40-year old battle tested cryptography protocol suit.
+- **Seqouia-PGP**: osvauld uses Rust based Seqouia-PGP which has its Focus on safety and correctness, Uses a memory-safe language, First-Class Library.
+- **ECC and AES Algorithms**: osvauld uses  the OpenPGP RFC 4880 standard with ECC Curve25519 AND AES-256.
 - **WASM Sandboxing**: wasm module provides an extra layer of sandoxing for the cryptographic operations.
-- **Utilizes Seqouia PGP**: Focus on safety and correctness, Uses a memory-safe language, First-Class Library.
-- **ECC and AES encryption**: osvauld uses the OpenPGP RFC 4880 standard with ECC Curve25519 to facilitate the sharing functionality and AES-256 for vault encryption.
 
 
 ## 🍙 On-Premise First
