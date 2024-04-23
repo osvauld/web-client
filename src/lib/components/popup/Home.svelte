@@ -5,7 +5,7 @@
     fetchSensitiveFieldsByCredentialId,
   } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { Maximize, Lens } from "./icons";
   import { Credential } from "../../dtos/credential.dto";
   import { sendMessage } from "../dashboard/helper";
@@ -14,6 +14,7 @@
   import { getSearchFields } from "../dashboard/apis";
   import ListedCredentials from "./components/ListedCredentials.svelte";
   import PasswordNotFound from "./components/PasswordNotFound.svelte";
+  import AddCredential from "./AddCredential.svelte";
 
   let passwordFound = false;
   let credentialClicked = false;
@@ -26,7 +27,14 @@
   let scrollPosition = 0;
   let clickedCredential: any | null = null;
   let scrollableElement;
-
+  let port: browser.Runtime.Port;
+  let addNewCredential = false;
+  let newCredential: any | null = {
+    username: "",
+    password: "",
+    domain: "",
+    windowId: "",
+  };
   const openFullscreenTab = async () => {
     await sendMessage("openFullscreenTab");
   };
@@ -38,13 +46,12 @@
     });
     const activeTab = tabs[0];
     if (activeTab && activeTab.url) domain = new URL(activeTab.url).hostname;
-    return domain;
   };
 
   const fetchCredentialsOfCurrentDomin = async () => {
     const responseJson = await fetchAllUserUrls();
     const urls = responseJson.data;
-    domain = await readDomain();
+    await readDomain();
     const { credIds } = await sendMessage("updateAllUrls", { urls, domain });
     if (credIds.length > 0) {
       passwordFound = true;
@@ -86,8 +93,20 @@
       scrollPosition = parseInt(storedScrollPosition);
       scrollableElement.scrollTop = scrollPosition;
     }
+    port = browser.runtime.connect({ name: "popup" });
+    port.onMessage.addListener(handleMessage);
   });
 
+  const handleMessage = (msg) => {
+    if (msg.username && msg.password) {
+      newCredential = msg;
+      addNewCredential = true;
+    }
+  };
+  onDestroy(() => {
+    port.disconnect();
+    port.onMessage.removeListener(handleMessage);
+  });
   const handleInputChange = async (e) => {
     const query = e.target.value;
     if (query.length >= 1) {
@@ -151,7 +170,9 @@
       class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm"
     >
       <span class="text-base text-osvauld-carolinablue">
-        {domain || readDomain()}
+        {#if domain}
+          {domain}
+        {/if}
       </span>
       <span
         class="text-osvauld-sheffieldgrey {passwordFound
@@ -185,7 +206,13 @@
         on:scroll={handleScroll}
         bind:this={scrollableElement}
       >
-        {#if listedCredentials.length !== 0}
+        {#if addNewCredential}
+          <AddCredential
+            username={newCredential.username}
+            password={newCredential.password}
+            domain={newCredential.domain}
+          />
+        {:else if listedCredentials.length !== 0}
           {#each listedCredentials as credential}
             <ListedCredentials
               {credential}

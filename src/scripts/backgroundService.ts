@@ -1,6 +1,7 @@
 
 import browser from "webextension-polyfill";
-import { createChallenge, finalRegistration, initiateAuth } from '../lib/apis/auth.api.js';
+import { createChallenge, finalRegistration, initiateAuth } from '../lib/apis/auth.api';
+import { fetchCredsByIds } from '../lib/apis/credentials.api';
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
 import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields, get_pub_key, } from './rust_openpgp_wasm.js';
 
@@ -169,3 +170,46 @@ export const handlePvtKeyImport = async (pvtKeys: string, passphrase: string) =>
     return token;
 
 }
+
+export const credentialSubmitHandler = async (newCredential: any, credIds: string[]) => {
+    if (credIds.length > 0) {
+
+        const responseJson = await fetchCredsByIds(credIds);
+        const listedCredentials = responseJson.data;
+        const decryptedData = await decryptCredentialFieldsHandlerNew(listedCredentials);
+        if (decryptedData) {
+            for (const credential of decryptedData.data) {
+                for (const field of credential.fields) {
+                    if (field.fieldName == 'Username') {
+                        if (field.fieldValue == newCredential.username) {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    const windowDetails = await browser.windows.create({
+        url: browser.runtime.getURL('popup.html'),
+        type: 'popup',
+        width: 360,
+        height: 588
+    });
+    return windowDetails.id;
+}
+export const getCurrentDomain = async () => {
+    try {
+        const queryOptions = { active: true, currentWindow: true };
+        const tabs = await browser.tabs.query(queryOptions);
+        if (tabs[0] && tabs[0].url) {
+            const url = new URL(tabs[0].url);
+            return url.hostname;  // Returns the domain of the current active tab
+        }
+        return null;
+    } catch (error) {
+        console.error("Error getting current domain:", error);
+        return null;
+    }
+}
+
+

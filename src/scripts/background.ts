@@ -4,12 +4,15 @@ import {
   decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler,
   decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler,
   decryptFieldHandler, encryptFieldHandler, createShareCredsPayload,
-  handlePvtKeyImport
+  handlePvtKeyImport, credentialSubmitHandler, getCurrentDomain
 } from "./backgroundService";
-import { fetchCredsByIds } from "../lib/apis/credentials.api"
-import { InjectionPayload } from "../lib/dtos/credential.dto";
 import init, { is_global_context_set } from "./rust_openpgp_wasm";
-
+let newCredential: any = {
+  username: '',
+  password: '',
+  domain: '',
+  windowId: ''
+}
 
 let urlObj = new Map<string, Set<string>>();
 
@@ -75,6 +78,11 @@ browser.runtime.onMessage.addListener(async (request) => {
       }
       break;
     case "updateAllUrls":
+      if (!request.data.domain) {
+        return Promise.resolve({
+          credIds: []
+        })
+      }
       for (let i = 0; i < request.data.urls.length; i++) {
         const decrypted = await decryptFieldHandler(request.data.urls[i].value);
         const normalizedDecrypted = decrypted.replace(/^www\./, '');
@@ -101,6 +109,14 @@ browser.runtime.onMessage.addListener(async (request) => {
       return addCredentialHandler(request.data);
     case "createShareCredPayload":
       return createShareCredsPayload(request.data.creds, request.data.users);
+    case "credentialSubmit": {
+      newCredential.username = request.data.username;
+      newCredential.password = request.data.password;
+      newCredential.domain = await getCurrentDomain();
+      const credIds = Array.from(urlObj.get(newCredential.domain.replace(/^www\./, '')) || [])
+      newCredential.windowId = await credentialSubmitHandler(newCredential, credIds)
+      return true;
+    }
 
     default:
       console.log(request.action)
@@ -109,7 +125,15 @@ browser.runtime.onMessage.addListener(async (request) => {
 });
 
 
-
+browser.runtime.onConnect.addListener(async (port) => {
+  if (port.name === "popup") {
+    // When you have data to send:
+    if (newCredential.username && newCredential.password) {
+      port.postMessage({ username: newCredential.username, password: newCredential.password, domain: newCredential.domain, windowId: newCredential.windowId });
+      newCredential = null;
+    }
+  }
+});
 
 function saveTimestamp() {
 

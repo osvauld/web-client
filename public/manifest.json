@@ -3,7 +3,7 @@
   "manifest_version": 3,
   "name": "osvauld",
   "version": "1.0",
-  "description": "Your extension description",
+  "description": "Open source credentials management tool",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -36,5 +36,11 @@
   "headers": {
     "Cross-Origin-Opener-Policy": "same-origin",
     "Cross-Origin-Embedder-Policy": "require-corp"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
 }
