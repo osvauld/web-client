@@ -1,13 +1,28 @@
-<script>
-    import { fetchAllFolders } from "../dashboard/apis";
+<script lang="ts">
+    import browser from "webextension-polyfill";
+    import {
+        addCredential,
+        fetchAllFolders,
+        fetchFolderUsersForDataSync,
+    } from "../dashboard/apis";
+    import { sendMessage } from "../dashboard/helper";
     export let username = "";
     export let password = "";
     export let domain = "";
+    export let windowId;
     let name = "";
     let description = "";
     let showFolderList = false;
     let folderData = [];
 
+    let addCredentialPayload = {
+        name: name,
+        folderId: "",
+        description: description,
+        credentialType: "Login",
+        userFields: [],
+        domain,
+    };
     // Function to handle form submission
     const handleSubmit = async () => {
         const credential = { username, password, domain, name, description };
@@ -21,6 +36,39 @@
 
         // Implement actual data handling here, such as an API call
     };
+
+    const handleFolderSelect = async (folderId) => {
+        console.log("Selected folder:", folderId);
+        const response = await fetchFolderUsersForDataSync(folderId);
+        const usersToShare = response.data;
+        const fieldPayload = [
+            { fieldName: "Username", fieldValue: username, fieldType: "meta" },
+            {
+                fieldName: "Password",
+                fieldValue: password,
+                fieldType: "sensitive",
+            },
+            {
+                fieldName: "Domain",
+                fieldValue: domain,
+                fieldType: "additional",
+            },
+            { fieldName: "URL", fieldValue: domain, fieldType: "meta" },
+        ];
+        addCredentialPayload.folderId = folderId;
+        const userFields = await sendMessage("addCredential", {
+            users: usersToShare,
+            addCredentialFields: fieldPayload,
+        });
+        addCredentialPayload.name = name;
+        addCredentialPayload.description = description;
+        addCredentialPayload.userFields = userFields;
+        console.log(addCredentialPayload);
+        await addCredential(addCredentialPayload);
+        showFolderList = false;
+        await browser.windows.remove(windowId);
+        // showFolderList = false;
+    };
 </script>
 
 {#if showFolderList}
@@ -28,7 +76,7 @@
     <ul>
         {#each folderData as folder}
             <li>
-                <button>
+                <button on:click={() => handleFolderSelect(folder.id)}>
                     <div class="p-2 mb-2 bg-white">{folder.name}</div>
                 </button>
             </li>

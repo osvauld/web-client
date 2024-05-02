@@ -211,6 +211,7 @@
             username={newCredential.username}
             password={newCredential.password}
             domain={newCredential.domain}
+            windowId={newCredential.windowId}
           />
         {:else if listedCredentials.length !== 0}
           {#each listedCredentials as credential}
