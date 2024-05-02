@@ -6,9 +6,7 @@ import {
   decryptFieldHandler, encryptFieldHandler, createShareCredsPayload,
   handlePvtKeyImport
 } from "./backgroundService";
-import { fetchCredsByIds } from "../lib/apis/credentials.api"
-import { InjectionPayload } from "../lib/dtos/credential.dto";
-import init, { is_global_context_set } from "./rust_openpgp_wasm";
+import init, { is_global_context_set } from "./crypto_primitives";
 
 
 let urlObj = new Map<string, Set<string>>();
