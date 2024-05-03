@@ -6,7 +6,7 @@
     fetchFolderUsersForDataSync,
   } from "../dashboard/apis";
   import { sendMessage } from "../dashboard/helper";
-  import { spawn } from "child_process";
+  import FolderIcon from "../basic/icons/folderIcon.svelte";
   export let username = "";
   export let password = "";
   export let domain = "";
@@ -15,6 +15,8 @@
   let description = "";
   let showFolderList = false;
   let folderData = [];
+  let selectedFolderId = null;
+  let hoveringIndex = null;
 
   let addCredentialPayload = {
     name: name,
@@ -37,8 +39,11 @@
   };
 
   const handleFolderSelect = async (folderId) => {
-    console.log("Selected folder:", folderId);
-    const response = await fetchFolderUsersForDataSync(folderId);
+    selectedFolderId = folderId;
+  };
+
+  const handleSave = async () => {
+    const response = await fetchFolderUsersForDataSync(selectedFolderId);
     const usersToShare = response.data;
     const fieldPayload = [
       { fieldName: "Username", fieldValue: username, fieldType: "meta" },
@@ -54,7 +59,7 @@
       },
       { fieldName: "URL", fieldValue: domain, fieldType: "meta" },
     ];
-    addCredentialPayload.folderId = folderId;
+    addCredentialPayload.folderId = selectedFolderId;
     const userFields = await sendMessage("addCredential", {
       users: usersToShare,
       addCredentialFields: fieldPayload,
@@ -74,30 +79,62 @@
   <div class="text-osvauld-textActive text-base max-w-full pl-4">
     Select Folder to add this credential
   </div>
-  <ul>
-    {#each folderData as folder}
-      <li>
-        <button on:click={() => handleFolderSelect(folder.id)}>
-          <div class="p-2 mb-2 bg-white">{folder.name}</div>
-        </button>
+  <ul
+    class="flex flex-col p-4 max-w-sm mx-auto space-y-2 text-osvauld-textActive bg-osvauld-cardshade rounded-lg overflow-y-scroll w-full overflow-x-hidden scrollbar-thin"
+  >
+    {#each folderData as folder, index}
+      <li
+        class="{selectedFolderId == folder.id
+          ? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
+          : 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center transition-colors duration-100"
+        on:mouseenter={() => (hoveringIndex = index)}
+        on:mouseleave={() => (hoveringIndex = null)}
+      >
+        <button
+          on:click={() => handleFolderSelect(folder.id)}
+          class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
+        >
+          <FolderIcon
+            color={selectedFolderId == folder.id || hoveringIndex === index
+              ? "#F2F2F0"
+              : "#85889C"}
+          />
+          <span
+            class="max-w-[75%] ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap {selectedFolderId ==
+              folder.id || hoveringIndex === index
+              ? 'text-osvauld-sideListTextActive'
+              : 'text-osvauld-fieldText'}"
+            >{folder.name}
+          </span></button
+        >
       </li>
     {/each}
+    <button
+      on:click={handleSave}
+      class="px-4 py-2 font-normal rounded-md active::scale-95 {selectedFolderId ===
+      null
+        ? 'bg-osvauld-cardshade text-osvauld-textActive border border-osvauld-iconblack'
+        : 'bg-osvauld-carolinablue text-osvauld-frameblack'}"
+    >
+      Save
+    </button>
   </ul>
 {:else}
   <div class="text-osvauld-textActive text-base max-w-full pl-4">
-    Do you want to add this credential to osvauld?
+    Would you like to add this credential to osvauld?
   </div>
   <form
     on:submit|preventDefault={handleSubmit}
-    class="flex flex-col p-4 max-w-sm mx-auto space-y-2 text-osvauld-textActive"
+    class="flex flex-col p-4 max-w-sm mx-auto space-y-2 text-osvauld-textActive bg-osvauld-cardshade rounded-lg mt-auto"
   >
     <div>
       <input
         id="name"
         type="text"
+        required
         placeholder="Enter credential name"
         bind:value={name}
-        class="mt-1 block w-full px-3 py-1 rounded-md shadow-sm sm:text-sm bg-osvauld-frameblack border-osvauld-iconblack focus:border-osvauld-iconblack focus:ring-0"
+        class="mt-1 block w-full px-3 py-1 rounded-md shadow-sm sm:text-sm bg-osvauld-cardshade border-osvauld-iconblack focus:border-osvauld-iconblack focus:ring-0"
         autocomplete="off"
       />
     </div>
@@ -153,7 +190,7 @@
         id="description"
         bind:value={description}
         rows="3"
-        class="mt-1 block w-full px-3 py-1 shadow-sm sm:text-sm text-osvauld-fieldTextActive bg-osvauld-frameblack rounded-md border border-osvauld-iconblack focus:border-osvauld-iconblack focus:ring-0"
+        class="mt-1 block w-full px-3 py-1 shadow-sm sm:text-sm text-osvauld-fieldTextActive bg-osvauld-cardshade rounded-md border border-osvauld-iconblack focus:border-osvauld-iconblack focus:ring-0"
       ></textarea>
     </div>
     <button

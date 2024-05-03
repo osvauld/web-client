@@ -27,7 +27,7 @@
   let clickedCredential: any | null = null;
   let scrollableElement;
   let port: browser.Runtime.Port;
-  let addNewCredential = true;
+  let addNewCredential = false;
   let newCredential: any | null = {
     username: "",
     password: "",
