@@ -28,14 +28,9 @@
   };
   // Function to handle form submission
   const handleSubmit = async () => {
-    const credential = { username, password, domain, name, description };
-
     const responseJson = await fetchAllFolders();
     folderData = responseJson.data.sort((a, b) => a.name.localeCompare(b.name));
     showFolderList = true;
-    console.log("Submitting credential:", credential);
-
-    // Implement actual data handling here, such as an API call
   };
 
   const handleFolderSelect = async (folderId) => {

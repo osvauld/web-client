@@ -189,7 +189,7 @@ export const credentialSubmitHandler = async (newCredential: any, credIds: strin
         }
     }
     const windowDetails = await browser.windows.create({
-        url: browser.runtime.getURL('prompt.html'),
+        url: browser.runtime.getURL('popup.html'),
         type: 'popup',
         width: 360,
         height: 588
