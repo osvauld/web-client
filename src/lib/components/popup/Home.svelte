@@ -5,7 +5,7 @@
     fetchSensitiveFieldsByCredentialId,
   } from "../../apis/credentials.api";
   import browser from "webextension-polyfill";
-  import { onDestroy, onMount } from "svelte";
+  import { onMount } from "svelte";
   import { Maximize, Lens } from "./icons";
   import { Credential } from "../../dtos/credential.dto";
   import { sendMessage } from "../dashboard/helper";
@@ -14,7 +14,6 @@
   import { getSearchFields } from "../dashboard/apis";
   import ListedCredentials from "./components/ListedCredentials.svelte";
   import PasswordNotFound from "./components/PasswordNotFound.svelte";
-  import AddCredential from "./AddCredential.svelte";
 
   let passwordFound = false;
   let credentialClicked = false;
@@ -27,14 +26,6 @@
   let scrollPosition = 0;
   let clickedCredential: any | null = null;
   let scrollableElement;
-  let port: browser.Runtime.Port;
-  let addNewCredential = false;
-  let newCredential: any | null = {
-    username: "",
-    password: "",
-    domain: "",
-    windowId: "",
-  };
   const openFullscreenTab = async () => {
     await sendMessage("openFullscreenTab");
   };
@@ -61,13 +52,13 @@
       listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
         ),
       }));
 
       const decyrptedResponse = await sendMessage(
         "decryptMeta",
-        listedCredentials,
+        listedCredentials
       );
       listedCredentials = decyrptedResponse.data;
       domainAssociatedCredentials = listedCredentials;
@@ -93,20 +84,8 @@
       scrollPosition = parseInt(storedScrollPosition);
       scrollableElement.scrollTop = scrollPosition;
     }
-    port = browser.runtime.connect({ name: "popup" });
-    port.onMessage.addListener(handleMessage);
   });
 
-  const handleMessage = (msg) => {
-    if (msg.username && msg.password) {
-      newCredential = msg;
-      addNewCredential = true;
-    }
-  };
-  onDestroy(() => {
-    port.disconnect();
-    port.onMessage.removeListener(handleMessage);
-  });
   const handleInputChange = async (e) => {
     const query = e.target.value;
     if (query.length >= 1) {
@@ -206,14 +185,7 @@
         on:scroll={handleScroll}
         bind:this={scrollableElement}
       >
-        {#if addNewCredential}
-          <AddCredential
-            username={newCredential.username}
-            password={newCredential.password}
-            domain={newCredential.domain}
-            windowId={newCredential.windowId}
-          />
-        {:else if listedCredentials.length !== 0}
+        {#if listedCredentials.length !== 0}
           {#each listedCredentials as credential}
             <ListedCredentials
               {credential}

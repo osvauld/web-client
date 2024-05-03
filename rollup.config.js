@@ -9,8 +9,6 @@ import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import os from "os";
 
-
-
 function buildConfig(inputFileName, outputFileName) {
   return {
     input: `src/${inputFileName}.ts`,
@@ -53,6 +51,7 @@ function buildConfig(inputFileName, outputFileName) {
 export default [
   buildConfig("popup", "popup"),
   buildConfig("dashboard", "dashboard"),
+  buildConfig("prompt", "prompt"),
   {
     input: "src/scripts/background.ts",
     output: {
@@ -62,7 +61,8 @@ export default [
     },
     plugins: [
       typescript({
-        tsconfig: "./tsconfig.background.json", sourceMap: true
+        tsconfig: "./tsconfig.background.json",
+        sourceMap: true,
       }),
       commonjs(),
       resolve({ browser: true, preferBuiltins: false }),
@@ -71,7 +71,7 @@ export default [
       clearScreen: false,
     },
   },
-   {
+  {
     input: "src/scripts/content.ts",
     output: {
       format: "iife",

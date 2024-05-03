@@ -173,7 +173,6 @@ export const handlePvtKeyImport = async (pvtKeys: string, passphrase: string) =>
 
 export const credentialSubmitHandler = async (newCredential: any, credIds: string[]) => {
     if (credIds.length > 0) {
-
         const responseJson = await fetchCredsByIds(credIds);
         const listedCredentials = responseJson.data;
         const decryptedData = await decryptCredentialFieldsHandlerNew(listedCredentials);
@@ -190,7 +189,7 @@ export const credentialSubmitHandler = async (newCredential: any, credIds: strin
         }
     }
     const windowDetails = await browser.windows.create({
-        url: browser.runtime.getURL('popup.html'),
+        url: browser.runtime.getURL('prompt.html'),
         type: 'popup',
         width: 360,
         height: 588
