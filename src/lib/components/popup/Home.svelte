@@ -26,6 +26,14 @@
   let scrollPosition = 0;
   let clickedCredential: any | null = null;
   let scrollableElement;
+  let port: browser.Runtime.Port;
+  let addNewCredential = true;
+  let newCredential: any | null = {
+    username: "",
+    password: "",
+    domain: "",
+    windowId: "",
+  };
   const openFullscreenTab = async () => {
     await sendMessage("openFullscreenTab");
   };
@@ -133,55 +141,60 @@
 </script>
 
 <div class="w-full h-full px-2">
-  <div class="flex justify-between items-center mb-3 py-0">
-    <h6 class="text-2xl font-medium text-osvauld-fieldText tracking-wide">
-      osvauld
-    </h6>
-    <div>
-      <button class="" on:click={openFullscreenTab}>
-        <Maximize />
-      </button>
+  {#if !addNewCredential}
+    <div class="flex justify-between items-center mb-3 py-0">
+      <h6 class="text-2xl font-medium text-osvauld-fieldText tracking-wide">
+        osvauld
+      </h6>
+      <div>
+        <button class="" on:click={openFullscreenTab}>
+          <Maximize />
+        </button>
+      </div>
     </div>
-  </div>
+  {/if}
 
   <div class="w-full h-[90%] overflow-hidden">
-    <div
-      class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm"
-    >
-      <span class="text-base text-osvauld-carolinablue">
-        {#if domain}
-          {domain}
-        {/if}
-      </span>
-      <span
-        class="text-osvauld-sheffieldgrey {passwordFound
-          ? 'visible'
-          : 'invisible'}"
+    {#if !addNewCredential}
+      <div
+        class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm"
       >
-        {domainAssociatedCredentials.length}
-      </span>
-    </div>
+        <span class="text-base text-osvauld-carolinablue">
+          {#if domain}
+            {domain}
+          {/if}
+        </span>
+        <span
+          class="text-osvauld-sheffieldgrey {passwordFound
+            ? 'visible'
+            : 'invisible'}"
+        >
+          {domainAssociatedCredentials.length}
+        </span>
+      </div>
 
-    <div
-      class="h-9 w-full mx-auto flex justify-start items-center border focus-within:!border-osvauld-activeBorder border-osvauld-iconblack rounded-lg cursor-pointer mb-4 pl-2"
-    >
-      <Lens />
-      <input
-        type="text"
-        class="h-6 w-[70%] bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-sm font-light focus:border-transparent focus:ring-0 cursor-pointer"
-        placeholder="Find what you need faster.."
-        on:keyup={handleInputChange}
-        bind:value={query}
-        autofocus
-      />
-    </div>
-
+      <div
+        class="h-9 w-full mx-auto flex justify-start items-center border focus-within:!border-osvauld-activeBorder border-osvauld-iconblack rounded-lg cursor-pointer mb-4 pl-2"
+      >
+        <Lens />
+        <input
+          type="text"
+          class="h-6 w-[70%] bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-sm font-light focus:border-transparent focus:ring-0 cursor-pointer"
+          placeholder="Find what you need faster.."
+          on:keyup={handleInputChange}
+          bind:value={query}
+          autofocus
+        />
+      </div>
+    {/if}
     <div class="h-full p-0 scrollbar-thin">
+      {#if !addNewCredential}
+        <div
+          class="border-b border-osvauld-darkLineSeperator mb-1 w-[calc(100%+1.5rem)] -translate-x-3"
+        ></div>
+      {/if}
       <div
-        class="border-b border-osvauld-darkLineSeperator mb-1 w-[calc(100%+1.5rem)] -translate-x-3"
-      ></div>
-      <div
-        class="h-[25rem] overflow-y-scroll scrollbar-thin pt-3"
+        class="min-h-[25rem] overflow-y-scroll scrollbar-thin pt-3"
         on:scroll={handleScroll}
         bind:this={scrollableElement}
       >
