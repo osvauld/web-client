@@ -1,6 +1,6 @@
 import { ShareFolderWithUsersPayload, ShareFolderWithGroupsPayload } from "../dtos/request.dto";
 import { FolderGroupResponse, FolderUserResponse, BaseResponse, FetchAllFoldersResponse } from "../dtos/response.dto";
-import { getTokenAndBaseUrl } from "../components/dashboard/helper";
+import { getTokenAndBaseUrl, sendMessage } from "../components/dashboard/helper";
 
 export const fetchAllFolders = async (): Promise<FetchAllFoldersResponse> => {
 
@@ -72,6 +72,8 @@ export const createFolder = async (payload: any): Promise<BaseResponse> => {
 
 export const shareFolderWithUsers = async (payload: ShareFolderWithUsersPayload) => {
   const headers = new Headers();
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify(payload) });
+  headers.append('Signature', signatureResponse.signature)
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
@@ -91,6 +93,8 @@ export const shareFolderWithUsers = async (payload: ShareFolderWithUsersPayload)
 
 export const shareFolderWithGroups = async (payload: ShareFolderWithGroupsPayload) => {
   const headers = new Headers();
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify(payload) });
+  headers.append('Signature', signatureResponse.signature)
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
@@ -149,11 +153,13 @@ export const editFolderPermissionForGroup = async (folderId: string, groupId: st
 }
 
 export const removeFolder = async (folderId: string) => {
-  const headers = new Headers();
+
+  const signatureResponse = await sendMessage("hashAndSign", { message: folderId });
   const { token, baseUrl } = await getTokenAndBaseUrl()
+  const headers = new Headers();
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
-
+  headers.append('Signature', signatureResponse.signature)
   const response = await fetch(`${baseUrl}/folder/${folderId}`, {
     method: "DELETE",
     headers,

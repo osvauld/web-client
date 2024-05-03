@@ -1,6 +1,6 @@
 import { BaseResponse, FetchAllUserUrlsResponse, FetchCredentialsByFolderResponse, FetchCredentialsFieldsByFolderIdResponse, FetchCredentialsFieldsByIdsResponse, FetchCredsByIdsResponse, FetchSensitiveFieldsByCredenitalIdResponse } from "../dtos/response.dto";
 import { AddCredentialPayload, ShareCredentialsWithUsersPayload, } from "../dtos/request.dto";
-import { getTokenAndBaseUrl } from "../components/dashboard/helper";
+import { getTokenAndBaseUrl, sendMessage } from "../components/dashboard/helper";
 
 export const fetchCredentialsByFolder = async (folderId: string): Promise<FetchCredentialsByFolderResponse> => {
   const headers = new Headers();
@@ -25,7 +25,11 @@ export const fetchCredentialById = async (credentialId: string) => {
 };
 
 export const addCredential = async (payload: AddCredentialPayload) => {
+
   const headers = new Headers();
+
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify(payload) });
+  headers.append('Signature', signatureResponse.signature)
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
@@ -41,7 +45,10 @@ export const addCredential = async (payload: AddCredentialPayload) => {
 
 
 export const updateCredential = async (payload: AddCredentialPayload, credentialId: string) => {
+
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify(payload) });
   const headers = new Headers();
+  headers.append('Signature', signatureResponse.signature)
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
@@ -74,9 +81,11 @@ export const fetchCredentialsFieldsByFolderId = async (folderId: string): Promis
 };
 
 export const shareCredentialsWithUsers = async (shareCredential: ShareCredentialsWithUsersPayload): Promise<BaseResponse> => {
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify(shareCredential) });
   const headers = new Headers();
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
+  headers.append('Signature', signatureResponse.signature)
   headers.append("Content-Type", "application/json");
 
   const response = await fetch(`${baseUrl}/share-credentials/users`, {
@@ -182,6 +191,7 @@ export const getSearchFields = async () => {
 
 
 export const editUserPermissionForCredential = async (credentialId: string, userId: string, accessType: string) => {
+
   const headers = new Headers();
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
@@ -228,7 +238,10 @@ export const fetchCredentialUsersForDataSync = async (credentialId: string) => {
 
 
 export const removeCredential = async (credentialId: string) => {
+
+  const signatureResponse = await sendMessage("hashAndSign", { message: credentialId });
   const headers = new Headers();
+  headers.append('Signature', signatureResponse.signature)
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
