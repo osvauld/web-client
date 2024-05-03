@@ -1,6 +1,6 @@
 import { FetchAllUserGroupsResponse, FetchGroupUsersResponse, FetchGroupsWithoutAccessResponse, fetchUsersByGroupIdsResponse, FetchUsersWithoutGroupAccess, FetchGroupCredentialResponse, FetchCredentialGroupsResponse } from "../dtos/response.dto";
 import { AddUserToGroupPayload, CreateGroupPayload, ShareCredentialsWithGroupsPayload } from "../dtos/request.dto";
-import { getTokenAndBaseUrl } from "../components/dashboard/helper";
+import { getTokenAndBaseUrl, sendMessage } from "../components/dashboard/helper";
 
 export const fetchAllUserGroups = async (): Promise<FetchAllUserGroupsResponse> => {
   // TODO: change store setting from here.
@@ -47,6 +47,8 @@ export const createGroup = async (payload: CreateGroupPayload) => {
 // TODO: add type for payload
 export const addUserToGroup = async (payload: AddUserToGroupPayload) => {
   const headers = new Headers();
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify(payload) });
+  headers.append('Signature', signatureResponse.signature)
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
@@ -80,6 +82,8 @@ export const fetchUsersByGroupIds = async (ids: string[]): Promise<fetchUsersByG
 
 export const shareCredentialsWithGroups = async (payload: ShareCredentialsWithGroupsPayload) => {
   const headers = new Headers();
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify(payload) });
+  headers.append('Signature', signatureResponse.signature)
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
@@ -163,10 +167,12 @@ export const removeGroupFromCredential = async (credentialId: string, groupId: s
 
 
 export const removeUserFromGroup = async (groupId: string, memberId: string) => {
+
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify({ memberId, groupId }) });
   const headers = new Headers();
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
-
+  headers.append('Signature', signatureResponse.signature)
   return await fetch(`${baseUrl}/group/member`, {
     method: "DELETE",
     headers,
@@ -177,9 +183,10 @@ export const removeUserFromGroup = async (groupId: string, memberId: string) => 
 
 export const removeGroup = async (groupId: string) => {
   const headers = new Headers();
+  const signatureResponse = await sendMessage("hashAndSign", { message: groupId });
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
-
+  headers.append('Signature', signatureResponse.signature)
   return await fetch(`${baseUrl}/group/${groupId}`, {
     method: "DELETE",
     headers,
