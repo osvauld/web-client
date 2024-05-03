@@ -115,7 +115,8 @@ export const shareFolderWithGroups = async (payload: ShareFolderWithGroupsPayloa
 export const editFolderPermissionForUser = async (folderId: string, userId: string, accessType: string) => {
   const headers = new Headers();
   const { token, baseUrl } = await getTokenAndBaseUrl()
-
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify({ accessType, userId }) });
+  headers.append('Signature', signatureResponse.signature)
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
 
@@ -135,6 +136,8 @@ export const editFolderPermissionForUser = async (folderId: string, userId: stri
 
 export const editFolderPermissionForGroup = async (folderId: string, groupId: string, accessType: string) => {
   const headers = new Headers();
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify({ accessType, groupId }) });
+  headers.append('Signature', signatureResponse.signature)
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
