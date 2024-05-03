@@ -51,7 +51,6 @@ function buildConfig(inputFileName, outputFileName) {
 export default [
   buildConfig("popup", "popup"),
   buildConfig("dashboard", "dashboard"),
-  buildConfig("prompt", "prompt"),
   {
     input: "src/scripts/background.ts",
     output: {
