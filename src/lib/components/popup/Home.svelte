@@ -61,13 +61,13 @@
       listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
         ),
       }));
 
       const decyrptedResponse = await sendMessage(
         "decryptMeta",
-        listedCredentials,
+        listedCredentials
       );
       listedCredentials = decyrptedResponse.data;
       domainAssociatedCredentials = listedCredentials;
@@ -206,7 +206,9 @@
         ></div>
       {/if}
       <div
-        class="min-h-[25rem] overflow-y-scroll scrollbar-thin pt-3"
+        class="{addNewCredential
+          ? 'h-[35rem] '
+          : 'h-[25rem]'} overflow-y-scroll scrollbar-thin pt-3"
         on:scroll={handleScroll}
         bind:this={scrollableElement}
       >
