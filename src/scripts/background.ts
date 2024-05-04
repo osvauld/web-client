@@ -128,7 +128,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 browser.runtime.onConnect.addListener(async (port) => {
   if (port.name === "popup") {
     // When you have data to send:
-    if (newCredential.username && newCredential.password) {
+    if (newCredential && newCredential.username && newCredential.password) {
       port.postMessage({ username: newCredential.username, password: newCredential.password, domain: newCredential.domain, windowId: newCredential.windowId });
       newCredential = null;
     }
