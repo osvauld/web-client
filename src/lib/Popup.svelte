@@ -11,20 +11,20 @@
   let loggedIn = true;
   let isLoaderActive = false;
   let isSignedUp = false;
-  onMount(async () => {
-    isLoaderActive = true;
-    if (devType != "popup") openFullscreenTab();
-    const response = await sendMessage("isSignedUp");
-    isSignedUp = response.isSignedUp;
-    const checkPvtLoad = await sendMessage("checkPvtLoaded");
-    if (checkPvtLoad) {
-      loggedIn = true;
-    } else {
-      loggedIn = false;
-    }
-    isLoaderActive = false;
-    // isSignedUp.set(false);
-  });
+  // onMount(async () => {
+  //   isLoaderActive = true;
+  //   if (devType != "popup") openFullscreenTab();
+  //   const response = await sendMessage("isSignedUp");
+  //   isSignedUp = response.isSignedUp;
+  //   const checkPvtLoad = await sendMessage("checkPvtLoaded");
+  //   if (checkPvtLoad) {
+  //     loggedIn = true;
+  //   } else {
+  //     loggedIn = false;
+  //   }
+  //   isLoaderActive = false;
+  //   // isSignedUp.set(false);
+  // });
 
   const openFullscreenTab = async () => {
     // Send a message to the background
