@@ -25,7 +25,7 @@
     if (username && password) {
       const challengeResponse = await getRegsitrationChallenge(
         username,
-        password,
+        password
       );
       if (challengeResponse.success === false) {
         isLoaderActive = false;
@@ -53,7 +53,7 @@
 </script>
 
 <form
-  class="flex flex-col justify-center items-center box-border"
+  class="flex flex-col justify-center items-center box-border w-[90%]"
   on:submit|preventDefault={handleSubmit}
 >
   <label for="baseurl" class="font-normal mt-6">Enter Base URL</label>
@@ -61,7 +61,7 @@
     class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack w-[260px]"
   >
     <input
-      class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
+      class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 w-full"
       type="text"
       autocomplete="off"
       id="baseurl"
@@ -74,7 +74,7 @@
     class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack w-[260px]"
   >
     <input
-      class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
+      class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 w-full"
       type="text"
       autocomplete="off"
       id="username"
@@ -88,7 +88,7 @@
     class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack w-[260px]"
   >
     <input
-      class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0"
+      class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 w-full"
       {type}
       autocomplete="off"
       id="password"

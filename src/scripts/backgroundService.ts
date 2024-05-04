@@ -3,7 +3,7 @@ import browser from "webextension-polyfill";
 import { createChallenge, finalRegistration, initiateAuth } from '../lib/apis/auth.api';
 import { fetchCredsByIds } from '../lib/apis/credentials.api';
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
-import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields, get_pub_key, } from './rust_openpgp_wasm.js';
+import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields, get_pub_key, sign_hash_message } from './crypto_primitives.js';
 
 type CredentialsForUsersPayload = {
     accessType?: string;
@@ -211,4 +211,11 @@ export const getCurrentDomain = async () => {
     }
 }
 
+
+
+export const sign_hashed_message = async (message: string) => {
+    const response = await sign_hash_message(message);
+   
+    return response;
+}
 

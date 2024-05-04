@@ -36,7 +36,7 @@
 </script>
 
 <div
-  class="h-full flex justify-center items-center text-base font-bold text-white"
+  class="h-full w-[90%] flex justify-center items-center text-base font-bold text-white"
 >
   {#if importPvtKeyFlag}
     <ImportPvtKey on:submit={(e) => importPvtKey(e)} />

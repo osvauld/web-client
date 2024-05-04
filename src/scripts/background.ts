@@ -4,15 +4,19 @@ import {
   decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler,
   decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler,
   decryptFieldHandler, encryptFieldHandler, createShareCredsPayload,
-  handlePvtKeyImport, credentialSubmitHandler, getCurrentDomain
+  handlePvtKeyImport, credentialSubmitHandler, getCurrentDomain, sign_hashed_message
 } from "./backgroundService";
-import init, { is_global_context_set } from "./rust_openpgp_wasm";
+import init, { is_global_context_set } from "./crypto_primitives";
+
 let newCredential: any = {
   username: '',
   password: '',
   domain: '',
   windowId: ''
 }
+
+
+
 
 let urlObj = new Map<string, Set<string>>();
 
@@ -42,7 +46,10 @@ browser.runtime.onMessage.addListener(async (request) => {
       browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
       break;
 
-
+    case "hashAndSign": {
+      const sign = await sign_hashed_message(request.data.message)
+      return { signature: sign }
+    }
     case "initiateAuth": {
       try {
 
