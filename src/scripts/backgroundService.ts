@@ -215,7 +215,7 @@ export const getCurrentDomain = async () => {
 
 export const sign_hashed_message = async (message: string) => {
     const response = await sign_hash_message(message);
-   
+
     return response;
 }
 

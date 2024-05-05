@@ -61,13 +61,13 @@
       listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
         ),
       }));
 
       const decyrptedResponse = await sendMessage(
         "decryptMeta",
-        listedCredentials
+        listedCredentials,
       );
       listedCredentials = decyrptedResponse.data;
       domainAssociatedCredentials = listedCredentials;
@@ -124,7 +124,7 @@
 
   const dropDownClicked = async (e: any) => {
     const credentialId = e.detail.credentialId;
-    if (!credentialClicked) {
+    if (!credentialClicked && credentialId) {
       const credentialResponse: any = await fetchCredsByIds([credentialId]);
       clickedCredential = credentialResponse.data[0];
       const decyrptedResponse = await sendMessage("decryptMeta", [
