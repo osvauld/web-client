@@ -124,8 +124,7 @@
 
   const dropDownClicked = async (e: any) => {
     const credentialId = e.detail.credentialId;
-    if (!credentialClicked) {
-      console.log("cred clicked");
+    if (!credentialClicked && credentialId) {
       const credentialResponse: any = await fetchCredsByIds([credentialId]);
       clickedCredential = credentialResponse.data[0];
       const decyrptedResponse = await sendMessage("decryptMeta", [
