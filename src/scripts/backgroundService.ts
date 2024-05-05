@@ -173,6 +173,7 @@ export const handlePvtKeyImport = async (pvtKeys: string, passphrase: string) =>
 
 export const credentialSubmitHandler = async (newCredential: any, credIds: string[]) => {
     if (credIds.length > 0) {
+        console.log("CredIds:", credIds);
         const responseJson = await fetchCredsByIds(credIds);
         const listedCredentials = responseJson.data;
         const decryptedData = await decryptCredentialFieldsHandlerNew(listedCredentials);
@@ -215,7 +216,7 @@ export const getCurrentDomain = async () => {
 
 export const sign_hashed_message = async (message: string) => {
     const response = await sign_hash_message(message);
-   
+
     return response;
 }
 
