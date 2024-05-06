@@ -1,5 +1,5 @@
 import { FetchAllUsersResponse, FetchCredentialUsersResponse } from "../dtos/response.dto";
-import { getTokenAndBaseUrl } from "../components/dashboard/helper";
+import { getTokenAndBaseUrl, sendMessage } from "../components/dashboard/helper";
 
 export const fetchSignedUpUsers = async (): Promise<FetchAllUsersResponse> => {
   const headers = new Headers();
@@ -18,7 +18,9 @@ export const createUser = async (payload: any) => {
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
-
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify(payload) })
+  console.log(signatureResponse);
+  headers.append("Signature", signatureResponse.signature)
   const response = await fetch(`${baseUrl}/user/`, {
     method: "POST",
     headers,
@@ -44,7 +46,8 @@ export const removeUserFromFolder = async (folderId: string, userId: string) => 
   const headers = new Headers();
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
-
+  const signatureResponse = await sendMessage("hashAndSign", JSON.stringify({ userIds: [userId] }))
+  headers.append("Signature", signatureResponse.signature)
   return await fetch(`${baseUrl}/folder/${folderId}/remove-user-access`, {
     method: "POST",
     headers,
@@ -56,6 +59,8 @@ export const removeUserFromCredential = async (credentialId: string, userId: str
   const headers = new Headers();
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
+  const signatureResponse = await sendMessage("hashAndSign", JSON.stringify({ userIds: [userId] }))
+  headers.append("Signature", signatureResponse.signature)
 
   return await fetch(`${baseUrl}/credential/${credentialId}/remove-user-access`, {
     method: "POST",
