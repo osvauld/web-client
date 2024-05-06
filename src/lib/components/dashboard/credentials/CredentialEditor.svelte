@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { fly } from "svelte/transition";
+  import { fly, blur } from "svelte/transition";
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
@@ -22,6 +22,7 @@
   } from "../dtos";
   import AddLoginFields from "./AddLoginFields.svelte";
   import { sendMessage } from "../helper";
+  import { setCredentialStore } from "../../../store/storeHelper";
 
   export let edit = false;
   export let credentialFields = [
@@ -121,9 +122,7 @@
     } else {
       await addCredential(addCredentialPaylod);
     }
-    const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const decryptedData = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(decryptedData.data);
+    await setCredentialStore();
     isLoaderActive = false;
     dispatcher("close");
   };
@@ -174,13 +173,14 @@
 
 <form on:submit|preventDefault={saveCredential}>
   <div
-    class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack"
+    class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack z-50"
     in:fly
+    out:blur
   >
     <div class="flex justify-between items-center px-12 py-6">
       <div>
         <button
-          class="text-[1.4rem] font-sans font-normal {credentialType === 'Login'
+          class="text-[28px] font-sans font-normal {credentialType === 'Login'
             ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
             : 'text-osvauld-sheffieldgrey '}"
           on:click={() => credentialTypeSelection(true)}
@@ -188,13 +188,13 @@
           {edit ? "Edit login credential" : "Add Login credential"}
         </button>
         <button
-          class="text-[1.4rem] font-sans font-normal ml-2 {credentialType ===
+          class="text-[28px] font-sans font-normal ml-8 {credentialType ===
           'Other'
             ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
             : 'text-osvauld-sheffieldgrey '}"
           on:click={() => credentialTypeSelection(false)}
         >
-          {edit ? "Edit other credential" : "Add other credential"}
+          {edit ? "Edit other" : "Other"}
         </button>
       </div>
       <div>
@@ -263,12 +263,12 @@
     <div class="border-b border-osvauld-iconblack w-full my-2"></div>
     <div class="flex justify-end items-center mx-10 py-2">
       <button
-        class="secondary-btn px-[3.25rem] py-2.5 mb-6 mr-3 w-[200px] whitespace-nowrap"
+        class="px-3 py-1.5 mb-6 whitespace-nowrap text-osvauld-fadedCancel bg-osvauld-frameblack hover:bg-osvauld-cardshade flex justify-center items-center rounded-md hover:text-osvauld-textActive text-base font-normal"
         on:click={closeDialog}>Cancel</button
       >
       <button
         type="submit"
-        class="primary-btn px-[3.25rem] py-2.5 mb-6 w-[200px] whitespace-nowrap flex justify-center items-center"
+        class="px-3 py-1.5 mb-6 whitespace-nowrap flex justify-center items-center ml-3 text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack font-normal text-base rounded-md"
         disabled={isLoaderActive}
       >
         {#if isLoaderActive}

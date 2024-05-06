@@ -3,7 +3,6 @@
   import EncryptedField from "./EncryptedField.svelte";
   import PlainField from "./PlainField.svelte";
   import UserGroupToggle from "../UserGroupToggle.svelte";
-  import ShareToast from "../components/ShareToast.svelte";
   import {
     fetchCredentialUsers,
     fetchCredentialGroups,
@@ -13,8 +12,8 @@
     editUserPermissionForCredential,
     fetchSensitiveFieldsByCredentialId,
   } from "../apis";
-  import { showCredentialDetailsDrawer } from "../store";
-  import { ClosePanel, EditIcon } from "../icons";
+  import { showCredentialDetailsDrawer, toastStore } from "../store";
+  import { ClosePanel, EditIcon, EyeScan } from "../icons";
   import { onMount } from "svelte";
   import ExistingListItem from "../components/ExistingListItem.svelte";
   import CredentialEditor from "./CredentialEditor.svelte";
@@ -22,13 +21,12 @@
 
   import { Credential, Fields, Group, UserWithAccessType } from "../dtos";
   import Tick from "../../basic/icons/tick.svelte";
+  import FileText from "../../basic/icons/fileText.svelte";
   export let credential: Credential;
   export let sensitiveFields: Fields[];
   let selectedTab = "Groups";
   let accessListSelected = false;
   let accessChangeDetected = false;
-  let permissionChangeAttemptMessage = "";
-  let changeToast = false;
   let fieldsForEdit = [];
   let editPermissionTrigger = false;
 
@@ -69,7 +67,7 @@
   };
 
   const savePermissions = async () => {
-    if (Object.keys(userPermissions).length !== 0) {
+    if (userPermissions && Object.keys(userPermissions).length !== 0) {
       const userPermissionSaveResponse = await editUserPermissionForCredential(
         userPermissions.credentialId,
         userPermissions.userId,
@@ -77,10 +75,10 @@
       );
       await toggleSelect({ detail: "Users" });
       accessChangeDetected = false;
-      changeToast = true;
-      permissionChangeAttemptMessage = userPermissionSaveResponse.message
+      const message = userPermissionSaveResponse.message
         ? userPermissionSaveResponse.message
         : "Does not have access";
+      toastStore.set({ message, type: true, show: true });
     } else if (Object.keys(groupPermissions).length !== 0) {
       const groupPermissionSaveResponse =
         await editGroupPermissionForCredential(
@@ -90,10 +88,10 @@
         );
       await toggleSelect({ detail: "Groups" });
       accessChangeDetected = false;
-      changeToast = true;
-      permissionChangeAttemptMessage = groupPermissionSaveResponse.message
+      const message = groupPermissionSaveResponse.message
         ? groupPermissionSaveResponse.message
         : "Does not have access";
+      toastStore.set({ message, type: true, show: true });
     }
     accessChangeDetected = false;
   };
@@ -133,8 +131,12 @@
         sensitive: false,
       });
     }
-
     showEditCredentialModal = true;
+  };
+
+  const closeCredentialEditor = async () => {
+    showEditCredentialModal = false;
+    showCredentialDetailsDrawer.set(false);
   };
   onMount(async () => {
     const groupsResponse = await fetchCredentialGroups(credential.credentialId);
@@ -154,9 +156,7 @@
   >
     <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
       <CredentialEditor
-        on:close={() => {
-          showEditCredentialModal = !showEditCredentialModal;
-        }}
+        on:close={closeCredentialEditor}
         edit={true}
         credentialId={credential.credentialId}
         name={credential.name}
@@ -168,7 +168,7 @@
   </div>
 {/if}
 <div
-  class="fixed top-0 right-0 z-50 flex justify-end rounded-xl blur-none"
+  class="fixed top-0 right-0 z-0 flex justify-end rounded-xl blur-none"
   in:fly
   out:fly
 >
@@ -176,10 +176,12 @@
     class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6 overflow-y-auto scrollbar-thin"
   >
     <div class="flex pb-4">
-      <div class="text-3xl font-semibold w-full text-left ml-2">
-        {credential.name}
+      <div
+        class="text-3xl font-semibold w-full text-left ml-2 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+      >
+        <span class="">{credential.name}</span>
       </div>
-      {#if credential.accessType === "manager"}
+      {#if credential.accessType === "manager" && !accessListSelected}
         <button
           class="p-2 mr-3 rounded-lg {showEditCredentialModal
             ? 'bg-osvauld-sensitivebgblue'
@@ -198,16 +200,29 @@
     <div class="flex justify-start items-center mb-6">
       <button
         on:click={() => (accessListSelected = false)}
-        class="p-2 font-medium border-transparent text-osvauld-chalkwhite mr-2 {!accessListSelected &&
-          'border-2 border-b-osvauld-carolinablue text-osvauld-plainwhite'}"
-        >Details</button
+        class="px-4 py-1.5 flex items-center text-sm font-light rounded-md mr-2 {!accessListSelected &&
+          ' text-osvauld-carolinablue bg-osvauld-modalFieldActive'}"
+      >
+        <FileText color={!accessListSelected ? "#89B4FA" : "#85889C"} />
+        <span
+          class="{!accessListSelected
+            ? 'text-osvauld-carolinablue'
+            : 'text-osvauld-fieldText '} ml-2">Details</span
+        ></button
       >
       <button
+        class="rounded-md flex justify-around items-center px-4 py-1.5 text-sm {accessListSelected &&
+          'bg-osvauld-modalFieldActive'}
+          ''}"
         on:click={() => (accessListSelected = true)}
-        class="p-2 font-medium border-transparent text-osvauld-chalkwhite {accessListSelected &&
-          'border-2 border-b-osvauld-carolinablue text-osvauld-plainwhite'}"
-        >Access List</button
       >
+        <EyeScan color={accessListSelected ? "#89B4FA" : "#85889C"} />
+        <span
+          class="ml-2 {accessListSelected
+            ? 'text-osvauld-carolinablue'
+            : 'text-osvauld-fieldText '}">Access List</span
+        >
+      </button>
     </div>
     <div class="border border-osvauld-iconblack rounded-xl p-3">
       {#if !accessListSelected}
@@ -252,28 +267,31 @@
                 class="p-2 mr-1 rounded-lg bg-osvauld-sensitivebgblue"
                 on:click={() => {
                   savePermissions();
-                  accessChangeDetected = !accessChangeDetected;
+                  editPermissionTrigger = false;
                 }}
               >
                 <Tick />
               </button>
             {/if}
-            <button
-              class="p-2 rounded-lg {editPermissionTrigger
-                ? 'bg-osvauld-sensitivebgblue'
-                : ''}"
-              on:click={() => {
-                editPermissionTrigger = !editPermissionTrigger;
-              }}
-            >
-              <EditIcon />
-            </button>
+            {#if credential.accessType === "manager"}
+              <button
+                class="p-2 rounded-lg {editPermissionTrigger
+                  ? 'bg-osvauld-sensitivebgblue'
+                  : ''}"
+                on:click={() => {
+                  editPermissionTrigger = !editPermissionTrigger;
+                }}
+              >
+                <EditIcon />
+              </button>
+            {/if}
           </div>
         </div>
         <div class="items-left">
           {#if selectedTab == "Groups"}
             {#each groups as group, index}
               <ExistingListItem
+                isUser={false}
                 item={group}
                 {index}
                 {editPermissionTrigger}
@@ -285,6 +303,7 @@
           {:else if selectedTab == "Users"}
             {#each users as user, index}
               <ExistingListItem
+                isUser={true}
                 item={user}
                 {index}
                 {editPermissionTrigger}
@@ -293,12 +312,6 @@
                   permissionChangeHandler(e, user.id, "user")}
               />
             {/each}
-          {/if}
-          {#if changeToast}
-            <ShareToast
-              message={permissionChangeAttemptMessage}
-              on:close={() => (changeToast = !changeToast)}
-            />
           {/if}
         </div>
       {/if}

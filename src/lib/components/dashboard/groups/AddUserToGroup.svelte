@@ -15,8 +15,8 @@
     selectedGroup,
     showAddUserToGroupDrawer,
     groupUsers,
+    toastStore,
   } from "../store";
-  import ShareToast from "../components/ShareToast.svelte";
   import RoleSelector from "../components/roleSelector.svelte";
   import { sendMessage } from "../helper";
 
@@ -26,7 +26,6 @@
   let hoveredIndex = null;
   let selectedPermission = null;
   let selectedUserIndice = null;
-  let finalBanner = false;
   let roleSelectionPrompt = false;
   let credentialFields: CredentialFields[] = [];
   onMount(async () => {
@@ -56,7 +55,11 @@
     const userAdditionResponse = await addUserToGroup(payload);
     selectedUserIndice = null;
     if (userAdditionResponse.success) {
-      finalBanner = true;
+      toastStore.set({
+        type: true,
+        message: userAdditionResponse.message,
+        show: true,
+      });
     }
     users = users.filter((u) => u.id !== userDataForApproval.id);
   };
@@ -73,6 +76,7 @@
   const selectionMaker = async (e) => {
     selectedPermission = e.detail.permission;
     roleSelectionPrompt = false;
+    await approveSelections();
   };
 
   const closeDrawer = () => {
@@ -145,27 +149,6 @@
           {/each}
         </div>
       </div>
-      <div class="p-2 flex justify-between items-center box-border">
-        <button
-          class="w-[45%] px-4 py-2 bg-osvauld-frameblack border border-osvauld-iconblack rounded-md text-osvauld-sheffieldgrey"
-          on:click={closeDrawer}>Cancel</button
-        >
-
-        <button
-          class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-macchiato-surface0 rounded-md"
-          on:click={() => {
-            approveSelections();
-          }}>Add</button
-        >
-      </div>
-      {#if finalBanner}
-        <ShareToast
-          message={"Added to group"}
-          on:close={() => {
-            finalBanner = false;
-          }}
-        />
-      {/if}
     </div>
   </div>
 </div>

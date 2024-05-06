@@ -6,6 +6,7 @@ import { Credential, CredentialFields } from './credential.dto';
 export type BaseResponse = {
     success: boolean;
     message: string;
+    data: any
 }
 
 export type ChallengeResponse = BaseResponse & {
@@ -27,10 +28,7 @@ export type FolderGroupResponse = BaseResponse & {
 export type FolderUserResponse = BaseResponse & {
     data: UserWithAccessType[];
 }
-// TODO: change fetchallfolders api 
-export type FetchFoldersResponse = BaseResponse & {
-    data: Folder[];
-}
+
 
 
 export type FetchAllUsersResponse = BaseResponse & {

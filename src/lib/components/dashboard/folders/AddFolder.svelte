@@ -1,7 +1,14 @@
 <script lang="ts">
-  import { createFolder, fetchAllFolders } from "../apis";
-  import { showAddFolderDrawer, folderStore } from "../store";
+  import { createFolder } from "../apis";
+  import {
+    showAddFolderDrawer,
+    folderStore,
+    selectedFolder,
+    toastStore,
+  } from "../store";
   import { ClosePanel } from "../icons";
+  import { setFolderStore } from "../../../store/storeHelper";
+  import { fly } from "svelte/transition";
 
   let name = "";
   let description = "";
@@ -15,10 +22,23 @@
       name: name,
       description: description,
     };
-    await createFolder(payload);
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
+    const folderResponse = await createFolder(payload);
+    await setFolderStore();
+    for (const folder of $folderStore) {
+      if (folder.id == folderResponse.data.folderId) {
+        selectedFolder.set(folder);
+        break;
+      }
+    }
     showAddFolderDrawer.set(false);
+    const actionMessage = folderResponse.success
+      ? "Folder Successfully Created"
+      : "Failed to Create folder";
+    toastStore.set({
+      type: folderResponse.success,
+      message: actionMessage,
+      show: true,
+    });
   };
 
   const handleClose = () => {
@@ -27,14 +47,26 @@
 </script>
 
 <form
-  class="flex flex-col p-6 border border-osvauld-iconblack bg-osvauld-frameblack rounded-lg"
+  class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[25rem] flex flex-col items-start justify-center gap-3"
   on:submit|preventDefault={addFolderFunc}
+  in:fly
+  out:fly
 >
-  <button type="button" on:click={handleClose} class="ml-auto"
-    ><ClosePanel /></button
-  >
+  <div class="flex justify-between items-center w-full">
+    <span class="text-[21px] font-medium text-osvauld-quarzowhite"
+      >Create Folder</span
+    >
+    <button class="cursor-pointer p-2" on:click|preventDefault={handleClose}>
+      <ClosePanel />
+    </button>
+  </div>
+  <div
+    class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
+  ></div>
 
-  <label for="name" class="mb-2 font-bold text-lg">Name:</label>
+  <label for="name" class="font-bold text-base text-osvauld-textActive"
+    >Name:</label
+  >
   <input
     id="name"
     type="text"
@@ -45,18 +77,27 @@
     autocomplete="off"
   />
 
-  <label for="description" class="mb-2 font-bold text-lg">Description:</label>
+  <label for="description" class="font-bold text-base text-osvauld-textActive"
+    >Description:</label
+  >
   <textarea
     id="description"
     bind:value={description}
     class="py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-20 mx-2 focus:border-osvauld-iconblack focus:ring-0 form-textarea"
   ></textarea>
+  <div
+    class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
+  ></div>
 
-  <button
-    type="submit"
-    class="bg-osvauld-carolinablue rounded-md p-2 mt-4 text-osvauld-ninjablack disabled:opacity-50"
-    disabled={!name}
-  >
-    Submit
-  </button>
+  <div class="flex justify-end items-center gap-6 w-full">
+    <button
+      class="text-osvauld-fadedCancel font-medium text-base"
+      on:click|preventDefault={handleClose}>Cancel</button
+    >
+    <button
+      class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md"
+      type="submit"
+      disabled={!name}>Add Folder</button
+    >
+  </div>
 </form>

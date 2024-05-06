@@ -6,12 +6,8 @@
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
 
-  import { Share, Add, InfoIcon } from "../icons";
-  import {
-    fetchSignedUpUsers,
-    fetchAllUserGroups,
-    fetchCredentialsByFolder,
-  } from "../apis";
+  import { Share, Add, EyeScan, FolderShare } from "../icons";
+  import { fetchSignedUpUsers, fetchAllUserGroups } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
 
   import {
@@ -23,9 +19,10 @@
     selectedCredential,
   } from "../store";
   import { onDestroy } from "svelte";
-  import { sendMessage } from "../helper";
   import DownArrow from "../../basic/icons/downArrow.svelte";
   import Placeholder from "../components/Placeholder.svelte";
+  import { accessListSelected, buttonRef } from "../../../store/ui.store";
+  import { setCredentialStore } from "../../../store/storeHelper";
 
   let checkedCards: Credential[] = [];
   let users: User[] = [];
@@ -35,9 +32,17 @@
   let areCardsSelected = false;
   let noCardsSelected = false;
   let showCreateCredentialModal = false;
+  let isShareHovered = false;
+  let accesslistHovered = false;
+  let addCredentialHovered = false;
+  $: isShareCredActive = checkedCards.length !== 0;
 
   $: sortedCredentials = $credentialStore.sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
+
+  $: minOneCredentialManager = sortedCredentials.some(
+    (credential) => credential.accessType === "manager"
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -50,15 +55,11 @@
     }
   }
   const subscribe = selectedFolder.subscribe(async (folder) => {
-    //TODO: fetch shared groups.
     if (folder === null) {
-      selectedFolder.set(null);
       return;
     }
     selectedCredential.set(null);
-    const responseJson = await fetchCredentialsByFolder(folder.id);
-    const response = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(response.data);
+    await setCredentialStore();
     let [allUsersResponse, allGroupResponse] = await Promise.all([
       fetchSignedUpUsers(),
       fetchAllUserGroups(),
@@ -102,6 +103,11 @@
     checkedCards = [];
   };
 
+  const handleAccessListSelection = (e: any) => {
+    buttonRef.set(e.currentTarget);
+    accessListSelected.set(true);
+  };
+
   onDestroy(() => {
     subscribe();
   });
@@ -126,22 +132,42 @@
   {#if $selectedFolder}
     <div class="flex justify-between items-center px-4 py-2">
       <div class="max-w-[50%] min-w-[30%] flex items-center">
-        <h1 class="text-4xl p-4 font-normal whitespace-nowrap">
+        <h1
+          class="text-3xl p-4 font-normal whitespace-nowrap text-osvauld-sideListTextActive"
+        >
           {$selectedFolder.name}
         </h1>
         <!-- TODO: update to share credentials in the same api -->
-        <button
-          class="rounded-md border border-osvauld-iconblack py-1 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap xl:scale-90"
-          on:click={folderShareManager}
-        >
-          <Share color={"#A3A4B5"} /> <span class="ml-1">Share Folder</span>
-        </button>
-        <button
-          class=" bg-osvauld-carolinablue rounded-md py-1 px-4 !text-lg text-osvauld-frameblack flex justify-between items-center whitespace-nowrap xl:scale-90"
-          on:click={credentialShareManager}
-        >
-          <Share color={"#0D0E13"} /><span class="ml-1">Share Credentials</span>
-        </button>
+        {#if $selectedFolder.accessType === "manager"}
+          <button
+            class="py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2 relative"
+            on:click={folderShareManager}
+            on:mouseenter={() => (isShareHovered = true)}
+            on:mouseleave={() => (isShareHovered = false)}
+          >
+            <FolderShare
+              color={isShareHovered ? "#F2F2F0" : "#85889C"}
+              size={28}
+            />
+            {#if isShareHovered}
+              <div class="tooltip">Share Folder</div>
+            {/if}
+          </button>
+        {/if}
+        {#if minOneCredentialManager}
+          <button
+            class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg flex justify-between items-center whitespace-nowrap {isShareCredActive
+              ? 'text-osvauld-frameblack bg-osvauld-carolinablue'
+              : 'text-osvauld-textActive bg-osvauld-frameblack'}"
+            on:click={credentialShareManager}
+          >
+            <span class="mr-1 text-sm">Share Credentials</span>
+            <Share
+              color={isShareCredActive ? "#0D0E13" : "#A3A4B5"}
+              size={16}
+            />
+          </button>
+        {/if}
         {#if areCardsSelected}
           <span
             class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"
@@ -156,22 +182,52 @@
           >
         {/if}
       </div>
-      <div class="w-1/2 flex justify-end items-center">
-        <button disabled class="scale-110">
-          <InfoIcon />
+
+      <div class="w-[40%] flex justify-end items-center">
+        <button
+          class="hover:bg-osvauld-modalFieldActive {$accessListSelected
+            ? 'bg-osvauld-modalFieldActive text-osvauld-carolinablue'
+            : 'bg-osvauld-frameblack text-osvauld-fieldText'} rounded-md flex justify-around items-center px-4 py-1.5 text-sm {$selectedFolder.accessType ===
+          'none'
+            ? 'hidden'
+            : 'visible'}"
+          on:click={handleAccessListSelection}
+          on:mouseenter={() => (accesslistHovered = true)}
+          on:mouseleave={() => (accesslistHovered = false)}
+        >
+          <EyeScan
+            color={$accessListSelected
+              ? "#89B4FA"
+              : accesslistHovered
+                ? "#F2F2F0"
+                : "#85889C"}
+          />
+          <span
+            class="ml-2 whitespace-nowrap {$accessListSelected
+              ? 'text-osvauld-carolinablue'
+              : accesslistHovered
+                ? 'text-osvauld-sideListTextActive'
+                : 'text-osvauld-fieldText'} ">Access List</span
+          >
         </button>
         <button
-          class="border border-osvauld-iconblack text-osvauld-textPassive flex justify-center items-center py-1 px-4 xl:scale-90 rounded-md ml-4"
+          class="border border-osvauld-iconblack text-osvauld-textPassive hidden justify-center items-center py-1.5 px-4 text-sm rounded-md ml-4"
         >
-          <span class="mr-1 pl-2">Latest</span>
+          <span class="mr-2 pl-2">Latest</span>
           <DownArrow type={"common"} />
         </button>
         <button
-          class="rounded-md py-1 px-4 mr-2 flex justify-center items-center whitespace-nowrap xl:scale-90 border text-osvauld-textActive border-osvauld-iconblack"
+          class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue {$selectedFolder.accessType ===
+          'manager'
+            ? 'visible'
+            : 'hidden'}"
+          on:mouseenter={() => (addCredentialHovered = true)}
+          on:mouseleave={() => (addCredentialHovered = false)}
           on:click={addCredentialManager}
           disabled={checkedCards.length !== 0}
-          ><Add color={"#A3A4B5"} />
-          <span class="ml-1">Add New Credential</span>
+        >
+          <span class="mr-2">Add New Credential</span>
+          <Add color={addCredentialHovered ? "#0D0E13" : "#A3A4B5"} />
         </button>
       </div>
     </div>
@@ -222,7 +278,7 @@
   {/if}
   {#if sortedCredentials.length !== 0}
     <div
-      class="flex flex-wrap p-3 pl-7 gap-4 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
+      class="flex flex-wrap pt-3 pb-7 px-7 gap-3.5 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
     >
       {#each sortedCredentials as credential}
         <CredentialCard
@@ -237,3 +293,19 @@
     </div>
   {/if}
 </div>
+
+<style>
+  .tooltip {
+    position: absolute;
+    top: 45px;
+    right: -20px;
+    border: 1px solid #2f303e;
+    background-color: #0d0e13;
+    color: #6e7681;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10;
+  }
+</style>

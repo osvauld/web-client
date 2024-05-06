@@ -6,6 +6,9 @@
       manager: "#F5C2E7",
       owner: "#A6E3A1",
       common: "#6E7681",
+      indicator: "#74C7EC",
+      profile: "#85889C",
+      profileActive: "#F2F2F0",
     };
     return typeToClassMap[type] || "";
   }

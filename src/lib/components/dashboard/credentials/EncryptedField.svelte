@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fly } from "svelte/transition";
+  import { fly, scale } from "svelte/transition";
   import {
     Locked,
     Eye,
@@ -7,6 +7,7 @@
     ActiveCopy,
     ClosedEye,
     CopyIcon,
+    Tick,
   } from "../icons";
   import { sendMessage } from "../helper";
   export let fieldName;
@@ -16,6 +17,7 @@
   let visibility = false;
   let decrypted = false;
   let decryptedValue = "";
+  let copied = false;
 
   const decrypt = async () => {
     const response = await sendMessage("decryptField", fieldValue);
@@ -31,17 +33,25 @@
   };
 
   const copyToClipboard = async (e) => {
+    copied = true;
     try {
       await navigator.clipboard.writeText(decryptedValue);
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
+    setTimeout(() => {
+      copied = false;
+    }, 2000);
+  };
+
+  const lockCredential = async () => {
+    decrypted = false;
   };
 </script>
 
 <div class="mb-2 mr-1 max-w-full" in:fly out:fly>
   <div
-    class="label block mb-2 text-left text-osvauld-dusklabel text-xs font-normal cursor-pointer"
+    class="label block mb-2 text-left text-osvauld-dusklabel text-xs font-normal cursor-pointer whitespace-nowrap text-ellipsis"
   >
     {fieldName}
   </div>
@@ -51,7 +61,8 @@
       ? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md '
       : 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}"
   >
-    <span class="w-3/5 text-left overflow-x-hidden font-normal text-sm"
+    <span
+      class="w-3/5 text-left overflow-x-hidden whitespace-nowrap text-ellipsis font-normal text-sm"
       >{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
     >
     {#if !decrypted}
@@ -60,7 +71,7 @@
       </button>
     {:else}
       <div class="w-2/5 flex gap-2 items-center justify-end">
-        <button>
+        <button on:click|stopPropagation={lockCredential}>
           <Unlocked />
         </button>
         <button on:click|stopPropagation={toggleVisibility}>
@@ -71,10 +82,14 @@
           {/if}
         </button>
         <button on:click|stopPropagation={copyToClipboard}>
-          {#if hoverEffect}
+          {#if copied}
+            <span in:scale>
+              <Tick />
+            </span>
+          {:else if hoverEffect}
             <ActiveCopy />
           {:else}
-            <CopyIcon color={null} />
+            <CopyIcon color={"#4D4F60"} />
           {/if}
         </button>
       </div>

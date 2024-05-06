@@ -7,9 +7,11 @@
   <Logo />
 </div>
 
-<Toggle />
+<div class="flex justify-center items-center w-full">
+  <Toggle />
+</div>
 <div
-  class="scroll-m-0 h-auto w-full scroll-smooth justify-center flex items-center mt-6"
+  class="scroll-m-0 h-[78%] w-full scroll-smooth justify-center flex items-center mt-6"
 >
   <SideList />
 </div>

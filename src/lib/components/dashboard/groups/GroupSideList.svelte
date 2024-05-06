@@ -6,12 +6,17 @@
     showAddGroupDrawer,
     showAddUserDrawer,
     allUsersSelected,
+    showMoreGroupOptions,
+    buttonRef,
+    modalManager,
   } from "../store";
-  import { fetchAllUserGroups } from "../apis";
   import { Group } from "../dtos";
+  import { fade, scale } from "svelte/transition";
+
   import Add from "../../basic/icons/add.svelte";
   import { GroupIcon, Menu } from "../icons";
   import { onMount } from "svelte";
+  import { setGroupStore } from "../../../store/storeHelper";
   const accountDetails = localStorage.getItem("user");
   let accountRole = JSON.parse(accountDetails).type;
   let adminStatus = false;
@@ -42,43 +47,56 @@
     selectedGroup.set(null);
     allUsersSelected.set(true);
   };
+
+  const showMoreOptionsHandler = (e, group) => {
+    buttonRef.set(e.target);
+    modalManager.set({ id: group.groupId, name: group.name, type: "Group" });
+    showMoreGroupOptions.set(true);
+  };
   onMount(async () => {
-    const responseJson = await fetchAllUserGroups();
-    groupStore.set(responseJson.data);
+    await setGroupStore();
   });
 </script>
 
-<div>
+<div class="h-full flex w-full flex-col justify-start items-center">
   <button
-    class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-10 mb-4 flex justify-center items-center"
+    class="w-[90%] bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-1.5 px-2 mb-4 flex justify-center items-center font-normal"
     on:mouseenter={() => (iconColor = "#000")}
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={() => openModal("group")}
   >
+    <span class="mr-1 text-base font-normal">Create new group</span>
     <Add color={iconColor} />
-    <span class="ml-1 text-base font-light">Create new group</span>
   </button>
   {#if $showAddGroupDrawer}
     <button
-      class="fixed inset-0 flex items-center justify-center z-50 bg- backdrop-filter backdrop-blur-[2px]"
+      class="fixed inset-0 flex items-center justify-center z-50 backdrop-filter backdrop-blur-[2px]"
       on:click|stopPropagation
       on:keydown|stopPropagation
     >
       <AddGroup on:close={closeModal} />
     </button>
   {/if}
-  <ul class=" max-h-[40rem] overflow-y-scroll scrollbar-thin -pl-3">
+  <ul
+    class="h-full w-full overflow-y-scroll overflow-x-hidden scrollbar-thin -pl-3"
+  >
     {#if adminStatus}
       <li
-        class="{$allUsersSelected
-          ? 'bg-osvauld-bordergreen rounded-lg'
-          : 'hover:bg-osvauld-bordergreen'} rounded-md pl-3"
+        class="{$allUsersSelected || hoveringIndex === 999
+          ? 'bg-osvauld-fieldActive text-osvauld-sideListTextActive'
+          : 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md pl-3 my-0.5 mr-1 pr-3 flex items-center"
+        on:mouseenter={() => (hoveringIndex = 999)}
+        on:mouseleave={() => (hoveringIndex = null)}
       >
         <button
           on:click={() => selectingAllUsers()}
           class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
         >
-          <GroupIcon color={$allUsersSelected ? "white" : "#85889C"} />
+          <GroupIcon
+            color={$allUsersSelected || hoveringIndex === 999
+              ? "white"
+              : "#85889C"}
+          />
           <span class="ml-2 text-base font-light">All users</span>
         </button>
       </li>
@@ -87,8 +105,8 @@
       <li
         class="{($selectedGroup && $selectedGroup.groupId === group.groupId) ||
         hoveringIndex === index
-          ? 'bg-osvauld-sideListHighlight text-osvauld-sideListTextActive'
-          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md pl-3 my-0.5 pr-3 flex items-center"
+          ? 'bg-osvauld-fieldActive text-osvauld-sideListTextActive'
+          : 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md pl-3 my-0.5 pr-3 mr-1 flex items-center transition-colors duration-100"
         on:mouseenter={() => (hoveringIndex = index)}
         on:mouseleave={() => (hoveringIndex = null)}
       >
@@ -103,18 +121,28 @@
               ? "white"
               : "#85889C"}
           />
-          <span class="ml-2 text-base font-light">{group.name}</span>
+          <span
+            class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap"
+            >{group.name}</span
+          >
         </button>
         <div
           class="relative z-100 flex justify-center items-center {($selectedGroup &&
             $selectedGroup.groupId === group.groupId) ||
           hoveringIndex === index
             ? 'visible'
-            : 'invisible'}"
+            : 'hidden'}"
         >
-          <button class="p-2">
-            <Menu />
-          </button>
+          {#if group.accessType === "admin"}
+            <button
+              class="p-2"
+              on:click|preventDefault={(e) => {
+                showMoreOptionsHandler(e, group);
+              }}
+            >
+              <Menu />
+            </button>
+          {/if}
         </div>
       </li>
     {/each}

@@ -8,12 +8,13 @@
     buttonRef,
     showMoreOptions,
     modalManager,
+    credentialStore,
   } from "../store";
 
-  import { fetchAllFolders } from "../apis";
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";
   import { onMount } from "svelte";
+  import { setFolderStore } from "../../../store/storeHelper";
   let iconColor = "#6E7681";
   let hoveringIndex = null;
 
@@ -36,20 +37,19 @@
   };
 
   onMount(async () => {
-    const responseJson = await fetchAllFolders();
-    folderStore.set(responseJson.data);
+    await setFolderStore();
   });
 </script>
 
-<div>
+<div class="h-full w-full flex flex-col justify-start items-center">
   <button
-    class="bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-2 px-10 mb-4 flex justify-center items-center"
+    class="w-[90%] bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-1.5 px-2 mb-4 flex justify-center items-center"
     on:mouseenter={() => (iconColor = "#000")}
     on:mouseleave={() => (iconColor = "#6E7681")}
     on:click={openModal}
   >
+    <span class="mr-1 text-base font-normal">Create new folder</span>
     <Add color={iconColor} />
-    <span class="ml-1 text-base font-light">Create new folder</span>
   </button>
   {#if $showAddFolderDrawer}
     <button
@@ -61,12 +61,14 @@
       </button>
     </button>
   {/if}
-  <ul class="">
+  <ul
+    class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin h-full -pl-3"
+  >
     {#each $folderStore as folder, index}
       <li
         class="{$selectedFolder?.id == folder.id
-          ? 'bg-osvauld-sideListHighlight rounded-lg text-osvauld-sideListTextActive'
-          : 'hover:bg-osvauld-sideListHighlight text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 flex items-center"
+          ? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
+          : 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center transition-colors duration-100"
         on:mouseenter={() => (hoveringIndex = index)}
         on:mouseleave={() => (hoveringIndex = null)}
       >
@@ -80,27 +82,36 @@
               : "#85889C"}
           />
           <span
-            class="ml-2 text-base font-light {$selectedFolder?.id ==
+            class="max-w-[75%] ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap {$selectedFolder?.id ==
               folder.id || hoveringIndex === index
               ? 'text-osvauld-sideListTextActive'
-              : 'text-osvauld-fieldText'}">{folder.name}</span
+              : 'text-osvauld-fieldText'}"
+            >{folder.name}
+            <span
+              class="ml-2 text-osvauld-fieldText font-light {$selectedFolder?.id ===
+              folder.id
+                ? 'visible delay-200'
+                : 'invisible'}">{$credentialStore.length}</span
+            ></span
           >
+          <div
+            class="relative z-100 ml-auto flex justify-center items-center {$selectedFolder?.id ==
+              folder.id || hoveringIndex === index
+              ? 'visible'
+              : 'invisible'}"
+          >
+            {#if folder.accessType === "manager"}
+              <button
+                class="p-2"
+                on:click={(e) => {
+                  openFolderMenu(e, folder.id, folder.name);
+                }}
+              >
+                <Menu />
+              </button>
+            {/if}
+          </div>
         </button>
-        <div
-          class="relative z-100 flex justify-center items-center {$selectedFolder?.id ==
-            folder.id || hoveringIndex === index
-            ? 'visible'
-            : 'invisible'}"
-        >
-          <button
-            class="p-2"
-            on:click={(e) => {
-              openFolderMenu(e, folder.id, folder.name);
-            }}
-          >
-            <Menu />
-          </button>
-        </div>
       </li>
     {/each}
   </ul>

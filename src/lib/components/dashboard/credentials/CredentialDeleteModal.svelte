@@ -4,13 +4,11 @@
     modalManager,
     DeleteConfirmationModal,
     showMoreOptions,
-    selectedFolder,
-    credentialStore,
   } from "../store";
   import { fly } from "svelte/transition";
-  import { sendMessage } from "../helper";
   import { Warning } from "../icons";
-  import { removeCredential, fetchCredentialsByFolder } from "../apis";
+  import { removeCredential } from "../apis";
+  import { setCredentialStore } from "../../../store/storeHelper";
 
   function withdrawCredentialDeleteModal() {
     modalManager.set(null);
@@ -20,9 +18,7 @@
 
   const removeCredentialHandler = async (credentialId) => {
     await removeCredential(credentialId);
-    const responseJson = await fetchCredentialsByFolder($selectedFolder.id);
-    const response = await sendMessage("decryptMeta", responseJson.data);
-    credentialStore.set(response.data);
+    await setCredentialStore();
   };
 
   async function DeleteConfirmation() {

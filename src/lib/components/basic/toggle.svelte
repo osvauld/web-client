@@ -11,13 +11,13 @@
   };
 </script>
 
-<div class="flex justify-center">
+<div class="flex justify-center w-[90%]">
   <div
-    class="inline-flex justify-center space-x-1 p-1 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl"
+    class="inline-flex justify-center space-x-1 p-0.5 bg-osvauld-frameblack border border-osvauld-iconblack rounded-xl w-full"
   >
     {#each ["Folders", "Groups"] as item}
       <button
-        class="w-1/2 px-3 py-1.5 text-lg flex justify-center items-center rounded-lg focus:outline-none {$selectedPage ===
+        class="transition-colors duration-75 ease-in w-1/2 px-3 py-1.5 text-lg flex justify-center items-center rounded-lg focus:outline-none {$selectedPage ===
         item
           ? 'bg-osvauld-sideListHighlight text-osvauld-plainwhite'
           : 'text-osvauld-quarzowhite'} "

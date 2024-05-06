@@ -1,22 +1,28 @@
 <script lang="ts">
-  import { ActiveCopy, CopyIcon } from "../icons";
+  import { scale } from "svelte/transition";
+  import { ActiveCopy, Tick, CopyIcon } from "../icons";
   export let fieldName;
   export let fieldValue;
   export let hoverEffect;
   export let bgColor;
+  export let copied = false;
 
   const copyToClipboard = async (e) => {
+    copied = true;
     try {
       await navigator.clipboard.writeText(fieldValue);
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
+    setTimeout(() => {
+      copied = false;
+    }, 2000);
   };
 </script>
 
 <div class="mb-2.5 mr-1 max-w-full">
   <label
-    class="label block mb-1 text-left text-osvauld-dusklabel text-xs font-normal cursor-pointer"
+    class="label block mb-1 text-left text-osvauld-dusklabel whitespace-nowrap text-ellipsis text-xs font-normal cursor-pointer"
     for="field">{fieldName}</label
   >
   <div
@@ -24,11 +30,16 @@
       ? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md'
       : 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}"
   >
-    <span class="w-full text-left overflow-x-hidden font-normal text-sm"
+    <span
+      class="w-full text-left overflow-x-hidden font-normal whitespace-nowrap text-ellipsis text-sm"
       >{fieldValue}</span
     >
     <button on:click|preventDefault|stopPropagation={copyToClipboard}>
-      {#if hoverEffect}
+      {#if copied}
+        <span in:scale>
+          <Tick />
+        </span>
+      {:else if hoverEffect}
         <ActiveCopy />
       {:else}
         <CopyIcon color={"#4D4F60"} />

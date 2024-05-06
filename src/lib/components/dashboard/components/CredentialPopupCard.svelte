@@ -50,7 +50,9 @@
         Description
       </label>
       <div
-        class="mt-4 w-[96%] h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin resize-none text-base
+        class=" {credential.description.length !== 0
+          ? 'h-[4rem]'
+          : ''} mt-4 w-[96%] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin resize-none text-base
      text-osvauld-fieldTextActive font-normal text-sm"
         id="credential-description"
       >

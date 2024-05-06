@@ -39,7 +39,7 @@
     if (!decrypted) {
       hoverTimeout = setTimeout(async () => {
         const response = await fetchSensitiveFieldsByCredentialId(
-          credential.credentialId,
+          credential.credentialId
         );
         sensitiveFields = response.data;
       }, 300);
@@ -68,19 +68,18 @@
     if (sensitiveFields.length) {
       clearTimeout(hoverTimeout);
       const response = await fetchSensitiveFieldsByCredentialId(
-        credential.credentialId,
+        credential.credentialId
       );
       sensitiveFields = response.data;
     }
     dispatch("select", sensitiveFields);
+    sensitiveFields = [];
   }; /* eslint-disable */
 </script>
 
 <button
   class="mb-1 overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite border border-osvauld-iconblack {checked &&
-    'shadow-[0_0_0_1px_#B4BEFE]'} {hoverEffect
-    ? 'shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)]'
-    : ''}"
+    'shadow-[0_0_0_1px_#B4BEFE]'}"
   style="border: {$borderHighLight ? '1px solid #89B4FA' : ''}"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
@@ -90,41 +89,46 @@
     class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
   >
     <div
-      class="flex justify-center items-center border-osvauld-iconblack pb-2"
+      class="flex {credential.accessType !== 'manager'
+        ? 'justify-start'
+        : 'justify-center'} items-center border-osvauld-iconblack pb-2"
       on:click|stopPropagation
     >
-      <input
-        type="checkbox"
-        id={credential.credentialId}
-        class="bg-osvauld-cardshade mr-2
+      {#if credential.accessType === "manager"}
+        <input
+          type="checkbox"
+          id={credential.credentialId}
+          class="bg-osvauld-cardshade mr-2
         {hoverEffect
-          ? 'border-osvauld-placeholderblack'
-          : 'border-osvauld-darkLineSeperator'} checked:bg-osvauld-activelavender focus:text-osvauld-activelavender hover:text-osvauld-activelavender active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
-        on:change|stopPropagation={(e) => {
-          toggleCheck();
-        }}
-        {checked}
-      />
+            ? 'border-osvauld-placeholderblack'
+            : 'border-osvauld-darkLineSeperator'} checked:bg-osvauld-activelavender focus:text-osvauld-activelavender hover:text-osvauld-activelavender active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
+          on:change|stopPropagation={(e) => {
+            toggleCheck();
+          }}
+          {checked}
+        />
+      {/if}
       <label
-        class="text-lg font-light w-full text-left ml-2 cursor-pointer max-w-full {hoverEffect
+        class="text-lg font-light text-left ml-2 cursor-pointer w-[10rem] overflow-x-hidden whitespace-nowrap {hoverEffect
           ? 'text-osvauld-sideListTextActive'
-          : 'text-osvauld-fieldTextActive '} overflow-x-hidden"
+          : 'text-osvauld-fieldTextActive '} "
         for={credential.credentialId}
       >
         {credential.name}
       </label>
-      <button class="pr-2" on:click={triggerMoreActions}>
-        <More />
-      </button>
-      <!-- <button on:click={removeCredentialHandler}>
-        <BinIcon color={"#FF0000"} />
-      </button> -->
+      {#if credential.accessType === "manager"}
+        <button class="pr-2" on:click={triggerMoreActions}>
+          <More />
+        </button>
+      {/if}
     </div>
     <div
       class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
     ></div>
     <div
-      class="w-[15rem] h-[11.5rem] overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
+      class="w-[15rem] {credential.description.length !== 0
+        ? 'h-[11.5rem]'
+        : 'h-[15rem]'} overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
         ? 'active'
         : ''} mt-2"
     >
@@ -155,7 +159,9 @@
         Description
       </label>
       <div
-        class="mt-1 w-[14.3rem] h-[4rem] py-1 px-2 overflow-y-scroll rounded-lg text-left scrollbar-thin resize-none text-sm
+        class="mt-1 w-[14.3rem] {credential.description.length !== 0
+          ? 'h-[4rem]'
+          : ''} py-1 px-2 overflow-y-scroll rounded-lg text-left scrollbar-thin resize-none text-sm
     {hoverEffect
           ? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive'
           : 'text-osvauld-fieldText'}"

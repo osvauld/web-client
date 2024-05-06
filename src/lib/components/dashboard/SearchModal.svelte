@@ -3,13 +3,11 @@
   import LinkIcon from "../basic/icons/linkIcon.svelte";
   import Highlight from "./components/Highlight.svelte";
   import Lens from "../basic/icons/lens.svelte";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
+
   export let searchResults = [];
   export let query = "";
   const dispatch = createEventDispatcher();
-  function autofocus(node) {
-    node.focus();
-  }
 
   const closeModal = () => {
     dispatch("close", true);
@@ -22,16 +20,27 @@
   const handleSearchClick = (result) => {
     dispatch("select", result);
   };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      closeModal();
+    }
+  };
+
+  function autofocus(node) {
+    node.focus();
+  }
 </script>
 
-<div
-  class="fixed z-10 inset-0 overflow-y-auto backdrop-filter backdrop-blur-[2px]"
+<button
+  class="fixed z-10 inset-0 backdrop-filter backdrop-blur-[2px]"
+  on:keydown={handleKeyDown}
 >
   <div class="flex items-start justify-center min-h-screen mt-[2.6vh]">
     <button class="fixed inset-0 bg-black opacity-50" on:click={closeModal}>
     </button>
     <div
-      class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw] ml-[16vw]"
+      class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw] ml-[10vw]"
     >
       <div
         class="h-[2.2rem] w-[31.25rem] px-2 flex m-auto mt-2 justify-center items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
@@ -61,14 +70,16 @@
           {#each searchResults as result}
             <button
               on:click={() => handleSearchClick(result)}
-              class="p-2 border rounded-lg border-osvauld-iconblack hover:bg-osvauld-iconblack w-full my-1 flex justify-start items-center"
+              class="p-2 border rounded-lg border-osvauld-iconblack hover:bg-osvauld-iconblack w-full my-1 flex justify-start items-center min-h-[60px]"
             >
               <div
                 class="h-full flex justify-center items-center scale-150 px-2"
               >
                 <Key />
               </div>
-              <div class="w-full flex flex-col justify-center items-start pl-2">
+              <div
+                class="w-full flex flex-col justify-center items-start pl-2 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+              >
                 <div class="text-base flex font-semibold">
                   <Highlight text={result.name} {query} />&nbsp;
                   <span>in folder</span>&nbsp;
@@ -86,10 +97,10 @@
         </div>
         {#if searchResults.length === 0}
           <div
-            class="bg-osvauld-frameblack w-full flex justify-center items-center px-4 mb-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+            class="bg-osvauld-frameblack w-full flex justify-center items-center px-4 mb-4 py-0 sm:px-6 sm:flex sm:flex-row-reverse"
           >
             <p
-              class="text-osvauld-placeholderblack text-base text-center w-1/2"
+              class="text-osvauld-placeholderblack text-base text-center w-[80%]"
             >
               Try searching for keywords in credentials, folders, groups,
               descriptions and more
@@ -99,4 +110,4 @@
       </div>
     </div>
   </div>
-</div>
+</button>

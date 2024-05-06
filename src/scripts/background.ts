@@ -4,11 +4,16 @@ import {
   decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler,
   decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler,
   decryptFieldHandler, encryptFieldHandler, createShareCredsPayload,
-  handlePvtKeyImport
+  handlePvtKeyImport, credentialSubmitHandler, getCurrentDomain, sign_hashed_message
 } from "./backgroundService";
-import { fetchCredsByIds } from "../lib/apis/credentials.api"
-import { InjectionPayload } from "../lib/dtos/credential.dto";
-import init, { is_global_context_set } from "./rust_openpgp_wasm";
+import init, { is_global_context_set } from "./crypto_primitives";
+
+let newCredential: any = {
+  username: '',
+  password: '',
+  domain: '',
+  windowId: ''
+}
 
 
 let urlObj = new Map<string, Set<string>>();
@@ -39,7 +44,10 @@ browser.runtime.onMessage.addListener(async (request) => {
       browser.tabs.create({ url: browser.runtime.getURL("dashboard.html") });
       break;
 
-
+    case "hashAndSign": {
+      const sign = await sign_hashed_message(request.data.message)
+      return { signature: sign }
+    }
     case "initiateAuth": {
       try {
 
@@ -75,17 +83,24 @@ browser.runtime.onMessage.addListener(async (request) => {
       }
       break;
     case "updateAllUrls":
+      if (!request.data.domain) {
+        return Promise.resolve({
+          credIds: []
+        })
+      }
       for (let i = 0; i < request.data.urls.length; i++) {
         const decrypted = await decryptFieldHandler(request.data.urls[i].value);
-        if (urlObj.has(decrypted)) {
+        const normalizedDecrypted = decrypted.replace(/^www\./, '');
+
+        if (urlObj.has(normalizedDecrypted)) {
           // @ts-ignore
-          urlObj.get(decrypted).add(request.data.urls[i].credentialId)
+          urlObj.get(normalizedDecrypted).add(request.data.urls[i].credentialId)
         } else {
-          urlObj.set(decrypted, new Set([request.data.urls[i].credentialId]))
+          urlObj.set(normalizedDecrypted, new Set([request.data.urls[i].credentialId]))
         }
       }
       return Promise.resolve({
-        credIds: Array.from(urlObj.get(request.data.domain) || [])
+        credIds: Array.from(urlObj.get(request.data.domain.replace(/^www\./, '')) || [])
 
       });
 
@@ -99,6 +114,15 @@ browser.runtime.onMessage.addListener(async (request) => {
       return addCredentialHandler(request.data);
     case "createShareCredPayload":
       return createShareCredsPayload(request.data.creds, request.data.users);
+    case "credentialSubmit": {
+      newCredential.username = request.data.username;
+      newCredential.password = request.data.password;
+      newCredential.domain = await getCurrentDomain();
+      const credIds = Array.from(urlObj.get(newCredential.domain.replace(/^www\./, '')) || [])
+      newCredential.windowId = await credentialSubmitHandler(newCredential, credIds)
+      return true;
+
+    }
 
     default:
       console.log(request.action)
@@ -107,40 +131,13 @@ browser.runtime.onMessage.addListener(async (request) => {
 });
 
 
+browser.runtime.onConnect.addListener(async (port) => {
+  if (port.name === "popup") {
+    // When you have data to send:
+    if (newCredential && newCredential.username && newCredential.password) {
+      port.postMessage({ username: newCredential.username, password: newCredential.password, domain: newCredential.domain, windowId: newCredential.windowId });
+      newCredential = {};
 
-browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  // Log for debugging
-
-  // Check if the tab status is 'complete'
-  if (changeInfo.status === 'complete') {
-    // Get the current tab URL directly from the tab object
-    let url: URL;
-    let domain: string = '';
-    if (tab.url) {
-      url = new URL(tab.url);
-      domain = url.hostname;
-    }
-    // Check if the domain is in your list
-    if (urlObj.has(domain)) {
-      // @ts-ignore
-      const responseData = await fetchCredsByIds([...urlObj.get(domain)]);
-      // TODO: payload change in future
-      const payload: InjectionPayload[] = [];
-      for (const cred of responseData.data) {
-        for (const field of cred.fields) {
-          if (field.fieldName === 'Username') {
-            const decrypted = await decryptFieldHandler(field.fieldValue);
-            payload.push({ id: cred.credentialId, username: decrypted });
-          }
-        }
-      }
-      try {
-        await browser.tabs.sendMessage(tabId, { action: "updateCredsList", creds: payload });
-      } catch (error) {
-        console.error("Error sending message to tab:", error);
-      }
-    } else {
-      console.log('Domain is not in the URLs array:', domain);
     }
   }
 });

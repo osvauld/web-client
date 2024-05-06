@@ -7,6 +7,7 @@
     showMoreOptions,
     DeleteConfirmationModal,
     modalManager,
+    showFolderShareDrawer,
   } from "../store";
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
@@ -27,7 +28,7 @@
       const leftVal =
         $modalManager.type === "Folder"
           ? rect.left + window.scrollX
-          : rect.left + window.scrollX - 3.5 * rect.width;
+          : rect.left + window.scrollX - 2.7 * rect.width;
       return {
         top: rect.top + window.scrollY + rect.height,
         left: leftVal,
@@ -44,6 +45,11 @@
 
   const handleClickOutside = () => {
     closeModal();
+  };
+
+  const callShareFolderModal = () => {
+    closeModal();
+    showFolderShareDrawer.set(true);
   };
 
   const deleteInitiate = () => {
@@ -77,16 +83,20 @@
         on:mouseenter={() => (isShareHovered = true)}
         on:mouseleave={() => (isShareHovered = false)}
       >
-        <FolderShare color={isShareHovered ? "#F2F2F0" : "#85889C"} />
-        <div class="font-inter text-base whitespace-nowrap">
+        <FolderShare size={24} color={isShareHovered ? "#F2F2F0" : "#85889C"} />
+        <button
+          class="font-inter text-base whitespace-nowrap"
+          on:click|stopPropagation={callShareFolderModal}
+        >
           Share {$modalManager.type === "Folder" ? "folder" : ""}
-        </div>
+        </button>
       </button>
 
       <button
-        class="flex items-center p-2 gap-2 w-full h-12 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg"
+        class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
         on:mouseenter={() => (isEditHovered = true)}
         on:mouseleave={() => (isEditHovered = false)}
+        disabled
       >
         <div class="w-6 h-6 flex items-center justify-center">
           <EditIcon color={isEditHovered ? "#F2F2F0" : "#85889C"} />
@@ -95,7 +105,7 @@
       </button>
 
       <button
-        class="flex items-center p-2 gap-2 w-full h-12 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg"
+        class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
         on:mouseenter={() => (isBinHovered = true)}
         on:mouseleave={() => (isBinHovered = false)}
         on:click|preventDefault={deleteInitiate}

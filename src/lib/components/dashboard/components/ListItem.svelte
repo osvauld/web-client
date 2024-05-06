@@ -1,9 +1,10 @@
 <script lang="ts">
   export let item: any;
   export let isSelected: boolean;
-  export let isTopList: boolean;
+  export let isBottomList: boolean;
   export let setbackground: any;
   export let showOptions: boolean;
+  export let reverseModal: boolean = false;
 
   let hoveredOverThisItem = false;
 
@@ -18,6 +19,7 @@
     dispatch("remove", item);
   };
   const eventPasser = (e) => {
+    hoveredOverThisItem = false;
     dispatch("select", { item, permission: e.detail.permission });
   };
 
@@ -29,8 +31,12 @@
 </script>
 
 <div
-  class="relative w-[99%] my-1 pl-2 pr-0.5 border border-osvauld-iconblack rounded-lg cursor-pointer flex items-center justify-between {isSelected
-    ? 'bg-osvauld-bordergreen text-osvauld-plainwhite'
+  class="relative w-[98%] my-1 ml-1 pl-2 pr-0.5 rounded-lg cursor-pointer flex items-center justify-between text-osvauld-sheffieldgrey text-base font-normal {(isSelected &&
+    !isBottomList) ||
+  (hoveredOverThisItem && !isBottomList)
+    ? 'shadow-[0_0_0_1px_#292A36] '
+    : ''}{showOptions && isSelected
+    ? 'bg-osvauld-cardshade text-osvauld-textActive'
     : ''}"
   on:click={handleClick}
   on:mouseenter={() => (hoveredOverThisItem = true)}
@@ -38,37 +44,40 @@
 >
   <div class="flex items-center space-x-4 max-w-full">
     <p
-      class="py-1 px-1 max-w-full whitespace-nowrap text-base {isTopList
-        ? 'text-osvauld-plainwhite'
+      class="py-1 px-1 max-w-full whitespace-nowrap text-base {isBottomList ||
+      hoveredOverThisItem
+        ? 'text-osvauld-textActive'
         : 'text-osvauld-sheffieldgrey'}"
     >
       {item.name}
     </p>
   </div>
-  {#if isTopList}
+  {#if isBottomList}
     <div class="flex justify-center items-center">
+      <button class="mr-3" on:click|stopPropagation={handleRemove}
+        ><BinIcon color={"#67697C"} /></button
+      >
       <button
-        class="w-[6.25rem] rounded-md font-normal cursor-pointer px-2 py-0 pl-2 text-base flex justify-between items-center {setbackground(
+        class="w-[9.8rem] rounded-md font-normal cursor-pointer px-2 py-0.5 pl-2 text-base flex justify-around items-center {setbackground(
           item.accessType
         )}"
         >{item.accessType}
         <span> <DownArrow type={item.accessType} /></span>
       </button>
       {#if showOptions && isSelected}
-        <AccessSelector on:select={(e) => eventPasser(e)} />
+        <AccessSelector on:select={(e) => eventPasser(e)} {reverseModal} />
       {/if}
-      <button class="ml-2" on:click|stopPropagation={handleRemove}
-        ><BinIcon color={null} /></button
-      >
     </div>
   {/if}
-  {#if !isTopList && showOptions && isSelected}
-    <AccessSelector on:select={(e) => eventPasser(e)} />
+  {#if !isBottomList && showOptions && isSelected}
+    <AccessSelector on:select={(e) => eventPasser(e)} {reverseModal} />
   {/if}
-  {#if !isTopList && !isSelected && hoveredOverThisItem}
+  {#if !isBottomList && hoveredOverThisItem}
     <span
-      class="text-osvauld-ownerText bg-osvauld-ownerGreen rounded-md cursor-pointer px-2 py-0.5 w-[10rem] flex justify-between items-center text-base font-normal"
-      >Permissions <span><DownArrow type={"owner"} /></span></span
+      class="cursor-pointer text-osvauld-permissionGreenText bg-osvauld-permissionsGreen rounded-md px-1 py-0.5 w-[9.8rem] flex justify-around items-center text-base font-normal"
+      >Permissions <span class="-rotate-90"
+        ><DownArrow type={"indicator"} /></span
+      ></span
     >
   {/if}
 </div>

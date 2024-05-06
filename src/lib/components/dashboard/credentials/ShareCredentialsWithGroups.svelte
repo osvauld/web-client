@@ -1,18 +1,18 @@
 <script lang="ts">
   import {
     Group,
-    Group,
     CredentialFields,
     ShareCredentialsWithGroupsPayload,
   } from "../dtos";
-  import { createEventDispatcher } from "svelte";
   import { writable } from "svelte/store";
   import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
   import { sendMessage, setbackground } from "../helper";
 
   import { Lens } from "../icons";
   import ListItem from "../components/ListItem.svelte";
-  import ShareToast from "../components/ShareToast.svelte";
+  import { toastStore } from "../store";
+  import { createEventDispatcher, onMount } from "svelte";
+  const dispatch = createEventDispatcher();
   export let groups: Group[];
   export let credentialsFields: CredentialFields[];
   let selectedGroups = writable(new Map<string, Group>());
@@ -20,15 +20,16 @@
   let selectionIndex: number | null = null;
   let topList = false;
   let searchInput = "";
-  let shareToast = false;
+
+  $: $selectedGroups.size == 0 && dispatch("enable", false);
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase()),
+        group.name.toLowerCase().includes(searchInput.toLowerCase())
       )
     : groups;
 
-  const shareCredentialHandler = async () => {
+  export const shareCredentialHandler = async () => {
     const groupIds = Array.from($selectedGroups.keys());
     const response = await fetchUsersByGroupIds(groupIds);
     const groupUsersList = response.data;
@@ -51,7 +52,13 @@
     }
     const shareStatus = await shareCredentialsWithGroups(payload);
 
-    shareToast = shareStatus.success === true;
+    toastStore.set({
+      type: shareStatus.success,
+      message: shareStatus.message,
+      show: true,
+    });
+
+    dispatch("cancel", true);
   };
   function handleClick(index: number, isSelectedList: boolean) {
     showOptions = !showOptions;
@@ -91,77 +98,64 @@
       $selectedGroups.set(item.groupId, { ...item, accessType: option });
       groups = groups.filter((u) => u.groupId !== item.groupId);
     }
+    $selectedGroups.size !== 0 && dispatch("enable", true);
   }
 
-  function handleCancel() {
-    const dispatch = createEventDispatcher();
-    dispatch("cancel", true);
-  }
+  onMount(() => {
+    //Below will disable save changes button when group/user button switched
+    dispatch("enable", false);
+  });
 </script>
 
-<div class="p-2 border border-osvauld-bordergreen rounded-lg max-h-[65vh]">
+<div class="p-2 pl-2 rounded-lg w-full">
   <div
-    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack rounded-lg cursor-pointer"
+    class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center cursor-pointer border rounded-lg border-osvauld-iconblack"
   >
     <Lens />
     <input
       type="text"
       bind:value={searchInput}
       class="h-[1.75rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
-      placeholder="Search for users"
+      placeholder=""
     />
   </div>
 
-  {#if $selectedGroups.size !== 0}
-    <div
-      class="overflow-y-auto scrollbar-thin min-h-0 max-h-[17.5vh] bg-osvauld-bordergreen rounded-lg w-full p-0.5 border border-osvauld-iconblack mt-1"
-    >
-      {#each Array.from($selectedGroups) as [groupId, group], index}
-        <ListItem
-          item={group}
-          isSelected={index === selectionIndex && topList}
-          isTopList={true}
-          on:click={() => handleClick(index, true)}
-          on:remove={() => handleItemRemove(groupId)}
-          {setbackground}
-          {showOptions}
-          on:select={(e) => handleRoleChange(e, index, "selectedGroups")}
-        />
-      {/each}
-    </div>
-  {/if}
   <div
-    class="overflow-y-auto scrollbar-thin min-h-0 max-h-[35vh] bg-osvauld-frameblack w-full"
+    class="overflow-y-scroll scrollbar-thin h-[20rem] bg-osvauld-frameblack w-full"
   >
     {#each filteredGroups as group, index}
       <ListItem
         item={group}
         isSelected={index === selectionIndex && !topList}
-        isTopList={false}
+        isBottomList={false}
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}
+        reverseModal={filteredGroups.length > 3 &&
+          index > filteredGroups.length - 3}
         on:select={(e) => handleRoleChange(e, index, "groups")}
       />
     {/each}
   </div>
-
-  {#if $selectedGroups.size !== 0}
-    <div class="p-2 flex justify-between items-center box-border">
-      <button
-        class="w-[45%] px-4 py-2 secondary-btn whitespace-nowrap"
-        on:click={handleCancel}>Cancel</button
-      >
-      <button
-        class="w-[45%] px-4 py-2 bg-osvauld-carolinablue text-osvauld-frameblack rounded-md"
-        on:click={shareCredentialHandler}>Share</button
-      >
-    </div>
-  {/if}
-  {#if shareToast}
-    <ShareToast
-      message={"Shared with groups"}
-      on:close={() => (shareToast = !shareToast)}
-    />
-  {/if}
 </div>
+
+{#if $selectedGroups.size !== 0}
+  <div
+    class="overflow-y-scroll overflow-x-hidden scrollbar-thin h-[8rem] bg-osvauld-frameblack rounded-lg w-full p-0.5 border border-osvauld-iconblack mt-auto !text-osvauld-textActive"
+  >
+    {#each Array.from($selectedGroups) as [groupId, group], index}
+      <ListItem
+        item={group}
+        isSelected={index === selectionIndex && topList}
+        isBottomList={true}
+        on:click={() => handleClick(index, true)}
+        on:remove={() => handleItemRemove(groupId)}
+        {setbackground}
+        {showOptions}
+        reverseModal={$selectedGroups.size > 3 &&
+          index > $selectedGroups.size - 3}
+        on:select={(e) => handleRoleChange(e, index, "selectedGroups")}
+      />
+    {/each}
+  </div>
+{/if}
