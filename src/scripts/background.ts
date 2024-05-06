@@ -16,8 +16,6 @@ let newCredential: any = {
 }
 
 
-
-
 let urlObj = new Map<string, Set<string>>();
 
 
