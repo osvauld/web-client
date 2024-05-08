@@ -37,10 +37,6 @@
     showMoreOptions.set(true);
   };
 
-  selectedFolder.subscribe(() => {
-    console.log("slected folder =>", $selectedFolder);
-  });
-
   onMount(async () => {
     await setFolderStore();
   });

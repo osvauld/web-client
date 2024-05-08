@@ -10,7 +10,7 @@ export {
 export {
     fetchAllFolders, fetchFolderUsers, createFolder, shareFolderWithUsers,
     shareFolderWithGroups, fetchFolderGroups, editFolderPermissionForGroup, editFolderPermissionForUser,
-    fetchFolderUsersForDataSync, removeFolder
+    fetchFolderUsersForDataSync, removeFolder, renameFolder
 } from '../../apis/folder.api';
 
 export {
