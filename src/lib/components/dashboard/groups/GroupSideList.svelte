@@ -122,7 +122,7 @@
               : "#85889C"}
           />
           <span
-            class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap"
+            class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem]"
             >{group.name}</span
           >
         </button>

@@ -36,7 +36,11 @@
 </script>
 
 <div class="flex items-center justify-between px-4 py-5 pb-0">
-  <h1 class="text-4xl p-4 font-normal w-1/3 ml-3">{groupName}</h1>
+  <h1
+    class="text-4xl p-4 font-normal ml-3 w-[40rem] overflow-hidden text-ellipsis"
+  >
+    {groupName}
+  </h1>
   {#if groupAdmin}
     <button
       class="rounded-md py-1 px-4 mr-2 border border-osvauld-iconblack flex justify-center items-center whitespace-nowrap text-base font-light text-osvauld-textActive hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue"
