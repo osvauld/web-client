@@ -58,10 +58,6 @@
   onMount(async () => {
     await setGroupStore();
   });
-
-  selectedGroup.subscribe(() => {
-    console.log("Selected group is =>", $selectedGroup);
-  });
 </script>
 
 <div class="h-full flex w-full flex-col justify-start items-center">
