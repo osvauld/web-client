@@ -82,7 +82,7 @@
               : "#85889C"}
           />
           <span
-            class="max-w-[75%] ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap {$selectedFolder?.id ==
+            class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem] {$selectedFolder?.id ==
               folder.id || hoveringIndex === index
               ? 'text-osvauld-sideListTextActive'
               : 'text-osvauld-fieldText'}"
