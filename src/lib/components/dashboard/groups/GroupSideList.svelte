@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AddGroup from "./AddGroup.svelte";
+  import GroupEditor from "./GroupEditor.svelte";
   import {
     groupStore,
     selectedGroup,
@@ -9,9 +9,9 @@
     showMoreGroupOptions,
     buttonRef,
     modalManager,
+    showRenameGroupDrawer,
   } from "../store";
   import { Group } from "../dtos";
-  import { fade, scale } from "svelte/transition";
 
   import Add from "../../basic/icons/add.svelte";
   import { GroupIcon, Menu } from "../icons";
@@ -49,12 +49,18 @@
   };
 
   const showMoreOptionsHandler = (e, group) => {
+    selectedGroup.set(group);
     buttonRef.set(e.target);
     modalManager.set({ id: group.groupId, name: group.name, type: "Group" });
     showMoreGroupOptions.set(true);
   };
+
   onMount(async () => {
     await setGroupStore();
+  });
+
+  selectedGroup.subscribe(() => {
+    console.log("Selected group is =>", $selectedGroup);
   });
 </script>
 
@@ -68,13 +74,13 @@
     <span class="mr-1 text-base font-normal">Create new group</span>
     <Add color={iconColor} />
   </button>
-  {#if $showAddGroupDrawer}
+  {#if $showAddGroupDrawer || $showRenameGroupDrawer}
     <button
       class="fixed inset-0 flex items-center justify-center z-50 backdrop-filter backdrop-blur-[2px]"
       on:click|stopPropagation
       on:keydown|stopPropagation
     >
-      <AddGroup on:close={closeModal} />
+      <GroupEditor on:close={closeModal} />
     </button>
   {/if}
   <ul

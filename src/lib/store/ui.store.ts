@@ -9,6 +9,7 @@ export let showCredentialShareDrawer = writable(false)
 export let showAddUserDrawer = writable(false);
 export let allUsersSelected = writable(false);
 export let showAddUserToGroupDrawer = writable(false);
+export let showRenameGroupDrawer = writable(false);
 export let showCredentialDetailsDrawer = writable(false);
 export let credentialIdForEdit = writable(null);
 export let buttonRef = writable(null);
