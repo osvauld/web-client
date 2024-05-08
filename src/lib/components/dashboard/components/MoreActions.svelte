@@ -8,6 +8,7 @@
     DeleteConfirmationModal,
     modalManager,
     showFolderShareDrawer,
+    showFolderRenameDrawer,
   } from "../store";
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
@@ -50,6 +51,11 @@
   const callShareFolderModal = () => {
     closeModal();
     showFolderShareDrawer.set(true);
+  };
+
+  const callRenameFolderModal = () => {
+    closeModal();
+    showFolderRenameDrawer.set(true);
   };
 
   const deleteInitiate = () => {
@@ -101,7 +107,10 @@
         <div class="w-6 h-6 flex items-center justify-center">
           <EditIcon color={isEditHovered ? "#F2F2F0" : "#85889C"} />
         </div>
-        <div class="font-inter text-base whitespace-nowrap">Rename</div>
+        <button
+          class="font-inter text-base whitespace-nowrap"
+          on:click|stopPropagation={callRenameFolderModal}>Rename</button
+        >
       </button>
 
       <button

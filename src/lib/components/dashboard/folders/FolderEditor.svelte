@@ -5,19 +5,26 @@
     folderStore,
     selectedFolder,
     toastStore,
+    showFolderRenameDrawer,
   } from "../store";
   import { ClosePanel } from "../icons";
   import { setFolderStore } from "../../../store/storeHelper";
   import { fly } from "svelte/transition";
+  import { onMount } from "svelte";
 
-  let name = "";
-  let description = "";
+  let name = $showFolderRenameDrawer ? $selectedFolder.name : "";
+  let description = $showFolderRenameDrawer
+    ? $selectedFolder.description.String
+    : "";
 
   function autofocus(node: any) {
     node.focus();
   }
 
+  const editFolderFunc = async () => {};
+
   const addFolderFunc = async () => {
+    console.log("Description being send =>", description);
     const payload = {
       name: name,
       description: description,
@@ -42,19 +49,26 @@
   };
 
   const handleClose = () => {
+    showFolderRenameDrawer.set(false);
     showAddFolderDrawer.set(false);
   };
+
+  onMount(() => {
+    console.log("description =>", name, description);
+  });
 </script>
 
 <form
   class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[25rem] flex flex-col items-start justify-center gap-3"
-  on:submit|preventDefault={addFolderFunc}
+  on:submit|preventDefault={$showFolderRenameDrawer
+    ? editFolderFunc
+    : addFolderFunc}
   in:fly
   out:fly
 >
   <div class="flex justify-between items-center w-full">
     <span class="text-[21px] font-medium text-osvauld-quarzowhite"
-      >Create Folder</span
+      >{$showFolderRenameDrawer ? "Rename Folder" : "Create Folder"}</span
     >
     <button class="cursor-pointer p-2" on:click|preventDefault={handleClose}>
       <ClosePanel />
@@ -65,7 +79,7 @@
   ></div>
 
   <label for="name" class="font-bold text-base text-osvauld-textActive"
-    >Name:</label
+    >{$showFolderRenameDrawer ? "Folder Name" : "Name:"}</label
   >
   <input
     id="name"
@@ -97,7 +111,8 @@
     <button
       class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md"
       type="submit"
-      disabled={!name}>Add Folder</button
+      disabled={!name}
+      >{$showFolderRenameDrawer ? "Save Changes" : "Add Folder"}</button
     >
   </div>
 </form>

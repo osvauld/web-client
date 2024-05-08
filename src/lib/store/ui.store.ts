@@ -4,6 +4,7 @@ export let selectedPage = writable("");
 export let showAddFolderDrawer = writable(false);
 export let showAddGroupDrawer = writable(false);
 export let showFolderShareDrawer = writable(false);
+export let showFolderRenameDrawer = writable(false);
 export let showCredentialShareDrawer = writable(false)
 export let showAddUserDrawer = writable(false);
 export let allUsersSelected = writable(false);
