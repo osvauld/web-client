@@ -74,26 +74,32 @@
     let domain = "";
     let addCredentialFields: Fields[] = [];
     for (const field of credentialFields) {
-      if (field.fieldName === "URL" && edit === false) {
+      if (field.fieldName === "URL" && field.fieldValue.length !== 0) {
         try {
-          if (field.fieldValue === ("https://" || "http://")) {
+          if (
+            !field.fieldValue.startsWith("https://") &&
+            !field.fieldValue.startsWith("http://")
+          ) {
             errorMessage = "Invalid URL";
             isLoaderActive = false;
             return;
           }
-          // domain = new URL(field.fieldValue).hostname;
-          // addCredentialFields.push({
-          //   fieldName: "Domain",
-          //   fieldValue: domain,
-          //   fieldType: "additional",
-          // });
+          domain = new URL(field.fieldValue).hostname;
+          addCredentialFields.push({
+            fieldName: "Domain",
+            fieldValue: domain,
+            fieldType: "additional",
+          });
         } catch (error) {
           errorMessage = "Invalid URL";
           isLoaderActive = false;
           return;
         }
       }
-      if (field.fieldName.length !== 0 || field.fieldValue.length !== 0) {
+      if (
+        (field.fieldName.length !== 0 || field.fieldValue.length !== 0) &&
+        field.fieldName !== "Domain"
+      ) {
         const baseField: Fields = {
           fieldName: field.fieldName,
           fieldValue: field.fieldValue,
@@ -244,14 +250,16 @@
           bind:value={name}
         />
         {#each credentialFields as field, index}
-          <AddLoginFields
-            {field}
-            {index}
-            {hoveredIndex}
-            on:select={(e) =>
-              triggerSensitiveBubble(e.detail.index, e.detail.identifier)}
-            on:remove={(e) => removeField(e.detail)}
-          />
+          {#if field.fieldName !== "Domain"}
+            <AddLoginFields
+              {field}
+              {index}
+              {hoveredIndex}
+              on:select={(e) =>
+                triggerSensitiveBubble(e.detail.index, e.detail.identifier)}
+              on:remove={(e) => removeField(e.detail)}
+            />
+          {/if}
         {/each}
       </div>
       <div class="flex mr-24">
