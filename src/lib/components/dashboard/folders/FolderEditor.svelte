@@ -12,9 +12,7 @@
   import { fly } from "svelte/transition";
 
   let name = $showFolderRenameDrawer ? $selectedFolder.name : "";
-  let description = $showFolderRenameDrawer
-    ? $selectedFolder.description.String
-    : "";
+  let description = $showFolderRenameDrawer ? $selectedFolder.description : "";
 
   function autofocus(node: any) {
     node.focus();
@@ -62,7 +60,8 @@
     });
   };
 
-  const handleClose = () => {
+  const handleClose = (message) => {
+    console.log("Closing triggered", message);
     showFolderRenameDrawer.set(false);
     showAddFolderDrawer.set(false);
   };
@@ -80,7 +79,11 @@
     <span class="text-[21px] font-medium text-osvauld-quarzowhite"
       >{$showFolderRenameDrawer ? "Rename Folder" : "Create Folder"}</span
     >
-    <button class="cursor-pointer p-2" on:click|preventDefault={handleClose}>
+    <button
+      class="cursor-pointer p-2"
+      type="button"
+      on:click|preventDefault={handleClose}
+    >
       <ClosePanel />
     </button>
   </div>
@@ -116,6 +119,7 @@
   <div class="flex justify-end items-center gap-6 w-full">
     <button
       class="text-osvauld-fadedCancel font-medium text-base"
+      type="button"
       on:click|preventDefault={handleClose}>Cancel</button
     >
     <button

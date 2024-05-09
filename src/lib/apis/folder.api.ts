@@ -74,7 +74,6 @@ export const renameFolder = async (payload: any, id: string): Promise<BaseRespon
   const headers = new Headers();
   const { token, baseUrl } = await getTokenAndBaseUrl()
   headers.append("Authorization", `Bearer ${token}`);
-  console.log('Sending to =>', `${baseUrl}/folder/${id}` )
   const response = await fetch(`${baseUrl}/folder/${id}`, {
     method: "PUT",
     headers,

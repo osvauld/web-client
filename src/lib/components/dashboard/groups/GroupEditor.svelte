@@ -72,7 +72,11 @@
     <span class="text-[21px] font-medium text-osvauld-quarzowhite"
       >{$showRenameGroupDrawer ? "Rename Group" : "Create Group"}</span
     >
-    <button class="cursor-pointer p-2" on:click|preventDefault={handleClose}>
+    <button
+      class="cursor-pointer p-2"
+      on:click|preventDefault={handleClose}
+      type="button"
+    >
       <ClosePanel />
     </button>
   </div>
@@ -100,7 +104,8 @@
   <div class="flex justify-end items-center gap-6 w-full">
     <button
       class="text-osvauld-fadedCancel font-medium text-base"
-      on:click|preventDefault={handleClose}>Cancel</button
+      on:click|preventDefault={handleClose}
+      type="button">Cancel</button
     >
     <button
       class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md"
