@@ -4,13 +4,16 @@
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
-  import { selectedFolder, credentialStore } from "../store";
+  import {
+    selectedFolder,
+    modalManager,
+    DeleteConfirmationModal,
+  } from "../store";
 
   import {
     fetchFolderUsersForDataSync,
     addCredential,
     updateCredential,
-    fetchCredentialsByFolder,
     fetchCredentialUsersForDataSync,
   } from "../apis";
 
@@ -73,17 +76,17 @@
     for (const field of credentialFields) {
       if (field.fieldName === "URL" && edit === false) {
         try {
-          if (field.fieldValue === "https://") {
+          if (field.fieldValue === ("https://" || "http://")) {
             errorMessage = "Invalid URL";
             isLoaderActive = false;
             return;
           }
-          domain = new URL(field.fieldValue).hostname;
-          addCredentialFields.push({
-            fieldName: "Domain",
-            fieldValue: domain,
-            fieldType: "additional",
-          });
+          // domain = new URL(field.fieldValue).hostname;
+          // addCredentialFields.push({
+          //   fieldName: "Domain",
+          //   fieldValue: domain,
+          //   fieldType: "additional",
+          // });
         } catch (error) {
           errorMessage = "Invalid URL";
           isLoaderActive = false;
@@ -163,7 +166,12 @@
   }
 
   function deleteCredential() {
-    console.log("Delete credential");
+    modalManager.set({
+      id: credentialId,
+      name: name,
+      type: "Credential",
+    });
+    DeleteConfirmationModal.set(true);
   }
 
   function triggerSensitiveBubble(index: number, isEnter: boolean) {

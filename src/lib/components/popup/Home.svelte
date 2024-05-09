@@ -45,29 +45,32 @@
       currentWindow: true,
     });
     const activeTab = tabs[0];
-    if (activeTab && activeTab.url) domain = new URL(activeTab.url).hostname;
+    if (activeTab && activeTab.url) {
+      domain = new URL(activeTab.url).hostname;
+    }
+    console.log("Current url, Domain =>", activeTab.url, domain);
   };
 
   const fetchCredentialsOfCurrentDomin = async () => {
     const responseJson = await fetchAllUserUrls();
     const urls = responseJson.data;
+    console.log("Fetching all urls related to your account =>", urls);
     await readDomain();
     const { credIds } = await sendMessage("updateAllUrls", { urls, domain });
     if (credIds.length > 0) {
       passwordFound = true;
       const responseJson = await fetchCredsByIds(credIds);
-
       listedCredentials = responseJson.data;
       listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
         ),
       }));
 
       const decyrptedResponse = await sendMessage(
         "decryptMeta",
-        listedCredentials,
+        listedCredentials
       );
       listedCredentials = decyrptedResponse.data;
       domainAssociatedCredentials = listedCredentials;

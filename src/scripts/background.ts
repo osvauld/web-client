@@ -90,8 +90,9 @@ browser.runtime.onMessage.addListener(async (request) => {
       }
       for (let i = 0; i < request.data.urls.length; i++) {
         const decrypted = await decryptFieldHandler(request.data.urls[i].value);
+        console.log('Decrypted individual URL', decrypted);
         const normalizedDecrypted = decrypted.replace(/^www\./, '');
-
+        console.log('Decrypted cropped URL', normalizedDecrypted );
         if (urlObj.has(normalizedDecrypted)) {
           // @ts-ignore
           urlObj.get(normalizedDecrypted).add(request.data.urls[i].credentialId)
