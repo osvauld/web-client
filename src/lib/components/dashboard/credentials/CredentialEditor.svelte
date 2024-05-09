@@ -183,6 +183,7 @@
           class="text-[28px] font-sans font-normal {credentialType === 'Login'
             ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
             : 'text-osvauld-sheffieldgrey '}"
+          type="button"
           on:click={() => credentialTypeSelection(true)}
         >
           {edit ? "Edit login credential" : "Add Login credential"}
@@ -192,6 +193,7 @@
           'Other'
             ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
             : 'text-osvauld-sheffieldgrey '}"
+          type="button"
           on:click={() => credentialTypeSelection(false)}
         >
           {edit ? "Edit other" : "Other"}
@@ -199,13 +201,17 @@
       </div>
       <div>
         {#if edit}
-          <button class="bg-osvauld-frameblack p-4" on:click={deleteCredential}
-            ><BinIcon /></button
+          <button
+            class="bg-osvauld-frameblack p-4"
+            on:click={deleteCredential}
+            type="button"><BinIcon /></button
           >
         {/if}
 
-        <button class="bg-osvauld-frameblack p-4" on:click={closeDialog}
-          ><ClosePanel /></button
+        <button
+          class="bg-osvauld-frameblack p-4"
+          on:click={closeDialog}
+          type="button"><ClosePanel /></button
         >
       </div>
     </div>
@@ -244,6 +250,7 @@
         <button
           class="py-2 m-4 bg-osvauld-addfieldgrey flex-1 flex justify-center items-center rounded-md text-osvauld-chalkwhite border-2 border-dashed border-osvauld-iconblack"
           on:click={addField}
+          type="button"
         >
           <Add color={"#6E7681"} />
         </button>
@@ -264,11 +271,12 @@
     <div class="flex justify-end items-center mx-10 py-2">
       <button
         class="px-3 py-1.5 mb-6 whitespace-nowrap text-osvauld-fadedCancel bg-osvauld-frameblack hover:bg-osvauld-cardshade flex justify-center items-center rounded-md hover:text-osvauld-textActive text-base font-normal"
+        type="button"
         on:click={closeDialog}>Cancel</button
       >
       <button
         type="submit"
-        class="px-3 py-1.5 mb-6 whitespace-nowrap flex justify-center items-center ml-3 text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack font-normal text-base rounded-md"
+        class="px-3 py-1.5 mb-6 whitespace-nowrap flex justify-center items-center ml-3 border border-osvauld-textActive text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack hover:border-osvauld-carolinablue font-normal text-base rounded-md"
         disabled={isLoaderActive}
       >
         {#if isLoaderActive}
