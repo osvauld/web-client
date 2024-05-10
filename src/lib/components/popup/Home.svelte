@@ -46,15 +46,20 @@
     });
     const activeTab = tabs[0];
     if (activeTab && activeTab.url) {
-      domain = new URL(activeTab.url).hostname;
+      const url = new URL(activeTab.url);
+      const hostname = url.hostname;
+      const parts = hostname.split(".");
+      if (parts.length > 2) {
+        domain = parts.slice(-2).join(".");
+      } else {
+        domain = hostname;
+      }
     }
-    console.log("Current url, Domain =>", activeTab.url, domain);
   };
 
   const fetchCredentialsOfCurrentDomin = async () => {
     const responseJson = await fetchAllUserUrls();
     const urls = responseJson.data;
-    console.log("Fetching all urls related to your account =>", urls);
     await readDomain();
     const { credIds } = await sendMessage("updateAllUrls", { urls, domain });
     if (credIds.length > 0) {
