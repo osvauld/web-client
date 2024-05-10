@@ -2,8 +2,9 @@
   import browser from "webextension-polyfill";
   import { clickOutside, getTokenAndBaseUrl } from "../helper";
   import { onMount, onDestroy } from "svelte";
-  import { CopyIcon } from "../icons";
+  import { CopyIcon, Tick } from "../icons";
   import { createEventDispatcher } from "svelte";
+  import { scale } from "svelte/transition";
 
   const dispatch = createEventDispatcher();
 
@@ -12,6 +13,7 @@
   export let username;
   let isUsernameHovered = false;
   let isRecoveryHovered = false;
+  let copied = false;
 
   function closeModal() {
     dispatch("close", true);
@@ -29,8 +31,16 @@
     closeModal();
   };
 
+  const delayFunction = () => {
+    copied = true;
+    setTimeout(() => {
+      copied = false;
+    }, 1500);
+  };
+
   const copyUsername = async () => {
     await navigator.clipboard.writeText(username);
+    delayFunction();
   };
 
   const initiateRecovery = async () => {
@@ -42,7 +52,7 @@
     const signKey = signPvtKeyObj.signPvtKey;
     const exporter = JSON.stringify({ encryptionKey, signKey, baseUrl });
     await navigator.clipboard.writeText(exporter);
-    closeModal();
+    delayFunction();
   };
 
   onMount(() => {
@@ -68,7 +78,13 @@
       on:click|preventDefault={copyUsername}
     >
       <div class="w-6 h-6 flex items-center justify-center">
-        <CopyIcon color={isUsernameHovered ? "#F2F2F0" : "#85889C"} />
+        {#if copied && isUsernameHovered}
+          <span in:scale>
+            <Tick />
+          </span>
+        {:else}
+          <CopyIcon color={isUsernameHovered ? "#F2F2F0" : "#85889C"} />
+        {/if}
       </div>
       <div class="font-inter text-base whitespace-nowrap">Copy username</div>
     </button>
@@ -80,7 +96,13 @@
       on:click|preventDefault={initiateRecovery}
     >
       <div class="w-6 h-6 flex items-center justify-center">
-        <CopyIcon color={isRecoveryHovered ? "#FF6A6A" : "#85889C"} />
+        {#if copied && isRecoveryHovered}
+          <span in:scale>
+            <Tick />
+          </span>
+        {:else}
+          <CopyIcon color={isRecoveryHovered ? "#FF6A6A" : "#85889C"} />
+        {/if}
       </div>
       <div class="font-inter text-base whitespace-nowrap">
         Copy recovery data
