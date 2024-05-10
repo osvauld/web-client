@@ -84,7 +84,14 @@
             isLoaderActive = false;
             return;
           }
-          domain = new URL(field.fieldValue).hostname;
+          const url = new URL(field.fieldValue);
+          const hostname = url.hostname;
+          const parts = hostname.split(".");
+          if (parts.length > 2) {
+            domain = parts.slice(-2).join(".");
+          } else {
+            domain = hostname;
+          }
           addCredentialFields.push({
             fieldName: "Domain",
             fieldValue: domain,
