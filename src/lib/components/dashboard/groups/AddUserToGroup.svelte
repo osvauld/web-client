@@ -85,6 +85,10 @@
       groupUsers.set(usersResponse.data);
     });
   };
+
+  const handleCurserMoveOut = () => {
+    selectedUserIndice = null;
+  };
 </script>
 
 <div
@@ -100,7 +104,11 @@
       <button class="p-2" on:click={closeDrawer}><ClosePanel /></button>
     </div>
     <div class="border border-osvauld-bordergreen mb-2 w-full"></div>
-    <div class="flex-grow max-h-[85vh]">
+    <div
+      class="flex-grow max-h-[85vh]"
+      on:mouseleave={handleCurserMoveOut}
+      role="complementary"
+    >
       <div class="p-2 border border-osvauld-bordergreen rounded-lg">
         <div
           class="h-[1.875rem] w-full px-2 mx-auto flex justify-start items-center border border-osvauld-bordergreen rounded-lg cursor-pointer"
