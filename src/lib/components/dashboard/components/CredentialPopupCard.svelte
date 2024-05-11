@@ -24,12 +24,14 @@
       class="w-full h-[90%] overflow-y-scroll scrollbar-thin pr-0 active mt-2"
     >
       {#each nonSensitiveFields as field}
-        <PlainField
-          bgColor={null}
-          fieldName={field.fieldName}
-          fieldValue={field.fieldValue}
-          hoverEffect={true}
-        />
+        {#if field.fieldName !== "Domain"}
+          <PlainField
+            bgColor={null}
+            fieldName={field.fieldName}
+            fieldValue={field.fieldValue}
+            hoverEffect={true}
+          />
+        {/if}
       {/each}
       {#if sensitiveFields}
         {#each sensitiveFields as field}

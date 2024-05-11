@@ -45,7 +45,16 @@
       currentWindow: true,
     });
     const activeTab = tabs[0];
-    if (activeTab && activeTab.url) domain = new URL(activeTab.url).hostname;
+    if (activeTab && activeTab.url) {
+      const url = new URL(activeTab.url);
+      const hostname = url.hostname;
+      const parts = hostname.split(".");
+      if (parts.length > 2) {
+        domain = parts.slice(-2).join(".");
+      } else {
+        domain = hostname;
+      }
+    }
   };
 
   const fetchCredentialsOfCurrentDomin = async () => {
@@ -56,18 +65,17 @@
     if (credIds.length > 0) {
       passwordFound = true;
       const responseJson = await fetchCredsByIds(credIds);
-
       listedCredentials = responseJson.data;
       listedCredentials = listedCredentials.map((cred) => ({
         ...cred,
         fields: cred.fields.filter(
-          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
+          (field) => field.fieldName !== "Domain" && field.fieldName !== "URL"
         ),
       }));
 
       const decyrptedResponse = await sendMessage(
         "decryptMeta",
-        listedCredentials,
+        listedCredentials
       );
       listedCredentials = decyrptedResponse.data;
       domainAssociatedCredentials = listedCredentials;

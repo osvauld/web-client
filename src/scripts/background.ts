@@ -91,7 +91,6 @@ browser.runtime.onMessage.addListener(async (request) => {
       for (let i = 0; i < request.data.urls.length; i++) {
         const decrypted = await decryptFieldHandler(request.data.urls[i].value);
         const normalizedDecrypted = decrypted.replace(/^www\./, '');
-
         if (urlObj.has(normalizedDecrypted)) {
           // @ts-ignore
           urlObj.get(normalizedDecrypted).add(request.data.urls[i].credentialId)
