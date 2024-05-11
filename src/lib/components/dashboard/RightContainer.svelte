@@ -86,7 +86,9 @@
   };
 
   onMount(() => {
-    username = localStorage.getItem("username");
+    username =
+      localStorage.getItem("username") ||
+      JSON.parse(localStorage.getItem("user")).username;
   });
 </script>
 

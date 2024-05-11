@@ -224,7 +224,6 @@
           on:mouseenter={() => (addCredentialHovered = true)}
           on:mouseleave={() => (addCredentialHovered = false)}
           on:click={addCredentialManager}
-          disabled={checkedCards.length !== 0}
         >
           <span class="mr-2">Add New Credential</span>
           <Add color={addCredentialHovered ? "#0D0E13" : "#A3A4B5"} />
