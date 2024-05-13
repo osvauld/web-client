@@ -7,6 +7,8 @@
   } from "../dashboard/apis";
   import { sendMessage } from "../dashboard/helper";
   import FolderIcon from "../basic/icons/folderIcon.svelte";
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
   export let username = "";
   export let password = "";
   export let domain = "";
@@ -37,6 +39,10 @@
     selectedFolderId = folderId;
   };
 
+  const closeEventDispatcher = () => {
+    dispatch("close", true);
+  };
+
   const handleSave = async () => {
     const response = await fetchFolderUsersForDataSync(selectedFolderId);
     const usersToShare = response.data;
@@ -62,11 +68,11 @@
     addCredentialPayload.name = name;
     addCredentialPayload.description = description;
     addCredentialPayload.userFields = userFields;
-    console.log(addCredentialPayload);
     await addCredential(addCredentialPayload);
     showFolderList = false;
+    //Need to dispatch add credetial
+    closeEventDispatcher();
     await browser.windows.remove(windowId);
-    // showFolderList = false;
   };
 </script>
 
@@ -116,7 +122,9 @@
   </ul>
 {:else}
   <div class="text-osvauld-textActive text-base max-w-full pl-4">
-    Would you like to add this credential to osvauld?
+    {windowId === "manual"
+      ? "Enter Details of your credential"
+      : "Would you like to add this credential to osvauld?"}
   </div>
   <form
     on:submit|preventDefault={handleSubmit}
@@ -128,6 +136,7 @@
         type="text"
         required
         placeholder="Enter credential name"
+        autofocus
         bind:value={name}
         class="mt-1 block w-full px-3 py-1 rounded-md shadow-sm sm:text-sm bg-osvauld-cardshade border-osvauld-iconblack focus:border-osvauld-iconblack focus:ring-0"
         autocomplete="off"
