@@ -131,7 +131,7 @@
   </div>
   <form
     on:submit|preventDefault={handleSubmit}
-    class="flex flex-col p-4 max-w-sm mx-auto space-y-2 text-osvauld-textActive bg-osvauld-cardshade rounded-lg mt-auto"
+    class="flex flex-col p-4 max-w-sm mx-auto text-osvauld-textActive bg-osvauld-cardshade rounded-lg h-[90%] gap-2"
   >
     <div>
       <input
@@ -215,7 +215,7 @@
     </div>
     <button
       type="submit"
-      class="px-4 py-2 bg-osvauld-carolinablue text-osvauld-frameblack font-normal rounded-md active::scale-95"
+      class="px-4 py-2 bg-osvauld-carolinablue text-osvauld-frameblack font-normal rounded-md active::scale-95 mt-auto"
     >
       Next
     </button>
