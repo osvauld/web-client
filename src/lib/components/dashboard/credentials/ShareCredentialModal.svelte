@@ -13,6 +13,7 @@
   import InfoIcon from "../../basic/icons/infoIcon.svelte";
   import InfoOverlay from "../components/Info.svelte";
   import ClosePanel from "../../basic/icons/closePanel.svelte";
+  import ShareCredentialsWithEnv from "./ShareCredentialsWithEnv.svelte";
   export let credentials: Credential[];
   export let users: User[];
   export let groups: Group[];
@@ -64,7 +65,7 @@
 
     {#if showInfoTab}
       <div
-        class="relative h-[1.875rem] w-full px-4 py-2 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {infoDropdown
+        class="relative h-[1.875rem] w-full px-4 py-2 mx-auto flex justify-between items-center border border-osvauld-bordergreen rounded-lg cursor-pointer mb-3 hover:bg-osvauld-bordergreen {showInfoTab
           ? 'bg-osvauld-bordergreen'
           : ''}"
       >
@@ -97,7 +98,7 @@
           on:cancel={() => showCredentialShareDrawer.set(false)}
           on:enable={(e) => (saveEnabled = e.detail)}
         />
-      {:else}
+      {:else if selectedTab == "Groups"}
         <ShareCredentialsWithGroups
           {groups}
           {credentialsFields}

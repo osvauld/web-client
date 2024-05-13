@@ -93,6 +93,7 @@ export default {
           sideListHighlight: "#292A36",
           permissionsGreen: "#263A47",
           permissionGreenText: "#74C7EC",
+          borderColor: "#292A36"
         },
       },
       fontFamily: {

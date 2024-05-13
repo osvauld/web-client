@@ -11,3 +11,4 @@ export { default as Eye } from "../basic/icons/eye.svelte";
 export { default as Unlocked } from "../basic/icons/unlocked.svelte";
 export { default as CopyIcon } from "../basic/icons/copyIcon.svelte";
 export { default as ClosedEye } from "../basic/icons/closedEye.svelte";
+export { default as FolderIcon } from "../basic/icons/folderIcon.svelte";

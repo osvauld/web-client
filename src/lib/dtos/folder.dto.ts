@@ -5,3 +5,11 @@ export type Folder = {
   accessType: string;
 };
 
+
+export type Env = {
+  id: string;
+  name: string;
+  publicKey: string;
+  cliUser: string;
+}
+

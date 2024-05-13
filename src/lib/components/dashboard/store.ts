@@ -1,5 +1,5 @@
 export { credentialStore, selectedCredential, searchedCredential } from '../../store/credential.store';
-export { folderStore, selectedFolder } from '../../store/folder.store';
+export { folderStore, selectedFolder, envStore, selectedEnv } from '../../store/folder.store';
 export { groupList, groupStore, selectedGroup, groupUsers } from '../../store/group.store';
 export {
     showAddUserDrawer, selectedPage, showAddFolderDrawer, showAddGroupDrawer, showFolderShareDrawer,

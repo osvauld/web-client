@@ -25,7 +25,7 @@
 
   $: filteredGroups = searchInput
     ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchInput.toLowerCase())
+        group.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : groups;
 
@@ -127,7 +127,6 @@
       <ListItem
         item={group}
         isSelected={index === selectionIndex && !topList}
-        isBottomList={false}
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}

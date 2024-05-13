@@ -5,6 +5,7 @@
   import ShareCredentialModal from "./ShareCredentialModal.svelte";
   import CredentialCard from "./CredentialCard.svelte";
   import CredentialDetails from "./CredentialDetails.svelte";
+  import AddCredentialToEnv from "./AddCredentialToEnv.svelte";
 
   import { Share, Add, EyeScan, FolderShare } from "../icons";
   import { fetchSignedUpUsers, fetchAllUserGroups } from "../apis";
@@ -17,12 +18,15 @@
     selectedFolder,
     showCredentialDetailsDrawer,
     selectedCredential,
+    selectedEnv,
+    envStore,
   } from "../store";
   import { onDestroy } from "svelte";
   import DownArrow from "../../basic/icons/downArrow.svelte";
   import Placeholder from "../components/Placeholder.svelte";
   import { accessListSelected, buttonRef } from "../../../store/ui.store";
   import { setCredentialStore } from "../../../store/storeHelper";
+  import { sendMessage } from "../helper";
 
   let checkedCards: Credential[] = [];
   let users: User[] = [];
@@ -35,14 +39,15 @@
   let isShareHovered = false;
   let accesslistHovered = false;
   let addCredentialHovered = false;
+  let addcredentialToEnv = false;
   $: isShareCredActive = checkedCards.length !== 0;
 
   $: sortedCredentials = $credentialStore.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
   );
 
   $: minOneCredentialManager = sortedCredentials.some(
-    (credential) => credential.accessType === "manager"
+    (credential) => credential.accessType === "manager",
   );
 
   function handleCheck(isChecked: boolean, card: Credential) {
@@ -50,7 +55,7 @@
       checkedCards = [...checkedCards, card];
     } else {
       checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId
+        (c) => c.credentialId !== card.credentialId,
       );
     }
   }
@@ -75,7 +80,7 @@
 
   const onSelectingCard = (
     sensitiveFieldsfromCard: Fields[],
-    credential: Credential
+    credential: Credential,
   ) => {
     sensitiveFields = [...sensitiveFieldsfromCard];
     selectedCard = credential;
@@ -106,6 +111,12 @@
   const handleAccessListSelection = (e: any) => {
     buttonRef.set(e.currentTarget);
     accessListSelected.set(true);
+  };
+
+  const createCliUser = async () => {
+    const response = await sendMessage("generateCliKeys", { username: "test" });
+
+    console.log(response, "klEYEYYEY");
   };
 
   onDestroy(() => {
@@ -230,6 +241,30 @@
         </button>
       </div>
     </div>
+  {:else if $selectedEnv}
+    <div class="flex justify-between">
+      <h1
+        class="text-3xl p-4 font-normal whitespace-nowrap text-osvauld-sideListTextActive"
+      >
+        {$selectedEnv.name}
+      </h1>
+      <button
+        class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue"
+        on:mouseenter={() => (addCredentialHovered = true)}
+        on:mouseleave={() => (addCredentialHovered = false)}
+        on:click={() => (addcredentialToEnv = true)}
+      >
+        <span class="mr-2">Add Credential</span>
+        <Add color={addCredentialHovered ? "#0D0E13" : "#A3A4B5"} />
+      </button>
+
+      <button
+        on:click={async () => {
+          await createCliUser();
+        }}>create cli user</button
+      >
+      <div></div>
+    </div>
   {:else}
     <div class="w-full max-h-[100vh] min-h-[70vh] mt-20">
       <Placeholder />
@@ -283,13 +318,23 @@
         <CredentialCard
           {credential}
           checked={checkedCards.some(
-            (c) => c.credentialId === credential.credentialId
+            (c) => c.credentialId === credential.credentialId,
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
         />
       {/each}
     </div>
+  {/if}
+  {#if addcredentialToEnv}
+    <button
+      class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
+      on:click={() => !addcredentialToEnv}
+    >
+      <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
+        <AddCredentialToEnv on:close={() => (addcredentialToEnv = false)} />
+      </button>
+    </button>
   {/if}
 </div>
 

@@ -1,8 +1,8 @@
 
-import { folderStore, selectedFolder } from "./folder.store";
+import { folderStore, selectedFolder, envStore } from "./folder.store";
 import { groupStore } from "./group.store";
 import { credentialStore } from "./credential.store";
-import { fetchAllFolders } from "../apis/folder.api";
+import { fetchAllFolders, getEnvironments } from "../apis/folder.api";
 import { fetchAllUserGroups } from "../apis/group.api";
 import { fetchCredentialsByFolder } from "../apis/credentials.api";
 import { sendMessage } from "../components/dashboard/helper";
@@ -47,4 +47,11 @@ export const setCredentialStore = async () => {
     }
     const response = await sendMessage("decryptMeta", responseJson.data);
     credentialStore.set(response.data);
+}
+
+
+export const setEnvStore = async () => {
+    const responseJson = await getEnvironments();
+    const envs = responseJson.data;
+    envStore.set(envs);
 }

@@ -259,3 +259,19 @@ export const removeCredential = async (credentialId: string) => {
   return response;
 }
 
+export const shareCredentialsWithEnv = async (data: any) => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify(data) });
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+  headers.append('Signature', signatureResponse.signature)
+
+  const response = await fetch(`${baseUrl}/share-credentials/environment`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(data),
+  }).then((response) => response.json());
+
+  return response;
+}

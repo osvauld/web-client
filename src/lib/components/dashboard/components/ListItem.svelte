@@ -1,7 +1,7 @@
 <script lang="ts">
   export let item: any;
   export let isSelected: boolean;
-  export let isBottomList: boolean;
+  export let isBottomList = false;
   export let setbackground: any;
   export let showOptions: boolean;
   export let reverseModal: boolean = false;
@@ -59,7 +59,7 @@
       >
       <button
         class="w-[9.8rem] rounded-md font-normal cursor-pointer px-2 py-0.5 pl-2 text-base flex justify-around items-center {setbackground(
-          item.accessType
+          item.accessType,
         )}"
         >{item.accessType}
         <span> <DownArrow type={item.accessType} /></span>

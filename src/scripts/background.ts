@@ -4,7 +4,8 @@ import {
   decryptCredentialFieldsHandler, initiateAuthHandler, savePassphraseHandler,
   decryptCredentialFieldsHandlerNew, loadWasmModule, addCredentialHandler,
   decryptFieldHandler, encryptFieldHandler, createShareCredsPayload,
-  handlePvtKeyImport, credentialSubmitHandler, getCurrentDomain, sign_hashed_message
+  handlePvtKeyImport, credentialSubmitHandler, getCurrentDomain, sign_hashed_message,
+  generateCliKeys
 } from "./backgroundService";
 import init, { is_global_context_set } from "./crypto_primitives";
 
@@ -82,6 +83,8 @@ browser.runtime.onMessage.addListener(async (request) => {
         return savePassphraseHandler(request.data.passphrase, request.data.challenge, request.data.username)
       }
       break;
+    case "generateCliKeys":
+      return generateCliKeys(request.data.username)
     case "updateAllUrls":
       if (!request.data.domain) {
         return Promise.resolve({

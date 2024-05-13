@@ -25,7 +25,7 @@
 
   $: filteredUsers = searchInput
     ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchInput.toLowerCase())
+        user.name.toLowerCase().includes(searchInput.toLowerCase()),
       )
     : users;
 
@@ -99,7 +99,6 @@
       <ListItem
         item={user}
         isSelected={index === selectionIndex && !topList}
-        isBottomList={false}
         on:click={() => handleClick(index, false)}
         {setbackground}
         {showOptions}

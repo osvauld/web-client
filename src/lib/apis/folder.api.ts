@@ -175,3 +175,14 @@ export const removeFolder = async (folderId: string) => {
   return response.json();
 }
 
+
+export const getEnvironments = async () => {
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  return fetch(`${baseUrl}/user/environments`, {
+    headers,
+  }).then((response) => response.json());
+}

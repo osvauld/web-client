@@ -6,7 +6,7 @@
     fetchFolderUsersForDataSync,
   } from "../dashboard/apis";
   import { sendMessage } from "../dashboard/helper";
-  import FolderIcon from "../basic/icons/folderIcon.svelte";
+  import { FolderIcon } from "./icons";
   export let username = "";
   export let password = "";
   export let domain = "";

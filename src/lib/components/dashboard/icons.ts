@@ -32,3 +32,6 @@ export { default as FolderShare } from "../basic/icons/FolderShare.svelte";
 export { default as Warning } from "../basic/icons/warning.svelte";
 export { default as EyeScan } from "../basic/icons/eyeScan.svelte";
 export { default as FildeText } from "../basic/icons/fileText.svelte";
+export { default as Key } from "../basic/icons/key.svelte";
+export { default as LinkIcon } from "../basic/icons/linkIcon.svelte";
+export { default as Highlight } from "./components/Highlight.svelte";

@@ -1,8 +1,5 @@
 <script lang="ts">
-  import Key from "../basic/icons/key.svelte";
-  import LinkIcon from "../basic/icons/linkIcon.svelte";
-  import Highlight from "./components/Highlight.svelte";
-  import Lens from "../basic/icons/lens.svelte";
+  import { Key, Lens, Highlight, LinkIcon } from "./icons";
   import { createEventDispatcher, onMount } from "svelte";
 
   export let searchResults = [];

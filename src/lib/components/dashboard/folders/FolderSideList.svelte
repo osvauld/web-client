@@ -9,17 +9,20 @@
     showMoreOptions,
     modalManager,
     credentialStore,
+    envStore,
+    selectedEnv,
   } from "../store";
 
   import { Folder } from "../dtos";
   import { Menu, FolderIcon, Add } from "../icons";
   import { onMount } from "svelte";
-  import { setFolderStore } from "../../../store/storeHelper";
+  import { setFolderStore, setEnvStore } from "../../../store/storeHelper";
   let iconColor = "#6E7681";
   let hoveringIndex = null;
 
   const selectFolder = async (folder: Folder) => {
     selectedFolder.set(folder);
+    selectedEnv.set(null);
   };
 
   const openModal = () => {
@@ -36,8 +39,15 @@
     showMoreOptions.set(true);
   };
 
+  const selectEnv = (env) => {
+    selectedEnv.set(env);
+    selectedFolder.set(null);
+    credentialStore.set([]);
+  };
+
   onMount(async () => {
     await setFolderStore();
+    await setEnvStore();
   });
 </script>
 
@@ -114,5 +124,20 @@
         </button>
       </li>
     {/each}
+
+    <div>ENV's</div>
+    <li>
+      {#each $envStore as env}
+        <ul>
+          <button
+            on:click={() => {
+              selectEnv(env);
+            }}
+          >
+            {env.name}
+          </button>
+        </ul>
+      {/each}
+    </li>
   </ul>
 </div>

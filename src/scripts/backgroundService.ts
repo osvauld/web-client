@@ -3,7 +3,7 @@ import browser from "webextension-polyfill";
 import { createChallenge, finalRegistration, initiateAuth } from '../lib/apis/auth.api';
 import { fetchCredsByIds } from '../lib/apis/credentials.api';
 import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
-import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields, get_pub_key, sign_hash_message } from './crypto_primitives.js';
+import init, { generate_and_encrypt_keys, sign_message, decrypt_and_store_keys, sign_message_with_stored_key, encrypt_new_credential, decrypt_credentials, decrypt_text, decrypt_fields, encrypt_fields, get_pub_key, sign_hash_message, generate_keys_without_password } from './crypto_primitives.js';
 
 type CredentialsForUsersPayload = {
     accessType?: string;
@@ -51,7 +51,7 @@ export const initiateAuthHandler = async (passphrase: string) => {
 
 export const savePassphraseHandler = async (passphrase: string, challenge: string, username: string) => {
     await init();
-    const keyPair = await generate_and_encrypt_keys(passphrase);
+    const keyPair = await generate_and_encrypt_keys(passphrase, username);
     await browser.storage.local.set({ encryptionPvtKey: keyPair.get('enc_private_key'), signPvtKey: keyPair.get('sign_private_key'), encPublicKey: keyPair.get('enc_public_key'), signPublicKey: keyPair.get('sign_public_key') });
     const signature = await sign_message(keyPair.get('sign_private_key'), passphrase, challenge)
     await finalRegistration(username, signature, keyPair.get('sign_public_key'), keyPair.get('enc_public_key'))
@@ -219,3 +219,8 @@ export const sign_hashed_message = async (message: string) => {
     return response;
 }
 
+export const generateCliKeys = async (username: string) => {
+    const response = await generate_keys_without_password(username);
+    const returnObj = Object.fromEntries(response);
+    return returnObj;
+}
