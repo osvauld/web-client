@@ -12,7 +12,11 @@
   import { fly } from "svelte/transition";
 
   let name = $showFolderRenameDrawer ? $selectedFolder.name : "";
-  let description = $showFolderRenameDrawer ? $selectedFolder.description : "";
+
+  //Following need to be changed in future, console.log(
+  let description = $showFolderRenameDrawer
+    ? $selectedFolder.description.String
+    : "";
 
   function autofocus(node: any) {
     node.focus();
