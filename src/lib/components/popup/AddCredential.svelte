@@ -7,18 +7,21 @@
   } from "../dashboard/apis";
   import { sendMessage } from "../dashboard/helper";
   import FolderIcon from "../basic/icons/folderIcon.svelte";
+  import { Eye, ClosedEye } from "./icons";
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
   export let username = "";
   export let password = "";
   export let domain = "";
   export let windowId;
+  let visibility = false;
   let name = "";
   let description = "";
   let showFolderList = false;
   let folderData = [];
   let selectedFolderId = null;
   let hoveringIndex = null;
+  $: type = visibility ? "text" : "password";
 
   let addCredentialPayload = {
     name: name,
@@ -162,13 +165,26 @@
         class="block text-sm font-medium text-osvauld-textActive"
         >Password</label
       >
-      <input
-        id="password"
-        type="password"
-        bind:value={password}
-        autocomplete="off"
-        class="mt-1 block w-full px-3 py-1 shadow-sm sm:text-sm text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md border-0 focus:border-osvauld-iconblack focus:ring-0"
-      />
+      <div class="flex bg-osvauld-fieldActive">
+        <input
+          id="password"
+          {...{ type }}
+          bind:value={password}
+          autocomplete="off"
+          class="mt-1 block w-[90%] px-3 py-1 shadow-sm sm:text-sm text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md border-0 focus:border-osvauld-iconblack focus:ring-0"
+        />
+        <button
+          class="w-[10%] flex justify-center items-center"
+          type="button"
+          on:click={() => (visibility = !visibility)}
+        >
+          {#if visibility}
+            <ClosedEye />
+          {:else}
+            <Eye />
+          {/if}
+        </button>
+      </div>
     </div>
     <div>
       <label
