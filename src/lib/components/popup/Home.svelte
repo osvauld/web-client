@@ -165,8 +165,9 @@
     addNewCredential = true;
   };
 
-  const closeAddCredential = () => {
+  const closeAddCredential = async () => {
     addNewCredential = false;
+    await fetchCredentialsOfCurrentDomin();
   };
 </script>
 
