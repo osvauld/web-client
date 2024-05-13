@@ -1,5 +1,5 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
+  import browser, { identity } from "webextension-polyfill";
   import {
     addCredential,
     fetchAllFolders,
@@ -73,9 +73,8 @@
     addCredentialPayload.userFields = userFields;
     await addCredential(addCredentialPayload);
     showFolderList = false;
-    //Need to dispatch add credetial
     closeEventDispatcher();
-    await browser.windows.remove(windowId);
+    if (windowId !== "manual") await browser.windows.remove(windowId);
   };
 </script>
 
