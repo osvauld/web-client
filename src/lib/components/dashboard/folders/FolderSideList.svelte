@@ -11,6 +11,7 @@
     credentialStore,
     envStore,
     selectedEnv,
+    selectedSection,
   } from "../store";
 
   import { Folder } from "../dtos";
@@ -23,6 +24,7 @@
   const selectFolder = async (folder: Folder) => {
     selectedFolder.set(folder);
     selectedEnv.set(null);
+    selectedSection.set("SharedFolders");
   };
 
   const openModal = () => {
@@ -42,6 +44,14 @@
   const selectEnv = (env) => {
     selectedEnv.set(env);
     selectedFolder.set(null);
+    selectedSection.set("Environments");
+    credentialStore.set([]);
+  };
+
+  const selectSection = (section) => {
+    selectedSection.set(section);
+    selectedFolder.set(null);
+    selectedEnv.set(null);
     credentialStore.set([]);
   };
 
@@ -71,6 +81,8 @@
       </button>
     </button>
   {/if}
+  <button on:click={() => selectSection("SharedFolders")}>Shared Folders</button
+  >
   <ul
     class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin h-full -pl-3"
   >
@@ -124,8 +136,10 @@
         </button>
       </li>
     {/each}
-
-    <div>ENV's</div>
+    <button on:click={() => selectSection("PrivateFolders")}
+      >Private Folders</button
+    >
+    <button on:click={() => selectSection("Environments")}>ENV's</button>
     <li>
       {#each $envStore as env}
         <ul>

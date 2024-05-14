@@ -2,6 +2,7 @@
   import CredentialList from "./credentials/CredentialList.svelte";
   import GroupList from "./groups/GroupList.svelte";
   import SearchModal from "./SearchModal.svelte";
+  import Environments from "./credentials/Environments.svelte";
   import { searchObjects } from "./helper";
   import { getSearchFields } from "./apis";
   import { Profile, Lens, DownArrow } from "./icons";
@@ -12,6 +13,7 @@
     credentialStore,
     searchedCredential,
     folderStore,
+    selectedSection,
   } from "./store";
 
   import ProfileModal from "./components/ProfileModal.svelte";
@@ -147,9 +149,10 @@
     />
   {/if}
   <div class="h-[90vh] bg-osvauld-frameblack mr-4 overflow-hidden">
-    <!-- Content for the bottom part (dynamic content) -->
-    {#if $selectedPage === "Folders"}
+    {#if $selectedPage === "Folders" && $selectedSection === "SharedFolders"}
       <CredentialList />
+    {:else if $selectedPage === "Folders" && $selectedSection === "Environments"}
+      <Environments />
     {:else if $selectedPage === "Groups"}
       <GroupList />
     {/if}
