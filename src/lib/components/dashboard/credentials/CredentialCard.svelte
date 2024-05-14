@@ -133,12 +133,14 @@
         : ''} mt-2"
     >
       {#each credential.fields as field}
-        <PlainField
-          bgColor={null}
-          fieldName={field.fieldName}
-          fieldValue={field.fieldValue}
-          {hoverEffect}
-        />
+        {#if field.fieldName !== "Domain"}
+          <PlainField
+            bgColor={null}
+            fieldName={field.fieldName}
+            fieldValue={field.fieldValue}
+            {hoverEffect}
+          />
+        {/if}
       {/each}
       {#if sensitiveFields}
         {#each sensitiveFields as field}

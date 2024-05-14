@@ -4,13 +4,16 @@
   import { ClosePanel, Add, BinIcon } from "../icons";
   import Loader from "../components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
-  import { selectedFolder, credentialStore } from "../store";
+  import {
+    selectedFolder,
+    modalManager,
+    DeleteConfirmationModal,
+  } from "../store";
 
   import {
     fetchFolderUsersForDataSync,
     addCredential,
     updateCredential,
-    fetchCredentialsByFolder,
     fetchCredentialUsersForDataSync,
   } from "../apis";
 
@@ -71,14 +74,24 @@
     let domain = "";
     let addCredentialFields: Fields[] = [];
     for (const field of credentialFields) {
-      if (field.fieldName === "URL" && edit === false) {
+      if (field.fieldName === "URL" && field.fieldValue.length !== 0) {
         try {
-          if (field.fieldValue === "https://") {
+          if (
+            !field.fieldValue.startsWith("https://") &&
+            !field.fieldValue.startsWith("http://")
+          ) {
             errorMessage = "Invalid URL";
             isLoaderActive = false;
             return;
           }
-          domain = new URL(field.fieldValue).hostname;
+          const url = new URL(field.fieldValue);
+          const hostname = url.hostname;
+          const parts = hostname.split(".");
+          if (parts.length > 2) {
+            domain = parts.slice(-2).join(".");
+          } else {
+            domain = hostname;
+          }
           addCredentialFields.push({
             fieldName: "Domain",
             fieldValue: domain,
@@ -90,7 +103,10 @@
           return;
         }
       }
-      if (field.fieldName.length !== 0 || field.fieldValue.length !== 0) {
+      if (
+        (field.fieldName.length !== 0 || field.fieldValue.length !== 0) &&
+        field.fieldName !== "Domain"
+      ) {
         const baseField: Fields = {
           fieldName: field.fieldName,
           fieldValue: field.fieldValue,
@@ -163,7 +179,12 @@
   }
 
   function deleteCredential() {
-    console.log("Delete credential");
+    modalManager.set({
+      id: credentialId,
+      name: name,
+      type: "Credential",
+    });
+    DeleteConfirmationModal.set(true);
   }
 
   function triggerSensitiveBubble(index: number, isEnter: boolean) {
@@ -183,6 +204,7 @@
           class="text-[28px] font-sans font-normal {credentialType === 'Login'
             ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
             : 'text-osvauld-sheffieldgrey '}"
+          type="button"
           on:click={() => credentialTypeSelection(true)}
         >
           {edit ? "Edit login credential" : "Add Login credential"}
@@ -192,6 +214,7 @@
           'Other'
             ? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
             : 'text-osvauld-sheffieldgrey '}"
+          type="button"
           on:click={() => credentialTypeSelection(false)}
         >
           {edit ? "Edit other" : "Other"}
@@ -199,13 +222,17 @@
       </div>
       <div>
         {#if edit}
-          <button class="bg-osvauld-frameblack p-4" on:click={deleteCredential}
-            ><BinIcon /></button
+          <button
+            class="bg-osvauld-frameblack p-4"
+            on:click={deleteCredential}
+            type="button"><BinIcon /></button
           >
         {/if}
 
-        <button class="bg-osvauld-frameblack p-4" on:click={closeDialog}
-          ><ClosePanel /></button
+        <button
+          class="bg-osvauld-frameblack p-4"
+          on:click={closeDialog}
+          type="button"><ClosePanel /></button
         >
       </div>
     </div>
@@ -230,20 +257,23 @@
           bind:value={name}
         />
         {#each credentialFields as field, index}
-          <AddLoginFields
-            {field}
-            {index}
-            {hoveredIndex}
-            on:select={(e) =>
-              triggerSensitiveBubble(e.detail.index, e.detail.identifier)}
-            on:remove={(e) => removeField(e.detail)}
-          />
+          {#if field.fieldName !== "Domain"}
+            <AddLoginFields
+              {field}
+              {index}
+              {hoveredIndex}
+              on:select={(e) =>
+                triggerSensitiveBubble(e.detail.index, e.detail.identifier)}
+              on:remove={(e) => removeField(e.detail)}
+            />
+          {/if}
         {/each}
       </div>
       <div class="flex mr-24">
         <button
           class="py-2 m-4 bg-osvauld-addfieldgrey flex-1 flex justify-center items-center rounded-md text-osvauld-chalkwhite border-2 border-dashed border-osvauld-iconblack"
           on:click={addField}
+          type="button"
         >
           <Add color={"#6E7681"} />
         </button>
@@ -264,11 +294,12 @@
     <div class="flex justify-end items-center mx-10 py-2">
       <button
         class="px-3 py-1.5 mb-6 whitespace-nowrap text-osvauld-fadedCancel bg-osvauld-frameblack hover:bg-osvauld-cardshade flex justify-center items-center rounded-md hover:text-osvauld-textActive text-base font-normal"
+        type="button"
         on:click={closeDialog}>Cancel</button
       >
       <button
         type="submit"
-        class="px-3 py-1.5 mb-6 whitespace-nowrap flex justify-center items-center ml-3 text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack font-normal text-base rounded-md"
+        class="px-3 py-1.5 mb-6 whitespace-nowrap flex justify-center items-center ml-3 border border-osvauld-textActive text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack hover:border-osvauld-carolinablue font-normal text-base rounded-md"
         disabled={isLoaderActive}
       >
         {#if isLoaderActive}

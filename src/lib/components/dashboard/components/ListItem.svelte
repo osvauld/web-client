@@ -44,7 +44,7 @@
 >
   <div class="flex items-center space-x-4 max-w-full">
     <p
-      class="py-1 px-1 max-w-full whitespace-nowrap text-base {isBottomList ||
+      class="py-1 px-1 w-[15rem] overflow-hidden whitespace-nowrap text-base flex justify-start {isBottomList ||
       hoveredOverThisItem
         ? 'text-osvauld-textActive'
         : 'text-osvauld-sheffieldgrey'}"

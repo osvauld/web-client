@@ -1,5 +1,6 @@
 <script lang="ts">
   import Eye from "../basic/icons/eye.svelte";
+  import ClosedEye from "../basic/icons/closedEye.svelte";
   import Loader from "../dashboard/components/Loader.svelte";
   import { sendMessage } from "../dashboard/helper";
   import { createEventDispatcher } from "svelte";
@@ -33,6 +34,10 @@
     if (type === "passphrase") passphrase = event.target.value;
     else confirmPassphrase = event.target.value;
   }
+
+  const togglePassword = () => {
+    showPassword = !showPassword;
+  };
 </script>
 
 <form
@@ -55,9 +60,13 @@
     <button
       type="button"
       class="flex justify-center items-center"
-      on:click={() => !showPassword}
+      on:click={togglePassword}
     >
-      <Eye />
+      {#if showPassword}
+        <ClosedEye />
+      {:else}
+        <Eye />
+      {/if}
     </button>
   </div>
   <label for="passphrase" class="font-normal mt-6">Confirm Passphrase</label>
@@ -76,9 +85,13 @@
     <button
       type="button"
       class="flex justify-center items-center"
-      on:click={() => !showPassword}
+      on:click={togglePassword}
     >
-      <Eye />
+      {#if showPassword}
+        <ClosedEye />
+      {:else}
+        <Eye />
+      {/if}
     </button>
   </div>
   {#if showPassphraseMismatchError}

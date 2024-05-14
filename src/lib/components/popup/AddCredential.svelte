@@ -1,5 +1,5 @@
 <script lang="ts">
-  import browser from "webextension-polyfill";
+  import browser, { identity } from "webextension-polyfill";
   import {
     addCredential,
     fetchAllFolders,
@@ -7,16 +7,21 @@
   } from "../dashboard/apis";
   import { sendMessage } from "../dashboard/helper";
   import FolderIcon from "../basic/icons/folderIcon.svelte";
+  import { Eye, ClosedEye } from "./icons";
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
   export let username = "";
   export let password = "";
   export let domain = "";
   export let windowId;
+  let visibility = false;
   let name = "";
   let description = "";
   let showFolderList = false;
   let folderData = [];
   let selectedFolderId = null;
   let hoveringIndex = null;
+  $: type = visibility ? "text" : "password";
 
   let addCredentialPayload = {
     name: name,
@@ -35,6 +40,10 @@
 
   const handleFolderSelect = async (folderId) => {
     selectedFolderId = folderId;
+  };
+
+  const closeEventDispatcher = () => {
+    dispatch("close", true);
   };
 
   const handleSave = async () => {
@@ -62,11 +71,10 @@
     addCredentialPayload.name = name;
     addCredentialPayload.description = description;
     addCredentialPayload.userFields = userFields;
-    console.log(addCredentialPayload);
     await addCredential(addCredentialPayload);
     showFolderList = false;
-    await browser.windows.remove(windowId);
-    // showFolderList = false;
+    closeEventDispatcher();
+    if (windowId !== "manual") await browser.windows.remove(windowId);
   };
 </script>
 
@@ -116,11 +124,13 @@
   </ul>
 {:else}
   <div class="text-osvauld-textActive text-base max-w-full pl-4">
-    Would you like to add this credential to osvauld?
+    {windowId === "manual"
+      ? "Enter Details of your credential"
+      : "Would you like to add this credential to osvauld?"}
   </div>
   <form
     on:submit|preventDefault={handleSubmit}
-    class="flex flex-col p-4 max-w-sm mx-auto space-y-2 text-osvauld-textActive bg-osvauld-cardshade rounded-lg mt-auto"
+    class="flex flex-col p-4 max-w-sm mx-auto text-osvauld-textActive bg-osvauld-cardshade rounded-lg h-[90%] gap-2"
   >
     <div>
       <input
@@ -128,6 +138,7 @@
         type="text"
         required
         placeholder="Enter credential name"
+        autofocus
         bind:value={name}
         class="mt-1 block w-full px-3 py-1 rounded-md shadow-sm sm:text-sm bg-osvauld-cardshade border-osvauld-iconblack focus:border-osvauld-iconblack focus:ring-0"
         autocomplete="off"
@@ -153,13 +164,26 @@
         class="block text-sm font-medium text-osvauld-textActive"
         >Password</label
       >
-      <input
-        id="password"
-        type="password"
-        bind:value={password}
-        autocomplete="off"
-        class="mt-1 block w-full px-3 py-1 shadow-sm sm:text-sm text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md border-0 focus:border-osvauld-iconblack focus:ring-0"
-      />
+      <div class="flex bg-osvauld-fieldActive">
+        <input
+          id="password"
+          {...{ type }}
+          bind:value={password}
+          autocomplete="off"
+          class="mt-1 block w-[90%] px-3 py-1 shadow-sm sm:text-sm text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md border-0 focus:border-osvauld-iconblack focus:ring-0"
+        />
+        <button
+          class="w-[10%] flex justify-center items-center"
+          type="button"
+          on:click={() => (visibility = !visibility)}
+        >
+          {#if visibility}
+            <ClosedEye />
+          {:else}
+            <Eye />
+          {/if}
+        </button>
+      </div>
     </div>
     <div>
       <label
@@ -190,7 +214,7 @@
     </div>
     <button
       type="submit"
-      class="px-4 py-2 bg-osvauld-carolinablue text-osvauld-frameblack font-normal rounded-md active::scale-95"
+      class="px-4 py-2 bg-osvauld-carolinablue text-osvauld-frameblack font-normal rounded-md active::scale-95 mt-auto"
     >
       Next
     </button>

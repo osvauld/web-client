@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AddFolder from "./AddFolder.svelte";
+  import FolderEditor from "./FolderEditor.svelte";
 
   import {
     showAddFolderDrawer,
@@ -9,6 +9,7 @@
     showMoreOptions,
     modalManager,
     credentialStore,
+    showFolderRenameDrawer,
   } from "../store";
 
   import { Folder } from "../dtos";
@@ -51,13 +52,13 @@
     <span class="mr-1 text-base font-normal">Create new folder</span>
     <Add color={iconColor} />
   </button>
-  {#if $showAddFolderDrawer}
+  {#if $showAddFolderDrawer || $showFolderRenameDrawer}
     <button
       class="fixed inset-0 flex items-center justify-center z-50 backdrop-filter backdrop-blur-[2px]"
       on:click={closeModal}
     >
       <button class="p-6 rounded" on:click|stopPropagation>
-        <AddFolder />
+        <FolderEditor />
       </button>
     </button>
   {/if}
@@ -82,7 +83,7 @@
               : "#85889C"}
           />
           <span
-            class="max-w-[75%] ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap {$selectedFolder?.id ==
+            class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem] {$selectedFolder?.id ==
               folder.id || hoveringIndex === index
               ? 'text-osvauld-sideListTextActive'
               : 'text-osvauld-fieldText'}"

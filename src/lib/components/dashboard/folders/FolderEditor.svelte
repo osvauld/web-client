@@ -1,21 +1,44 @@
 <script lang="ts">
-  import { createFolder } from "../apis";
+  import { createFolder, renameFolder } from "../apis";
   import {
     showAddFolderDrawer,
     folderStore,
     selectedFolder,
     toastStore,
+    showFolderRenameDrawer,
   } from "../store";
   import { ClosePanel } from "../icons";
   import { setFolderStore } from "../../../store/storeHelper";
   import { fly } from "svelte/transition";
 
-  let name = "";
-  let description = "";
+  let name = $showFolderRenameDrawer ? $selectedFolder.name : "";
+
+  //Following need to be changed in future, console.log(
+  let description = $showFolderRenameDrawer
+    ? $selectedFolder.description.String
+    : "";
 
   function autofocus(node: any) {
     node.focus();
   }
+
+  const renameFolderFunc = async () => {
+    const payload = {
+      name: name,
+      description: description,
+    };
+    const renameResponse = await renameFolder(payload, $selectedFolder.id);
+    await setFolderStore();
+    showFolderRenameDrawer.set(false);
+    const actionMessage = renameResponse.success
+      ? "Folder Successfully Renamed"
+      : "Failed to Rename folder";
+    toastStore.set({
+      type: renameResponse.success,
+      message: actionMessage,
+      show: true,
+    });
+  };
 
   const addFolderFunc = async () => {
     const payload = {
@@ -41,22 +64,30 @@
     });
   };
 
-  const handleClose = () => {
+  const handleClose = (message) => {
+    console.log("Closing triggered", message);
+    showFolderRenameDrawer.set(false);
     showAddFolderDrawer.set(false);
   };
 </script>
 
 <form
   class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[25rem] flex flex-col items-start justify-center gap-3"
-  on:submit|preventDefault={addFolderFunc}
+  on:submit|preventDefault={$showFolderRenameDrawer
+    ? renameFolderFunc
+    : addFolderFunc}
   in:fly
   out:fly
 >
   <div class="flex justify-between items-center w-full">
     <span class="text-[21px] font-medium text-osvauld-quarzowhite"
-      >Create Folder</span
+      >{$showFolderRenameDrawer ? "Rename Folder" : "Create Folder"}</span
     >
-    <button class="cursor-pointer p-2" on:click|preventDefault={handleClose}>
+    <button
+      class="cursor-pointer p-2"
+      type="button"
+      on:click|preventDefault={handleClose}
+    >
       <ClosePanel />
     </button>
   </div>
@@ -65,7 +96,7 @@
   ></div>
 
   <label for="name" class="font-bold text-base text-osvauld-textActive"
-    >Name:</label
+    >{$showFolderRenameDrawer ? "Folder Name" : "Name:"}</label
   >
   <input
     id="name"
@@ -92,12 +123,14 @@
   <div class="flex justify-end items-center gap-6 w-full">
     <button
       class="text-osvauld-fadedCancel font-medium text-base"
+      type="button"
       on:click|preventDefault={handleClose}>Cancel</button
     >
     <button
       class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md"
       type="submit"
-      disabled={!name}>Add Folder</button
+      disabled={!name}
+      >{$showFolderRenameDrawer ? "Save Changes" : "Add Folder"}</button
     >
   </div>
 </form>
