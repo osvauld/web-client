@@ -15,6 +15,7 @@
   import ListedCredentials from "./components/ListedCredentials.svelte";
   import PasswordNotFound from "./components/PasswordNotFound.svelte";
   import AddCredential from "./AddCredential.svelte";
+  import { Add } from "./icons";
 
   let passwordFound = false;
   let credentialClicked = false;
@@ -114,6 +115,7 @@
     port.disconnect();
     port.onMessage.removeListener(handleMessage);
   });
+
   const handleInputChange = async (e) => {
     const query = e.target.value;
     if (query.length >= 1) {
@@ -158,9 +160,18 @@
     scrollPosition = e.target.scrollTop;
     await localStorage.setItem("scrollPosition", scrollPosition.toString());
   };
+
+  const addCredentialManual = async () => {
+    addNewCredential = true;
+  };
+
+  const closeAddCredential = async () => {
+    addNewCredential = false;
+    await fetchCredentialsOfCurrentDomin();
+  };
 </script>
 
-<div class="w-full h-full px-2">
+<div class="w-full h-full px-2 relative">
   {#if !addNewCredential}
     <div class="flex justify-between items-center mb-3 py-0">
       <h6 class="text-2xl font-medium text-osvauld-fieldText tracking-wide">
@@ -224,8 +235,9 @@
           <AddCredential
             username={newCredential.username}
             password={newCredential.password}
-            domain={newCredential.domain}
-            windowId={newCredential.windowId}
+            domain={newCredential.domain || domain}
+            windowId={newCredential.windowId || "manual"}
+            on:close={closeAddCredential}
           />
         {:else if listedCredentials.length !== 0}
           {#each listedCredentials as credential}
@@ -241,4 +253,11 @@
       </div>
     </div>
   </div>
+
+  {#if !addNewCredential}
+    <button
+      class="p-1 border border-osvauld-defaultBorder rounded-md right-2 bottom-2 fixed active:scale-[.98]"
+      on:click={addCredentialManual}><Add color={"#A3A4B5"} /></button
+    >
+  {/if}
 </div>

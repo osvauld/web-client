@@ -44,6 +44,26 @@ export const createGroup = async (payload: CreateGroupPayload) => {
   return response.json();
 };
 
+
+export const renameGroup = async (payload: CreateGroupPayload, id: string) => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const response = await fetch(`${baseUrl}/group/${id}`, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+};
+
 // TODO: add type for payload
 export const addUserToGroup = async (payload: AddUserToGroupPayload) => {
   const headers = new Headers();

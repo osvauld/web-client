@@ -10,13 +10,15 @@ export {
 export {
     fetchAllFolders, fetchFolderUsers, createFolder, shareFolderWithUsers,
     shareFolderWithGroups, fetchFolderGroups, editFolderPermissionForGroup, editFolderPermissionForUser,
-    fetchFolderUsersForDataSync, removeFolder, getEnvironments, addEnvironment, fetchEnvFields
+    fetchFolderUsersForDataSync, removeFolder, getEnvironments, addEnvironment, fetchEnvFields,
+    renameFolder
+
 } from '../../apis/folder.api';
 
 export {
     fetchAllUserGroups, fetchGroupUsers, createGroup, addUserToGroup, fetchUsersByGroupIds,
     shareCredentialsWithGroups, fetchGroupsWithoutAccess, fetchCredentialFieldsByGroupId, fetchCredentialGroups,
-    fetchUsersWithoutGroupAccess, removeGroupFromFolder, removeGroupFromCredential, removeUserFromGroup, removeGroup
+    fetchUsersWithoutGroupAccess, removeGroupFromFolder, removeGroupFromCredential, removeUserFromGroup, removeGroup, renameGroup
 } from '../../apis/group.api';
 export {
     fetchSignedUpUsers, createUser, fetchCredentialUsers, removeUserFromFolder,

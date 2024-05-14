@@ -70,6 +70,23 @@ export const createFolder = async (payload: any): Promise<BaseResponse> => {
   return response.json();
 };
 
+export const renameFolder = async (payload: any, id: string): Promise<BaseResponse> => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+  const response = await fetch(`${baseUrl}/folder/${id}`, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+};
+
 export const shareFolderWithUsers = async (payload: ShareFolderWithUsersPayload) => {
   const headers = new Headers();
   const signatureResponse = await sendMessage("hashAndSign", { message: JSON.stringify(payload) });
