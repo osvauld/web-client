@@ -22,8 +22,8 @@ document.addEventListener('readystatechange', function () {
         if(forms.length > 0){
             forms.forEach(form => {
                 form.addEventListener('submit', function (event) {
-                    const username = usernameElem?.value;
-                    const password = passwordElem?.value;
+                    const username = form.querySelector('input[type="text"], input[type="email"]')?.value;
+                    const password = form.querySelector('input[type="password"]')?.value;
         
                     if (username && password) {
                         // Send message to the background script
@@ -37,9 +37,9 @@ document.addEventListener('readystatechange', function () {
         } 
         // when detect when url is changing
         window.addEventListener('popstate', () => {
-            const username = usernameElem?.value;
-            const password = passwordElem?.value
-            if(forms.length === 0 && (username && password)){
+            if(forms.length === 0 && (usernameElem?.value && passwordElem?.value)){
+                const username = usernameElem?.value;
+                const password = passwordElem?.value
                 browser.runtime.sendMessage({
                     action: 'credentialSubmit',
                     data: { username, password  }

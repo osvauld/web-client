@@ -130,7 +130,9 @@
   </div>
   <form
     on:submit|preventDefault={handleSubmit}
-    class="flex flex-col p-4 max-w-sm mx-auto text-osvauld-textActive bg-osvauld-cardshade rounded-lg h-[90%] gap-2"
+    class="flex flex-col p-4 max-w-sm mx-auto text-osvauld-textActive bg-osvauld-cardshade rounded-lg {windowId
+      ? 'h-[70%]'
+      : 'h-[90%]'} gap-2"
   >
     <div>
       <input

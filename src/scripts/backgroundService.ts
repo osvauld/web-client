@@ -191,8 +191,8 @@ export const credentialSubmitHandler = async (newCredential: any, credIds: strin
     const windowDetails = await browser.windows.create({
         url: browser.runtime.getURL('popup.html'),
         type: 'popup',
-        width: 520,
-        height: 710
+        width: 290,
+        height: 480
     });
     return windowDetails.id;
 }
