@@ -133,3 +133,14 @@ export const addCliUser = async (data: any) => {
 
   return response;
 }
+
+export const fetchCliUsers = async () => {
+  const headers = new Headers();
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  headers.append("Authorization", `Bearer ${token}`);
+
+  return await fetch(`${baseUrl}/user/cli-users`, {
+    method: "GET",
+    headers,
+  }).then(response => response.json());
+}

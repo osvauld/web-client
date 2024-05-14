@@ -186,3 +186,33 @@ export const getEnvironments = async () => {
     headers,
   }).then((response) => response.json());
 }
+
+
+export const addEnvironment = async (name: string, cliUser: string) => {
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  const payload = {
+    name,
+    cliUser
+  }
+
+  return fetch(`${baseUrl}/user/environment`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  }).then((response) => response.json());
+}
+
+export const fetchEnvFields = async (envId: string) => {
+  const { token, baseUrl } = await getTokenAndBaseUrl()
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+
+  return fetch(`${baseUrl}/user/environment/${envId}`, {
+    headers,
+  }).then((response) => response.json());
+}

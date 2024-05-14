@@ -10,7 +10,7 @@ export {
 export {
     fetchAllFolders, fetchFolderUsers, createFolder, shareFolderWithUsers,
     shareFolderWithGroups, fetchFolderGroups, editFolderPermissionForGroup, editFolderPermissionForUser,
-    fetchFolderUsersForDataSync, removeFolder, getEnvironments
+    fetchFolderUsersForDataSync, removeFolder, getEnvironments, addEnvironment, fetchEnvFields
 } from '../../apis/folder.api';
 
 export {
@@ -20,5 +20,5 @@ export {
 } from '../../apis/group.api';
 export {
     fetchSignedUpUsers, createUser, fetchCredentialUsers, removeUserFromFolder,
-    removeUserFromCredential, deleteUser, checkUserNameExists, fetchAllUsers, addCliUser
+    removeUserFromCredential, deleteUser, checkUserNameExists, fetchAllUsers, addCliUser, fetchCliUsers
 } from '../../apis/user.api';
