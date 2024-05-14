@@ -8,7 +8,7 @@
   import AddCredentialToEnv from "./AddCredentialToEnv.svelte";
 
   import { Share, Add, EyeScan, FolderShare } from "../icons";
-  import { fetchSignedUpUsers, fetchAllUserGroups } from "../apis";
+  import { fetchSignedUpUsers, fetchAllUserGroups, addCliUser } from "../apis";
   import { User, Group, Credential, Fields } from "../dtos";
 
   import {
@@ -263,7 +263,6 @@
           await createCliUser();
         }}>create cli user</button
       >
-      <div></div>
     </div>
   {:else}
     <div class="w-full max-h-[100vh] min-h-[70vh] mt-20">

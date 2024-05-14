@@ -17,6 +17,7 @@ export let DeleteConfirmationModal = writable(false);
 export let accessListSelected = writable(false);
 export let showMoreGroupOptions = writable(false);
 export let toastStore = writable({ show: false, message: "", type: true });
+export let selectedSection = writable("Credentials");
 
 
 
