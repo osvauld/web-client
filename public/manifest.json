@@ -1,4 +1,3 @@
-
 {
   "manifest_version": 3,
   "name": "osvauld",
@@ -12,16 +11,10 @@
   "background": {
     "type": "module",
     "service_worker": "background.js"
-},
-  "permissions": [
-    "storage",
-    "activeTab",
-    "windows"
-  ],
-  
-"host_permissions": [
-  "<all_urls>"
-],
+  },
+  "permissions": ["storage", "activeTab", "windows"],
+
+  "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup.html"
   },

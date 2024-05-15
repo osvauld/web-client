@@ -120,7 +120,6 @@ browser.runtime.onMessage.addListener(async (request) => {
       const credIds = Array.from(urlObj.get(newCredential.domain.replace(/^www\./, '')) || [])
       newCredential.windowId = await credentialSubmitHandler(newCredential, credIds)
       return true;
-
     }
 
     default:
