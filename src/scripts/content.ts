@@ -4,7 +4,6 @@ let formSubmitted = false;
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'complete') {
         const forms = document.querySelectorAll('form');
-        console.log('script injected');
         // const currentURL = window.location.href;
         // let usernameElem= document.evaluate(
         //     "(//form//input[   @type='email' or contains(@name, 'username')   or contains(@id, 'email')   or contains(@id, 'username')   or contains(@placeholder, 'Email')   or contains(@placeholder, 'Username')   or contains(ancestor::label, 'Email')   or contains(ancestor::label, 'Username')   or contains(@class, 'email')   or contains(@class, 'username')   or @aria-label='Email'   or @aria-label='Username'   or @aria-labelledby='Email'   or @aria-labelledby='Username' ] | //input[@type='text'])[1]",
@@ -35,23 +34,9 @@ document.addEventListener('readystatechange', function () {
                             data: { username, password }
                         })
                         formSubmitted = true;
-                        console.log('Submitted via form');
                     }
                 });
             });
         } 
-        // when detect when url is changing
-        // window.addEventListener('popstate', () => {
-        //     if( !formSubmitted && forms.length === 0 && (usernameElem?.value && passwordElem?.value)){
-        //         const username = usernameElem?.value;
-        //         const password = passwordElem?.value
-        //         browser.runtime.sendMessage({
-        //             action: 'credentialSubmit',
-        //             data: { username, password  }
-        //         })
-        //           console.log('Submitted via form');
-        //     }
-        // });
-
     }
 });
