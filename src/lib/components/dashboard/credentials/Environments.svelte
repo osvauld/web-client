@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { scale } from "svelte/transition";
   import {
     selectedEnv,
     showAddCliDrawer,
@@ -7,7 +8,7 @@
   } from "../store";
   import AddCredentialToEnv from "./AddCredentialToEnv.svelte";
   import AddCliUser from "./AddCliUser.svelte";
-  import { Add } from "../icons";
+  import { Add, Tick, ActiveCopy, CopyIcon } from "../icons";
   import { fetchEnvFields } from "../apis";
   import EnvironmentAdd from "../../basic/icons/environmentAdd.svelte";
   import UserPlus from "../../basic/icons/userPlus.svelte";
@@ -17,7 +18,11 @@
   let addcredentialToEnv = false;
   let addNewUserHovered = false;
   let addNewCliUserHovered = false;
+  let copiedIndex = null;
+  let isFieldName = null;
+  let hoverEffect = false;
   let fields = [];
+
   const addEnv = () => {
     showAddEnvDrawer.set(true);
   };
@@ -31,6 +36,20 @@
       fields = fieldsResponse.data;
     }
   });
+
+  const copyToClipboard = async (value, index, iamFieldName) => {
+    copiedIndex = index;
+    isFieldName = iamFieldName;
+    try {
+      await navigator.clipboard.writeText(value);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+    setTimeout(() => {
+      copiedIndex = null;
+      isFieldName = null;
+    }, 2000);
+  };
 </script>
 
 <div class="flex justify-between items-center my-4 p-2">
@@ -50,7 +69,7 @@
       on:mouseleave={() => (addCredentialHovered = false)}
       on:click={() => (addcredentialToEnv = true)}
     >
-      <span class="mr-2">Add Credential</span>
+      <span class="mr-2">Add Credential to environment</span>
       <Add color={addCredentialHovered ? "#0D0E13" : "#A3A4B5"} />
     </button>
   {:else}
@@ -79,11 +98,62 @@
 </div>
 
 {#if $selectedEnv}
-  <ul>
-    {#each fields as field}
-      <li>
-        {field.fieldName}
-        {field.fieldValue}
+  <ul
+    class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden overflow-y-scroll scrollbar-thin min-h-[24rem] max-h-[45rem]"
+  >
+    {#each fields as field, index}
+      <li class="w-full">
+        <div class="flex items-center justify-between p-4">
+          <div
+            class="w-[30%] bg-osvauld-fieldActive rounded-md px-2 py-1 flex justify-between items-center"
+          >
+            <input
+              class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
+              id={`key-${index}`}
+              type="text"
+              value={field.fieldName}
+            />
+            <button
+              on:click|preventDefault|stopPropagation={() =>
+                copyToClipboard(field.fieldName, index, true)}
+            >
+              {#if copiedIndex === index && isFieldName}
+                <span in:scale>
+                  <Tick />
+                </span>
+              {:else if hoverEffect}
+                <ActiveCopy />
+              {:else}
+                <CopyIcon color={"#4D4F60"} />
+              {/if}
+            </button>
+          </div>
+          <div
+            class="w-[68%] bg-osvauld-fieldActive rounded-md px-2 py-1 flex justify-between items-center"
+          >
+            <input
+              class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
+              id={`value-${index}`}
+              type="text"
+              autocomplete="off"
+              value={field.fieldValue}
+            />
+            <button
+              on:click|preventDefault|stopPropagation={() =>
+                copyToClipboard(field.fieldValue, index, false)}
+            >
+              {#if copiedIndex === index && !isFieldName}
+                <span in:scale>
+                  <Tick />
+                </span>
+              {:else if hoverEffect}
+                <ActiveCopy />
+              {:else}
+                <CopyIcon color={"#4D4F60"} />
+              {/if}
+            </button>
+          </div>
+        </div>
       </li>
     {/each}
   </ul>
@@ -96,6 +166,7 @@
     {/each}
   </ul>
 {/if}
+
 {#if addcredentialToEnv}
   <button
     class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
