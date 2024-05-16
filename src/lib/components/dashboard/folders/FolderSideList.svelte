@@ -21,8 +21,11 @@
   import { setFolderStore, setEnvStore } from "../../../store/storeHelper";
   import FolderAdd from "../../basic/icons/folderAdd.svelte";
   import EnvironmentAdd from "../../basic/icons/environmentAdd.svelte";
+  import Environments from "../credentials/Environments.svelte";
+  import ExistingEnvironment from "../../basic/icons/existingEnvironment.svelte";
   let iconColor = "#6E7681";
   let hoveringIndex = null;
+  let hoveringEnvIndex = null;
 
   const selectFolder = async (folder: Folder) => {
     selectedFolder.set(folder);
@@ -103,7 +106,7 @@
     </span>
   </button>
   <ul
-    class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin min-h-[8rem] max-h-[16rem] -pl-3"
+    class="overflow-y-scroll w-[90%] overflow-x-hidden scrollbar-thin min-h-[8rem] max-h-[16rem] -pl-3"
   >
     {#each $folderStore as folder, index}
       <li
@@ -156,7 +159,7 @@
       </li>
     {/each}
   </ul>
-
+  <div class="border-b border-osvauld-iconblack my-1 w-[90%]"></div>
   <button
     on:click={() => selectSection("PrivateFolders")}
     class="text-white w-[90%] py-2 flex justify-between items-center px-2 rounded-md {$selectedSection ===
@@ -177,7 +180,7 @@
   <ul
     class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin -pl-3 mx-auto"
   ></ul>
-
+  <div class="border-b border-osvauld-iconblack my-1 w-[90%]"></div>
   <button
     on:click={() => selectSection("Environments")}
     class="text-white w-[90%] py-2 flex justify-between items-center px-2 rounded-md {$selectedSection ===
@@ -195,16 +198,36 @@
       </span>
     </span>
   </button>
-  <ul>
-    {#each $envStore as env}
-      <li>
+  <ul
+    class="overflow-y-scroll w-[90%] overflow-x-hidden scrollbar-thin min-h-[8rem] max-h-[16rem] -pl-3"
+  >
+    {#each $envStore as env, index}
+      <li
+        class="{$selectedEnv?.id == env.id
+          ? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
+          : 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center transition-colors duration-100"
+        on:mouseenter={() => (hoveringEnvIndex = index)}
+        on:mouseleave={() => (hoveringEnvIndex = null)}
+      >
         <button
           on:click={() => {
             selectEnv(env);
           }}
+          class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
         >
-          {env.name}
-        </button>
+          <ExistingEnvironment
+            color={$selectedEnv?.id == env.id || hoveringEnvIndex === index
+              ? "#F2F2F0"
+              : "#85889C"}
+          />
+          <span
+            class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem] {$selectedEnv?.id ==
+              env.id || hoveringEnvIndex === index
+              ? 'text-osvauld-sideListTextActive'
+              : 'text-osvauld-fieldText'}"
+            >{env.name}
+          </span></button
+        >
       </li>
     {/each}
   </ul>
