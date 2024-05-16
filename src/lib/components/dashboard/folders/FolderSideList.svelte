@@ -13,13 +13,13 @@
     selectedEnv,
     selectedSection,
     showFolderRenameDrawer,
-
   } from "../store";
 
   import { Folder } from "../dtos";
-  import { Menu, FolderIcon, Add } from "../icons";
+  import { Menu, FolderIcon, Add, RightArrow } from "../icons";
   import { onMount } from "svelte";
   import { setFolderStore, setEnvStore } from "../../../store/storeHelper";
+  import FolderAdd from "../../basic/icons/folderAdd.svelte";
   let iconColor = "#6E7681";
   let hoveringIndex = null;
 
@@ -83,8 +83,24 @@
       </button>
     </button>
   {/if}
-  <button on:click={() => selectSection("SharedFolders")}>Shared Folders</button
-  >
+  <div class="border-b border-osvauld-iconblack my-1 w-[90%]"></div>
+  <button
+    on:click={() => selectSection("SharedFolders")}
+    class="text-white w-[90%] py-2 flex justify-between items-center px-2 rounded-md {$selectedSection ===
+    'SharedFolders'
+      ? 'bg-osvauld-sideListHighlight'
+      : ''}"
+    >Shared Folders <span class="flex"
+      ><FolderAdd />
+      <span
+        class={$selectedSection === "SharedFolders"
+          ? "rotate-90 transition-all"
+          : "rotate-0"}
+      >
+        <RightArrow />
+      </span>
+    </span>
+  </button>
   <ul
     class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin h-full -pl-3"
   >
