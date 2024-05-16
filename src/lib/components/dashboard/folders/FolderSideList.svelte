@@ -20,6 +20,7 @@
   import { onMount } from "svelte";
   import { setFolderStore, setEnvStore } from "../../../store/storeHelper";
   import FolderAdd from "../../basic/icons/folderAdd.svelte";
+  import EnvironmentAdd from "../../basic/icons/environmentAdd.svelte";
   let iconColor = "#6E7681";
   let hoveringIndex = null;
 
@@ -102,7 +103,7 @@
     </span>
   </button>
   <ul
-    class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin h-full -pl-3"
+    class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin min-h-[8rem] max-h-[16rem] -pl-3"
   >
     {#each $folderStore as folder, index}
       <li
@@ -154,22 +155,57 @@
         </button>
       </li>
     {/each}
-    <button on:click={() => selectSection("PrivateFolders")}
-      >Private Folders</button
-    >
-    <button on:click={() => selectSection("Environments")}>ENV's</button>
-    <li>
-      {#each $envStore as env}
-        <ul>
-          <button
-            on:click={() => {
-              selectEnv(env);
-            }}
-          >
-            {env.name}
-          </button>
-        </ul>
-      {/each}
-    </li>
+  </ul>
+
+  <button
+    on:click={() => selectSection("PrivateFolders")}
+    class="text-white w-[90%] py-2 flex justify-between items-center px-2 rounded-md {$selectedSection ===
+    'PrivateFolders'
+      ? 'bg-osvauld-sideListHighlight'
+      : ''}"
+    >Private Folders <span class="flex"
+      ><FolderAdd />
+      <span
+        class={$selectedSection === "PrivateFolders"
+          ? "rotate-90 transition-all"
+          : "rotate-0"}
+      >
+        <RightArrow />
+      </span>
+    </span>
+  </button>
+  <ul
+    class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin -pl-3 mx-auto"
+  ></ul>
+
+  <button
+    on:click={() => selectSection("Environments")}
+    class="text-white w-[90%] py-2 flex justify-between items-center px-2 rounded-md {$selectedSection ===
+    'Environments'
+      ? 'bg-osvauld-sideListHighlight'
+      : ''}"
+    >Environments <span class="flex"
+      ><EnvironmentAdd />
+      <span
+        class={$selectedSection === "Environments"
+          ? "rotate-90 transition-all"
+          : "rotate-0"}
+      >
+        <RightArrow />
+      </span>
+    </span>
+  </button>
+  <ul>
+    {#each $envStore as env}
+      <li>
+        <button
+          on:click={() => {
+            selectEnv(env);
+          }}
+        >
+          {env.name}
+        </button>
+      </li>
+    {/each}
   </ul>
 </div>
