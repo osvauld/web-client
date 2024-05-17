@@ -1,16 +1,46 @@
 <script lang="ts">
   import { fetchCliUsers, addEnvironment } from "../apis";
-
+  import { onMount, createEventDispatcher } from "svelte";
   import { showAddEnvDrawer } from "../store";
-  import ClosePanel from "../../basic/icons/closePanel.svelte";
-  import { onMount } from "svelte";
+  import { getSearchFields } from "../apis";
+  import { ClosePanel, Lens, UserCheck, UserPlus } from "../icons";
+  import { searchObjects } from "../helper";
 
   let name = "";
   let selectedUser = null;
   let cliUsers = [];
+  let query = "";
+  let searchData = [];
+  let searchResults = [];
+  let hoveredIndex = null;
+  let selectedUserIndice = null;
+
+  const dispatch = createEventDispatcher();
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      dispatch("close");
+    }
+  };
+
+  const addUsertoGroup = async (user, index) => {
+    selectedUserIndice = index;
+    selectedUser = user;
+  };
+
+  const getSearchData = async () => {
+    const searchFieldSResponse = await getSearchFields();
+    searchData = searchFieldSResponse.data;
+    searchResults = searchData;
+  };
+  const handleInputChange = (e: any) => {
+    const query = e.type === "input" ? e.target.value : e.detail;
+    searchResults = query.length >= 1 ? searchObjects(query, searchData) : [];
+  };
 
   const addEnvironmentHandler = async () => {
     console.log(selectedUser.id);
+
     await addEnvironment(name, selectedUser.id);
     showAddEnvDrawer.set(false);
   };
@@ -44,8 +74,8 @@
     class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
   ></div>
 
-  <label for="name" class="font-bold text-base text-osvauld-textActive"
-    >Name:</label
+  <label for="name" class="font-normal text-base text-osvauld-textActive"
+    >Name</label
   >
   <input
     id="name"
@@ -53,14 +83,50 @@
     use:autofocus
     required
     bind:value={name}
-    class="py-1 rounded-md items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0 form-input"
+    class="py-2 rounded-md items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-12 mx-2 focus:border-osvauld-iconblack focus:ring-0 form-input"
     autocomplete="off"
   />
-  <div class="max-h-[18.75rem] flex flex-col justify-start items-center w-full">
-    {#each cliUsers as user}
-      <label class="w-full p-2 text-left cursor-pointer">
-        <input type="radio" bind:group={selectedUser} value={user} />
-        {user.username}
+  <label for="name" class="font-light text-base text-osvauld-textActive"
+    >Add one CLI user to the environment</label
+  >
+  <div
+    class="h-12 w-[95%] px-2 mx-2 mb-2 flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
+  >
+    <Lens />
+    <input
+      type="text"
+      class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+      placeholder="Search.."
+      on:click={getSearchData}
+      on:input={handleInputChange}
+      bind:value={query}
+      on:keyup={handleKeyDown}
+    />
+  </div>
+  <div
+    class="max-h-[14rem] overflow-y-scroll scrollbar-thin flex flex-col justify-start items-center w-[95%] px-1"
+  >
+    {#each cliUsers as user, index}
+      <label
+        class="w-full px-2 py-1.5 text-left rounded-md cursor-pointer text-osvauld-textActive hover:bg-osvauld-fieldActive hover:shadow-[0_0_0_1px_#292A36] flex justify-between items-center"
+        on:mouseenter={() => (hoveredIndex = index)}
+        on:mouseleave={() => (hoveredIndex = null)}
+      >
+        <!-- <input type="radio" bind:group={selectedUser} value={user} /> -->
+        <span class="pl-1">{user.username}</span>
+        <button
+          class="p-1 relative"
+          type="button"
+          on:click={() => addUsertoGroup(user, index)}
+        >
+          {#if selectedUserIndice === index}
+            <UserCheck />
+          {:else}
+            <span class={hoveredIndex === index ? "visible" : "invisible"}>
+              <UserPlus />
+            </span>
+          {/if}
+        </button>
       </label>
     {/each}
   </div>
@@ -74,7 +140,7 @@
       on:click|preventDefault={handleClose}>Cancel</button
     >
     <button
-      class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md"
+      class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-normal text-osvauld-textActive rounded-md"
       type="submit"
       disabled={name === "" || selectedUser === null}
     >

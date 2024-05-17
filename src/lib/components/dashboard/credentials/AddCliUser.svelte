@@ -68,7 +68,7 @@
       on:click|preventDefault={handleClose}>Cancel</button
     >
     <button
-      class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md"
+      class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-normal text-osvauld-textActive rounded-md"
       type="submit"
       disabled={name === ""}
     >
