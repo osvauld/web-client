@@ -8,15 +8,19 @@
     let name = "";
 
     const createCliUser = async () => {
-        const response = await sendMessage("generateCliKeys", {
+        const keys = await sendMessage("generateCliKeys", {
             username: name,
         });
         const payload = {
             name,
-            deviceKey: response.sign_public_key,
-            encryptionKey: response.enc_public_key,
+            deviceKey: keys.sign_public_key,
+            encryptionKey: keys.enc_public_key,
         };
         await addCliUser(payload);
+        const { baseUrl } = await getTokenAndBaseUrl();
+        keys.base_url = baseUrl;
+        console.log(btoa(JSON.stringify(keys)));
+
         showAddCliDrawer.set(false);
     };
 
