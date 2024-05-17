@@ -25,7 +25,6 @@
   import EnvironmentAdd from "../../basic/icons/environmentAdd.svelte";
   import Environments from "../credentials/Environments.svelte";
   import ExistingEnvironment from "../../basic/icons/existingEnvironment.svelte";
-  import { cubicIn } from "svelte/easing";
   let iconColor = "#6E7681";
   let hoveringIndex = null;
   let hoveringEnvIndex = null;

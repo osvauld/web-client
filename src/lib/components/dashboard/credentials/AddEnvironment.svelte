@@ -2,15 +2,12 @@
   import { fetchCliUsers, addEnvironment } from "../apis";
   import { onMount, createEventDispatcher } from "svelte";
   import { showAddEnvDrawer } from "../store";
-  import { getSearchFields } from "../apis";
   import { ClosePanel, Lens, UserCheck, UserPlus } from "../icons";
-  import { searchObjects } from "../helper";
 
   let name = "";
   let selectedUser = null;
   let cliUsers = [];
   let query = "";
-  let searchData = [];
   let searchResults = [];
   let hoveredIndex = null;
   let selectedUserIndice = null;
@@ -23,24 +20,20 @@
     }
   };
 
+  const handleInputChange = (e: any) => {
+    const query = e.target.value;
+    searchResults =
+      query.length === 0
+        ? cliUsers
+        : cliUsers.filter((item) => item.username.startsWith(query));
+  };
+
   const addUsertoGroup = async (user, index) => {
     selectedUserIndice = index;
     selectedUser = user;
   };
 
-  const getSearchData = async () => {
-    const searchFieldSResponse = await getSearchFields();
-    searchData = searchFieldSResponse.data;
-    searchResults = searchData;
-  };
-  const handleInputChange = (e: any) => {
-    const query = e.type === "input" ? e.target.value : e.detail;
-    searchResults = query.length >= 1 ? searchObjects(query, searchData) : [];
-  };
-
   const addEnvironmentHandler = async () => {
-    console.log(selectedUser.id);
-
     await addEnvironment(name, selectedUser.id);
     showAddEnvDrawer.set(false);
   };
@@ -52,9 +45,10 @@
   const handleClose = () => {
     showAddEnvDrawer.set(false);
   };
+
   onMount(async () => {
     const response = await fetchCliUsers();
-    cliUsers = response.data;
+    searchResults = cliUsers = response.data;
   });
 </script>
 
@@ -83,30 +77,29 @@
     use:autofocus
     required
     bind:value={name}
-    class="py-2 rounded-md items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-12 mx-2 focus:border-osvauld-iconblack focus:ring-0 form-input"
+    class="py-1 rounded-md items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-8 mx-2 focus:border-osvauld-iconblack focus:ring-0 form-input"
     autocomplete="off"
   />
   <label for="name" class="font-light text-base text-osvauld-textActive"
     >Add one CLI user to the environment</label
   >
   <div
-    class="h-12 w-[95%] px-2 mx-2 mb-2 flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
+    class="h-8 w-[95%] px-2 mx-2 mb-2 py-1 flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
   >
-    <Lens />
+    <span class="w-4 h-4"><Lens /></span>
     <input
       type="text"
-      class="h-[2rem] w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
+      class="h-full w-full bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-base focus:border-transparent focus:ring-0 cursor-pointer"
       placeholder="Search.."
-      on:click={getSearchData}
       on:input={handleInputChange}
       bind:value={query}
       on:keyup={handleKeyDown}
     />
   </div>
   <div
-    class="max-h-[14rem] overflow-y-scroll scrollbar-thin flex flex-col justify-start items-center w-[95%] px-1"
+    class="min-h-[10rem] max-h-[14rem] overflow-y-scroll scrollbar-thin flex flex-col justify-start items-center w-[95%] px-1"
   >
-    {#each cliUsers as user, index}
+    {#each searchResults as user, index}
       <label
         class="w-full px-2 py-1.5 text-left rounded-md cursor-pointer text-osvauld-textActive hover:bg-osvauld-fieldActive hover:shadow-[0_0_0_1px_#292A36] flex justify-between items-center"
         on:mouseenter={() => (hoveredIndex = index)}

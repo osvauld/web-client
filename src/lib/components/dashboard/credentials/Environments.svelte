@@ -13,7 +13,6 @@
   import EnvironmentAdd from "../../basic/icons/environmentAdd.svelte";
   import UserPlus from "../../basic/icons/userPlus.svelte";
   import AddEnvironment from "./AddEnvironment.svelte";
-  import { onMount } from "svelte";
 
   let addCredentialHovered = false;
   let addcredentialToEnv = false;
@@ -51,10 +50,6 @@
       isFieldName = null;
     }, 2000);
   };
-
-  onMount(() => {
-    console.log($envStore);
-  });
 </script>
 
 <div class="flex justify-between items-center my-4 p-2">
@@ -104,7 +99,7 @@
 
 {#if $selectedEnv}
   <ul
-    class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden overflow-y-scroll scrollbar-thin min-h-[24rem] max-h-[45rem]"
+    class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden overflow-y-scroll scrollbar-thin min-h-[35rem] max-h-[45rem]"
   >
     {#each fields as field, index}
       <li class="w-full">
