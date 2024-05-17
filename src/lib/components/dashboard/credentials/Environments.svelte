@@ -13,6 +13,7 @@
   import EnvironmentAdd from "../../basic/icons/environmentAdd.svelte";
   import UserPlus from "../../basic/icons/userPlus.svelte";
   import AddEnvironment from "./AddEnvironment.svelte";
+  import { onMount } from "svelte";
 
   let addCredentialHovered = false;
   let addcredentialToEnv = false;
@@ -50,6 +51,10 @@
       isFieldName = null;
     }, 2000);
   };
+
+  onMount(() => {
+    console.log($envStore);
+  });
 </script>
 
 <div class="flex justify-between items-center my-4 p-2">
@@ -158,13 +163,25 @@
     {/each}
   </ul>
 {:else}
-  <ul>
-    {#each $envStore as env}
-      <li>
-        {env.name}
-      </li>
-    {/each}
-  </ul>
+  <div class="w-full">
+    <ul class="w-[90%] mx-auto text-osvauld-fieldText font-light">
+      <div class="flex justify-between items-center p-4">
+        <span>Environment Name</span><span>CLI users</span><span
+          >Created At</span
+        >
+      </div>
+      <div class="border-b border-osvauld-iconblack my-1 w-full mt-auto"></div>
+      {#each $envStore as env}
+        <li
+          class="my-2 py-3 px-6 bg-osvauld-cardshade rounded-lg flex justify-between items-center text-base"
+        >
+          <span>{env.name}</span>
+          <span>{env.cliUser}</span>
+          <span>{new Date(env.createdat).toLocaleString().split(",")[0]}</span>
+        </li>
+      {/each}
+    </ul>
+  </div>
 {/if}
 
 {#if addcredentialToEnv}
@@ -178,8 +195,22 @@
   </button>
 {/if}
 {#if $showAddCliDrawer}
-  <AddCliUser />
+  <button
+    class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
+    on:click={() => showAddCliDrawer.set(false)}
+  >
+    <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
+      <AddCliUser />
+    </button>
+  </button>
 {/if}
 {#if $showAddEnvDrawer}
-  <AddEnvironment />
+  <button
+    class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
+    on:click={() => showAddEnvDrawer.set(false)}
+  >
+    <button class="p-6 rounded bg-transparent" on:click|stopPropagation>
+      <AddEnvironment />
+    </button>
+  </button>
 {/if}
