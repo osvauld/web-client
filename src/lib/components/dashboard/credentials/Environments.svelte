@@ -30,6 +30,7 @@
   const addCliUser = () => {
     showAddCliDrawer.set(true);
   };
+
   selectedEnv.subscribe(async (value) => {
     if (value) {
       const fieldsResponse = await fetchEnvFields(value.id);
@@ -161,18 +162,20 @@
   <div class="w-full">
     <ul class="w-[90%] mx-auto text-osvauld-fieldText font-light">
       <div class="flex justify-between items-center p-4">
-        <span>Environment Name</span><span>CLI users</span><span
-          >Created At</span
-        >
+        <span class="w-[15rem] text-center">Environment Name</span><span
+          class="w-[15rem] text-center">CLI user</span
+        ><span class="w-[15rem] text-center pr-6">Created At</span>
       </div>
       <div class="border-b border-osvauld-iconblack my-1 w-full mt-auto"></div>
       {#each $envStore as env}
         <li
           class="my-2 py-3 px-6 bg-osvauld-cardshade rounded-lg flex justify-between items-center text-base"
         >
-          <span>{env.name}</span>
-          <span>{env.cliUser}</span>
-          <span>{new Date(env.createdat).toLocaleString().split(",")[0]}</span>
+          <span class="w-[15rem] text-center">{env.name}</span>
+          <span class="w-[15rem] text-center">{env.cliUsername}</span>
+          <span class="w-[15rem] text-center"
+            >{new Date(env.createdat).toLocaleString().split(",")[0]}</span
+          >
         </li>
       {/each}
     </ul>

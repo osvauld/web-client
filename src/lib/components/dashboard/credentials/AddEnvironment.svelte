@@ -3,6 +3,7 @@
   import { onMount, createEventDispatcher } from "svelte";
   import { showAddEnvDrawer } from "../store";
   import { ClosePanel, Lens, UserCheck, UserPlus } from "../icons";
+  import { setEnvStore } from "../../../store/storeHelper";
 
   let name = "";
   let selectedUser = null;
@@ -36,6 +37,7 @@
   const addEnvironmentHandler = async () => {
     await addEnvironment(name, selectedUser.id);
     showAddEnvDrawer.set(false);
+    setEnvStore();
   };
 
   function autofocus(node: any) {
