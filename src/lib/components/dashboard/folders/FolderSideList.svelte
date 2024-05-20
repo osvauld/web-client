@@ -75,16 +75,14 @@
 		class="w-[90%] bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack whitespace-nowrap rounded-lg py-1.5 px-2 mb-4 flex justify-center items-center"
 		on:mouseenter="{() => (iconColor = '#000')}"
 		on:mouseleave="{() => (iconColor = '#6E7681')}"
-		on:click="{openModal}"
-	>
+		on:click="{openModal}">
 		<span class="mr-1 text-base font-normal">Create new folder</span>
 		<Add color="{iconColor}" />
 	</button>
 	{#if $showAddFolderDrawer || $showFolderRenameDrawer}
 		<button
 			class="fixed inset-0 flex items-center justify-center z-50 backdrop-filter backdrop-blur-[2px]"
-			on:click="{closeModal}"
-		>
+			on:click="{closeModal}">
 			<button class="p-6 rounded" on:click|stopPropagation>
 				<FolderEditor />
 			</button>
@@ -109,25 +107,21 @@
     </span>
   </button> -->
 	<ul
-		class="overflow-y-scroll w-[90%] overflow-x-hidden scrollbar-thin min-h-[8rem] -pl-3"
-	>
+		class="overflow-y-scroll w-[90%] overflow-x-hidden scrollbar-thin min-h-[8rem] -pl-3">
 		{#each $folderStore as folder, index}
 			<li
 				class="{$selectedFolder?.id == folder.id
 					? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
 					: 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center"
 				on:mouseenter="{() => (hoveringIndex = index)}"
-				on:mouseleave="{() => (hoveringIndex = null)}"
-			>
+				on:mouseleave="{() => (hoveringIndex = null)}">
 				<button
 					on:click="{() => selectFolder(folder)}"
-					class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
-				>
+					class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer">
 					<FolderIcon
 						color="{$selectedFolder?.id == folder.id || hoveringIndex === index
 							? '#F2F2F0'
-							: '#85889C'}"
-					/>
+							: '#85889C'}" />
 					<span
 						class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem] {$selectedFolder?.id ==
 							folder.id || hoveringIndex === index
@@ -139,21 +133,18 @@
 							folder.id
 								? 'visible delay-200'
 								: 'invisible'}">{$credentialStore.length}</span
-						></span
-					>
+						></span>
 					<div
 						class="relative z-100 ml-auto flex justify-center items-center {$selectedFolder?.id ==
 							folder.id || hoveringIndex === index
 							? 'visible'
-							: 'invisible'}"
-					>
+							: 'invisible'}">
 						{#if folder.accessType === "manager"}
 							<button
 								class="p-2"
 								on:click="{(e) => {
 									openFolderMenu(e, folder.id, folder.name);
-								}}"
-							>
+								}}">
 								<Menu />
 							</button>
 						{/if}
@@ -162,57 +153,89 @@
 			</li>
 		{/each}
 	</ul>
-	<!-- <div class="border-b border-osvauld-iconblack my-1 w-[90%]"></div>
-  <button
-    on:click={() => selectSection("PrivateFolders")}
-    class="text-white w-[90%] py-2 flex justify-between items-center px-2 rounded-md {$selectedSection ===
-    'PrivateFolders'
-      ? 'bg-osvauld-sideListHighlight'
-      : ''}"
-    >Private Folders <span class="flex"
-      ><FolderAdd />
-      <span
-        class={$selectedSection === "PrivateFolders"
-          ? "rotate-90 transition-all"
-          : "rotate-0"}
-      >
-        <RightArrow />
-      </span>
-    </span>
-  </button>
-  <ul
-    class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin -pl-3 mx-auto"
-  ></ul> -->
 	<div class="border-b border-osvauld-iconblack my-1 w-[90%] mt-auto"></div>
+	<button
+		on:click="{() =>
+			selectSection(
+				$selectedSection === 'PrivateFolders'
+					? 'SharedFolders'
+					: 'PrivateFolders',
+			)}"
+		class=" w-[90%] py-2 flex justify-between items-center px-2 rounded-md {$selectedSection ===
+		'PrivateFolders'
+			? 'bg-osvauld-sideListHighlight text-osvauld-sideListTextActive'
+			: 'text-osvauld-fieldText'}"
+		>Private Folders <span class="flex"
+			><FolderAdd
+				color="{$selectedSection === 'PrivateFolders'
+					? '#F2F2F0'
+					: '#85889C'}" />
+			<span
+				class="{$selectedSection === 'PrivateFolders'
+					? 'rotate-90 transition-all'
+					: 'rotate-0'}">
+				<RightArrow
+					color="{$selectedSection === 'PrivateFolders'
+						? '#F2F2F0'
+						: '#85889C'}" />
+			</span>
+		</span>
+	</button>
+
+	{#if $selectedSection === "PrivateFolders"}
+		<div class="w-[90%]" transition:slide="{{ delay: 0, duration: 100 }}">
+			<ul
+				class="overflow-y-scroll w-[90%] overflow-x-hidden scrollbar-thin min-h-[8rem]">
+				<li class="flex items-center my-3 pl-4">
+					<FolderIcon color="{'#85889C'}" />
+					<span
+						class="text-osvauld-fieldText ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem]"
+						>One</span>
+				</li>
+				<li class="flex items-center my-3 pl-4">
+					<FolderIcon color="{'#85889C'}" />
+					<span
+						class="text-osvauld-fieldText ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem]"
+						>Two</span>
+				</li>
+				<li class="flex items-center my-3 pl-4">
+					<FolderIcon color="{'#85889C'}" />
+					<span
+						class="text-osvauld-fieldText ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem]"
+						>Three</span>
+				</li>
+			</ul>
+		</div>
+	{/if}
+
+	<div class="border-b border-osvauld-iconblack my-1 w-[90%] mt-0"></div>
 	<button
 		on:click="{() =>
 			selectSection(
 				$selectedSection === 'Environments' ? 'SharedFolders' : 'Environments',
 			)}"
-		class="w-[90%] py-2 flex justify-between items-center px-2 rounded-md {$selectedSection ===
+		class="w-[90%] py-2 flex justify-between items-center my-1.5 pl-2 px-2 rounded-md {$selectedSection ===
 		'Environments'
 			? 'bg-osvauld-sideListHighlight text-osvauld-sideListTextActive'
 			: 'text-osvauld-fieldText'}"
 		>Environments <span class="flex"
 			><EnvironmentAdd
-				color="{$selectedSection === 'Environments' ? '#F2F2F0' : '#85889C'}"
-			/>
+				color="{$selectedSection === 'Environments' ? '#F2F2F0' : '#85889C'}" />
 			<span
 				class="{$selectedSection === 'Environments'
 					? 'rotate-90 transition-all'
-					: 'rotate-0'}"
-			>
+					: 'rotate-0'}">
 				<RightArrow
-					color="{$selectedSection === 'Environments' ? '#F2F2F0' : '#85889C'}"
-				/>
+					color="{$selectedSection === 'Environments'
+						? '#F2F2F0'
+						: '#85889C'}" />
 			</span>
 		</span>
 	</button>
 	{#if $selectedSection === "Environments"}
 		<div class="w-[90%]" transition:slide="{{ delay: 0, duration: 100 }}">
 			<ul
-				class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin min-h-[4rem] max-h-[8.5rem] pl-0"
-			>
+				class="overflow-y-scroll w-full overflow-x-hidden scrollbar-thin min-h-[4rem] max-h-[8.5rem] pl-0">
 				{#each $envStore as env, index}
 					<li
 						class="{$selectedEnv?.id == env.id
@@ -220,19 +243,16 @@
 							: 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} 
           rounded-md my-1 pl-3 pr-3 mr-1 flex items-center transition-colors duration-0 ease-in"
 						on:mouseenter="{() => (hoveringEnvIndex = index)}"
-						on:mouseleave="{() => (hoveringEnvIndex = null)}"
-					>
+						on:mouseleave="{() => (hoveringEnvIndex = null)}">
 						<button
 							on:click="{() => {
 								selectEnv(env);
 							}}"
-							class="w-full p-2 text-lg rounded-2xl flex items-center"
-						>
+							class="w-full p-2 text-lg rounded-2xl flex items-center">
 							<ExistingEnvironment
 								color="{$selectedEnv?.id == env.id || hoveringEnvIndex === index
 									? '#F2F2F0'
-									: '#85889C'}"
-							/>
+									: '#85889C'}" />
 							<span
 								class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem] {$selectedEnv?.id ==
 									env.id || hoveringEnvIndex === index
