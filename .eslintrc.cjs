@@ -20,13 +20,24 @@ module.exports = {
         parser: "@typescript-eslint/parser",
         project: "./tsconfig.app.json",
       },
+      rules: {
+        "indent": ["error", "tab", { "SwitchCase": 1 }],
+        "no-tabs": "off"
+      }
     },
     {
       files: ["src/**/*.ts"],
       parserOptions: {
         project: "./tsconfig.app.json",
       },
+      rules: {
+        "indent": ["error", "tab", { "SwitchCase": 1 }],
+        "no-tabs": "off"
+      }
     },
   ],
-  rules: {},
+  rules: {
+    "indent": ["error", "tab", { "SwitchCase": 1 }],
+    "no-tabs": "off"
+  },
 };

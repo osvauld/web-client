@@ -13,8 +13,9 @@
     "check": "svelte-check --tsconfig ./tsconfig.app.json",
     "watch": "svelte-check --tsconfig ./tsconfig.app.json --watch",
     "build": "npm run build:rollup",
-    "lint": "eslint --ext .svelte,.ts src/",
-    "prepare": "npx allow-scripts"
+    "lint": "eslint \"src/**/*.{js,ts,svelte}\" --fix",
+    "prepare": "npx allow-scripts",
+    "format": "prettier --write \"src/**/*.{js,ts,svelte}\""
   },
   "keywords": [],
   "author": "",
@@ -36,6 +37,8 @@
     "husky": "^8.0.3",
     "lavamoat-browserify": "^17.0.0",
     "postcss": "^8.4.32",
+    "prettier": "^3.2.5",
+    "prettier-plugin-svelte": "^3.2.3",
     "rollup": "^4.6.1",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-svelte": "^7.1.6",

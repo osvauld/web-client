@@ -5,7 +5,7 @@ export let showAddFolderDrawer = writable(false);
 export let showAddGroupDrawer = writable(false);
 export let showFolderShareDrawer = writable(false);
 export let showFolderRenameDrawer = writable(false);
-export let showCredentialShareDrawer = writable(false)
+export let showCredentialShareDrawer = writable(false);
 export let showAddUserDrawer = writable(false);
 export let allUsersSelected = writable(false);
 export let showAddUserToGroupDrawer = writable(false);
@@ -23,23 +23,20 @@ export let selectedSection = writable("Credentials");
 export let showAddCliDrawer = writable(false);
 export let showAddEnvDrawer = writable(false);
 
-
-
 const storedPage = browser.storage.local.get("selectedPage");
 
-
 type MoreActions = {
-    id: string,
-    name: string,
-    type: string
-}
+	id: string;
+	name: string;
+	type: string;
+};
 storedPage.then((value) => {
-    if (value.selectedPage) {
-        selectedPage.set(value.selectedPage);
-    } else {
-        selectedPage.set("Folders");
-    }
+	if (value.selectedPage) {
+		selectedPage.set(value.selectedPage);
+	} else {
+		selectedPage.set("Folders");
+	}
 });
 selectedPage.subscribe((value) => {
-    browser.storage.local.set({ selectedPage: value });
-})
+	browser.storage.local.set({ selectedPage: value });
+});
