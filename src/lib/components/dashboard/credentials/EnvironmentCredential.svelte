@@ -75,14 +75,10 @@
 				id="{`value-${index}`}"
 				type="text"
 				autocomplete="off"
-				value="{visibility[index]
-					? decryptedValues[index]
-					: '*'.repeat(8)}"
+				value="{visibility[index] ? decryptedValues[index] : '*'.repeat(8)}"
 			/>
 			<div class="w-2/5 flex gap-2 items-center justify-end">
-				<button
-					on:click|stopPropagation="{() => toggleVisibility(index)}"
-				>
+				<button on:click|stopPropagation="{() => toggleVisibility(index)}">
 					{#if visibility[index]}
 						<ClosedEye color="{'#4D4F60'}" />
 					{:else}
@@ -91,10 +87,7 @@
 				</button>
 				<button
 					on:click|stopPropagation="{() =>
-						copyToClipboard(
-							decryptedValues[index],
-							`fieldValue-${index}`,
-						)}"
+						copyToClipboard(decryptedValues[index], `fieldValue-${index}`)}"
 				>
 					{#if fieldCopied[`fieldValue-${index}`]}
 						<span in:scale>

@@ -65,10 +65,7 @@
 				<span> <DownArrow type="{item.accessType}" /></span>
 			</button>
 			{#if showOptions && isSelected}
-				<AccessSelector
-					on:select="{(e) => eventPasser(e)}"
-					{reverseModal}
-				/>
+				<AccessSelector on:select="{(e) => eventPasser(e)}" {reverseModal} />
 			{/if}
 		</div>
 	{/if}

@@ -48,8 +48,8 @@
 		>
 			<h2 class="text-3xl">Organize your credentials</h2>
 			<p class="text-base">
-				Create a new folder to securely store your credentials. Stay
-				organized and access them easily whenever you need.
+				Create a new folder to securely store your credentials. Stay organized
+				and access them easily whenever you need.
 			</p>
 			<button
 				class="flex justify-center items-center text-base border text-osvauld-textActive border-osvauld-iconblack rounded-md px-4 py-1 {isFirstCardHovered &&
@@ -57,9 +57,7 @@
 				on:click="{createFolderManager}"
 			>
 				<span class="mr-1 whitespace-nowrap">Create new folder</span>
-				<Add
-					color="{isFirstCardHovered ? '#000' : '#A3A4B5'}"
-				/></button
+				<Add color="{isFirstCardHovered ? '#000' : '#A3A4B5'}" /></button
 			>
 		</div>
 
@@ -73,8 +71,8 @@
 		>
 			<h2 class="text-3xl">Collaborate with teams</h2>
 			<p class="text-base">
-				Start a new group to collaborate, share your credentials, manage
-				access, and streamline your workflows.
+				Start a new group to collaborate, share your credentials, manage access,
+				and streamline your workflows.
 			</p>
 			<button
 				class="flex justify-center items-center text-base border text-osvauld-textActive border-osvauld-iconblack rounded-md px-4 py-1 {isSecondCardHovered &&
@@ -90,10 +88,8 @@
 		<div
 			class="w-1/2 h-10 flex justify-end items-center text-sm text-osvauld-textActive pr-4"
 		>
-			<a
-				href="https://osvauld.com"
-				target="_blank"
-				rel="noopener noreferrer">Visit osvauld.com</a
+			<a href="https://osvauld.com" target="_blank" rel="noopener noreferrer"
+				>Visit osvauld.com</a
 			>
 		</div>
 		<div

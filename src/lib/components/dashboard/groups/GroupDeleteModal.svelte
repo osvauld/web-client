@@ -61,9 +61,8 @@
 			</div>
 			<div class="text-osvauld-textActive text-left">
 				Are you sure? <br /> All
-				<span class="font-semibold text-osvauld-quarzowhite"
-					>credentials</span
-				> shared with this group will be Revoked.
+				<span class="font-semibold text-osvauld-quarzowhite">credentials</span> shared
+				with this group will be Revoked.
 			</div>
 		</div>
 		<div
@@ -72,13 +71,11 @@
 		<div class="flex justify-end items-center gap-6 w-full">
 			<button
 				class="text-osvauld-fadedCancel font-medium text-base"
-				on:click|preventDefault="{withdrawGroupDeleteModal}"
-				>Cancel</button
+				on:click|preventDefault="{withdrawGroupDeleteModal}">Cancel</button
 			>
 			<button
 				class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md"
-				on:click|preventDefault="{DeleteConfirmation}"
-				>Delete Group</button
+				on:click|preventDefault="{DeleteConfirmation}">Delete Group</button
 			>
 		</div>
 	</div>

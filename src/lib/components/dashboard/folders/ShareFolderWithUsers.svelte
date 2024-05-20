@@ -141,8 +141,7 @@
 					{showOptions}
 					reverseModal="{selectedUsers.length > 3 &&
 						index > selectedUsers.length - 3}"
-					on:select="{(e) =>
-						handleRoleChange(e, index, 'selectedUsers')}"
+					on:select="{(e) => handleRoleChange(e, index, 'selectedUsers')}"
 				/>
 				<div class="border-b border-osvauld-iconblack w-full"></div>
 			{/each}

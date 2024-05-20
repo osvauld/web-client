@@ -31,14 +31,12 @@
 		showModal = true;
 		const searchFieldSResponse = await getSearchFields();
 		searchData = searchFieldSResponse.data;
-		searchResults =
-			query.length !== 0 ? searchObjects(query, searchData) : [];
+		searchResults = query.length !== 0 ? searchObjects(query, searchData) : [];
 	};
 
 	const handleInputChange = (e: any) => {
 		const query = e.type === "input" ? e.target.value : e.detail;
-		searchResults =
-			query.length >= 1 ? searchObjects(query, searchData) : [];
+		searchResults = query.length >= 1 ? searchObjects(query, searchData) : [];
 	};
 
 	const closeModal = () => {
@@ -120,9 +118,7 @@
 			on:click|stopPropagation="{profileSelectionManager}"
 		>
 			<div class="flex justify-center items-center">
-				<Profile
-					color="{isProfileClicked ? '#F2F2F0' : '#85889C'}"
-				/><span
+				<Profile color="{isProfileClicked ? '#F2F2F0' : '#85889C'}" /><span
 					class="font-inter text-base overflow-hidden text-ellipsis whitespace-nowrap {isProfileClicked
 						? 'text-osvauld-sideListTextActive'
 						: 'text-osvauld-fieldText'} ">{username}</span
@@ -133,9 +129,7 @@
 					? 'rotate-180'
 					: 'rotate-0'}"
 			>
-				<DownArrow
-					type="{isProfileClicked ? 'profileActive' : 'profile'}"
-				/>
+				<DownArrow type="{isProfileClicked ? 'profileActive' : 'profile'}" />
 			</span>
 		</button>
 	</div>

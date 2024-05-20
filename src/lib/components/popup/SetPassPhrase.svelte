@@ -95,9 +95,7 @@
 		</button>
 	</div>
 	{#if showPassphraseMismatchError}
-		<span class="text-xs text-red-500 font-thin"
-			>Passphrase doesn't match</span
-		>
+		<span class="text-xs text-red-500 font-thin">Passphrase doesn't match</span>
 	{/if}
 	<button
 		class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"

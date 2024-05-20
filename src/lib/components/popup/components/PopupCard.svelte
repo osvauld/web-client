@@ -28,8 +28,7 @@
 					<span>{field.fieldValue}</span>
 					<button
 						class="scale-[0.8] active:scale-75"
-						on:click|stopPropagation="{() =>
-							copyToClipboard(field.fieldValue)}"
+						on:click|stopPropagation="{() => copyToClipboard(field.fieldValue)}"
 						><ActiveCopy />
 					</button>
 				</div>

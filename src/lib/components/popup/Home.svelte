@@ -73,9 +73,7 @@
 			listedCredentials = listedCredentials.map((cred) => ({
 				...cred,
 				fields: cred.fields.filter(
-					(field) =>
-						field.fieldName !== "Domain" &&
-						field.fieldName !== "URL",
+					(field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
 				),
 			}));
 
@@ -142,9 +140,7 @@
 	const dropDownClicked = async (e: any) => {
 		const credentialId = e.detail.credentialId;
 		if (!credentialClicked && credentialId) {
-			const credentialResponse: any = await fetchCredsByIds([
-				credentialId,
-			]);
+			const credentialResponse: any = await fetchCredsByIds([credentialId]);
 			clickedCredential = credentialResponse.data[0];
 			const decyrptedResponse = await sendMessage("decryptMeta", [
 				clickedCredential,
@@ -183,9 +179,7 @@
 <div class="w-full h-full px-2 relative">
 	{#if !addNewCredential}
 		<div class="flex justify-between items-center mb-3 py-0">
-			<h6
-				class="text-2xl font-medium text-osvauld-fieldText tracking-wide"
-			>
+			<h6 class="text-2xl font-medium text-osvauld-fieldText tracking-wide">
 				osvauld
 			</h6>
 			<div>

@@ -158,10 +158,7 @@ export const encryptCredentialsForUser = async (
 			fields: [],
 		};
 		encryptedCred.credentialId = credential.credentialId;
-		const response = await encryptFieldHandler(
-			credential.fields,
-			publicKeyStr,
-		);
+		const response = await encryptFieldHandler(credential.fields, publicKeyStr);
 		encryptedCred.fields = response.data;
 		encryptedCredsForUser.push(encryptedCred);
 	}

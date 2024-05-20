@@ -55,9 +55,7 @@
 					on:mouseenter="{() => (infoOnHover = true)}"
 					on:mouseleave="{() => (infoOnHover = false)}"
 					on:click="{() => (showInfoTab = !showInfoTab)}"
-					><InfoIcon
-						color="{infoOnHover ? '#BFC0CC' : '#4D4F60'}"
-					/></button
+					><InfoIcon color="{infoOnHover ? '#BFC0CC' : '#4D4F60'}" /></button
 				></span
 			>
 			<button
@@ -118,8 +116,7 @@
 		<div class="p-2 w-full flex justify-end items-center box-border mt-4">
 			<button
 				class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
-				on:click="{() => showCredentialShareDrawer.set(false)}"
-				>Cancel</button
+				on:click="{() => showCredentialShareDrawer.set(false)}">Cancel</button
 			>
 
 			<button

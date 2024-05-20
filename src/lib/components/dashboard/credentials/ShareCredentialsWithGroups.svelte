@@ -153,8 +153,7 @@
 				{showOptions}
 				reverseModal="{$selectedGroups.size > 3 &&
 					index > $selectedGroups.size - 3}"
-				on:select="{(e) =>
-					handleRoleChange(e, index, 'selectedGroups')}"
+				on:select="{(e) => handleRoleChange(e, index, 'selectedGroups')}"
 			/>
 		{/each}
 	</div>

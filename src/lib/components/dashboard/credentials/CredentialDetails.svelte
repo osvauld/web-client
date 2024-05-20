@@ -47,9 +47,7 @@
 	const toggleSelect = async (e: any) => {
 		selectedTab = e.detail;
 		if (selectedTab == "Users") {
-			const usersResponse = await fetchCredentialUsers(
-				credential.credentialId,
-			);
+			const usersResponse = await fetchCredentialUsers(credential.credentialId);
 			users = usersResponse.data;
 		} else if (selectedTab == "Groups") {
 			const groupsResponse = await fetchCredentialGroups(
@@ -63,21 +61,18 @@
 		await removeGroupFromCredential(credential.credentialId, group.groupId);
 		await toggleSelect({ detail: "Groups" });
 	};
-	const removeUserFromCredentialHandler = async (
-		user: UserWithAccessType,
-	) => {
+	const removeUserFromCredentialHandler = async (user: UserWithAccessType) => {
 		await removeUserFromCredential(credential.credentialId, user.id);
 		await toggleSelect({ detail: "Users" });
 	};
 
 	const savePermissions = async () => {
 		if (userPermissions && Object.keys(userPermissions).length !== 0) {
-			const userPermissionSaveResponse =
-				await editUserPermissionForCredential(
-					userPermissions.credentialId,
-					userPermissions.userId,
-					userPermissions.accessType,
-				);
+			const userPermissionSaveResponse = await editUserPermissionForCredential(
+				userPermissions.credentialId,
+				userPermissions.userId,
+				userPermissions.accessType,
+			);
 			await toggleSelect({ detail: "Users" });
 			accessChangeDetected = false;
 			const message = userPermissionSaveResponse.message
@@ -101,11 +96,7 @@
 		accessChangeDetected = false;
 	};
 
-	const permissionChangeHandler = async (
-		e: any,
-		id: string,
-		type: string,
-	) => {
+	const permissionChangeHandler = async (e: any, id: string, type: string) => {
 		accessChangeDetected = true;
 
 		if (type == "user") {
@@ -125,10 +116,7 @@
 
 	const handleEditCredential = async () => {
 		for (let field of sensitiveFields) {
-			const response = await sendMessage(
-				"decryptField",
-				field.fieldValue,
-			);
+			const response = await sendMessage("decryptField", field.fieldValue);
 			let decryptedValue = response.data;
 			fieldsForEdit.push({
 				fieldName: field.fieldName,
@@ -151,15 +139,12 @@
 		showCredentialDetailsDrawer.set(false);
 	};
 	onMount(async () => {
-		const groupsResponse = await fetchCredentialGroups(
-			credential.credentialId,
-		);
+		const groupsResponse = await fetchCredentialGroups(credential.credentialId);
 		groups = groupsResponse.data;
 		if (sensitiveFields.length === 0) {
-			const sensitiveFieldsResponse =
-				await fetchSensitiveFieldsByCredentialId(
-					credential.credentialId,
-				);
+			const sensitiveFieldsResponse = await fetchSensitiveFieldsByCredentialId(
+				credential.credentialId,
+			);
 			sensitiveFields = sensitiveFieldsResponse.data;
 		}
 	});
@@ -218,9 +203,7 @@
 				class="px-4 py-1.5 flex items-center text-sm font-light rounded-md mr-2 {!accessListSelected &&
 					' text-osvauld-carolinablue bg-osvauld-modalFieldActive'}"
 			>
-				<FileText
-					color="{!accessListSelected ? '#89B4FA' : '#85889C'}"
-				/>
+				<FileText color="{!accessListSelected ? '#89B4FA' : '#85889C'}" />
 				<span
 					class="{!accessListSelected
 						? 'text-osvauld-carolinablue'
@@ -296,8 +279,7 @@
 									? 'bg-osvauld-sensitivebgblue'
 									: ''}"
 								on:click="{() => {
-									editPermissionTrigger =
-										!editPermissionTrigger;
+									editPermissionTrigger = !editPermissionTrigger;
 								}}"
 							>
 								<EditIcon />
@@ -313,14 +295,9 @@
 								item="{group}"
 								{index}
 								{editPermissionTrigger}
-								on:remove="{() =>
-									removeGroupFromCredentialHandler(group)}"
+								on:remove="{() => removeGroupFromCredentialHandler(group)}"
 								on:permissonChange="{(e) =>
-									permissionChangeHandler(
-										e,
-										group.groupId,
-										'group',
-									)}"
+									permissionChangeHandler(e, group.groupId, 'group')}"
 							/>
 						{/each}
 					{:else if selectedTab == "Users"}
@@ -330,14 +307,9 @@
 								item="{user}"
 								{index}
 								{editPermissionTrigger}
-								on:remove="{() =>
-									removeUserFromCredentialHandler(user)}"
+								on:remove="{() => removeUserFromCredentialHandler(user)}"
 								on:permissonChange="{(e) =>
-									permissionChangeHandler(
-										e,
-										user.id,
-										'user',
-									)}"
+									permissionChangeHandler(e, user.id, 'user')}"
 							/>
 						{/each}
 					{/if}

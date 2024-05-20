@@ -110,9 +110,7 @@
 				<div class="w-6 h-6 flex items-center justify-center">
 					<EditIcon color="{isEditHovered ? '#F2F2F0' : '#85889C'}" />
 				</div>
-				<button class="font-inter text-base whitespace-nowrap"
-					>Rename</button
-				>
+				<button class="font-inter text-base whitespace-nowrap">Rename</button>
 			</button>
 
 			<button

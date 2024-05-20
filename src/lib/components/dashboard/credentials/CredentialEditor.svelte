@@ -104,8 +104,7 @@
 				}
 			}
 			if (
-				(field.fieldName.length !== 0 ||
-					field.fieldValue.length !== 0) &&
+				(field.fieldName.length !== 0 || field.fieldValue.length !== 0) &&
 				field.fieldName !== "Domain"
 			) {
 				const baseField: Fields = {
@@ -165,8 +164,7 @@
 
 	onMount(async () => {
 		if (edit) {
-			const responseJson =
-				await fetchCredentialUsersForDataSync(credentialId);
+			const responseJson = await fetchCredentialUsersForDataSync(credentialId);
 			usersToShare = responseJson.data;
 		} else {
 			const responseJson = await fetchFolderUsersForDataSync(
@@ -203,8 +201,7 @@
 		<div class="flex justify-between items-center px-12 py-6">
 			<div>
 				<button
-					class="text-[28px] font-sans font-normal {credentialType ===
-					'Login'
+					class="text-[28px] font-sans font-normal {credentialType === 'Login'
 						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
 						: 'text-osvauld-sheffieldgrey '}"
 					type="button"
@@ -266,10 +263,7 @@
 							{index}
 							{hoveredIndex}
 							on:select="{(e) =>
-								triggerSensitiveBubble(
-									e.detail.index,
-									e.detail.identifier,
-								)}"
+								triggerSensitiveBubble(e.detail.index, e.detail.identifier)}"
 							on:remove="{(e) => removeField(e.detail)}"
 						/>
 					{/if}

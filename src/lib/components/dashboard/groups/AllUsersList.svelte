@@ -39,19 +39,11 @@
 	<table class="min-w-max w-full table-auto">
 		<thead>
 			<tr class="leading-normal text-lg">
-				<th class="py-3 px-3 text-left whitespace-nowrap w-1/5">Name</th
-				>
-				<th class="py-3 px-3 text-left whitespace-nowrap w-1/5"
-					>Username</th
-				>
-				<th class="py-3 px-3 text-left whitespace-nowrap w-1/5">Role</th
-				>
-				<th class="py-3 px-3 text-left whitespace-nowrap w-1/5"
-					>Status</th
-				>
-				<th class="py-3 px-3 text-left whitespace-nowrap w-1/5"
-					>Actions</th
-				>
+				<th class="py-3 px-3 text-left whitespace-nowrap w-1/5">Name</th>
+				<th class="py-3 px-3 text-left whitespace-nowrap w-1/5">Username</th>
+				<th class="py-3 px-3 text-left whitespace-nowrap w-1/5">Role</th>
+				<th class="py-3 px-3 text-left whitespace-nowrap w-1/5">Status</th>
+				<th class="py-3 px-3 text-left whitespace-nowrap w-1/5">Actions</th>
 			</tr>
 		</thead>
 	</table>
@@ -67,8 +59,7 @@
 							class="py-5 px-6 text-left whitespace-nowrap w-1/5 transition-colors duration-300"
 							>{user.name}</td
 						>
-						<td
-							class="py-5 px-6 text-left w-1/5 transition-colors duration-300"
+						<td class="py-5 px-6 text-left w-1/5 transition-colors duration-300"
 							>{user.username}</td
 						>
 						<td
@@ -83,16 +74,13 @@
 								{user.type}
 							</span>
 						</td>
-						<td
-							class="py-5 px-6 text-left w-1/5 transition-colors duration-300"
+						<td class="py-5 px-6 text-left w-1/5 transition-colors duration-300"
 							>{user.status}</td
 						>
 						<td
 							class="flex justify-center items-center py-5 w-1/5 cursor-pointer transition-colors duration-300"
 						>
-							<button
-								on:click="{() => deleteUserHandler(user.id)}"
-							>
+							<button on:click="{() => deleteUserHandler(user.id)}">
 								<BinIcon />
 							</button>
 						</td>

@@ -7,11 +7,7 @@
 	import CredentialDetails from "./CredentialDetails.svelte";
 
 	import { Share, Add, EyeScan, FolderShare } from "../icons";
-	import {
-		fetchSignedUpUsers,
-		fetchAllUserGroups,
-		addCliUser,
-	} from "../apis";
+	import { fetchSignedUpUsers, fetchAllUserGroups, addCliUser } from "../apis";
 	import { User, Group, Credential, Fields } from "../dtos";
 
 	import {
@@ -46,8 +42,7 @@
 	$: isShareCredActive = checkedCards.length !== 0;
 
 	$: sortedCredentials = $credentialStore.sort(
-		(a, b) =>
-			new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+		(a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
 	);
 
 	$: minOneCredentialManager = sortedCredentials.some(
@@ -251,9 +246,7 @@
 					on:click="{addCredentialManager}"
 				>
 					<span class="mr-2">Add New Credential</span>
-					<Add
-						color="{addCredentialHovered ? '#0D0E13' : '#A3A4B5'}"
-					/>
+					<Add color="{addCredentialHovered ? '#0D0E13' : '#A3A4B5'}" />
 				</button>
 			</div>
 		</div>

@@ -42,10 +42,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 		}
 
 		case "encryptFields": {
-			return encryptFieldHandler(
-				request.data.fields,
-				request.data.publicKey,
-			);
+			return encryptFieldHandler(request.data.fields, request.data.publicKey);
 		}
 
 		case "openFullscreenTab":
@@ -105,9 +102,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 				});
 			}
 			for (let i = 0; i < request.data.urls.length; i++) {
-				const decrypted = await decryptFieldHandler(
-					request.data.urls[i].value,
-				);
+				const decrypted = await decryptFieldHandler(request.data.urls[i].value);
 				const normalizedDecrypted = decrypted.replace(/^www\./, "");
 				if (urlObj.has(normalizedDecrypted)) {
 					// @ts-ignore
@@ -134,10 +129,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 		case "addCredential":
 			return addCredentialHandler(request.data);
 		case "createShareCredPayload":
-			return createShareCredsPayload(
-				request.data.creds,
-				request.data.users,
-			);
+			return createShareCredsPayload(request.data.creds, request.data.users);
 		case "credentialSubmit": {
 			newCredential.username = request.data.username;
 			newCredential.password = request.data.password;

@@ -139,10 +139,7 @@ function getInt32Memory0() {
 let cachedFloat64Memory0 = null;
 
 function getFloat64Memory0() {
-	if (
-		cachedFloat64Memory0 === null ||
-		cachedFloat64Memory0.byteLength === 0
-	) {
+	if (cachedFloat64Memory0 === null || cachedFloat64Memory0.byteLength === 0) {
 		cachedFloat64Memory0 = new Float64Array(wasm.memory.buffer);
 	}
 	return cachedFloat64Memory0;
@@ -621,11 +618,7 @@ function __wbg_get_imports() {
 		const ret = typeof obj === "string" ? obj : undefined;
 		var ptr1 = isLikeNone(ret)
 			? 0
-			: passStringToWasm0(
-					ret,
-					wasm.__wbindgen_malloc,
-					wasm.__wbindgen_realloc,
-				);
+			: passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
 		var len1 = WASM_VECTOR_LEN;
 		getInt32Memory0()[arg0 / 4 + 1] = len1;
 		getInt32Memory0()[arg0 / 4 + 0] = ptr1;
@@ -806,9 +799,7 @@ function __wbg_get_imports() {
 		const ret = getObject(arg0).push(getObject(arg1));
 		return ret;
 	};
-	imports.wbg.__wbg_instanceof_ArrayBuffer_9221fa854ffb71b5 = function (
-		arg0,
-	) {
+	imports.wbg.__wbg_instanceof_ArrayBuffer_9221fa854ffb71b5 = function (arg0) {
 		let result;
 		try {
 			result = getObject(arg0) instanceof ArrayBuffer;

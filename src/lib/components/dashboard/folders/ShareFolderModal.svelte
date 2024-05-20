@@ -51,15 +51,11 @@
 					on:mouseenter="{() => (infoOnHover = true)}"
 					on:mouseleave="{() => (infoOnHover = false)}"
 					on:click="{() => (showInfoTab = !showInfoTab)}"
-					><InfoIcon
-						color="{infoOnHover ? '#BFC0CC' : '#4D4F60'}"
-					/></button
+					><InfoIcon color="{infoOnHover ? '#BFC0CC' : '#4D4F60'}" /></button
 				></span
 			>
 
-			<button
-				class="p-2"
-				on:click="{() => showFolderShareDrawer.set(false)}"
+			<button class="p-2" on:click="{() => showFolderShareDrawer.set(false)}"
 				><ClosePanel /></button
 			>
 		</div>
@@ -110,8 +106,7 @@
 		<div class="p-2 w-full flex justify-end items-center box-border mt-0">
 			<button
 				class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
-				on:click="{() => showFolderShareDrawer.set(false)}"
-				>Cancel</button
+				on:click="{() => showFolderShareDrawer.set(false)}">Cancel</button
 			>
 
 			<button
@@ -119,8 +114,7 @@
 					? 'bg-osvauld-carolinablue text-osvauld-frameblack border-transparent'
 					: 'border border-osvauld-iconblack text-osvauld-textActive'}"
 				disabled="{!saveEnabled}"
-				on:click="{() => saveChanges.shareFolderHandler()}"
-				>Save changes</button
+				on:click="{() => saveChanges.shareFolderHandler()}">Save changes</button
 			>
 		</div>
 	</div>

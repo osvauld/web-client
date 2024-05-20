@@ -6,9 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			const username = form.querySelector(
 				'input[type="text"], input[type="email"]',
 			)?.value;
-			const password = form.querySelector(
-				'input[type="password"]',
-			)?.value;
+			const password = form.querySelector('input[type="password"]')?.value;
 
 			if (username && password) {
 				// Send message to the background script

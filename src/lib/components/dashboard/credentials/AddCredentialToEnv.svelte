@@ -44,8 +44,7 @@
 	};
 	const handleInputChange = (e: any) => {
 		const query = e.type === "input" ? e.target.value : e.detail;
-		searchResults =
-			query.length >= 1 ? searchObjects(query, searchData) : [];
+		searchResults = query.length >= 1 ? searchObjects(query, searchData) : [];
 	};
 
 	const addCredentialToEnv = async () => {
@@ -167,8 +166,7 @@
 								type="checkbox"
 								class="mr-2 bg-osvauld-cardshade
                checked:bg-osvauld-activelavender focus:text-osvauld-activelavender hover:text-osvauld-activelavender active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
-								on:change="{(event) =>
-									toggleFolder(result, event)}"
+								on:change="{(event) => toggleFolder(result, event)}"
 							/>
 							<span class="text-base">
 								{result.name}

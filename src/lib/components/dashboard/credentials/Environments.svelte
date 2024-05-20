@@ -65,9 +65,7 @@
 				on:click="{addCliUser}"
 			>
 				<span class="mr-2">Add new CLI user</span>
-				<UserPlus
-					color="{addNewCliUserHovered ? '#0D0E13' : '#A3A4B5'}"
-				/>
+				<UserPlus color="{addNewCliUserHovered ? '#0D0E13' : '#A3A4B5'}" />
 			</button>
 
 			<button
@@ -77,9 +75,7 @@
 				on:click="{addEnv}"
 			>
 				<span class="mr-2">Add new environment </span>
-				<EnvironmentAdd
-					color="{addNewUserHovered ? '#0D0E13' : '#A3A4B5'}"
-				/>
+				<EnvironmentAdd color="{addNewUserHovered ? '#0D0E13' : '#A3A4B5'}" />
 			</button>
 		</div>
 	{/if}
@@ -110,9 +106,7 @@
 					class="w-[15rem] text-center">CLI user</span
 				><span class="w-[15rem] text-center pr-6">Created At</span>
 			</div>
-			<div
-				class="border-b border-osvauld-iconblack my-1 w-full mt-auto"
-			></div>
+			<div class="border-b border-osvauld-iconblack my-1 w-full mt-auto"></div>
 			{#each $envStore as env}
 				<li
 					class="my-2 py-3 px-6 bg-osvauld-cardshade rounded-lg flex justify-between items-center text-base"
@@ -120,9 +114,7 @@
 					<span class="w-[15rem] text-center">{env.name}</span>
 					<span class="w-[15rem] text-center">{env.cliUsername}</span>
 					<span class="w-[15rem] text-center"
-						>{new Date(env.createdat)
-							.toLocaleString()
-							.split(",")[0]}</span
+						>{new Date(env.createdat).toLocaleString().split(",")[0]}</span
 					>
 				</li>
 			{/each}
@@ -136,9 +128,7 @@
 		on:click="{() => !addcredentialToEnv}"
 	>
 		<button class="p-6 rounded bg-transparent" on:click|stopPropagation>
-			<AddCredentialToEnv
-				on:close="{() => (addcredentialToEnv = false)}"
-			/>
+			<AddCredentialToEnv on:close="{() => (addcredentialToEnv = false)}" />
 		</button>
 	</button>
 {/if}

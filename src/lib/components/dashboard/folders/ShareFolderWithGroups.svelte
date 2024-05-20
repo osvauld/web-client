@@ -164,8 +164,7 @@
 					{setbackground}
 					{showOptions}
 					reverseModal="{$selectedGroups.size > 1 && index > 1}"
-					on:select="{(e) =>
-						handleRoleChange(e, index, 'selectedGroups')}"
+					on:select="{(e) => handleRoleChange(e, index, 'selectedGroups')}"
 				/>
 				<div class="border-b border-osvauld-iconblack w-full"></div>
 			{/each}

@@ -124,8 +124,7 @@
 					class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
 				>
 					<FolderIcon
-						color="{$selectedFolder?.id == folder.id ||
-						hoveringIndex === index
+						color="{$selectedFolder?.id == folder.id || hoveringIndex === index
 							? '#F2F2F0'
 							: '#85889C'}"
 					/>
@@ -188,9 +187,7 @@
 	<button
 		on:click="{() =>
 			selectSection(
-				$selectedSection === 'Environments'
-					? 'SharedFolders'
-					: 'Environments',
+				$selectedSection === 'Environments' ? 'SharedFolders' : 'Environments',
 			)}"
 		class="w-[90%] py-2 flex justify-between items-center px-2 rounded-md {$selectedSection ===
 		'Environments'
@@ -198,9 +195,7 @@
 			: 'text-osvauld-fieldText'}"
 		>Environments <span class="flex"
 			><EnvironmentAdd
-				color="{$selectedSection === 'Environments'
-					? '#F2F2F0'
-					: '#85889C'}"
+				color="{$selectedSection === 'Environments' ? '#F2F2F0' : '#85889C'}"
 			/>
 			<span
 				class="{$selectedSection === 'Environments'
@@ -208,9 +203,7 @@
 					: 'rotate-0'}"
 			>
 				<RightArrow
-					color="{$selectedSection === 'Environments'
-						? '#F2F2F0'
-						: '#85889C'}"
+					color="{$selectedSection === 'Environments' ? '#F2F2F0' : '#85889C'}"
 				/>
 			</span>
 		</span>
@@ -236,8 +229,7 @@
 							class="w-full p-2 text-lg rounded-2xl flex items-center"
 						>
 							<ExistingEnvironment
-								color="{$selectedEnv?.id == env.id ||
-								hoveringEnvIndex === index
+								color="{$selectedEnv?.id == env.id || hoveringEnvIndex === index
 									? '#F2F2F0'
 									: '#85889C'}"
 							/>

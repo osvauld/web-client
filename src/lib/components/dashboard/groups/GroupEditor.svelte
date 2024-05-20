@@ -14,10 +14,7 @@
 		const payload = {
 			name: name,
 		};
-		const groupResponse = await renameGroup(
-			payload,
-			$selectedGroup.groupId,
-		);
+		const groupResponse = await renameGroup(payload, $selectedGroup.groupId);
 
 		await setGroupStore();
 		showRenameGroupDrawer.set(false);

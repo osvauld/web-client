@@ -108,14 +108,10 @@
 				on:mouseenter="{() => (infoOnHover = true)}"
 				on:mouseleave="{() => (infoOnHover = false)}"
 				on:click="{() => (showInfoTab = !showInfoTab)}"
-				><InfoIcon
-					color="{infoOnHover ? '#BFC0CC' : '#4D4F60'}"
-				/></button
+				><InfoIcon color="{infoOnHover ? '#BFC0CC' : '#4D4F60'}" /></button
 			></span
 		>
-		<button class="p-2" on:click="{handleClickOutside}"
-			><ClosePanel /></button
-		>
+		<button class="p-2" on:click="{handleClickOutside}"><ClosePanel /></button>
 	</div>
 
 	{#if showInfoTab}
@@ -124,8 +120,8 @@
 		>
 			<span class="w-[12%] mt-1"> <InfoIcon /> </span>
 			<p class="text-sm text-osvauld-sheffieldgrey font-normal">
-				This folder contains credentials you have access directly or
-				indirectly through below assignments
+				This folder contains credentials you have access directly or indirectly
+				through below assignments
 			</p>
 		</div>
 	{/if}
@@ -142,9 +138,7 @@
 					editPermissionTrigger = !editPermissionTrigger;
 				}}"
 			>
-				<EditIcon
-					color="{editPermissionTrigger ? '#89B4FA' : '#6E7681'}"
-				/>
+				<EditIcon color="{editPermissionTrigger ? '#89B4FA' : '#6E7681'}" />
 			</button>
 		</div>
 	</div>

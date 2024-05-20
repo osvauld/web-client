@@ -109,8 +109,7 @@
 		{/if}
 		{#each $groupStore as group, index}
 			<li
-				class="{($selectedGroup &&
-					$selectedGroup.groupId === group.groupId) ||
+				class="{($selectedGroup && $selectedGroup.groupId === group.groupId) ||
 				hoveringIndex === index
 					? 'bg-osvauld-fieldActive text-osvauld-sideListTextActive'
 					: 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md pl-3 my-0.5 pr-3 mr-1 flex items-center transition-colors duration-100"

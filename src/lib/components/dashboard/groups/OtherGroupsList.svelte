@@ -59,13 +59,9 @@
 			<tr
 				class="leading-normal text-base font-light text-osvauld-fieldTextActive"
 			>
-				<th class="py-3 px-3 text-left whitespace-nowrap w-1/4">Name</th
-				>
-				<th class="py-3 px-3 text-left whitespace-nowrap w-1/4"
-					>Username</th
-				>
-				<th class="py-3 px-3 text-left whitespace-nowrap w-1/4">Role</th
-				>
+				<th class="py-3 px-3 text-left whitespace-nowrap w-1/4">Name</th>
+				<th class="py-3 px-3 text-left whitespace-nowrap w-1/4">Username</th>
+				<th class="py-3 px-3 text-left whitespace-nowrap w-1/4">Role</th>
 				<th class="py-3 px-3 text-left whitespace-nowrap w-1/4"></th>
 			</tr>
 		</thead>
@@ -98,10 +94,7 @@
 							class="flex justify-center items-center py-5 w-1/4 cursor-pointer"
 						>
 							{#if groupAdmin}
-								<button
-									on:click="{() =>
-										handleRemoveUserFromGroup(user.id)}"
-								>
+								<button on:click="{() => handleRemoveUserFromGroup(user.id)}">
 									<BinIcon />
 								</button>
 							{/if}

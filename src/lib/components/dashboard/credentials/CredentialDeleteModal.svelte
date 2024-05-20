@@ -65,13 +65,11 @@
 		<div class="flex justify-end items-center gap-6 w-full">
 			<button
 				class="text-osvauld-fadedCancel font-medium text-base"
-				on:click|preventDefault="{withdrawCredentialDeleteModal}"
-				>Cancel</button
+				on:click|preventDefault="{withdrawCredentialDeleteModal}">Cancel</button
 			>
 			<button
 				class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md"
-				on:click|preventDefault="{DeleteConfirmation}"
-				>Delete Credential</button
+				on:click|preventDefault="{DeleteConfirmation}">Delete Credential</button
 			>
 		</div>
 	</div>

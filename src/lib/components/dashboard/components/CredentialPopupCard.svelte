@@ -45,9 +45,7 @@
 			{/if}
 		</div>
 		<div
-			class="{credential.description.length !== 0
-				? 'visible'
-				: 'invisible'}"
+			class="{credential.description.length !== 0 ? 'visible' : 'invisible'}"
 		>
 			<label
 				class="text-osvauld-dusklabel block text-left text-sm font-normal"

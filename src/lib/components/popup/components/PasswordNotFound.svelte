@@ -3,9 +3,7 @@
 >
 	<div>
 		<span class="text-lg">No passwords found!</span>
-		<p class="text-sm mt-4">
-			Current page doesn't have a password in osvauld.
-		</p>
+		<p class="text-sm mt-4">Current page doesn't have a password in osvauld.</p>
 	</div>
 	<!-- <button
     class="w-2/3 rounded-md py-2 px-4 mr-2 bg-osvauld-carolinablue text-osvauld-ninjablack text-base font-normal flex justify-center items-center whitespace-nowrap"

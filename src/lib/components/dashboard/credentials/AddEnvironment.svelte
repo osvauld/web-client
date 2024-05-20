@@ -62,10 +62,7 @@
 		<span class="text-[21px] font-medium text-osvauld-quarzowhite"
 			>Create Environment</span
 		>
-		<button
-			class="cursor-pointer p-2"
-			on:click|preventDefault="{handleClose}"
-		>
+		<button class="cursor-pointer p-2" on:click|preventDefault="{handleClose}">
 			<ClosePanel />
 		</button>
 	</div>
@@ -120,11 +117,7 @@
 					{#if selectedUserIndice === index}
 						<UserCheck />
 					{:else}
-						<span
-							class="{hoveredIndex === index
-								? 'visible'
-								: 'invisible'}"
-						>
+						<span class="{hoveredIndex === index ? 'visible' : 'invisible'}">
 							<UserPlus />
 						</span>
 					{/if}

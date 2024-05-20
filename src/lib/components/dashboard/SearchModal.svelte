@@ -34,10 +34,7 @@
 	on:keydown="{handleKeyDown}"
 >
 	<div class="flex items-start justify-center min-h-screen mt-[2.6vh]">
-		<button
-			class="fixed inset-0 bg-black opacity-50"
-			on:click="{closeModal}"
-		>
+		<button class="fixed inset-0 bg-black opacity-50" on:click="{closeModal}">
 		</button>
 		<div
 			class="bg-osvauld-frameblack border border-osvauld-iconblack rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full !w-[40vw] ml-[10vw]"
@@ -55,9 +52,7 @@
 					bind:value="{query}"
 				/>
 			</div>
-			<div
-				class="w-full border-t-[1px] border-osvauld-iconblack my-2"
-			></div>
+			<div class="w-full border-t-[1px] border-osvauld-iconblack my-2"></div>
 			<div class=" bg-osvauld-frameblack">
 				{#if searchResults.length !== 0}
 					<p
@@ -83,15 +78,9 @@
 								class="w-full flex flex-col justify-center items-start pl-2 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
 							>
 								<div class="text-base flex font-semibold">
-									<Highlight
-										text="{result.name}"
-										{query}
-									/>&nbsp;
+									<Highlight text="{result.name}" {query} />&nbsp;
 									<span>in folder</span>&nbsp;
-									<Highlight
-										text="{result.folderName}"
-										{query}
-									/>
+									<Highlight text="{result.folderName}" {query} />
 								</div>
 								<div class="text-sm font-normal">
 									<Highlight text="{result.domain}" {query} />
@@ -110,8 +99,8 @@
 						<p
 							class="text-osvauld-placeholderblack text-base text-center w-[80%]"
 						>
-							Try searching for keywords in credentials, folders,
-							groups, descriptions and more
+							Try searching for keywords in credentials, folders, groups,
+							descriptions and more
 						</p>
 					</div>
 				{/if}

@@ -83,14 +83,10 @@
 						<Tick />
 					</span>
 				{:else}
-					<CopyIcon
-						color="{isUsernameHovered ? '#F2F2F0' : '#85889C'}"
-					/>
+					<CopyIcon color="{isUsernameHovered ? '#F2F2F0' : '#85889C'}" />
 				{/if}
 			</div>
-			<div class="font-inter text-base whitespace-nowrap">
-				Copy username
-			</div>
+			<div class="font-inter text-base whitespace-nowrap">Copy username</div>
 		</button>
 
 		<button
@@ -105,9 +101,7 @@
 						<Tick />
 					</span>
 				{:else}
-					<CopyIcon
-						color="{isRecoveryHovered ? '#FF6A6A' : '#85889C'}"
-					/>
+					<CopyIcon color="{isRecoveryHovered ? '#FF6A6A' : '#85889C'}" />
 				{/if}
 			</div>
 			<div class="font-inter text-base whitespace-nowrap">

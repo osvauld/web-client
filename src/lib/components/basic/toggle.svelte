@@ -25,14 +25,10 @@
 			>
 				{#if item === "Folders"}
 					<MultipleFolders
-						color="{$selectedPage === 'Folders'
-							? 'white'
-							: '#85889C'}"
+						color="{$selectedPage === 'Folders' ? 'white' : '#85889C'}"
 					/>
 				{:else}
-					<GroupIcon
-						color="{$selectedPage === item ? 'white' : '#85889C'}"
-					/>
+					<GroupIcon color="{$selectedPage === item ? 'white' : '#85889C'}" />
 				{/if}
 				<span class="ml-2 text-base font-light">{item}</span>
 			</button>

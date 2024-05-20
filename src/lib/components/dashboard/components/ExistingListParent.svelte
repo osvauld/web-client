@@ -32,8 +32,7 @@
 					reverseModal="{existingItemsData.length > 3 &&
 						index > existingItemsData.length - 3}"
 					on:remove="{() => handleRemoval(item)}"
-					on:permissonChange="{(e) =>
-						handlePermissionChange(e, item)}"
+					on:permissonChange="{(e) => handlePermissionChange(e, item)}"
 				/>
 			{/each}
 		{/if}

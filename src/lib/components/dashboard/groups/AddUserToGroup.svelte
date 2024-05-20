@@ -100,9 +100,7 @@
 		class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6"
 	>
 		<div class="flex justify-between items-center p-3">
-			<span class="font-sans text-white text-28 font-normal"
-				>Add Users</span
-			>
+			<span class="font-sans text-white text-28 font-normal">Add Users</span>
 			<button class="p-2" on:click="{closeDrawer}"><ClosePanel /></button>
 		</div>
 		<div class="border border-osvauld-bordergreen mb-2 w-full"></div>
@@ -124,9 +122,7 @@
 					/>
 				</div>
 
-				<div
-					class="border border-osvauld-bordergreen my-1 w-full mb-1"
-				></div>
+				<div class="border border-osvauld-bordergreen my-1 w-full mb-1"></div>
 
 				<div
 					class="overflow-y-scroll scrollbar-thin bg-osvauld-frameblack w-full min-h-[40vh] max-h-[70vh]"
@@ -141,21 +137,16 @@
 								<span class="text-base">{user.name}</span>
 								<button
 									class="p-2 relative"
-									on:click="{() =>
-										addUsertoGroup(user, index)}"
+									on:click="{() => addUsertoGroup(user, index)}"
 								>
 									{#if selectedUserIndice === index}
 										<svelte:component
-											this="{roleSelectionPrompt
-												? RoleSelector
-												: UserCheck}"
+											this="{roleSelectionPrompt ? RoleSelector : UserCheck}"
 											on:select="{selectionMaker}"
 										/>
 									{:else}
 										<span
-											class="{hoveredIndex === index
-												? 'visible'
-												: 'invisible'}"
+											class="{hoveredIndex === index ? 'visible' : 'invisible'}"
 										>
 											<UserPlus />
 										</span>

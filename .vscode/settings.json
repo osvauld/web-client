@@ -3,7 +3,7 @@
   "svelte.plugin.css.diagnostics.enable": true,
   "svelte.plugin.svelte.diagnostics.enable": true,
   "editor.insertSpaces": false,
-  "editor.tabSize": 4, // Set the tab width to 4 spaces
+  "editor.tabSize": 4, 
   "[svelte]": {
     "editor.insertSpaces": false,
     "editor.tabSize": 4

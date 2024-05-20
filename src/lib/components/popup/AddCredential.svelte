@@ -34,9 +34,7 @@
 	// Function to handle form submission
 	const handleSubmit = async () => {
 		const responseJson = await fetchAllFolders();
-		folderData = responseJson.data.sort((a, b) =>
-			a.name.localeCompare(b.name),
-		);
+		folderData = responseJson.data.sort((a, b) => a.name.localeCompare(b.name));
 		showFolderList = true;
 	};
 
@@ -100,8 +98,7 @@
 					class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
 				>
 					<FolderIcon
-						color="{selectedFolderId == folder.id ||
-						hoveringIndex === index
+						color="{selectedFolderId == folder.id || hoveringIndex === index
 							? '#F2F2F0'
 							: '#85889C'}"
 					/>
@@ -191,8 +188,7 @@
 		<div>
 			<label
 				for="domain"
-				class="block text-sm font-medium text-osvauld-textActive"
-				>Domain</label
+				class="block text-sm font-medium text-osvauld-textActive">Domain</label
 			>
 			<input
 				id="domain"

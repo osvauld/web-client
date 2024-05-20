@@ -54,9 +54,7 @@
 	{#if !signedUp}
 		<Signup on:signedUp="{handleSignedUp}" />
 	{:else if showWelcome}
-		<div
-			class="overflow-hidden flex justify-center items-center w-full h-full"
-		>
+		<div class="overflow-hidden flex justify-center items-center w-full h-full">
 			<Welcome on:authenticated="{handleAuthenticated}" />
 		</div>
 	{:else}

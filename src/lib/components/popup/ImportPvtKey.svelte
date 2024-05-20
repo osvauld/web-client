@@ -45,9 +45,7 @@
 		on:input="{(e) => handleInputChange(e, 'privateKey')}"
 	></textarea>
 
-	<label for="passphrase" class="font-normal mt-6 mb-2"
-		>Enter Passphrase</label
-	>
+	<label for="passphrase" class="font-normal mt-6 mb-2">Enter Passphrase</label>
 	<div
 		class="flex justify-between items-center bg-osvauld-frameblack px-3 border rounded-lg border-osvauld-iconblack w-[300px]"
 	>

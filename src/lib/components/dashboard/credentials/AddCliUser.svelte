@@ -41,10 +41,7 @@
 		<span class="text-[21px] font-medium text-osvauld-quarzowhite"
 			>Create Cli User</span
 		>
-		<button
-			class="cursor-pointer p-2"
-			on:click|preventDefault="{handleClose}"
-		>
+		<button class="cursor-pointer p-2" on:click|preventDefault="{handleClose}">
 			<ClosePanel />
 		</button>
 	</div>
