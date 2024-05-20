@@ -21,7 +21,7 @@
   let copiedIndex = null;
   let isFieldName = null;
   let hoverEffect = false;
-  let fields = [];
+  let credentials = [];
 
   const addEnv = () => {
     showAddEnvDrawer.set(true);
@@ -34,7 +34,7 @@
   selectedEnv.subscribe(async (value) => {
     if (value) {
       const fieldsResponse = await fetchEnvFields(value.id);
-      fields = fieldsResponse.data;
+      credentials = fieldsResponse.data;
     }
   });
 
@@ -99,65 +99,74 @@
 </div>
 
 {#if $selectedEnv}
-  <ul
-    class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden overflow-y-scroll scrollbar-thin min-h-[35rem] max-h-[45rem]"
-  >
-    {#each fields as field, index}
-      <li class="w-full">
-        <div class="flex items-center justify-between p-4">
-          <div
-            class="w-[30%] bg-osvauld-fieldActive rounded-md px-2 py-1 flex justify-between items-center"
-          >
-            <input
-              class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
-              id={`key-${index}`}
-              type="text"
-              value={field.fieldName}
-            />
-            <button
-              on:click|preventDefault|stopPropagation={() =>
-                copyToClipboard(field.fieldName, index, true)}
+  {#each credentials as credential}
+    <ul
+      class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden my-6"
+    >
+      <div
+        class="text-osvauld-fieldTextActive text-lg font-medium py-2 border-b border-osvauld-iconblack"
+      >
+        {credential.credentialId}
+      </div>
+      <div
+        class="flex flex-col p-4 pl-0 pt-0 overflow-y-scroll scrollbar-thin h-[10rem] mt-2"
+      >
+        {#each credential.fields as field, index}
+          <div class="flex justify-between items-center my-1">
+            <div
+              class="w-[30%] bg-osvauld-fieldActive rounded-lg pl-0 pr-2 py-0.5 flex justify-between items-center"
             >
-              {#if copiedIndex === index && isFieldName}
-                <span in:scale>
-                  <Tick />
-                </span>
-              {:else if hoverEffect}
-                <ActiveCopy />
-              {:else}
-                <CopyIcon color={"#4D4F60"} />
-              {/if}
-            </button>
-          </div>
-          <div
-            class="w-[68%] bg-osvauld-fieldActive rounded-md px-2 py-1 flex justify-between items-center"
-          >
-            <input
-              class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
-              id={`value-${index}`}
-              type="text"
-              autocomplete="off"
-              value={field.fieldValue}
-            />
-            <button
-              on:click|preventDefault|stopPropagation={() =>
-                copyToClipboard(field.fieldValue, index, false)}
+              <input
+                class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
+                id={`key-${index}`}
+                type="text"
+                value={field.fieldName}
+              />
+              <button
+                on:click|preventDefault|stopPropagation={() =>
+                  copyToClipboard(field.fieldName, index, true)}
+              >
+                {#if copiedIndex === index && isFieldName}
+                  <span in:scale>
+                    <Tick />
+                  </span>
+                {:else if hoverEffect}
+                  <ActiveCopy />
+                {:else}
+                  <CopyIcon color={"#4D4F60"} />
+                {/if}
+              </button>
+            </div>
+            <div
+              class="w-[68%] bg-osvauld-fieldActive rounded-lg pl-0 pr-2 py-0.5 flex justify-between items-center"
             >
-              {#if copiedIndex === index && !isFieldName}
-                <span in:scale>
-                  <Tick />
-                </span>
-              {:else if hoverEffect}
-                <ActiveCopy />
-              {:else}
-                <CopyIcon color={"#4D4F60"} />
-              {/if}
-            </button>
+              <input
+                class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
+                id={`value-${index}`}
+                type="text"
+                autocomplete="off"
+                value={field.fieldValue}
+              />
+              <button
+                on:click|preventDefault|stopPropagation={() =>
+                  copyToClipboard(field.fieldValue, index, false)}
+              >
+                {#if copiedIndex === index && !isFieldName}
+                  <span in:scale>
+                    <Tick />
+                  </span>
+                {:else if hoverEffect}
+                  <ActiveCopy />
+                {:else}
+                  <CopyIcon color={"#4D4F60"} />
+                {/if}
+              </button>
+            </div>
           </div>
-        </div>
-      </li>
-    {/each}
-  </ul>
+        {/each}
+      </div>
+    </ul>
+  {/each}
 {:else}
   <div class="w-full">
     <ul class="w-[90%] mx-auto text-osvauld-fieldText font-light">
