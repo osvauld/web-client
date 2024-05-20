@@ -6,9 +6,19 @@
     envStore,
     showAddEnvDrawer,
   } from "../store";
+  import { sendMessage } from "../helper";
   import AddCredentialToEnv from "./AddCredentialToEnv.svelte";
   import AddCliUser from "./AddCliUser.svelte";
-  import { Add, Tick, ActiveCopy, CopyIcon } from "../icons";
+  import {
+    Add,
+    Locked,
+    Eye,
+    Unlocked,
+    ActiveCopy,
+    ClosedEye,
+    CopyIcon,
+    Tick,
+  } from "../icons";
   import { fetchEnvFields } from "../apis";
   import EnvironmentAdd from "../../basic/icons/environmentAdd.svelte";
   import UserPlus from "../../basic/icons/userPlus.svelte";
@@ -18,8 +28,12 @@
   let addcredentialToEnv = false;
   let addNewUserHovered = false;
   let addNewCliUserHovered = false;
-  let copiedIndex = null;
+  let visibility = false;
+  let decrypted = false;
+  let decryptedValue = "";
   let isFieldName = null;
+  let currentMainIndex = null;
+  let currentSubIndex = null;
   let hoverEffect = false;
   let credentials = [];
 
@@ -38,8 +52,30 @@
     }
   });
 
-  const copyToClipboard = async (value, index, iamFieldName) => {
-    copiedIndex = index;
+  const decrypt = async (fieldValue, mainIndex, subIndex) => {
+    currentMainIndex = mainIndex;
+    currentSubIndex = subIndex;
+    const response = await sendMessage("decryptField", fieldValue);
+    decryptedValue = response.data;
+    decrypted = true;
+  };
+
+  const toggleVisibility = () => {
+    visibility = !visibility;
+    setTimeout(() => {
+      visibility = false;
+    }, 3000);
+  };
+
+  const lockCredential = async () => {
+    decrypted = false;
+    currentMainIndex = null;
+    currentSubIndex = null;
+  };
+
+  const copyToClipboard = async (value, mainIndex, subIndex, iamFieldName) => {
+    currentMainIndex = mainIndex;
+    currentSubIndex = subIndex;
     isFieldName = iamFieldName;
     try {
       await navigator.clipboard.writeText(value);
@@ -47,8 +83,9 @@
       console.error("Failed to copy: ", err);
     }
     setTimeout(() => {
-      copiedIndex = null;
       isFieldName = null;
+      currentMainIndex = null;
+      currentSubIndex = null;
     }, 2000);
   };
 </script>
@@ -99,7 +136,7 @@
 </div>
 
 {#if $selectedEnv}
-  {#each credentials as credential}
+  {#each credentials as credential, mainIndex}
     <ul
       class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden my-6"
     >
@@ -111,22 +148,22 @@
       <div
         class="flex flex-col p-4 pl-0 pt-0 overflow-y-scroll scrollbar-thin h-[10rem] mt-2"
       >
-        {#each credential.fields as field, index}
+        {#each credential.fields as field, subIndex}
           <div class="flex justify-between items-center my-1">
             <div
               class="w-[30%] bg-osvauld-fieldActive rounded-lg pl-0 pr-2 py-0.5 flex justify-between items-center"
             >
               <input
                 class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
-                id={`key-${index}`}
+                id={`key-${subIndex}`}
                 type="text"
                 value={field.fieldName}
               />
               <button
                 on:click|preventDefault|stopPropagation={() =>
-                  copyToClipboard(field.fieldName, index, true)}
+                  copyToClipboard(field.fieldName, mainIndex, subIndex, true)}
               >
-                {#if copiedIndex === index && isFieldName}
+                {#if currentMainIndex === mainIndex && currentSubIndex === subIndex && isFieldName}
                   <span in:scale>
                     <Tick />
                   </span>
@@ -142,25 +179,56 @@
             >
               <input
                 class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
-                id={`value-${index}`}
+                id={`value-${mainIndex}-${subIndex}`}
                 type="text"
                 autocomplete="off"
-                value={field.fieldValue}
+                value={decrypted &&
+                currentMainIndex === mainIndex &&
+                currentSubIndex === subIndex &&
+                visibility
+                  ? decryptedValue
+                  : "*".repeat(8)}
               />
-              <button
-                on:click|preventDefault|stopPropagation={() =>
-                  copyToClipboard(field.fieldValue, index, false)}
-              >
-                {#if copiedIndex === index && !isFieldName}
-                  <span in:scale>
-                    <Tick />
-                  </span>
-                {:else if hoverEffect}
-                  <ActiveCopy />
-                {:else}
-                  <CopyIcon color={"#4D4F60"} />
-                {/if}
-              </button>
+              {#if decrypted && currentMainIndex === mainIndex && currentSubIndex === subIndex}
+                <div class="w-2/5 flex gap-2 items-center justify-end">
+                  <button on:click|stopPropagation={lockCredential}>
+                    <Unlocked />
+                  </button>
+                  <button on:click|stopPropagation={toggleVisibility}>
+                    {#if visibility}
+                      <ClosedEye />
+                    {:else}
+                      <Eye />
+                    {/if}
+                  </button>
+                  <button
+                    on:click|stopPropagation={() =>
+                      copyToClipboard(
+                        decryptedValue,
+                        mainIndex,
+                        subIndex,
+                        false
+                      )}
+                  >
+                    {#if currentMainIndex === mainIndex && currentSubIndex === subIndex && !isFieldName}
+                      <span in:scale>
+                        <Tick />
+                      </span>
+                    {:else if hoverEffect}
+                      <ActiveCopy />
+                    {:else}
+                      <CopyIcon color={"#4D4F60"} />
+                    {/if}
+                  </button>
+                </div>
+              {:else}
+                <button
+                  on:click|stopPropagation={() =>
+                    decrypt(field.fieldValue, mainIndex, subIndex)}
+                >
+                  <Locked color={hoverEffect ? "#89B4FA" : "#4D4F60"} />
+                </button>
+              {/if}
             </div>
           </div>
         {/each}
