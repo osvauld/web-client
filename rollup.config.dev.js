@@ -36,6 +36,7 @@ function buildConfig(inputFileName, outputFileName) {
   return {
     input: `src/${inputFileName}.ts`,
     output: {
+      sourcemap: true,
       file: `public/build/${outputFileName}.js`,
       format: "iife",
       name: "app",
@@ -73,6 +74,7 @@ export default [
     input: "src/scripts/content.ts",
     output: {
       format: "iife",
+      sourcemap: true,
       name: "content",
       file: "public/content.js",
     },
@@ -92,6 +94,7 @@ export default [
     output: {
       format: "es",
       name: "background",
+      sourcemap: true,
       file: "public/background.js",
     },
     plugins: [

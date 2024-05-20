@@ -1,4 +1,3 @@
-
 export { default as Maximize } from "../basic/icons/maximize.svelte";
 export { default as Lens } from "../basic/icons/lens.svelte";
 export { default as ClosePanel } from "../basic/icons/closePanel.svelte";
