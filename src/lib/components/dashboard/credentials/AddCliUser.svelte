@@ -1,6 +1,6 @@
 <script lang="ts">
     import { addCliUser } from "../apis";
-    import { sendMessage } from "../helper";
+    import { getTokenAndBaseUrl, sendMessage } from "../helper";
 
     import { showAddCliDrawer } from "../store";
     import ClosePanel from "../../basic/icons/closePanel.svelte";
@@ -8,15 +8,19 @@
     let name = "";
 
     const createCliUser = async () => {
-        const response = await sendMessage("generateCliKeys", {
+        const keys = await sendMessage("generateCliKeys", {
             username: name,
         });
         const payload = {
             name,
-            deviceKey: response.sign_public_key,
-            encryptionKey: response.enc_public_key,
+            deviceKey: keys.sign_public_key,
+            encryptionKey: keys.enc_public_key,
         };
         await addCliUser(payload);
+        const { baseUrl } = await getTokenAndBaseUrl();
+        keys.base_url = baseUrl;
+        console.log(btoa(JSON.stringify(keys)));
+
         showAddCliDrawer.set(false);
     };
 
@@ -71,11 +75,11 @@
             on:click|preventDefault={handleClose}>Cancel</button
         >
         <button
-            class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md"
+            class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-normal text-osvauld-textActive rounded-md"
             type="submit"
             disabled={name === ""}
         >
-            Add Cli User
+            Add CLI User
         </button>
     </div>
 </form>

@@ -5,7 +5,7 @@ export {
     showAddUserDrawer, selectedPage, showAddFolderDrawer, showAddGroupDrawer, showFolderShareDrawer,
     showCredentialShareDrawer, showAddUserToGroupDrawer, allUsersSelected, showCredentialDetailsDrawer,
     credentialIdForEdit, buttonRef, showMoreOptions, modalManager, DeleteConfirmationModal, accessListSelected,
-    showMoreGroupOptions, toastStore, selectedSection, showAddCliDrawer, showAddEnvDrawer
-     showFolderRenameDrawer, showRenameGroupDrawer
+    showMoreGroupOptions, toastStore, selectedSection, showAddCliDrawer, showAddEnvDrawer,
+    showFolderRenameDrawer, showRenameGroupDrawer
 } from '../../store/ui.store';
 

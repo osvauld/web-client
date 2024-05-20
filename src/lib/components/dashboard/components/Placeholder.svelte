@@ -35,9 +35,11 @@
       Lets Jump right onto things!
     </p>
   </div>
-  <div class="flex justify-around items-center gap-4 w-[110%] h-[30rem]">
+  <div
+    class="flex justify-around items-center flex-wrap gap-4 min-w-[40rem] max-w-[60rem] h-[30rem]"
+  >
     <div
-      class="bg-osvauld-cardshade h-[80%] w-[48%] rounded-3xl flex flex-col gap-7 justify-center items-start p-14 border border-transparent transition duration-300 ease-in-out hover:border-osvauld-iconblack hover:-translate-y-1 hover:scale-101 cursor-pointer hover:shadow-[0_14px_15px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] text-osvauld-textActive"
+      class="bg-osvauld-cardshade h-[80%] w-[48%] rounded-3xl flex flex-col gap-7 justify-center items-start p-14 border border-transparent transition duration-300 ease-in-out hover:border-osvauld-iconblack hover:-translate-y-1 hover:scale-101 cursor-pointer hover:shadow-[0_14px_15px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] text-osvauld-textActive overflow-hidden"
       role="option"
       tabindex="0"
       aria-selected={isFirstCardHovered}
@@ -54,13 +56,13 @@
           'bg-osvauld-carolinablue !text-osvauld-frameblack'} transition-colors duration-300 !ease-in"
         on:click={createFolderManager}
       >
-        <span class="mr-1">Create new folder</span>
+        <span class="mr-1 whitespace-nowrap">Create new folder</span>
         <Add color={isFirstCardHovered ? "#000" : "#A3A4B5"} /></button
       >
     </div>
 
     <div
-      class="bg-osvauld-cardshade h-[80%] w-[48%] rounded-3xl flex flex-col justify-center gap-7 items-start p-14 border border-transparent transition duration-300 ease-in-out hover:border-osvauld-iconblack hover:-translate-y-1 hover:scale-101 cursor-pointer hover:shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] text-osvauld-textActive"
+      class="bg-osvauld-cardshade h-[80%] w-[48%] rounded-3xl flex flex-col justify-center gap-7 items-start p-14 border border-transparent transition duration-300 ease-in-out hover:border-osvauld-iconblack hover:-translate-y-1 hover:scale-101 cursor-pointer hover:shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] text-osvauld-textActive overflow-hidden"
       role="option"
       tabindex="0"
       aria-selected={isSecondCardHovered}
@@ -77,7 +79,7 @@
           'bg-osvauld-carolinablue !text-osvauld-frameblack'} transition-colors duration-300 !ease-in"
         on:click={createGroupManager}
       >
-        <span class="mr-1">Start new group</span>
+        <span class="mr-1 whitespace-nowrap">Start new group</span>
         <Add color={isSecondCardHovered ? "#000" : "#A3A4B5"} />
       </button>
     </div>
