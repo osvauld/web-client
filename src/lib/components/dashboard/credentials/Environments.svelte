@@ -14,7 +14,6 @@
     Locked,
     Eye,
     Unlocked,
-    ActiveCopy,
     ClosedEye,
     CopyIcon,
     Tick,
@@ -34,7 +33,6 @@
   let isFieldName = null;
   let currentMainIndex = null;
   let currentSubIndex = null;
-  let hoverEffect = false;
   let credentials = [];
 
   const addEnv = () => {
@@ -55,6 +53,7 @@
   const decrypt = async (fieldValue, mainIndex, subIndex) => {
     currentMainIndex = mainIndex;
     currentSubIndex = subIndex;
+    isFieldName = null;
     const response = await sendMessage("decryptField", fieldValue);
     decryptedValue = response.data;
     decrypted = true;
@@ -84,8 +83,6 @@
     }
     setTimeout(() => {
       isFieldName = null;
-      currentMainIndex = null;
-      currentSubIndex = null;
     }, 2000);
   };
 </script>
@@ -167,8 +164,6 @@
                   <span in:scale>
                     <Tick />
                   </span>
-                {:else if hoverEffect}
-                  <ActiveCopy />
                 {:else}
                   <CopyIcon color={"#4D4F60"} />
                 {/if}
@@ -210,14 +205,12 @@
                         false
                       )}
                   >
-                    {#if currentMainIndex === mainIndex && currentSubIndex === subIndex && !isFieldName}
+                    {#if currentMainIndex === mainIndex && currentSubIndex === subIndex && isFieldName === null}
+                      <CopyIcon color={"#4D4F60"} />
+                    {:else}
                       <span in:scale>
                         <Tick />
                       </span>
-                    {:else if hoverEffect}
-                      <ActiveCopy />
-                    {:else}
-                      <CopyIcon color={"#4D4F60"} />
                     {/if}
                   </button>
                 </div>
@@ -226,7 +219,7 @@
                   on:click|stopPropagation={() =>
                     decrypt(field.fieldValue, mainIndex, subIndex)}
                 >
-                  <Locked color={hoverEffect ? "#89B4FA" : "#4D4F60"} />
+                  <Locked color={"#4D4F60"} />
                 </button>
               {/if}
             </div>
