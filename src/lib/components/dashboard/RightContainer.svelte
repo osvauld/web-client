@@ -149,7 +149,7 @@
 		/>
 	{/if}
 	<div class="h-[90vh] bg-osvauld-frameblack mr-4 overflow-hidden">
-		{#if $selectedPage === "Folders" && $selectedSection === "SharedFolders"}
+		{#if $selectedPage === "Folders" }
 			<CredentialList />
 		{:else if $selectedPage === "Folders" && $selectedSection === "Environments"}
 			<Environments />

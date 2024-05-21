@@ -3,6 +3,7 @@ export type Folder = {
 	name: string;
 	description?: string;
 	accessType: string;
+	type: string;
 };
 
 export type Env = {

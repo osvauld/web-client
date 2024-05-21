@@ -6,7 +6,7 @@
 	export let tabs = ["Groups", "Users"];
 	const dispatch = createEventDispatcher();
 
-	let selectedItem = "Groups";
+	let selectedItem = tabs[0];
 	const select = (item) => {
 		selectedItem = item;
 		dispatch("select", item);

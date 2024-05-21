@@ -183,6 +183,7 @@
 			id: credentialId,
 			name: name,
 			type: "Credential",
+			private: $selectedFolder.type === "private",
 		});
 		DeleteConfirmationModal.set(true);
 	}

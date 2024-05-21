@@ -16,6 +16,7 @@
 	const dispatch = createEventDispatcher();
 	export let credential: Credential;
 	export let checked = false;
+	export let privateFolder;
 	let sensitiveFields: Fields[] = [];
 	let decrypted = false;
 	let hoverEffect = false;
@@ -60,6 +61,7 @@
 			id: credential.credentialId,
 			name: credential.name,
 			type: "Credential",
+			private: privateFolder, 
 		});
 		showMoreOptions.set(true);
 	};
@@ -134,12 +136,12 @@
 		class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
 	>
 		<div
-			class="flex {credential.accessType !== 'manager'
+			class="flex {credential.accessType !== 'manager' || privateFolder
 				? 'justify-start'
 				: 'justify-center'} items-center border-osvauld-iconblack pb-2"
 			on:click|stopPropagation
 		>
-			{#if credential.accessType === "manager"}
+			{#if credential.accessType === "manager" && !privateFolder}
 				<input
 					type="checkbox"
 					id="{credential.credentialId}"

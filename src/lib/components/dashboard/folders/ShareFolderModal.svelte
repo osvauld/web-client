@@ -8,7 +8,7 @@
 	import { InfoIcon, ClosePanel } from "../icons";
 
 	import ShareFolderWithGroups from "./ShareFolderWithGroups.svelte";
-	import UserGroupToggle from "../UserGroupToggle.svelte";
+	import Toggle from "../Toggle.svelte";
 	import ShareFolderWithUsers from "./ShareFolderWithUsers.svelte";
 	import InfoOverlay from "../components/Info.svelte";
 
@@ -82,7 +82,7 @@
 		></div>
 
 		<div class="">
-			<UserGroupToggle on:select="{toggleSelect}" />
+			<Toggle on:select="{toggleSelect}" />
 			{#if selectedTab === "Users"}
 				<ShareFolderWithUsers
 					{users}

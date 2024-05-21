@@ -7,13 +7,12 @@
 
 	import { User, Group, Credential, CredentialFields } from "../dtos";
 
-	import UserGroupToggle from "../UserGroupToggle.svelte";
+	import Toggle from "../Toggle.svelte";
 	import ShareCredentialsWithUser from "./ShareCredentialsWithUsers.svelte";
 	import ShareCredentialsWithGroups from "./ShareCredentialsWithGroups.svelte";
 	import InfoIcon from "../../basic/icons/infoIcon.svelte";
 	import InfoOverlay from "../components/Info.svelte";
 	import ClosePanel from "../../basic/icons/closePanel.svelte";
-	import ShareCredentialsWithEnv from "./ShareCredentialsWithEnv.svelte";
 	export let credentials: Credential[];
 	export let users: User[];
 	export let groups: Group[];
@@ -91,7 +90,7 @@
 		<div
 			class="flex flex-col justify-start items-center overflow-hidden h-full"
 		>
-			<UserGroupToggle on:select="{toggleSelect}" />
+			<Toggle on:select="{toggleSelect}" />
 			{#if selectedTab === "Users"}
 				<ShareCredentialsWithUser
 					{users}

@@ -10,12 +10,13 @@
 	import { ClosePanel } from "../icons";
 	import { setFolderStore } from "../../../store/storeHelper";
 	import { fly } from "svelte/transition";
+	import Toggle from "../Toggle.svelte";
 
 	let name = $showFolderRenameDrawer ? $selectedFolder.name : "";
+	let selectedTab = "shared";
 
-	//Following need to be changed in future, console.log(
 	let description = $showFolderRenameDrawer
-		? $selectedFolder.description.String
+		? $selectedFolder.description
 		: "";
 
 	function autofocus(node: any) {
@@ -44,6 +45,7 @@
 		const payload = {
 			name: name,
 			description: description,
+			sharedFolder: selectedTab === "shared",
 		};
 		const folderResponse = await createFolder(payload);
 		await setFolderStore();
@@ -65,10 +67,13 @@
 	};
 
 	const handleClose = (message) => {
-		console.log("Closing triggered", message);
 		showFolderRenameDrawer.set(false);
 		showAddFolderDrawer.set(false);
 	};
+
+	const toggleSelect = (e) => {
+		selectedTab = e.detail;
+	}
 </script>
 
 <form
@@ -91,6 +96,7 @@
 			<ClosePanel />
 		</button>
 	</div>
+	<Toggle on:select={toggleSelect} tabs={['shared', 'private']} />
 	<div
 		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
 	></div>

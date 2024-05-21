@@ -17,15 +17,12 @@
 		selectedFolder,
 		showCredentialDetailsDrawer,
 		selectedCredential,
-		selectedEnv,
-		envStore,
 	} from "../store";
 	import { onDestroy } from "svelte";
 	import DownArrow from "../../basic/icons/downArrow.svelte";
 	import Placeholder from "../components/Placeholder.svelte";
 	import { accessListSelected, buttonRef } from "../../../store/ui.store";
 	import { setCredentialStore } from "../../../store/storeHelper";
-	import { sendMessage } from "../helper";
 
 	let checkedCards: Credential[] = [];
 	let users: User[] = [];
@@ -38,7 +35,7 @@
 	let isShareHovered = false;
 	let accesslistHovered = false;
 	let addCredentialHovered = false;
-	let addcredentialToEnv = false;
+	let privateFolder = false;
 	$: isShareCredActive = checkedCards.length !== 0;
 
 	$: sortedCredentials = $credentialStore.sort(
@@ -61,6 +58,11 @@
 	const subscribe = selectedFolder.subscribe(async (folder) => {
 		if (folder === null) {
 			return;
+		}
+		if (folder.type === "private") {
+			privateFolder = true;
+		} else {
+			privateFolder = false;
 		}
 		selectedCredential.set(null);
 		await setCredentialStore();
@@ -158,7 +160,7 @@
 					{$selectedFolder.name}
 				</h1>
 				<!-- TODO: update to share credentials in the same api -->
-				{#if $selectedFolder.accessType === "manager"}
+				{#if $selectedFolder.accessType === "manager" && !privateFolder}
 					<button
 						class="py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2 relative"
 						on:click="{folderShareManager}"
@@ -174,7 +176,7 @@
 						{/if}
 					</button>
 				{/if}
-				{#if minOneCredentialManager}
+				{#if minOneCredentialManager && !privateFolder}
 					<button
 						class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg flex justify-between items-center whitespace-nowrap {isShareCredActive
 							? 'text-osvauld-frameblack bg-osvauld-carolinablue'
@@ -204,6 +206,7 @@
 			</div>
 
 			<div class="w-[40%] flex justify-end items-center">
+				{#if !privateFolder}
 				<button
 					class="hover:bg-osvauld-modalFieldActive {$accessListSelected
 						? 'bg-osvauld-modalFieldActive text-osvauld-carolinablue'
@@ -230,6 +233,7 @@
 								: 'text-osvauld-fieldText'} ">Access List</span
 					>
 				</button>
+				{/if}
 				<button
 					class="border border-osvauld-iconblack text-osvauld-textPassive hidden justify-center items-center py-1.5 px-4 text-sm rounded-md ml-4"
 				>
@@ -301,6 +305,7 @@
 		>
 			{#each sortedCredentials as credential}
 				<CredentialCard
+				{privateFolder}
 					{credential}
 					checked="{checkedCards.some(
 						(c) => c.credentialId === credential.credentialId,
