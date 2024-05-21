@@ -13,6 +13,7 @@
 	import UserPlus from "../../basic/icons/userPlus.svelte";
 	import AddEnvironment from "./AddEnvironment.svelte";
 	import EnvironmentCredential from "./EnvironmentCredential.svelte";
+	import { onMount } from "svelte";
 
 	let addCredentialHovered = false;
 	let addcredentialToEnv = false;

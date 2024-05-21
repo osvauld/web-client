@@ -15,9 +15,7 @@
 	let name = $showFolderRenameDrawer ? $selectedFolder.name : "";
 	let selectedTab = "shared";
 
-	let description = $showFolderRenameDrawer
-		? $selectedFolder.description
-		: "";
+	let description = $showFolderRenameDrawer ? $selectedFolder.description : "";
 
 	function autofocus(node: any) {
 		node.focus();
@@ -73,7 +71,7 @@
 
 	const toggleSelect = (e) => {
 		selectedTab = e.detail;
-	}
+	};
 </script>
 
 <form
@@ -96,7 +94,7 @@
 			<ClosePanel />
 		</button>
 	</div>
-	<Toggle on:select={toggleSelect} tabs={['shared', 'private']} />
+	<Toggle on:select="{toggleSelect}" tabs="{['shared', 'private']}" />
 	<div
 		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
 	></div>

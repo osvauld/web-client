@@ -61,7 +61,7 @@
 			id: credential.credentialId,
 			name: credential.name,
 			type: "Credential",
-			private: privateFolder, 
+			private: privateFolder,
 		});
 		showMoreOptions.set(true);
 	};

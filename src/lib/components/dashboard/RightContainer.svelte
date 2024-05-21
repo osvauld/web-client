@@ -44,7 +44,6 @@
 		query = "";
 		searchResults = [];
 	};
-
 	const handleSearchClick = (e: any) => {
 		searchedCredential.set(e.detail);
 		selectedPage.set("Folders");
@@ -149,7 +148,7 @@
 		/>
 	{/if}
 	<div class="h-[90vh] bg-osvauld-frameblack mr-4 overflow-hidden">
-		{#if $selectedPage === "Folders" }
+		{#if $selectedPage === "Folders" && ($selectedSection === "SharedFolders" || $selectedSection === "PrivateFolders")}
 			<CredentialList />
 		{:else if $selectedPage === "Folders" && $selectedSection === "Environments"}
 			<Environments />

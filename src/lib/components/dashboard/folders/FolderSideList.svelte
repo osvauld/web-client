@@ -47,9 +47,19 @@
 		showAddFolderDrawer.set(false);
 	};
 
-	const openFolderMenu = (e, folderId: string, folderName: string, type: string) => {
+	const openFolderMenu = (
+		e,
+		folderId: string,
+		folderName: string,
+		type: string,
+	) => {
 		buttonRef.set(e.currentTarget);
-		modalManager.set({ id: folderId, name: folderName, type: "Folder", private: type === "private"});
+		modalManager.set({
+			id: folderId,
+			name: folderName,
+			type: "Folder",
+			private: type === "private",
+		});
 		showMoreOptions.set(true);
 	};
 
@@ -206,7 +216,7 @@
 			>
 				{#each $folderStore as folder, index}
 					{#if folder.type === "private"}
-						<button on:click="{() => selectFolder(folder, "PrivateFolders")}">
+						<button on:click="{() => selectFolder(folder, 'PrivateFolders')}">
 							<li class="flex items-center my-3 pl-4">
 								<FolderIcon color="{'#85889C'}" />
 								<span

@@ -207,32 +207,32 @@
 
 			<div class="w-[40%] flex justify-end items-center">
 				{#if !privateFolder}
-				<button
-					class="hover:bg-osvauld-modalFieldActive {$accessListSelected
-						? 'bg-osvauld-modalFieldActive text-osvauld-carolinablue'
-						: 'bg-osvauld-frameblack text-osvauld-fieldText'} rounded-md flex justify-around items-center px-4 py-1.5 text-sm {$selectedFolder.accessType ===
-					'none'
-						? 'hidden'
-						: 'visible'}"
-					on:click="{handleAccessListSelection}"
-					on:mouseenter="{() => (accesslistHovered = true)}"
-					on:mouseleave="{() => (accesslistHovered = false)}"
-				>
-					<EyeScan
-						color="{$accessListSelected
-							? '#89B4FA'
-							: accesslistHovered
-								? '#F2F2F0'
-								: '#85889C'}"
-					/>
-					<span
-						class="ml-2 whitespace-nowrap {$accessListSelected
-							? 'text-osvauld-carolinablue'
-							: accesslistHovered
-								? 'text-osvauld-sideListTextActive'
-								: 'text-osvauld-fieldText'} ">Access List</span
+					<button
+						class="hover:bg-osvauld-modalFieldActive {$accessListSelected
+							? 'bg-osvauld-modalFieldActive text-osvauld-carolinablue'
+							: 'bg-osvauld-frameblack text-osvauld-fieldText'} rounded-md flex justify-around items-center px-4 py-1.5 text-sm {$selectedFolder.accessType ===
+						'none'
+							? 'hidden'
+							: 'visible'}"
+						on:click="{handleAccessListSelection}"
+						on:mouseenter="{() => (accesslistHovered = true)}"
+						on:mouseleave="{() => (accesslistHovered = false)}"
 					>
-				</button>
+						<EyeScan
+							color="{$accessListSelected
+								? '#89B4FA'
+								: accesslistHovered
+									? '#F2F2F0'
+									: '#85889C'}"
+						/>
+						<span
+							class="ml-2 whitespace-nowrap {$accessListSelected
+								? 'text-osvauld-carolinablue'
+								: accesslistHovered
+									? 'text-osvauld-sideListTextActive'
+									: 'text-osvauld-fieldText'} ">Access List</span
+						>
+					</button>
 				{/if}
 				<button
 					class="border border-osvauld-iconblack text-osvauld-textPassive hidden justify-center items-center py-1.5 px-4 text-sm rounded-md ml-4"
@@ -305,7 +305,7 @@
 		>
 			{#each sortedCredentials as credential}
 				<CredentialCard
-				{privateFolder}
+					{privateFolder}
 					{credential}
 					checked="{checkedCards.some(
 						(c) => c.credentialId === credential.credentialId,

@@ -55,7 +55,7 @@
 			id: group.groupId,
 			name: group.name,
 			type: "Group",
-			private: false
+			private: false,
 		});
 		showMoreGroupOptions.set(true);
 	};

@@ -85,22 +85,22 @@
 	>
 		<div class="flex flex-col items-start p-2 gap-2 w-full h-full">
 			{#if !$modalManager.private}
-			<button
-				class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
-				on:mouseenter="{() => (isShareHovered = true)}"
-				on:mouseleave="{() => (isShareHovered = false)}"
-			>
-				<FolderShare
-					size="{24}"
-					color="{isShareHovered ? '#F2F2F0' : '#85889C'}"
-				/>
 				<button
-					class="font-inter text-base whitespace-nowrap"
-					on:click|stopPropagation="{callShareFolderModal}"
+					class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
+					on:mouseenter="{() => (isShareHovered = true)}"
+					on:mouseleave="{() => (isShareHovered = false)}"
 				>
-					Share {$modalManager.type === "Folder" ? "folder" : ""}
+					<FolderShare
+						size="{24}"
+						color="{isShareHovered ? '#F2F2F0' : '#85889C'}"
+					/>
+					<button
+						class="font-inter text-base whitespace-nowrap"
+						on:click|stopPropagation="{callShareFolderModal}"
+					>
+						Share {$modalManager.type === "Folder" ? "folder" : ""}
+					</button>
 				</button>
-			</button>
 			{/if}
 			<button
 				class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
