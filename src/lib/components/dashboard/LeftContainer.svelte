@@ -11,7 +11,6 @@
 	<Toggle />
 </div>
 <div
-	class="scroll-m-0 h-[85%] w-full scroll-smooth justify-center flex items-center mt-6"
->
+	class="scroll-m-0 h-[82%] w-full scroll-smooth justify-center flex items-center mt-6">
 	<SideList />
 </div>
