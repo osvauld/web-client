@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Lens, ClosePanel, EditIcon, InfoIcon } from "../icons";
 	import ExistingListParent from "../components/ExistingListParent.svelte";
-	import UserGroupToggle from "../UserGroupToggle.svelte";
+	import Toggle from "../Toggle.svelte";
 	import { accessListSelected, selectedFolder, buttonRef } from "../store";
 	import {
 		fetchFolderUsers,
@@ -18,7 +18,6 @@
 	let existingUserData = [];
 	let existingGroupsData = [];
 	let selectedTab = "Groups";
-	let existingItemDropdown = false;
 	let editPermissionTrigger = false;
 	let infoOnHover = false;
 	let showInfoTab = false;
@@ -126,7 +125,7 @@
 		</div>
 	{/if}
 	<div class="flex justify-around items-center">
-		<UserGroupToggle on:select="{toggleSelect}" />
+		<Toggle on:select="{toggleSelect}" />
 		<div class="flex justify-end items-center w-full">
 			<button
 				class="p-2 rounded-lg {editPermissionTrigger

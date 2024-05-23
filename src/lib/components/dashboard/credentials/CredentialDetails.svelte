@@ -2,7 +2,7 @@
 	import { fly } from "svelte/transition";
 	import EncryptedField from "./EncryptedField.svelte";
 	import PlainField from "./PlainField.svelte";
-	import UserGroupToggle from "../UserGroupToggle.svelte";
+	import Toggle from "../Toggle.svelte";
 	import {
 		fetchCredentialUsers,
 		fetchCredentialGroups,
@@ -260,7 +260,7 @@
 				{/if}
 			{:else}
 				<div class="flex justify-between items-center">
-					<UserGroupToggle on:select="{toggleSelect}" />
+					<Toggle on:select="{toggleSelect}" />
 					<div class="mr-3">
 						{#if accessChangeDetected}
 							<button

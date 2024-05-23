@@ -27,7 +27,6 @@ export const createUser = async (payload: any) => {
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: JSON.stringify(payload),
 	});
-	console.log(signatureResponse);
 	headers.append("Signature", signatureResponse.signature);
 	const response = await fetch(`${baseUrl}/user/`, {
 		method: "POST",
