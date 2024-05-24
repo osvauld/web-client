@@ -9,6 +9,7 @@
     modalManager,
     showFolderShareDrawer,
     showFolderRenameDrawer,
+    showCredentialShareDrawer,
   } from "../store";
   import { clickOutside } from "../helper";
   import { derived } from "svelte/store";
@@ -53,6 +54,11 @@
     showFolderShareDrawer.set(true);
   };
 
+  const callShareCredentialModal = () => {
+    showMoreOptions.set(false);
+    showCredentialShareDrawer.set(true);
+  };
+
   const callRenameFolderModal = () => {
     closeModal();
     showFolderRenameDrawer.set(true);
@@ -92,23 +98,27 @@
         <FolderShare size={24} color={isShareHovered ? "#F2F2F0" : "#85889C"} />
         <button
           class="font-inter text-base whitespace-nowrap"
-          on:click|stopPropagation={callShareFolderModal}
+          on:click|stopPropagation={$modalManager.type === "Folder"
+            ? callShareFolderModal
+            : callShareCredentialModal}
         >
           Share {$modalManager.type === "Folder" ? "folder" : ""}
         </button>
       </button>
 
-      <button
-        class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
-        on:mouseenter={() => (isEditHovered = true)}
-        on:mouseleave={() => (isEditHovered = false)}
-        on:click|stopPropagation={callRenameFolderModal}
-      >
-        <div class="w-6 h-6 flex items-center justify-center">
-          <EditIcon color={isEditHovered ? "#F2F2F0" : "#85889C"} />
-        </div>
-        <button class="font-inter text-base whitespace-nowrap">Rename</button>
-      </button>
+      {#if $modalManager.type === "Folder"}
+        <button
+          class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
+          on:mouseenter={() => (isEditHovered = true)}
+          on:mouseleave={() => (isEditHovered = false)}
+          on:click|stopPropagation={callRenameFolderModal}
+        >
+          <div class="w-6 h-6 flex items-center justify-center">
+            <EditIcon color={isEditHovered ? "#F2F2F0" : "#85889C"} />
+          </div>
+          <button class="font-inter text-base whitespace-nowrap">Rename</button>
+        </button>
+      {/if}
 
       <button
         class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
