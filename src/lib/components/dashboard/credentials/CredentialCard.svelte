@@ -61,6 +61,7 @@
       name: credential.name,
       type: "Credential",
     });
+    dispatch("action", true);
     showMoreOptions.set(true);
   };
 
