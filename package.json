@@ -21,6 +21,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "-": "^0.0.1",
     "@lavamoat/allow-scripts": "^3.0.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -50,8 +51,7 @@
     "webextension-polyfill": "^0.10.0"
   },
   "dependencies": {
-    "@lavamoat/preinstall-always-fail": "^2.0.0",
-    "totp-generator": "^1.0.0"
+    "@lavamoat/preinstall-always-fail": "^2.0.0"
   },
   "lavamoat": {
     "allowScripts": {

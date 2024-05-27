@@ -148,6 +148,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 			console.log(request.action);
 			break;
 	}
+
 });
 
 browser.runtime.onConnect.addListener(async (port) => {

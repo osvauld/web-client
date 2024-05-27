@@ -239,7 +239,6 @@
 						<EncryptedField
 							fieldName="{field.fieldName}"
 							fieldValue="{field.fieldValue}"
-							fieldType="{field.fieldType}"
 							hoverEffect="{true}"
 							bgColor="{null}"
 						/>
