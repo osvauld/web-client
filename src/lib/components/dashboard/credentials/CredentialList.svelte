@@ -17,7 +17,6 @@
     selectedFolder,
     showCredentialDetailsDrawer,
     selectedCredential,
-    modalManager,
   } from "../store";
   import { onDestroy } from "svelte";
   import DownArrow from "../../basic/icons/downArrow.svelte";
@@ -46,7 +45,7 @@
     (credential) => credential.accessType === "manager"
   );
 
-  function handleCheck(isChecked: boolean, card: Credential) {
+  const handleCheck = (isChecked: boolean, card: Credential) => {
     if (isChecked) {
       checkedCards = [...checkedCards, card];
     } else {
@@ -54,11 +53,12 @@
         (c) => c.credentialId !== card.credentialId
       );
     }
-  }
+  };
 
-  function handleAction(triggerAction: boolean, card: Credential) {
+  const handleActionModalCall = (triggerAction: boolean, card: Credential) => {
+    // When the action modal is called from a credential, it clears all other checked credentials and make that credential checked.
     checkedCards = [card];
-  }
+  };
 
   const subscribe = selectedFolder.subscribe(async (folder) => {
     if (folder === null) {
@@ -292,7 +292,7 @@
             (c) => c.credentialId === credential.credentialId
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
-          on:action={(e) => handleAction(e.detail, credential)}
+          on:action={(e) => handleActionModalCall(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
         />
       {/each}
