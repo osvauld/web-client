@@ -299,7 +299,6 @@
     </div>
   {/if}
 </div>
-x
 
 <style>
   .tooltip {
