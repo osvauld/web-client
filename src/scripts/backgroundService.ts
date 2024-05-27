@@ -165,120 +165,32 @@ export const encryptCredentialsForUser = async (
 	return encryptedCredsForUser;
 };
 
-
-export const loadWasmModule = async () => {
-    try {
-        await init();
-    } catch (error) {
-        console.error("Error loading WASM module or processing encryption/decryption:", error);
-    }
+export const createShareCredsPayload = async (
+	creds: CredentialFields[],
+	selectedUsers: UserListForEncryption[],
+): Promise<CredentialsForUsersPayload[]> => {
+	const response = await decryptCredentialFieldsHandler(creds);
+	const userData: CredentialsForUsersPayload[] = [];
+	for (const user of selectedUsers) {
+		const userEncryptedFields = await encryptCredentialsForUser(
+			response.data,
+			user.publicKey,
+		);
+		if (user.accessType) {
+			userData.push({
+				userId: user.id,
+				credentials: userEncryptedFields,
+				accessType: user.accessType,
+			});
+		} else {
+			userData.push({
+				userId: user.id,
+				credentials: userEncryptedFields,
+			});
+		}
+	}
+	return userData;
 };
-
-
-
-export const encryptCredentialsForUser = async (credentials: CredentialFields[], publicKeyStr: string): Promise<CredentialFields[]> => {
-    const encryptedCredsForUser: CredentialFields[] = []
-    for (const credential of credentials) {
-        const encryptedCred: CredentialFields = {
-            credentialId: credential.credentialId,
-            fields: []
-        }
-        encryptedCred.credentialId = credential.credentialId
-        const response = await encryptFieldHandler(credential.fields, publicKeyStr);
-        encryptedCred.fields = response.data
-        encryptedCredsForUser.push(encryptedCred)
-    }
-    return encryptedCredsForUser;
-}
-
-
-export const createShareCredsPayload = async (creds: CredentialFields[], selectedUsers: UserListForEncryption[]): Promise<CredentialsForUsersPayload[]> => {
-
-    const response = await decryptCredentialFieldsHandler(creds)
-    const userData: CredentialsForUsersPayload[] = [];
-    for (const user of selectedUsers) {
-        const userEncryptedFields = await encryptCredentialsForUser(
-            response.data,
-            user.publicKey,
-        );
-        if (user.accessType) {
-            userData.push({
-                userId: user.id,
-                credentials: userEncryptedFields,
-                accessType: user.accessType,
-            });
-        } else {
-            userData.push({
-                userId: user.id,
-                credentials: userEncryptedFields,
-            });
-        }
-    }
-    return userData;
-}
-
-export const handlePvtKeyImport = async (pvtKeys: string, passphrase: string) => {
-    await init();
-    const { encryptionKey, signKey, baseUrl } = JSON.parse(pvtKeys);
-    await browser.storage.local.set({ baseUrl });
-    const signPubKey = await get_pub_key(signKey);
-    const encPublicKey = await get_pub_key(encryptionKey);
-
-    const challegeResult = await createChallenge(signPubKey)
-    await decrypt_and_store_keys(encryptionKey, signKey, passphrase)
-    const signedMessage = await sign_message_with_stored_key(challegeResult.data.challenge)
-    const verificationResponse = await initiateAuth(signedMessage, signPubKey);
-    const token = verificationResponse.data.token;
-    if (token) {
-        await browser.storage.local.set({ token: token });
-        await browser.storage.local.set({ isLoggedIn: true });
-    }
-    await browser.storage.local.set({ encryptionPvtKey: encryptionKey, signPvtKey: signKey, encPublicKey: encPublicKey, signPublicKey: signPubKey });
-
-    return token;
-
-}
-
-export const credentialSubmitHandler = async (newCredential: any, credIds: string[]) => {
-    if (credIds.length > 0) {
-        const responseJson = await fetchCredsByIds(credIds);
-        const listedCredentials = responseJson.data;
-        const decryptedData = await decryptCredentialFieldsHandlerNew(listedCredentials);
-        if (decryptedData) {
-            for (const credential of decryptedData.data) {
-                for (const field of credential.fields) {
-                    if (field.fieldName == 'Username') {
-                        if (field.fieldValue == newCredential.username) {
-                            return null;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    const windowDetails = await browser.windows.create({
-            url: browser.runtime.getURL('popup.html'),
-            type: 'popup',
-            width: 290,
-            height: 480
-        });
-        return windowDetails.id;
-
-}
-export const getCurrentDomain = async () => {
-    try {
-        const queryOptions = { active: true, currentWindow: true };
-        const tabs = await browser.tabs.query(queryOptions);
-        if (tabs[0] && tabs[0].url) {
-            const url = new URL(tabs[0].url);
-            return url.hostname;  // Returns the domain of the current active tab
-        }
-        return null;
-    } catch (error) {
-        console.error("Error getting current domain:", error);
-        return null;
-    }
-}
 
 export const handlePvtKeyImport = async (
 	pvtKeys: string,

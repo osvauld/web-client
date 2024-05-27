@@ -9,20 +9,53 @@
 		CopyIcon,
 		Tick,
 	} from "../icons";
+	import { TOTP } from "totp-generator";
+
+	import { onDestroy } from "svelte";
+
 	import { sendMessage } from "../helper";
 	export let fieldName;
 	export let fieldValue;
+	export let fieldType = "sensitive";
 	export let hoverEffect;
 	export let bgColor;
 	let visibility = false;
 	let decrypted = false;
-	let decryptedValue = "";
+	let decryptedValue = null;
 	let copied = false;
-
+	let totpToken = null;
+	let timeRemaining = 0;
+	let totpInterval;
+	
 	const decrypt = async () => {
 		const response = await sendMessage("decryptField", fieldValue);
 		decryptedValue = response.data;
 		decrypted = true;
+		if (fieldType === "totp") {
+			generateTotpToken();
+		}
+	};
+
+	const generateTotpToken = () => {
+		const now = Date.now();
+		const { otp, expires } = TOTP.generate(decryptedValue || fieldValue);
+		totpToken = otp;
+		timeRemaining = Math.floor((expires - now) / 1000);
+
+		if (totpInterval) {
+			clearInterval(totpInterval);
+		}
+
+		totpInterval = setInterval(() => {
+			const currentTime = Date.now();
+			timeRemaining = Math.floor((expires - currentTime) / 1000);
+
+			if (timeRemaining <= 0) {
+				const newTotp = TOTP.generate(decryptedValue || fieldValue);
+				totpToken = newTotp.otp;
+				timeRemaining = Math.floor((newTotp.expires - currentTime) / 1000);
+			}
+		}, 1000);
 	};
 
 	const toggleVisibility = () => {
@@ -46,7 +79,14 @@
 
 	const lockCredential = async () => {
 		decrypted = false;
+		clearInterval(totpInterval);
+		decryptedValue = null;
 	};
+	onDestroy(() => {
+		if (totpInterval) {
+			clearInterval(totpInterval);
+		}
+	});
 </script>
 
 <div class="mb-2 mr-1 max-w-full" in:fly out:fly>
@@ -96,3 +136,10 @@
 		{/if}
 	</div>
 </div>
+
+{#if fieldType === "totp" && decrypted}
+	<div class="mt-2 text-xs text-osvauld-dusklabel">
+		TOTP: {totpToken} <br />
+		Time remaining: {timeRemaining}s
+	</div>
+{/if}

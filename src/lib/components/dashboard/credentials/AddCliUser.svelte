@@ -59,20 +59,23 @@
 
 <form
 	class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[20rem] flex flex-col items-start justify-around"
-	on:submit|preventDefault="{createCliUser}">
+	on:submit|preventDefault="{createCliUser}"
+>
 	<div class="flex justify-between items-center w-full">
 		<span class="text-[21px] font-medium text-osvauld-quarzowhite"
-			>Create Cli User</span>
+			>Create Cli User</span
+		>
 		<button class="cursor-pointer p-2" on:click|preventDefault="{handleClose}">
 			<ClosePanel />
 		</button>
 	</div>
 	<div
-		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4">
-	</div>
+		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
+	></div>
 
 	<label for="name" class="font-light text-sm text-osvauld-textActive"
-		>Name:</label>
+		>Name:</label
+	>
 	<input
 		id="name"
 		type="text"
@@ -81,10 +84,12 @@
 		bind:value="{name}"
 		disabled="{userString.length !== 0}"
 		class="py-1 rounded-md items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0 form-input"
-		autocomplete="off" />
+		autocomplete="off"
+	/>
 	{#if userString.length !== 0}
 		<div
-			class=" w-[95%] font-normal text-base flex justify-start items-center border border-osvauld-iconblack bg-osvauld-fieldActive rounded-lg gap-3 p-2 mx-2">
+			class=" w-[95%] font-normal text-base flex justify-start items-center border border-osvauld-iconblack bg-osvauld-fieldActive rounded-lg gap-3 p-2 mx-2"
+		>
 			<div class="justify-center items-center flex">
 				<Warning />
 			</div>
@@ -96,31 +101,35 @@
 			>Copy the user string:
 		</label>
 		<div
-			class="py-1 rounded-md items-center text-base text-osvauld-textActive bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 text-ellipsis whitespace-nowrap overflow-hidden">
+			class="py-1 rounded-md items-center text-base text-osvauld-textActive bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 text-ellipsis whitespace-nowrap overflow-hidden"
+		>
 			{userString}
 		</div>
 	{/if}
 	<div
-		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4">
-	</div>
+		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
+	></div>
 
 	<div class="flex justify-end items-center gap-6 w-full">
 		<button
 			class="text-osvauld-fadedCancel font-medium text-base"
-			on:click|preventDefault="{handleClose}">Cancel</button>
+			on:click|preventDefault="{handleClose}">Cancel</button
+		>
 		{#if userString.length === 0}
 			<button
 				class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-normal text-osvauld-textActive rounded-md"
 				type="submit"
 				disabled="{name === ''}"
-				on:click|preventDefault="{createCliUser}">
+				on:click|preventDefault="{createCliUser}"
+			>
 				Add CLI User
 			</button>
 		{:else}
 			<button
 				class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-normal text-osvauld-textActive rounded-md flex justify-between flex-nowrap gap-1"
 				type="submit"
-				on:click|preventDefault="{finishSetup}">
+				on:click|preventDefault="{finishSetup}"
+			>
 				Copy Secret info
 				{#if userStringCopied}
 					<span in:scale>
