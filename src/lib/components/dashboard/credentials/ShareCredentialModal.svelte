@@ -14,7 +14,6 @@
   import InfoOverlay from "../components/Info.svelte";
   import ClosePanel from "../../basic/icons/closePanel.svelte";
   export let credentials: Credential[] = [];
-  export let singleCredentialId = null;
   export let users: User[];
   export let groups: Group[];
   let credentialsFields: CredentialFields[] = [];
@@ -23,9 +22,7 @@
   let saveChanges;
   let saveEnabled = false;
 
-  const credIds = singleCredentialId
-    ? [singleCredentialId]
-    : credentials.map((cred) => cred.credentialId);
+  const credIds = credentials.map((cred) => cred.credentialId);
   onMount(async () => {
     const responseJson = await fetchCredentialsFieldsByIds(credIds);
     credentialsFields = responseJson.data;

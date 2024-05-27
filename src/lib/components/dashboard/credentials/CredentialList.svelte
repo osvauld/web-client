@@ -55,6 +55,11 @@
       );
     }
   }
+
+  function handleAction(triggerAction: boolean, card: Credential) {
+    checkedCards = [card];
+  }
+
   const subscribe = selectedFolder.subscribe(async (folder) => {
     if (folder === null) {
       return;
@@ -270,10 +275,6 @@
         <ShareCredentialModal
           {users}
           credentials={checkedCards}
-          singleCredentialId={$modalManager &&
-          $modalManager?.type === "Credential"
-            ? $modalManager?.id
-            : null}
           groups={allGroups}
           on:close={() => showCredentialShareDrawer.set(false)}
         />
@@ -291,12 +292,14 @@
             (c) => c.credentialId === credential.credentialId
           )}
           on:check={(e) => handleCheck(e.detail, credential)}
+          on:action={(e) => handleAction(e.detail, credential)}
           on:select={(e) => onSelectingCard(e.detail, credential)}
         />
       {/each}
     </div>
   {/if}
 </div>
+x
 
 <style>
   .tooltip {
