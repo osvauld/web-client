@@ -195,6 +195,7 @@
 						bgColor="{null}"
 						fieldName="{field.fieldName}"
 						fieldValue="{field.fieldValue}"
+						fieldType="{field.fieldType}"
 						{hoverEffect}
 					/>
 				{/each}
