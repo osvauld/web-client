@@ -76,3 +76,51 @@ export const generatePassword = (length: number) => {
 
 	return password;
 };
+
+type TransformedPayload = {
+	name: string;
+	description: string;
+	folderId: string;
+	credentialType: string;
+	domain: string;
+	fields: {
+		fieldName?: string;
+		fieldType?: string;
+		fieldValues: {
+			userId: string;
+			fieldValue: string;
+		}[];
+	}[];
+};
+
+export const transformAddCredentialPayload = (payload: any): TransformedPayload => {
+	const fieldsMap: { [key: string]: { fieldName?: string; fieldType?: string; fieldValues: { userId: string; fieldValue: string; }[]; } } = {};
+
+	payload.userFields.forEach(userField => {
+		userField.fields.forEach(field => {
+			const key = field.fieldName;
+			if (!fieldsMap[key]) {
+				fieldsMap[key] = {
+					fieldName: field.fieldName,
+					fieldType: field.fieldType,
+					fieldValues: []
+				};
+			}
+			fieldsMap[key].fieldValues.push({
+				userId: userField.userId,
+				fieldValue: field.fieldValue
+			});
+		});
+	});
+
+	const transformedFields = Object.values(fieldsMap);
+
+	return {
+		name: payload.name,
+		description: payload.description,
+		folderId: payload.folderId,
+		credentialType: payload.credentialType,
+		domain: payload.domain,
+		fields: transformedFields
+	};
+}
