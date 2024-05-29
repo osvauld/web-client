@@ -73,6 +73,15 @@ export const generatePassword = (length: number) => {
 		const randomIndex = passwordArray[i] % charSet.length;
 		password += charSet[randomIndex];
 	}
-
 	return password;
 };
+
+export 	function debounce(func, delay) {
+	let timeoutId;
+	return function (...args) {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => {
+			func.apply(this, args);
+		}, delay);
+	};
+}
