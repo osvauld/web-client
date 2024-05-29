@@ -14,7 +14,7 @@ import {
 import {
 	getTokenAndBaseUrl,
 	sendMessage,
-	transformAddCredentialPayload
+	transformAddCredentialPayload,
 } from "../components/dashboard/helper";
 
 export const fetchCredentialsByFolder = async (
@@ -43,7 +43,7 @@ export const fetchCredentialById = async (credentialId: string) => {
 
 export const addCredential = async (payload: AddCredentialPayload) => {
 	const headers = new Headers();
-	const transformedPayload = transformAddCredentialPayload(payload)
+	const transformedPayload = transformAddCredentialPayload(payload);
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: JSON.stringify(transformedPayload),
 	});

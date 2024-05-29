@@ -93,22 +93,30 @@ type TransformedPayload = {
 	}[];
 };
 
-export const transformAddCredentialPayload = (payload: any): TransformedPayload => {
-	const fieldsMap: { [key: string]: { fieldName?: string; fieldType?: string; fieldValues: { userId: string; fieldValue: string; }[]; } } = {};
+export const transformAddCredentialPayload = (
+	payload: any,
+): TransformedPayload => {
+	const fieldsMap: {
+		[key: string]: {
+			fieldName?: string;
+			fieldType?: string;
+			fieldValues: { userId: string; fieldValue: string }[];
+		};
+	} = {};
 
-	payload.userFields.forEach(userField => {
-		userField.fields.forEach(field => {
+	payload.userFields.forEach((userField) => {
+		userField.fields.forEach((field) => {
 			const key = field.fieldName;
 			if (!fieldsMap[key]) {
 				fieldsMap[key] = {
 					fieldName: field.fieldName,
 					fieldType: field.fieldType,
-					fieldValues: []
+					fieldValues: [],
 				};
 			}
 			fieldsMap[key].fieldValues.push({
 				userId: userField.userId,
-				fieldValue: field.fieldValue
+				fieldValue: field.fieldValue,
 			});
 		});
 	});
@@ -121,6 +129,6 @@ export const transformAddCredentialPayload = (payload: any): TransformedPayload 
 		folderId: payload.folderId,
 		credentialType: payload.credentialType,
 		domain: payload.domain,
-		fields: transformedFields
+		fields: transformedFields,
 	};
-}
+};
