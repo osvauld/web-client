@@ -1,7 +1,7 @@
 <div
-	class="w-full h-full flex justify-center items-center text-osvauld-quarzowhite">
-	<ul
-		class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden my-6">
+	class="w-full h-full flex justify-center items-center text-osvauld-quarzowhite p-4">
+	<div
+		class="w-full h-full border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-hidden my-6">
 		<div
 			class="text-osvauld-fieldTextActive text-lg font-medium py-2 border-b border-osvauld-iconblack">
 			Here the random string goes
@@ -16,5 +16,5 @@
 				</div>
 			</div>
 		</div>
-	</ul>
+	</div>
 </div>
