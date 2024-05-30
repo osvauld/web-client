@@ -68,8 +68,7 @@
 
 <div class="flex justify-between items-center my-4 p-2">
 	<h1
-		class="text-3xl p-4 font-normal whitespace-nowrap text-osvauld-sideListTextActive"
-	>
+		class="text-3xl p-4 font-normal whitespace-nowrap text-osvauld-sideListTextActive">
 		{#if $selectedEnv}
 			{$selectedEnv.name}
 		{:else}
@@ -81,8 +80,7 @@
 			class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue"
 			on:mouseenter="{() => (addCredentialHovered = true)}"
 			on:mouseleave="{() => (addCredentialHovered = false)}"
-			on:click="{() => (addcredentialToEnv = true)}"
-		>
+			on:click="{() => (addcredentialToEnv = true)}">
 			<span class="mr-2">Add Credential to environment</span>
 			<Add color="{addCredentialHovered ? '#0D0E13' : '#A3A4B5'}" />
 		</button>
@@ -92,8 +90,7 @@
 				class="rounded-md h-[40px] py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue"
 				on:mouseenter="{() => (addNewCliUserHovered = true)}"
 				on:mouseleave="{() => (addNewCliUserHovered = false)}"
-				on:click="{addCliUser}"
-			>
+				on:click="{addCliUser}">
 				<span class="mr-2">Add new CLI user</span>
 				<UserPlus color="{addNewCliUserHovered ? '#0D0E13' : '#A3A4B5'}" />
 			</button>
@@ -102,8 +99,7 @@
 				class="rounded-md h-[40px] py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue"
 				on:mouseenter="{() => (addNewUserHovered = true)}"
 				on:mouseleave="{() => (addNewUserHovered = false)}"
-				on:click="{addEnv}"
-			>
+				on:click="{addEnv}">
 				<span class="mr-2">Add new environment </span>
 				<EnvironmentAdd color="{addNewUserHovered ? '#0D0E13' : '#A3A4B5'}" />
 			</button>
@@ -114,36 +110,29 @@
 {#if $selectedEnv}
 	{#each credentials as credential}
 		<ul
-			class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden my-6"
-		>
+			class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden my-6">
 			<div
-				class="text-osvauld-fieldTextActive text-lg font-medium py-2 border-b border-osvauld-iconblack"
-			>
+				class="text-osvauld-fieldTextActive text-lg font-medium py-2 border-b border-osvauld-iconblack">
 				{credential.credentialName}
 			</div>
-			<div
-				class="flex flex-col p-4 pl-0 pt-0 overflow-y-scroll scrollbar-thin h-[10rem] mt-2"
-			>
+			<div class="flex flex-col pr-4 pb-2 pl-0 pt-0 mt-2">
 				<EnvironmentCredential
 					{credential}
 					on:edit="{(e) => handleEditField(credential.credentialId, e.detail)}"
 					activefieldId="{credential.credentialId ===
 					editedCredential?.credentialId
 						? editedCredential?.fieldID
-						: null}"
-				/>
+						: null}" />
 			</div>
 			{#if credential.credentialId === editedCredential?.credentialId}
 				<div class="flex justify-end items-center pr-4">
 					<button
 						class="px-3 py-1 mr-2 text-osvauld-fadedCancel border border-osvauld-iconblack rounded-md hover:text-osvauld-textActive text-sm font-medium"
 						type="button"
-						on:click="{closeEditOption}">Cancel</button
-					>
+						on:click="{closeEditOption}">Cancel</button>
 					<button
 						class="px-3 py-1 whitespace-nowrap text-sm font-medium rounded-md border bg-osvauld-carolinablue border-osvauld-iconblack text-osvauld-frameblack"
-						on:click="{handleSaveChange}">Save Changes</button
-					>
+						on:click="{handleSaveChange}">Save Changes</button>
 				</div>
 			{/if}
 		</ul>
@@ -159,13 +148,11 @@
 			<div class="border-b border-osvauld-iconblack my-1 w-full mt-auto"></div>
 			{#each $envStore as env}
 				<li
-					class="my-2 py-3 px-6 bg-osvauld-cardshade rounded-lg flex justify-between items-center text-base"
-				>
+					class="my-2 py-3 px-6 bg-osvauld-cardshade rounded-lg flex justify-between items-center text-base">
 					<span class="w-[15rem] text-center">{env.name}</span>
 					<span class="w-[15rem] text-center">{env.cliUsername}</span>
 					<span class="w-[15rem] text-center"
-						>{new Date(env.createdat).toLocaleString().split(",")[0]}</span
-					>
+						>{new Date(env.createdat).toLocaleString().split(",")[0]}</span>
 				</li>
 			{/each}
 		</ul>
@@ -175,8 +162,7 @@
 {#if addcredentialToEnv}
 	<button
 		class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-		on:click="{() => !addcredentialToEnv}"
-	>
+		on:click="{() => !addcredentialToEnv}">
 		<button class="p-6 rounded bg-transparent" on:click|stopPropagation>
 			<AddCredentialToEnv on:close="{() => (addcredentialToEnv = false)}" />
 		</button>
@@ -185,8 +171,7 @@
 {#if $showAddCliDrawer}
 	<button
 		class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-		on:click="{() => showAddCliDrawer.set(false)}"
-	>
+		on:click="{() => showAddCliDrawer.set(false)}">
 		<button class="p-6 rounded bg-transparent" on:click|stopPropagation>
 			<AddCliUser />
 		</button>
@@ -195,11 +180,9 @@
 {#if $showAddEnvDrawer}
 	<button
 		class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-		on:click="{() => showAddEnvDrawer.set(false)}"
-	>
+		on:click="{() => showAddEnvDrawer.set(false)}">
 		<button class="p-6 rounded bg-transparent" on:click|stopPropagation>
 			<AddEnvironment />
 		</button>
 	</button>
 {/if}
-x
