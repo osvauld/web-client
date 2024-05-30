@@ -14,7 +14,7 @@ export {
 	fetchCredentialUsersForDataSync,
 	removeCredential,
 	shareCredentialsWithEnv,
-	EditEnvCredentialField
+	EditEnvCredentialField,
 } from "../../apis/credentials.api";
 
 export {

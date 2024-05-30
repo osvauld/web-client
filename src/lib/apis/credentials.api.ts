@@ -330,7 +330,6 @@ export const shareCredentialsWithEnv = async (data: any) => {
 	return response;
 };
 
-
 export const EditEnvCredentialField = async (data: any) => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
