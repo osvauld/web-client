@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { scale } from "svelte/transition";
 	import { onMount } from "svelte";
-	import { debounce, sendMessage } from "../helper";
+	import { sendMessage } from "../helper";
 	import { Eye, ClosedEye, CopyIcon, Tick } from "../icons";
 	import { createEventDispatcher } from "svelte";
 	const dispatch = createEventDispatcher();
@@ -10,9 +10,7 @@
 	let fieldCopied = {};
 	let visibility = [];
 	let fieldNameEdited = false;
-
-	const initialData = structuredClone(credential.fields);
-	// dispatch("select", selectedItem);
+	let initialCredential = structuredClone(credential);
 
 	const copyToClipboard = async (value, fieldName) => {
 		fieldCopied[fieldName] = true;
@@ -39,20 +37,13 @@
 	};
 
 	const checkAnyFieldChanged = (index) => {
-		console.log(
-			"Changed value =>",
-			credential.fields[index].fieldName,
-			"Unchanged Value =>",
-			initialData[index].fieldName,
-		);
 		fieldNameEdited =
-			credential.fields[index].fieldName !== initialData[index].fieldName;
+			credential.fields[index].fieldName !==
+			initialCredential.fields[index].fieldName;
 		if (fieldNameEdited) {
-			dispatch("edit", true);
+			dispatch("edit", credential.fields[index]);
 		}
 	};
-
-	const debouncedCheckAnyFieldChanged = debounce(checkAnyFieldChanged, 300);
 
 	const initializeDecryption = () => {
 		credential.fields.forEach((field, index) => {
@@ -71,10 +62,10 @@
 			class="w-[30%] bg-osvauld-fieldActive rounded-lg pl-0 pr-2 py-0.5 flex justify-between items-center">
 			<input
 				class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
-				id="{`key-${index}`}"
+				id="{field.fieldId}"
 				type="text"
 				bind:value="{field.fieldName}"
-				on:input="{() => debouncedCheckAnyFieldChanged(index)}" />
+				on:input="{() => checkAnyFieldChanged(index)}" />
 			<button
 				on:click|preventDefault|stopPropagation="{() =>
 					copyToClipboard(field.fieldName, `fieldName-${index}`)}">
@@ -91,7 +82,7 @@
 			class="w-[68%] bg-osvauld-fieldActive rounded-lg pl-0 pr-2 py-0.5 flex justify-between items-center">
 			<input
 				class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
-				id="{`value-${index}`}"
+				id="{field.fieldId}"
 				type="text"
 				autocomplete="off"
 				value="{visibility[index] ? decryptedValues[index] : '*'.repeat(8)}" />

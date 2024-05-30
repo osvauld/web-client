@@ -329,3 +329,23 @@ export const shareCredentialsWithEnv = async (data: any) => {
 
 	return response;
 };
+
+
+export const EditEnvCredentialField = async (data: any) => {
+	const headers = new Headers();
+	const { token, baseUrl } = await getTokenAndBaseUrl();
+	const signatureResponse = await sendMessage("hashAndSign", {
+		message: JSON.stringify(data),
+	});
+	headers.append("Authorization", `Bearer ${token}`);
+	headers.append("Content-Type", "application/json");
+	headers.append("Signature", signatureResponse.signature);
+
+	const response = await fetch(`${baseUrl}/environment/edit-field-name`, {
+		method: "POST",
+		headers,
+		body: JSON.stringify(data),
+	}).then((response) => response.json());
+
+	return response;
+};
