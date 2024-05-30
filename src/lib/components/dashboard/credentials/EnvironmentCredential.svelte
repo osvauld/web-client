@@ -10,6 +10,7 @@
 	let fieldCopied = {};
 	let visibility = [];
 	let fieldNameEdited = false;
+	export let activefieldId = null;
 	let initialCredential = structuredClone(credential);
 
 	const copyToClipboard = async (value, fieldName) => {
@@ -64,6 +65,7 @@
 				class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
 				id="{field.fieldId}"
 				type="text"
+				disabled="{activefieldId && activefieldId !== field.fieldId}"
 				bind:value="{field.fieldName}"
 				on:input="{() => checkAnyFieldChanged(index)}" />
 			<button

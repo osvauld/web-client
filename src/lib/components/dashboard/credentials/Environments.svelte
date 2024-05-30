@@ -39,6 +39,12 @@
 		};
 	};
 
+	const closeEditOption = async () => {
+		editedCredential = null;
+		const fieldsResponse = await fetchEnvFields($selectedEnv.id);
+		credentials = fieldsResponse.data;
+	};
+
 	const handleSaveChange = async () => {
 		const { credentialId, ...editRequestData } = editedCredential;
 		const editResponse = await EditEnvCredentialField(editRequestData);
@@ -113,11 +119,18 @@
 				class="flex flex-col p-4 pl-0 pt-0 overflow-y-scroll scrollbar-thin h-[10rem] mt-2">
 				<EnvironmentCredential
 					{credential}
-					on:edit="{(e) =>
-						handleEditField(credential.credentialId, e.detail)}" />
+					on:edit="{(e) => handleEditField(credential.credentialId, e.detail)}"
+					activefieldId="{credential.credentialId ===
+					editedCredential?.credentialId
+						? editedCredential?.fieldID
+						: null}" />
 			</div>
 			{#if credential.credentialId === editedCredential?.credentialId}
 				<div class="flex justify-end items-center pr-4">
+					<button
+						class="px-3 py-1 mr-2 text-osvauld-fadedCancel border border-osvauld-iconblack rounded-md hover:text-osvauld-textActive text-sm font-medium"
+						type="button"
+						on:click="{closeEditOption}">Cancel</button>
 					<button
 						class="px-3 py-1 whitespace-nowrap text-sm font-medium rounded-md border bg-osvauld-carolinablue border-osvauld-iconblack text-osvauld-frameblack"
 						on:click="{handleSaveChange}">Save Changes</button>
