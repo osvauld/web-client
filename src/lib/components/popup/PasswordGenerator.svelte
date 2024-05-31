@@ -1,42 +1,47 @@
 <script lang="ts">
+	import AlertOctagon from "../basic/icons/alertOctagon.svelte";
+	import CheckVerified from "../basic/icons/checkVerified.svelte";
+
 	let includeSpecialChars = false;
 	let includeNumbers = false;
 	let includeCapital = false;
 	let passwordLength = 8;
+	$: strengthSticker = passwordLength > 17;
 </script>
-
-<style>
-	.slider-container {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 20px;
-	}
-
-	.slider {
-		width: 80%;
-		margin: 10px 0;
-	}
-</style>
 
 <div
 	class="w-full h-full flex justify-center items-center text-osvauld-quarzowhite box-border p-2">
 	<div
 		class="w-full border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText overflow-hidden">
-		<div class="text-osvauld-fieldTextActive text-lg font-medium py-2 px-4">
-			rmiq@q3qwQds45a@
+		<div
+			class="text-osvauld-fieldTextActive text-lg font-medium flex justify-center items-center flex-wrap min-h-[94px]">
+			<span class="max-w-[80%] pt-3 pb-0 break-words">
+				rmiqgfhsdfjghksjdhqwrmiqgfhsdfjghksjdhqwrmiqgfhsdfjghksjdhqwasd
+			</span>
 		</div>
 
 		<div class="flex flex-col gap-2">
-			<div class="slider-container">
-				<label for="lengthSlider">Password Length: {passwordLength}</label>
+			<div class="flex flex-col mt-5 items-center">
+				<div class="flex justify-between items-center gap-2">
+					<label class="w-[9rem]" for="lengthSlider"
+						>Character Length: {passwordLength}</label>
+					{#if strengthSticker}
+						<span class="flex justify-center items-center w-[6rem]"
+							><CheckVerified /> Strong</span>
+					{:else}
+						<span class="flex justify-center items-center gap-1 w-[6rem]"
+							><AlertOctagon /> Vulnerable</span>
+					{/if}
+				</div>
 				<input
 					type="range"
 					id="lengthSlider"
 					min="4"
-					max="20"
+					max="64"
 					bind:value="{passwordLength}"
-					class="slider" />
+					class="slider w-[80%] my-3 mx-0 h-2 rounded-lg appearance-none cursor-pointer bg-osvauld-placeholderblack" />
+			</div>
+			<div class="border-b border-osvauld-iconblack w-[90%] translate-x-4">
 			</div>
 			<div class="flex items-center justify-between px-3">
 				<span>Special characters (!&*)</span>
