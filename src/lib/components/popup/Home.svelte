@@ -53,7 +53,6 @@
 		if (activeTab && activeTab.url) {
 			const url = new URL(activeTab.url);
 			const hostname = url.hostname;
-			console.log("Hello", hostname, browser.runtime.id);
 			const parts = hostname.split(".");
 			if (parts.length > 2) {
 				domain = parts.slice(-2).join(".");
