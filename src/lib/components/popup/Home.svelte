@@ -255,7 +255,10 @@
 						windowId="{newCredential.windowId || 'manual'}"
 						on:close="{closeAddCredential}" />
 				{:else if passwordGenerator}
-					<PasswordGenerator />
+					<PasswordGenerator
+						on:close="{() => {
+							passwordGenerator = false;
+						}}" />
 				{:else if listedCredentials.length !== 0}
 					{#each listedCredentials as credential}
 						<ListedCredentials
@@ -269,12 +272,6 @@
 			</div>
 		</div>
 	</div>
-
-	<!-- 
-	<button
-	class="p-1 border border-osvauld-defaultBorder rounded-md right-2 bottom-2 fixed active:scale-[.98]"
-	on:click="{addCredentialManual}"><Add color="{'#A3A4B5'}" /></button
-> -->
 
 	{#if !addNewCredential}
 		<button

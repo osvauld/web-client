@@ -1,37 +1,44 @@
 <script lang="ts">
+	import { scale } from "svelte/transition";
 	import AlertOctagon from "../basic/icons/alertOctagon.svelte";
 	import CheckVerified from "../basic/icons/checkVerified.svelte";
-	import browser from "webextension-polyfill";
+	import Tick from "../basic/icons/tick.svelte";
 	import Crown from "../basic/icons/crown.svelte";
 	import ShieldCheck from "../basic/icons/shieldCheck.svelte";
+	import CopyIcon from "../basic/icons/copyIcon.svelte";
+	import Refresh from "../basic/icons/refresh.svelte";
+	import ActiveCopy from "../basic/icons/activeCopy.svelte";
+	import { createEventDispatcher } from "svelte";
+
+	const dispatch = createEventDispatcher();
 
 	let includeSpecialChars = false;
-	let includeNumbers = false;
-	let includeCapital = false;
-	let passwordLength = 12;
+	let includeNumbers = true;
+	let includeCapital = true;
+	let passwordLength = 14;
 	let generatedPassword = "";
 	let entropy = null;
+	let copied = false;
+	let hoverEffect = false;
 	let strengthSticker: string = "";
+	let rotationDegree: number = 0;
 	const specialChars = "!#%+:=?@";
 	const numbers = "0123456789";
 	const lowerCase = "abcdefghijklmnopqrstuvwxyz";
 	const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-	// Function to calculate entropy
 	function calculateEntropy(password: string): number {
-		let N = lowerCase.length; // always include lowercase
+		let N = lowerCase.length;
 
 		if (includeSpecialChars) N += specialChars.length;
 		if (includeNumbers) N += numbers.length;
 		if (includeCapital) N += upperCase.length;
 
 		const L = password.length;
-
 		entropy = Math.log2(N ** L);
 		return entropy;
 	}
 
-	// Function to determine password strength
 	function setStrengthSticker(password: string): void {
 		const entropy = calculateEntropy(password);
 		if (entropy < 40) {
@@ -46,7 +53,6 @@
 		console.log("Entropy:", entropy, "bits", "Strength:", strengthSticker);
 	}
 
-	// Function to shuffle a string
 	function shuffleString(str: string): string {
 		let array = str.split("");
 		for (let i = array.length - 1; i > 0; i--) {
@@ -93,7 +99,6 @@
 		).join("");
 
 		generatedPassword = shuffleString(mandatoryChars + randomChars);
-		console.log("generatedPassword", generatedPassword);
 		setStrengthSticker(generatedPassword);
 	}
 
@@ -106,39 +111,85 @@
 		);
 	}
 
-	// Function to copy password and close window
-	async function copyAndClose() {
+	const copyToClipboard = async (e) => {
+		copied = true;
 		try {
 			await navigator.clipboard.writeText(generatedPassword);
 		} catch (err) {
-			console.error("Failed to copy or close:", err);
+			console.error("Failed to copy: ", err);
 		}
-	}
+		setTimeout(() => {
+			copied = false;
+		}, 2000);
+	};
+
+	const regenerationHandler = () => {
+		rotationDegree += 180;
+		setTimeout(() => {
+			generatePassword(
+				passwordLength,
+				includeSpecialChars,
+				includeNumbers,
+				includeCapital,
+			);
+		}, 350);
+	};
+
+	const handleCancel = () => {
+		dispatch("close", true);
+	};
 </script>
+
+<style>
+	.rotate-custom {
+		transform: rotate(var(--rotation-deg, 0deg));
+	}
+</style>
 
 <div
 	class="w-full h-full flex justify-center items-center text-osvauld-quarzowhite box-border p-2">
 	<div
 		class="w-full border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText overflow-hidden">
 		<div
-			class="text-osvauld-fieldTextActive text-lg font-medium flex justify-center items-center flex-wrap min-h-[120px]">
+			class="text-osvauld-fieldTextActive text-lg font-medium flex justify-center items-center flex-wrap min-h-[120px] relative">
 			<span class="max-w-[80%] pt-3 pb-0 break-words">{generatedPassword}</span>
+			<div class="absolute bottom-1 right-10 flex gap-2">
+				<button
+					on:click|preventDefault|stopPropagation="{copyToClipboard}"
+					on:mouseenter="{() => (hoverEffect = true)}"
+					on:mouseleave="{() => (hoverEffect = false)}">
+					{#if copied}
+						<span in:scale>
+							<Tick />
+						</span>
+					{:else if hoverEffect}
+						<ActiveCopy />
+					{:else}
+						<CopyIcon color="{'#4D4F60'}" />
+					{/if}
+				</button>
+				<button
+					on:click|stopPropagation="{regenerationHandler}"
+					class="transition-transform duration-300 ease-in rotate-custom"
+					style="--rotation-deg: {rotationDegree}deg;"><Refresh /></button>
+			</div>
 		</div>
+		<div class="border-b border-osvauld-iconblack w-[90%] translate-x-4"></div>
 
 		<div class="flex flex-col gap-2">
 			<div class="flex flex-col mt-5 items-center">
 				<div class="flex justify-between items-center gap-2">
 					<label class="w-[9rem]" for="lengthSlider"
-						>Entropy {Math.floor(entropy)} bits</label>
+						>Length {passwordLength}</label>
 					{#if strengthSticker === "Chad"}
 						<span class="flex justify-center items-center gap-1 w-[6rem]"
 							><Crown /> Chad</span>
 					{:else if strengthSticker === "Strong"}
 						<span class="flex justify-center items-center gap-1 w-[6rem]"
-							><ShieldCheck /> Strong</span>
+							><ShieldCheck />Very Strong</span>
 					{:else if strengthSticker === "Fair"}
 						<span class="flex justify-center items-center w-[6rem]"
-							><CheckVerified /> Fair</span>
+							><CheckVerified /> Strong</span>
 					{:else}
 						<span class="flex justify-center items-center gap-1 w-[6rem]"
 							><AlertOctagon /> Weak</span>
@@ -148,7 +199,7 @@
 					type="range"
 					id="lengthSlider"
 					min="4"
-					max="64"
+					max="56"
 					bind:value="{passwordLength}"
 					class="slider w-[80%] my-3 mx-0 h-2 rounded-lg appearance-none cursor-pointer bg-osvauld-placeholderblack" />
 			</div>
@@ -228,13 +279,10 @@
 			</div>
 		</div>
 
-		<div class="flex justify-end items-center gap-2 w-full pr-3 my-2">
+		<div class="flex justify-start items-center w-full pl-3 my-2">
 			<button
 				class="text-osvauld-fadedCancel rounded-md border border-osvauld-iconblack py-1 px-2"
-				on:click|preventDefault="{() => {}}">Cancel</button>
-			<button
-				class="py-1 px-2 rounded-md bg-osvauld-carolinablue text-osvauld-frameblack"
-				on:click|preventDefault="{copyAndClose}">Copy and Close</button>
+				on:click|preventDefault="{handleCancel}">Cancel</button>
 		</div>
 	</div>
 </div>
