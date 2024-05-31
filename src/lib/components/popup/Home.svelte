@@ -209,7 +209,8 @@
 	<div class="w-full h-[90%] overflow-hidden">
 		{#if !addNewCredential}
 			<div
-				class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm">
+				class="text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm"
+			>
 				<span class="text-base text-osvauld-carolinablue">
 					{#if domain}
 						{domain}
@@ -218,13 +219,15 @@
 				<span
 					class="text-osvauld-sheffieldgrey {passwordFound
 						? 'visible'
-						: 'invisible'}">
+						: 'invisible'}"
+				>
 					{domainAssociatedCredentials.length}
 				</span>
 			</div>
 
 			<div
-				class="h-9 w-full mx-auto flex justify-start items-center border focus-within:!border-osvauld-activeBorder border-osvauld-iconblack rounded-lg cursor-pointer mb-4 pl-2">
+				class="h-9 w-full mx-auto flex justify-start items-center border focus-within:!border-osvauld-activeBorder border-osvauld-iconblack rounded-lg cursor-pointer mb-4 pl-2"
+			>
 				<Lens />
 				<input
 					type="text"
@@ -232,40 +235,45 @@
 					placeholder="Find what you need faster.."
 					on:keyup="{handleInputChange}"
 					bind:value="{query}"
-					autofocus />
+					autofocus
+				/>
 			</div>
 		{/if}
 		<div class="h-full p-0 scrollbar-thin">
 			{#if !addNewCredential}
 				<div
-					class="border-b border-osvauld-darkLineSeperator mb-1 w-[calc(100%+1.5rem)] -translate-x-3">
-				</div>
+					class="border-b border-osvauld-darkLineSeperator mb-1 w-[calc(100%+1.5rem)] -translate-x-3"
+				></div>
 			{/if}
 			<div
 				class="{addNewCredential
 					? 'h-[35rem] '
 					: 'h-[25rem]'} overflow-y-scroll scrollbar-thin pt-3"
 				on:scroll="{handleScroll}"
-				bind:this="{scrollableElement}">
+				bind:this="{scrollableElement}"
+			>
 				{#if addNewCredential}
 					<AddCredential
 						username="{newCredential.username}"
 						password="{newCredential.password}"
 						domain="{newCredential.domain || domain}"
 						windowId="{newCredential.windowId || 'manual'}"
-						on:close="{closeAddCredential}" />
+						on:close="{closeAddCredential}"
+					/>
 				{:else if passwordGenerator}
 					<PasswordGenerator
 						on:close="{() => {
 							passwordGenerator = false;
-						}}" />
+						}}"
+					/>
 				{:else if listedCredentials.length !== 0}
 					{#each listedCredentials as credential}
 						<ListedCredentials
 							{credential}
 							{selectedCredentialId}
 							{clickedCredential}
-							on:select="{dropDownClicked}" />{/each}
+							on:select="{dropDownClicked}"
+						/>{/each}
 				{:else}
 					<PasswordNotFound />
 				{/if}
@@ -276,23 +284,29 @@
 	{#if !addNewCredential}
 		<button
 			class="p-1 border border-osvauld-defaultBorder rounded-md right-2 bottom-2 fixed active:scale-[.98]"
-			on:click="{handleOptionsClick}"><Add color="{'#A3A4B5'}" /></button>
+			on:click="{handleOptionsClick}"><Add color="{'#A3A4B5'}" /></button
+		>
 		{#if showAddOptions}
 			<div
 				class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack w-[160px] rounded-lg"
-				style="bottom: 25px; right: 30px;">
+				style="bottom: 25px; right: 30px;"
+			>
 				<div class="flex flex-col items-start p-2 gap-1 w-full h-full">
 					<button
 						class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-md cursor-pointer"
-						on:click="{triggerPasswordGenerator}">
+						on:click="{triggerPasswordGenerator}"
+					>
 						<span class="font-inter font-normal text-sm whitespace-nowrap"
-							>Generate Password</span>
+							>Generate Password</span
+						>
 					</button>
 					<button
 						class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-md cursor-pointer"
-						on:click="{addCredentialManual}">
+						on:click="{addCredentialManual}"
+					>
 						<span class="font-inter font-normal text-sm whitespace-nowrap"
-							>Add Credential</span>
+							>Add Credential</span
+						>
 					</button>
 				</div>
 			</div>

@@ -26,7 +26,7 @@
 	let totpToken = null;
 	let timeRemaining = 0;
 	let totpInterval;
-	
+
 	const decrypt = async () => {
 		const response = await sendMessage("decryptField", fieldValue);
 		decryptedValue = response.data;
