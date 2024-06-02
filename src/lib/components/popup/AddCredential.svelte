@@ -42,8 +42,9 @@
 		selectedFolderId = folderId;
 	};
 
-	const closeEventDispatcher = () => {
+	const closeEventDispatcher = async () => {
 		dispatch("close", true);
+		if (windowId !== "manual") await browser.windows.remove(windowId);
 	};
 
 	const handleSave = async () => {
@@ -73,8 +74,7 @@
 		addCredentialPayload.userFields = userFields;
 		await addCredential(addCredentialPayload);
 		showFolderList = false;
-		closeEventDispatcher();
-		if (windowId !== "manual") await browser.windows.remove(windowId);
+		await closeEventDispatcher();
 	};
 </script>
 
@@ -130,7 +130,7 @@
 	</div>
 	<form
 		on:submit|preventDefault="{handleSubmit}"
-		class="flex flex-col p-4 max-w-sm mx-auto text-osvauld-textActive bg-osvauld-cardshade rounded-lg h-[90%] gap-2"
+		class="flex flex-col p-4 max-w-sm mx-auto text-osvauld-textActive bg-osvauld-cardshade rounded-lg h-[90%] gap-2 relative"
 	>
 		<div>
 			<input
@@ -219,4 +219,9 @@
 			Next
 		</button>
 	</form>
+	<button
+		class="text-osvauld-fadedCancel rounded-md border border-osvauld-iconblack font-normal text-sm absolute left-2 bottom-2 px-2 py-1"
+		on:click|preventDefault|stopPropagation="{closeEventDispatcher}"
+		>Cancel</button
+	>
 {/if}

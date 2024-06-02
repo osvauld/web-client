@@ -16,6 +16,7 @@
 	import PasswordNotFound from "./components/PasswordNotFound.svelte";
 	import AddCredential from "./AddCredential.svelte";
 	import { Add } from "./icons";
+	import PasswordGenerator from "./PasswordGenerator.svelte";
 
 	let passwordFound = false;
 	let credentialClicked = false;
@@ -28,6 +29,9 @@
 	let scrollPosition = 0;
 	let clickedCredential: any | null = null;
 	let scrollableElement;
+	let passwordGenerator = false;
+	let showAddOptions = false;
+
 	let port: browser.Runtime.Port;
 	let addNewCredential = false;
 	let newCredential: any | null = {
@@ -52,6 +56,8 @@
 			const parts = hostname.split(".");
 			if (parts.length > 2) {
 				domain = parts.slice(-2).join(".");
+			} else if (hostname === browser.runtime.id) {
+				domain = "Dashboard";
 			} else {
 				domain = hostname;
 			}
@@ -167,12 +173,22 @@
 	};
 
 	const addCredentialManual = async () => {
+		showAddOptions = false;
 		addNewCredential = true;
 	};
 
 	const closeAddCredential = async () => {
 		addNewCredential = false;
 		await fetchCredentialsOfCurrentDomin();
+	};
+
+	const handleOptionsClick = () => {
+		showAddOptions = !showAddOptions;
+	};
+
+	const triggerPasswordGenerator = () => {
+		showAddOptions = false;
+		passwordGenerator = true;
 	};
 </script>
 
@@ -244,6 +260,12 @@
 						windowId="{newCredential.windowId || 'manual'}"
 						on:close="{closeAddCredential}"
 					/>
+				{:else if passwordGenerator}
+					<PasswordGenerator
+						on:close="{() => {
+							passwordGenerator = false;
+						}}"
+					/>
 				{:else if listedCredentials.length !== 0}
 					{#each listedCredentials as credential}
 						<ListedCredentials
@@ -262,7 +284,32 @@
 	{#if !addNewCredential}
 		<button
 			class="p-1 border border-osvauld-defaultBorder rounded-md right-2 bottom-2 fixed active:scale-[.98]"
-			on:click="{addCredentialManual}"><Add color="{'#A3A4B5'}" /></button
+			on:click="{handleOptionsClick}"><Add color="{'#A3A4B5'}" /></button
 		>
+		{#if showAddOptions}
+			<div
+				class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack w-[160px] rounded-lg"
+				style="bottom: 25px; right: 30px;"
+			>
+				<div class="flex flex-col items-start p-2 gap-1 w-full h-full">
+					<button
+						class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-md cursor-pointer"
+						on:click="{triggerPasswordGenerator}"
+					>
+						<span class="font-inter font-normal text-sm whitespace-nowrap"
+							>Generate Password</span
+						>
+					</button>
+					<button
+						class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-md cursor-pointer"
+						on:click="{addCredentialManual}"
+					>
+						<span class="font-inter font-normal text-sm whitespace-nowrap"
+							>Add Credential</span
+						>
+					</button>
+				</div>
+			</div>
+		{/if}
 	{/if}
 </div>
