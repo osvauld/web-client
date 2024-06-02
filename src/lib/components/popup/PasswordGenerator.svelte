@@ -48,7 +48,7 @@
 			strengthSticker = "Fair";
 		} else if (entropy < 120) {
 			strengthSticker = "Strong";
-		} else if (entropy < 160) {
+		} else if (entropy < 280) {
 			strengthSticker = "Very Strong";
 		} else {
 			strengthSticker = "Chad";
