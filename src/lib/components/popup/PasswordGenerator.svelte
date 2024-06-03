@@ -219,7 +219,7 @@
 					min="8"
 					max="64"
 					bind:value="{passwordLength}"
-					class="slider w-[90%] my-3 mx-0 h-2 rounded-lg appearance-none cursor-pointer bg-osvauld-placeholderblack" />
+					class="slider w-[90%] my-3 mx-0 h-2 rounded-lg appearance-none cursor-pointer bg-osvauld-placeholderblack accent-osvauld-carolinablue" />
 			</div>
 			<div class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-1">
 			</div>
