@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { scale } from "svelte/transition";
+	import RangeSlider from "./components/RangeSlider.svelte";
 	import AlertOctagon from "../basic/icons/alertOctagon.svelte";
 	import CheckVerified from "../basic/icons/checkVerified.svelte";
 	import Tick from "../basic/icons/tick.svelte";
@@ -191,7 +192,7 @@
 			<div class="flex flex-col gap-2 mt-5 items-center">
 				<div class="flex justify-between items-center gap-2 w-[90%]">
 					<label class="w-[9rem]" for="lengthSlider"
-						>Length : {passwordLength}</label>
+						>Entropy : {Math.floor(entropy)} bits</label>
 					{#if strengthSticker === "Chad"}
 						<span class="flex justify-end items-center gap-1 w-[6rem]"
 							>Chad <Crown />
@@ -213,13 +214,11 @@
 							>Weak<AlertOctagon /></span>
 					{/if}
 				</div>
-				<input
-					type="range"
-					id="lengthSlider"
-					min="8"
-					max="64"
-					bind:value="{passwordLength}"
-					class="slider w-[90%] my-3 mx-0 h-2 rounded-lg appearance-none cursor-pointer bg-osvauld-placeholderblack accent-osvauld-carolinablue" />
+				<div class="w-[90%]">
+					<RangeSlider
+						on:change="{(e) => (passwordLength = e.detail.value)}"
+						id="basic-slider" />
+				</div>
 			</div>
 			<div class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-1">
 			</div>
