@@ -150,31 +150,38 @@
 </style>
 
 <div
-	class="w-full h-full flex justify-center items-center text-osvauld-quarzowhite box-border p-2">
+	class="w-full h-full flex justify-center items-start text-osvauld-quarzowhite box-border">
 	<div
-		class="w-full border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText overflow-hidden">
-		<div
-			class="text-osvauld-fieldTextActive text-lg font-medium flex justify-center items-center flex-wrap min-h-[120px] relative">
-			<span class="max-w-[80%] pt-3 pb-0 break-words">{generatedPassword}</span>
-			<div class="absolute bottom-1 right-10 flex gap-2">
-				<button
-					on:click|preventDefault|stopPropagation="{copyToClipboard}"
-					on:mouseenter="{() => (hoverEffect = true)}"
-					on:mouseleave="{() => (hoverEffect = false)}">
-					{#if copied}
-						<span in:scale>
-							<Tick />
-						</span>
-					{:else if hoverEffect}
-						<ActiveCopy />
-					{:else}
-						<CopyIcon color="{'#4D4F60'}" />
-					{/if}
-				</button>
-				<button
-					on:click|stopPropagation="{regenerationHandler}"
-					class="transition-transform duration-300 ease-in rotate-custom"
-					style="--rotation-deg: {rotationDegree}deg;"><Refresh /></button>
+		class="w-full h-[80%] rounded-xl bg-osvauld-cardshade text-osvauld-fieldText overflow-hidden">
+		<div class="px-3 py-2">
+			<span class="text-osvauld-fieldText font-light text-xs"
+				>Generated Password</span>
+			<div
+				class="text-osvauld-fieldTextActive flex justify-between items-center gap-2">
+				<div
+					class="bg-osvauld-fieldActive rounded-md text-sm p-2 font-semibold text-osvauld-fieldText break-all min-w-[90%] max-w-[90%] min-h-[80px]">
+					{generatedPassword}
+				</div>
+				<div class="flex flex-col justify-between items-center gap-2 pr-2">
+					<button
+						on:click|preventDefault|stopPropagation="{copyToClipboard}"
+						on:mouseenter="{() => (hoverEffect = true)}"
+						on:mouseleave="{() => (hoverEffect = false)}">
+						{#if copied}
+							<span in:scale>
+								<Tick />
+							</span>
+						{:else if hoverEffect}
+							<ActiveCopy />
+						{:else}
+							<CopyIcon color="{'#4D4F60'}" />
+						{/if}
+					</button>
+					<button
+						on:click|stopPropagation="{regenerationHandler}"
+						class="transition-transform duration-300 ease-in rotate-custom"
+						style="--rotation-deg: {rotationDegree}deg;"><Refresh /></button>
+				</div>
 			</div>
 		</div>
 		<div class="border-b border-osvauld-iconblack w-[90%] translate-x-4"></div>
