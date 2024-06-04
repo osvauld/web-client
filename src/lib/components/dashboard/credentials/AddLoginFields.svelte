@@ -54,17 +54,17 @@
 			bind:value="{field.fieldValue}"
 			on:change="{() => dispatch('change')}"
 		/>
+			required="{field.fieldName !== 'TOTP'}"
+			bind:value="{field.fieldValue}" />
 		<div
 			class="flex items-center justify-center {index === hoveredIndex
 				? 'relative'
 				: ''}"
 			on:mouseenter="{() => sensitiveLabelMaker(index, true)}"
-			on:mouseleave="{() => sensitiveLabelMaker(index, false)}"
-		>
+			on:mouseleave="{() => sensitiveLabelMaker(index, false)}">
 			<label
 				for="{`toggle-${index}`}"
-				class="inline-flex items-center cursor-pointer"
-			>
+				class="inline-flex items-center cursor-pointer">
 				<span class="relative">
 					<span
 						class="block w-10 h-6 {field.sensitive
@@ -74,8 +74,7 @@
 					<span
 						class="absolute block w-4 h-4 mt-1 ml-1 rounded-full shadow inset-y-0 left-0 focus-within:shadow-outline transform transition-transform duration-300 ease-in-out {field.sensitive
 							? 'bg-osvauld-plainwhite translate-x-full'
-							: 'bg-osvauld-chalkwhite'}"
-					>
+							: 'bg-osvauld-chalkwhite'}">
 						<input
 							type="checkbox"
 							id="{`toggle-${index}`}"
@@ -89,15 +88,13 @@
 			{#if index === hoveredIndex}
 				<span
 					class=" absolute top-[-3.75rem] left-[-1.5625rem] bg-osvauld-iconblack rounded-lg p-3 text-sm text-osvauld-dusklabel triangle"
-					>Sensitive</span
-				>
+					>Sensitive</span>
 			{/if}
 		</div>
 		<div class="flex items-center justify-center">
 			<button
 				class="rounded-md pr-2 pl-2 bg-osvauld-frameblack text-osvauld-quarzowhite flex justify-center items-center ml-5"
-				on:click="{() => removeEventDispatcher(index)}"
-			>
+				on:click="{() => removeEventDispatcher(index)}">
 				<BinIcon />
 			</button>
 		</div>
