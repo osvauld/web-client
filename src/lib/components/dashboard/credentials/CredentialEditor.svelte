@@ -32,6 +32,7 @@
 		{ fieldName: "Username", fieldValue: "", sensitive: false },
 		{ fieldName: "Password", fieldValue: "", sensitive: true },
 		{ fieldName: "URL", fieldValue: "https://", sensitive: false },
+		{ fieldName: "TOTP", fieldValue: "", sensitive: true },
 	];
 	export let credentialId = null;
 	export let description = "";
@@ -161,6 +162,7 @@
 				{ fieldName: "Username", fieldValue: "", sensitive: false },
 				{ fieldName: "Password", fieldValue: "", sensitive: true },
 				{ fieldName: "URL", fieldValue: "https://", sensitive: false },
+				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
 			];
 		}
 	};

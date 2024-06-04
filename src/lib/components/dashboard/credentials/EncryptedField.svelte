@@ -14,6 +14,7 @@
 	import { onDestroy } from "svelte";
 
 	import { sendMessage } from "../helper";
+	import CircularProgressBar from "../../popup/components/CircularProgressBar.svelte";
 	export let fieldName;
 	export let fieldValue;
 	export let fieldType = "sensitive";
@@ -91,36 +92,41 @@
 
 <div class="mb-2 mr-1 max-w-full" in:fly out:fly>
 	<div
-		class="label block mb-2 text-left text-osvauld-dusklabel text-xs font-normal cursor-pointer whitespace-nowrap text-ellipsis"
-	>
+		class="label block mb-2 text-left text-osvauld-dusklabel text-xs font-normal cursor-pointer whitespace-nowrap text-ellipsis">
 		{fieldName}
 	</div>
 
 	<div
 		class="py-1 px-3 w-full flex justify-between items-center text-base {hoverEffect
 			? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md '
-			: 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}"
-	>
+			: 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}">
 		<span
-			class="w-3/5 text-left overflow-x-hidden whitespace-nowrap text-ellipsis font-normal text-sm"
-			>{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
-		>
+			class="w-[75%] flex justify-between items-center whitespace-nowrap text-ellipsis font-normal text-sm">
+			{#if fieldType === "totp" && decrypted}
+				<span class="mr-4">{totpToken} </span>
+				<CircularProgressBar counter="{timeRemaining}" />
+			{:else}
+				{decrypted && visibility ? decryptedValue : "*".repeat(8)}
+			{/if}
+		</span>
 		{#if !decrypted}
 			<button on:click|stopPropagation="{decrypt}">
 				<Locked color="{hoverEffect ? '#89B4FA' : '#4D4F60'}" />
 			</button>
 		{:else}
-			<div class="w-2/5 flex gap-2 items-center justify-end">
-				<button on:click|stopPropagation="{lockCredential}">
-					<Unlocked />
-				</button>
-				<button on:click|stopPropagation="{toggleVisibility}">
-					{#if visibility}
-						<ClosedEye />
-					{:else}
-						<Eye />
-					{/if}
-				</button>
+			<div class="max-w-2/5 flex gap-2 items-center justify-end">
+				{#if fieldType !== "totp"}
+					<button on:click|stopPropagation="{lockCredential}">
+						<Unlocked />
+					</button>
+					<button on:click|stopPropagation="{toggleVisibility}">
+						{#if visibility}
+							<ClosedEye />
+						{:else}
+							<Eye />
+						{/if}
+					</button>
+				{/if}
 				<button on:click|stopPropagation="{copyToClipboard}">
 					{#if copied}
 						<span in:scale>
@@ -137,9 +143,9 @@
 	</div>
 </div>
 
-{#if fieldType === "totp" && decrypted}
+<!-- {#if fieldType === "totp" && decrypted}
 	<div class="mt-2 text-xs text-osvauld-dusklabel">
 		TOTP: {totpToken} <br />
 		Time remaining: {timeRemaining}s
 	</div>
-{/if}
+{/if} -->
