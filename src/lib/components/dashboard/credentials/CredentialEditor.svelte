@@ -149,6 +149,9 @@
 					fieldValue: field.fieldValue,
 					fieldType: field.sensitive ? "sensitive" : "meta",
 				};
+				if (field.fieldName === "TOTP") {
+					baseField.fieldType = "totp";
+				}
 				addCredentialFields.push(baseField);
 			}
 		}
@@ -233,8 +236,7 @@
 	<div
 		class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack z-50"
 		in:fly
-		out:blur
-	>
+		out:blur>
 		<div class="flex justify-between items-center px-12 py-6">
 			<div>
 				<button
@@ -242,8 +244,7 @@
 						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
 						: 'text-osvauld-sheffieldgrey '}"
 					type="button"
-					on:click="{() => credentialTypeSelection(true)}"
-				>
+					on:click="{() => credentialTypeSelection(true)}">
 					{edit ? "Edit login credential" : "Add Login credential"}
 				</button>
 				<button
@@ -252,8 +253,7 @@
 						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
 						: 'text-osvauld-sheffieldgrey '}"
 					type="button"
-					on:click="{() => credentialTypeSelection(false)}"
-				>
+					on:click="{() => credentialTypeSelection(false)}">
 					{edit ? "Edit other" : "Other"}
 				</button>
 			</div>
@@ -262,15 +262,13 @@
 					<button
 						class="bg-osvauld-frameblack p-4"
 						on:click="{deleteCredential}"
-						type="button"><BinIcon /></button
-					>
+						type="button"><BinIcon /></button>
 				{/if}
 
 				<button
 					class="bg-osvauld-frameblack p-4"
 					on:click="{closeDialog}"
-					type="button"><ClosePanel /></button
-				>
+					type="button"><ClosePanel /></button>
 			</div>
 		</div>
 
@@ -278,8 +276,7 @@
 
 		<div class="mx-6">
 			<div
-				class="min-h-[32vh] max-h-[35vh] overflow-y-scroll scrollbar-thin z-50"
-			>
+				class="min-h-[32vh] max-h-[35vh] overflow-y-scroll scrollbar-thin z-50">
 				<input
 					class="w-[78%] mb-2 mt-4 ml-6 pl-4 bg-osvauld-frameblack
            border rounded-md text-base text-osvauld-quarzowhite font-normal
@@ -291,8 +288,7 @@
 					placeholder="Enter Credential name...."
 					autocomplete="off"
 					autofocus
-					bind:value="{name}"
-				/>
+					bind:value="{name}" />
 				{#each credentialFields as field, index}
 					{#if field.fieldName !== "Domain"}
 						<AddLoginFields
@@ -306,6 +302,7 @@
 								fieldEditHandler(field);
 							}}"
 						/>
+							on:remove="{(e) => removeField(e.detail)}" />
 					{/if}
 				{/each}
 			</div>
@@ -313,8 +310,7 @@
 				<button
 					class="py-2 m-4 bg-osvauld-addfieldgrey flex-1 flex justify-center items-center rounded-md text-osvauld-chalkwhite border-2 border-dashed border-osvauld-iconblack"
 					on:click="{addField}"
-					type="button"
-				>
+					type="button">
 					<Add color="{'#6E7681'}" />
 				</button>
 			</div>
@@ -324,8 +320,7 @@
 				rows="2"
 				class="w-5/6 mt-4 h-auto min-h-[6rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base focus:border-osvauld-iconblack focus:ring-0"
 				bind:value="{description}"
-				placeholder="Enter description about the secret"
-			></textarea>
+				placeholder="Enter description about the secret"></textarea>
 		</div>
 		{#if errorMessage !== ""}
 			{errorMessage}
@@ -335,13 +330,11 @@
 			<button
 				class="px-3 py-1.5 mb-6 whitespace-nowrap text-osvauld-fadedCancel bg-osvauld-frameblack hover:bg-osvauld-cardshade flex justify-center items-center rounded-md hover:text-osvauld-textActive text-base font-normal"
 				type="button"
-				on:click="{closeDialog}">Cancel</button
-			>
+				on:click="{closeDialog}">Cancel</button>
 			<button
 				type="submit"
 				class="px-3 py-1.5 mb-6 whitespace-nowrap flex justify-center items-center ml-3 border border-osvauld-textActive text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack hover:border-osvauld-carolinablue font-normal text-base rounded-md"
-				disabled="{isLoaderActive}"
-			>
+				disabled="{isLoaderActive}">
 				{#if isLoaderActive}
 					<Loader size="{24}" color="#1F242A" duration="{1}" />
 				{:else}
