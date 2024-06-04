@@ -160,7 +160,7 @@
 			<div
 				class="text-osvauld-fieldTextActive flex justify-between items-center gap-2">
 				<div
-					class="bg-osvauld-fieldActive rounded-md text-sm p-2 font-semibold text-osvauld-fieldText break-all min-w-[90%] max-w-[90%] min-h-[80px]">
+					class="bg-osvauld-fieldActive rounded-md text-sm p-2 font-semibold text-osvauld-fieldText break-all min-w-[85%] max-w-[85%] min-h-[70px] max-h-[70px]">
 					{generatedPassword}
 				</div>
 				<div class="flex flex-col justify-between items-center gap-2 pr-2">
