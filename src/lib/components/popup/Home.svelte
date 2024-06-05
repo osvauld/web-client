@@ -154,10 +154,18 @@
 			clickedCredential = decyrptedResponse?.data[0] || {};
 			const sensitiveResponse =
 				await fetchSensitiveFieldsByCredentialId(credentialId);
+
+			console.log(
+				"clicked credential Data =>",
+				clickedCredential,
+				credentialResponse,
+				sensitiveResponse,
+			);
 			clickedCredential.fields = [
 				...(clickedCredential?.fields ?? []),
 				...(sensitiveResponse.data ?? []),
 			];
+
 			selectedCredentialId = credentialId;
 			localStorage.setItem("selectedCredentialId", selectedCredentialId);
 		} else {
