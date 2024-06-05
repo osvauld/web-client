@@ -1,7 +1,7 @@
 // new cred definitons
 
 type UUID = string;
-type FieldType = "meta" | "sensitive" | "additional";
+type FieldType = "meta" | "sensitive" | "additional" | "totp";
 export type Fields = {
 	fieldId?: string;
 	fieldName?: string;
