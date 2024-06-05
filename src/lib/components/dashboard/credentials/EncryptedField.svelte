@@ -15,6 +15,7 @@
 
 	import { sendMessage } from "../helper";
 	import CircularProgressBar from "../../popup/components/CircularProgressBar.svelte";
+	import { spawn } from "child_process";
 	export let fieldName;
 	export let fieldValue;
 	export let fieldType = "sensitive";
@@ -102,12 +103,20 @@
 			? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md '
 			: 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}">
 		<span
-			class="w-[75%] flex justify-between items-center whitespace-nowrap text-ellipsis font-normal text-sm">
+			class=" {fieldType === 'totp'
+				? 'min-w-[80%] max-w-[80%] mr-6'
+				: 'w-3/5'} flex justify-between items-center font-normal text-sm">
 			{#if fieldType === "totp" && decrypted}
 				<span class="mr-4">{totpToken} </span>
 				<CircularProgressBar counter="{timeRemaining}" />
 			{:else}
-				{decrypted && visibility ? decryptedValue : "*".repeat(8)}
+				<span class="overflow-hidden whitespace-nowrap text-ellipsis"
+					>{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span>
+			{/if}
+		</span>
+		{#if !decrypted}
+			<button on:click|stopPropagation="{decrypt}">
+				<Locked color="{hoverEffect ? '#89B4FA' : '#4D4F60'}" />
 			</button>
 			<div class="max-w-2/5 flex gap-2 items-center justify-end">
 				{#if fieldType !== "totp"}
