@@ -5,12 +5,13 @@
 	import { Credential } from "../dtos";
 
 	export let credential: Credential;
+
 	let sensitiveFields = credential.fields.filter(
-		(field) => field.fieldType === "sensitive",
+		(field) => field.fieldType === ("totp" || "sensitive"),
 	);
 
 	let nonSensitiveFields = credential.fields.filter(
-		(field) => field.fieldType !== "sensitive",
+		(field) => field.fieldType !== ("totp" || "sensitive"),
 	);
 </script>
 
@@ -35,6 +36,7 @@
 						bgColor="{null}"
 						fieldName="{field.fieldName}"
 						fieldValue="{field.fieldValue}"
+						fieldType="{field.fieldType}"
 						hoverEffect="{true}" />
 				{/each}
 			{/if}

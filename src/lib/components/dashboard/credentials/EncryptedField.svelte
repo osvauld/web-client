@@ -15,7 +15,6 @@
 
 	import { sendMessage } from "../helper";
 	import CircularProgressBar from "../../popup/components/CircularProgressBar.svelte";
-	import { spawn } from "child_process";
 	export let fieldName;
 	export let fieldValue;
 	export let fieldType = "sensitive";
@@ -33,6 +32,7 @@
 		const response = await sendMessage("decryptField", fieldValue);
 		decryptedValue = response.data;
 		decrypted = true;
+
 		if (fieldType === "totp") {
 			generateTotpToken();
 		}
