@@ -147,17 +147,26 @@
 		const credentialId = e.detail.credentialId;
 		if (!credentialClicked && credentialId) {
 			const credentialResponse: any = await fetchCredsByIds([credentialId]);
-			clickedCredential = credentialResponse.data[0];
+			clickedCredential = credentialResponse?.data[0];
 			const decyrptedResponse = await sendMessage("decryptMeta", [
 				clickedCredential,
 			]);
-			clickedCredential = decyrptedResponse.data[0];
+			clickedCredential = decyrptedResponse?.data[0] || {};
+
 			const sensitiveResponse =
 				await fetchSensitiveFieldsByCredentialId(credentialId);
+
+			console.log(
+				"clicked credential Data =>",
+				clickedCredential,
+				credentialResponse,
+				sensitiveResponse,
+			);
 			clickedCredential.fields = [
-				...clickedCredential.fields,
-				...sensitiveResponse.data,
+				...(clickedCredential?.fields ?? []),
+				...(sensitiveResponse.data ?? []),
 			];
+
 			selectedCredentialId = credentialId;
 			localStorage.setItem("selectedCredentialId", selectedCredentialId);
 		} else {

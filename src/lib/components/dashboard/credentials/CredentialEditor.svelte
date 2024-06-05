@@ -156,6 +156,7 @@
 					fieldValue: "",
 					sensitive: false,
 				},
+				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
 			];
 		} else {
 			credentialFields = [
