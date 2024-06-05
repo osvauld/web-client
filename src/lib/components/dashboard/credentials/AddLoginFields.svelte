@@ -55,7 +55,9 @@
 			on:change="{() => dispatch('change')}"
 		/>
 			required="{field.fieldName !== 'TOTP'}"
-			bind:value="{field.fieldValue}" />
+			bind:value="{field.fieldValue}" 
+			on:change="{() => dispatch('change')}"
+		/>
 		<div
 			class="flex items-center justify-center {index === hoveredIndex
 				? 'relative'

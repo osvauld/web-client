@@ -305,7 +305,6 @@
 								fieldEditHandler(field);
 							}}"
 						/>
-							on:remove="{(e) => removeField(e.detail)}" />
 					{/if}
 				{/each}
 			</div>
