@@ -7,11 +7,11 @@
 	export let credential: Credential;
 
 	let sensitiveFields = credential.fields.filter(
-		(field) => field.fieldType === "totp" || field.fieldType === "sensitive",
+		(field) => field.fieldType === ("totp" || "sensitive"),
 	);
 
 	let nonSensitiveFields = credential.fields.filter(
-		(field) => field.fieldType !== "totp" && field.fieldType !== "sensitive",
+		(field) => field.fieldType !== ("totp" || "sensitive"),
 	);
 
 	console.log(credential, sensitiveFields, nonSensitiveFields);
@@ -39,8 +39,7 @@
 						fieldName="{field.fieldName}"
 						fieldValue="{field.fieldValue}"
 						fieldType="{field.fieldType}"
-						hoverEffect="{true}"
-					/>
+						hoverEffect="{true}" />
 				{/each}
 			{/if}
 		</div>
