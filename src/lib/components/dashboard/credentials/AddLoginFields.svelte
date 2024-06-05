@@ -42,6 +42,7 @@
 			required
 			autofocus
 			bind:value="{field.fieldName}"
+			on:change="{() => dispatch('change')}"
 		/>
 		<input
 			class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[16rem] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
@@ -51,6 +52,7 @@
 			autocomplete="off"
 			required
 			bind:value="{field.fieldValue}"
+			on:change="{() => dispatch('change')}"
 		/>
 		<div
 			class="flex items-center justify-center {index === hoveredIndex
@@ -79,6 +81,7 @@
 							id="{`toggle-${index}`}"
 							class="absolute opacity-0 w-0 h-0"
 							bind:checked="{field.sensitive}"
+							on:change="{() => dispatch('change')}"
 						/>
 					</span>
 				</span>

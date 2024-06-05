@@ -17,15 +17,18 @@
 	credential.credentiaId
 		? 'border border-osvauld-iconblack'
 		: ''}"
-	on:click="{dropDownClicked}">
+	on:click="{dropDownClicked}"
+>
 	<div
 		class="w-full flex justify-between items-center px-4 {selectedCredentialId ===
 		credential.credentialId
 			? 'text-osvauld-quarzowhite mb-2'
-			: 'mb-0'}">
+			: 'mb-0'}"
+	>
 		<span
 			class="text-base font-normal tracking-wide text-osvauld-fieldText overflow-hidden whitespace-nowrap text-ellipsis"
-			>{credential.name}</span>
+			>{credential.name}</span
+		>
 		<button class="px-4 py-1 cursor-pointer">
 			{#if selectedCredentialId === credential.credentialId}
 				<DownArrow type="{'common'}" />

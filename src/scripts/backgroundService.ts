@@ -19,6 +19,7 @@ import init, {
 	get_pub_key,
 	sign_hash_message,
 	generate_keys_without_password,
+	encrypt_field_value,
 } from "./crypto_primitives.js";
 
 type CredentialsForUsersPayload = {
@@ -277,4 +278,10 @@ export const generateCliKeys = async (username: string) => {
 	const response = await generate_keys_without_password(username);
 	const returnObj = Object.fromEntries(response);
 	return returnObj;
+};
+
+export const encryptEditFields = async (data: any) => {
+
+	const encryptedFields = await encrypt_field_value(data.fieldValue, data.usersToShare);
+	return { data: encryptedFields }
 };

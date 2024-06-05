@@ -15,6 +15,7 @@ import {
 	getCurrentDomain,
 	sign_hashed_message,
 	generateCliKeys,
+	encryptEditFields,
 } from "./backgroundService";
 import init, { is_global_context_set } from "./crypto_primitives";
 
@@ -142,6 +143,9 @@ browser.runtime.onMessage.addListener(async (request) => {
 				credIds,
 			);
 			return true;
+		}
+		case "encryptEditFields": {
+			return encryptEditFields(request.data);
 		}
 
 		default:

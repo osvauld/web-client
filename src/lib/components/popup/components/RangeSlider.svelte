@@ -252,7 +252,8 @@
 	on:touchend="{onDragEnd}"
 	on:mousemove="{updateValueOnEvent}"
 	on:mouseup="{onDragEnd}"
-	on:resize="{resizeWindow}" />
+	on:resize="{resizeWindow}"
+/>
 <div class="range">
 	<div
 		class="range__wrapper"
@@ -265,7 +266,8 @@
 		aria-valuenow="{value}"
 		{id}
 		on:mousedown="{onTrackEvent}"
-		on:touchstart="{onTrackEvent}">
+		on:touchstart="{onTrackEvent}"
+	>
 		<div class="range__track" bind:this="{container}">
 			<div class="range__track--highlighted" bind:this="{progressBar}"></div>
 			<div
@@ -275,12 +277,14 @@
 				on:touchstart="{onDragStart}"
 				on:mousedown="{onDragStart}"
 				on:mouseover="{() => (thumbHover = true)}"
-				on:mouseout="{() => (thumbHover = false)}">
+				on:mouseout="{() => (thumbHover = false)}"
+			>
 				{#if holding || thumbHover}
 					<div
 						class="range__tooltip"
 						in:fly="{{ y: 7, duration: 200 }}"
-						out:fade="{{ duration: 100 }}">
+						out:fade="{{ duration: 100 }}"
+					>
 						{value}
 					</div>
 				{/if}

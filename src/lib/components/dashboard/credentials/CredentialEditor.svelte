@@ -28,7 +28,7 @@
 	import { setCredentialStore } from "../../../store/storeHelper";
 
 	export let edit = false;
-	export let credentialFields = [
+	export let credentialFields: any = [
 		{ fieldName: "Username", fieldValue: "", sensitive: false },
 		{ fieldName: "Password", fieldValue: "", sensitive: true },
 		{ fieldName: "URL", fieldValue: "https://", sensitive: false },
@@ -43,6 +43,7 @@
 	let addCredentialPaylod: AddCredentialPayload;
 	let hoveredIndex: Number | null = null;
 	let errorMessage = "";
+	let changedFields = new Set();
 
 	const dispatcher = createEventDispatcher();
 	const addField = () => {
@@ -73,6 +74,32 @@
 		}
 		let domain = "";
 		let addCredentialFields: Fields[] = [];
+		if (edit) {
+			const editedUserFields = [];
+
+			const users = usersToShare.map((user) => ({
+				userId: user.id,
+				publicKey: user.publicKey,
+			}));
+			for (const field of credentialFields) {
+				let editedUserField;
+				if (changedFields.has(field.fieldId)) {
+					editedUserField = {
+						fieldId: field.fieldId,
+						fieldName: field.fieldName,
+						fieldType: field.fieldType,
+						fieldValues: [],
+					};
+					const response = await sendMessage("encryptField", {
+						fieldValue: field.fieldValue,
+						usersToShare: users,
+					});
+					editedUserField.fieldValues = response.data;
+				}
+			}
+			console.log(editedUserFields)
+			return;
+		}
 		for (const field of credentialFields) {
 			if (field.fieldName === "URL" && field.fieldValue.length !== 0) {
 				try {
@@ -130,14 +157,7 @@
 			addCredentialFields,
 		});
 		addCredentialPaylod.userFields = response;
-		if (edit) {
-			if (credentialId == null) {
-				throw new Error("credential not selected for edit");
-			}
-			await updateCredential(addCredentialPaylod, credentialId);
-		} else {
-			await addCredential(addCredentialPaylod);
-		}
+		await addCredential(addCredentialPaylod);
 		await setCredentialStore();
 		isLoaderActive = false;
 		dispatcher("close");
@@ -174,11 +194,11 @@
 		}
 	});
 
-	function closeDialog() {
+	const closeDialog = () => {
 		dispatcher("close");
-	}
+	};
 
-	function deleteCredential() {
+	const deleteCredential = () => {
 		modalManager.set({
 			id: credentialId,
 			name: name,
@@ -186,11 +206,17 @@
 			private: $selectedFolder.type === "private",
 		});
 		DeleteConfirmationModal.set(true);
-	}
+	};
 
-	function triggerSensitiveBubble(index: number, isEnter: boolean) {
+	const triggerSensitiveBubble = (index: number, isEnter: boolean) => {
 		isEnter ? (hoveredIndex = index) : (hoveredIndex = null);
-	}
+	};
+
+	const fieldEditHandler = (field) => {
+		if (edit) {
+			changedFields.add(field.fieldId);
+		}
+	};
 </script>
 
 <form on:submit|preventDefault="{saveCredential}">
@@ -266,6 +292,9 @@
 							on:select="{(e) =>
 								triggerSensitiveBubble(e.detail.index, e.detail.identifier)}"
 							on:remove="{(e) => removeField(e.detail)}"
+							on:change="{() => {
+								fieldEditHandler(field);
+							}}"
 						/>
 					{/if}
 				{/each}
