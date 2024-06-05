@@ -7,11 +7,11 @@
 	export let credential: Credential;
 
 	let sensitiveFields = credential.fields.filter(
-		(field) => field.fieldType === ("totp" || "sensitive"),
+		(field) => field.fieldType === "totp" || field.fieldType === "sensitive",
 	);
 
 	let nonSensitiveFields = credential.fields.filter(
-		(field) => field.fieldType !== ("totp" || "sensitive"),
+		(field) => field.fieldType !== "totp" && field.fieldType !== "sensitive",
 	);
 
 	console.log(credential, sensitiveFields, nonSensitiveFields);
