@@ -39,7 +39,7 @@
 			id="{`key-${index}`}"
 			type="text"
 			placeholder="Enter field name"
-			required
+			required="{field.fieldName !== 'TOTP'}"
 			autofocus
 			bind:value="{field.fieldName}"
 			on:change="{() => dispatch('change')}"
@@ -50,12 +50,8 @@
 			type="text"
 			placeholder="Enter value"
 			autocomplete="off"
-			required
-			bind:value="{field.fieldValue}"
-			on:change="{() => dispatch('change')}"
-		/>
 			required="{field.fieldName !== 'TOTP'}"
-			bind:value="{field.fieldValue}" 
+			bind:value="{field.fieldValue}"
 			on:change="{() => dispatch('change')}"
 		/>
 		<div
