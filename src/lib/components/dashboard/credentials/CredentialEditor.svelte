@@ -90,14 +90,24 @@
 						fieldType: field.fieldType,
 						fieldValues: [],
 					};
-					const response = await sendMessage("encryptField", {
+					const response = await sendMessage("encryptEditFields", {
 						fieldValue: field.fieldValue,
 						usersToShare: users,
 					});
 					editedUserField.fieldValues = response.data;
 				}
+				editedUserFields.push(editedUserField);
 			}
-			console.log(editedUserFields)
+			const payload = {
+				name,
+				description,
+				credentialId,
+				credentialType,
+				editedUserFields,
+				editedEnvFields: [],
+				newFields: []
+			}
+			updateCredential(payload, credentialId)
 			return;
 		}
 		for (const field of credentialFields) {

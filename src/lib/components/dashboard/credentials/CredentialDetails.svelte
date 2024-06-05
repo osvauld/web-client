@@ -119,15 +119,19 @@
 			const response = await sendMessage("decryptField", field.fieldValue);
 			let decryptedValue = response.data;
 			fieldsForEdit.push({
+				fieldId: field.fieldId,
 				fieldName: field.fieldName,
 				fieldValue: decryptedValue,
+				fieldType: field.fieldType,
 				sensitive: true,
 			});
 		}
 		for (let field of credential.fields) {
 			fieldsForEdit.push({
+				fieldId: field.fieldId,
 				fieldName: field.fieldName,
 				fieldValue: field.fieldValue,
+				fieldType: field.fieldType,
 				sensitive: false,
 			});
 		}

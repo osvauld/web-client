@@ -283,5 +283,7 @@ export const generateCliKeys = async (username: string) => {
 export const encryptEditFields = async (data: any) => {
 
 	const encryptedFields = await encrypt_field_value(data.fieldValue, data.usersToShare);
-	return { data: encryptedFields }
+	const encryptedFieldsObject = encryptedFields.map(field => Object.fromEntries(field));
+	console.log(encryptedFieldsObject)
+	return { data: encryptedFieldsObject }
 };
