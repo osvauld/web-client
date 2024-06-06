@@ -26,6 +26,7 @@
 	import AddLoginFields from "./AddLoginFields.svelte";
 	import { sendMessage } from "../helper";
 	import { setCredentialStore } from "../../../store/storeHelper";
+	import { spawn } from "child_process";
 
 	export let edit = false;
 	export let credentialFields = [
@@ -39,6 +40,7 @@
 	export let name = "";
 	export let credentialType = "Login";
 	let notNamed = false;
+	let invalidTotp = false;
 	let isLoaderActive: boolean = false;
 	let usersToShare: User[] = [];
 	let addCredentialPaylod: AddCredentialPayload;
@@ -60,6 +62,25 @@
 		credentialFields = [...credentialFields];
 	};
 
+	const totpValidator = (secretKey) => {
+		if (secretKey.length < 16 || secretKey.length > 32) {
+			return false;
+		}
+
+		// Check character set: Only uppercase letters A-Z and digits 2-7 are valid
+		const validBase32Regex = /^[A-Z2-7]+$/;
+		if (!validBase32Regex.test(secretKey)) {
+			return false;
+		}
+
+		// Check padding: Base32 strings should be a multiple of 8 characters
+		if (secretKey.length % 8 !== 0) {
+			return false;
+		}
+
+		return true;
+	};
+
 	const saveCredential = async () => {
 		isLoaderActive = true;
 		errorMessage = "";
@@ -71,6 +92,21 @@
 				notNamed = false;
 			}, 1000);
 			return;
+		}
+		// We need to do the totp validation here.
+		let totpPresence = credentialFields.filter(
+			(field) => field.fieldName === "TOTP",
+		);
+		if (totpPresence.length !== 0) {
+			const isTotpValid = totpValidator(totpPresence[0].fieldValue);
+			if (!isTotpValid) {
+				isLoaderActive = false;
+				invalidTotp = true;
+				setTimeout(() => {
+					invalidTotp = false;
+				}, 1000);
+				return;
+			}
 		}
 		let domain = "";
 		let addCredentialFields: Fields[] = [];
@@ -289,6 +325,10 @@
 		{/if}
 		<div class="border-b border-osvauld-iconblack w-full my-2"></div>
 		<div class="flex justify-end items-center mx-10 py-2">
+			{#if invalidTotp}
+				<span class="text-red-500 text-base font-normal mr-3 mb-6"
+					>TOTP Secret key invalid!</span>
+			{/if}
 			<button
 				class="px-3 py-1.5 mb-6 whitespace-nowrap text-osvauld-fadedCancel bg-osvauld-frameblack hover:bg-osvauld-cardshade flex justify-center items-center rounded-md hover:text-osvauld-textActive text-base font-normal"
 				type="button"
@@ -298,9 +338,11 @@
 				class="px-3 py-1.5 mb-6 whitespace-nowrap flex justify-center items-center ml-3 border border-osvauld-textActive text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack hover:border-osvauld-carolinablue font-normal text-base rounded-md"
 				disabled="{isLoaderActive}">
 				{#if isLoaderActive}
-					<Loader size="{24}" color="#1F242A" duration="{1}" />
+					<span class="w-[8rem] flex justify-center items-center"
+						><Loader size="{24}" color="#1F242A" duration="{1}" /></span>
 				{:else}
-					<span>{edit ? "Save Changes" : "Add credential"}</span>
+					<span class="w-[8rem]"
+						>{edit ? "Save Changes" : "Add credential"}</span>
 				{/if}
 			</button>
 		</div>

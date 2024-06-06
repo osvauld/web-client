@@ -33,7 +33,7 @@
 </style>
 
 <div class="field-container rounded-sm transition relative">
-	<div class="flex items-center justify-between p-4">
+	<div class="flex items-center justify-between px-4 py-1.5">
 		<input
 			class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[16rem] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
 			id="{`key-${index}`}"
