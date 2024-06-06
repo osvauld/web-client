@@ -48,6 +48,7 @@
 				? 'visible'
 				: 'invisible'}"
 		>
+
 			<label
 				class="text-osvauld-dusklabel block text-left text-sm font-normal"
 				for="credential-description">
