@@ -171,14 +171,14 @@
 	const editCredential = async () => {
 		const editedUserFields = [];
 		const editedEnvFields = [];
-		const newFields = []
+		const newFields = [];
 		const envResponse = await getEnvsForCredential(credentialId);
 		const users = usersToShare.map((user) => ({
 			userId: user.id,
 			publicKey: user.publicKey,
 		}));
 		const envFieldsResponse = await getEnvFieldsByCredentialId(credentialId);
-	
+
 		let userEnvMap = envResponse.data.reduce((obj, item) => {
 			if (!obj[item.cliUserCreatedBy]) {
 				obj[item.cliUserCreatedBy] = [];
@@ -237,34 +237,36 @@
 				};
 
 				const response = await sendMessage("encryptEditFields", {
-						fieldValue: field.fieldValue,
-						usersToShare: users,
-					});
-				for(const fieldData of response.data) {
-					if(!userEnvMap[fieldData.userId]) {
+					fieldValue: field.fieldValue,
+					usersToShare: users,
+				});
+				for (const fieldData of response.data) {
+					if (!userEnvMap[fieldData.userId]) {
 						continue;
 					}
 					let payload = {
 						fieldValue: fieldData.fieldValue,
 						userId: fieldData.userId,
-						envFieldvalues: []
-					}
-					const cliUsersToShare = userEnvMap[fieldData.userId].map(envData => {
-						return {
-							userId: envData.envId,
-							publicKey: envData.cliUserPublicKey
-						}
-					})
+						envFieldvalues: [],
+					};
+					const cliUsersToShare = userEnvMap[fieldData.userId].map(
+						(envData) => {
+							return {
+								userId: envData.envId,
+								publicKey: envData.cliUserPublicKey,
+							};
+						},
+					);
 					const response = await sendMessage("encryptEditFields", {
 						fieldValue: field.fieldValue,
 						usersToShare: cliUsersToShare,
 					});
-					const envFieldsValues = response.data.map(envField => {
+					const envFieldsValues = response.data.map((envField) => {
 						return {
 							envId: envField.userId,
-							fieldValue: envField.fieldValue
-						}
-					})
+							fieldValue: envField.fieldValue,
+						};
+					});
 					payload.envFieldvalues = envFieldsValues;
 					newFieldPayload.fieldValues.push(payload);
 				}
