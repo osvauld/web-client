@@ -14,7 +14,7 @@ import {
 import {
 	getTokenAndBaseUrl,
 	sendMessage,
-	transformAddCredentialPayload
+	transformAddCredentialPayload,
 } from "../components/dashboard/helper";
 
 export const fetchCredentialsByFolder = async (
@@ -41,7 +41,6 @@ export const fetchCredentialById = async (credentialId: string) => {
 	}).then((response) => response.json());
 };
 
-
 export const addCredential = async (payload: AddCredentialPayload) => {
 	const headers = new Headers();
 	const transformedPayload = transformAddCredentialPayload(payload);
@@ -62,11 +61,7 @@ export const addCredential = async (payload: AddCredentialPayload) => {
 	return response;
 };
 
-
-export const updateCredential = async (
-	payload: any,
-	credentialId: string,
-) => {
+export const updateCredential = async (payload: any, credentialId: string) => {
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: JSON.stringify(payload),
 	});
@@ -352,7 +347,6 @@ export const editEnvCredentialField = async (data: any) => {
 	return response;
 };
 
-
 export const getEnvFieldsByCredentialId = async (credentialId: string) => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
@@ -367,4 +361,17 @@ export const getEnvFieldsByCredentialId = async (credentialId: string) => {
 	).then((response) => response.json());
 
 	return response;
-}
+};
+
+export const getEnvsForCredential = async (credentialId: string) => {
+	const headers = new Headers();
+	const { token, baseUrl } = await getTokenAndBaseUrl();
+	headers.append("Authorization", `Bearer ${token}`);
+
+	const response = await fetch(`${baseUrl}/environments/${credentialId}`, {
+		method: "GET",
+		headers,
+	}).then((response) => response.json());
+
+	return response;
+};

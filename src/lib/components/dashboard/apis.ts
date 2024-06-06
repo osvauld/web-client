@@ -15,7 +15,8 @@ export {
 	removeCredential,
 	shareCredentialsWithEnv,
 	editEnvCredentialField,
-	getEnvFieldsByCredentialId
+	getEnvFieldsByCredentialId,
+	getEnvsForCredential,
 } from "../../apis/credentials.api";
 
 export {
