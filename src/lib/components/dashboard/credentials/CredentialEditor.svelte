@@ -26,7 +26,6 @@
 	import AddLoginFields from "./AddLoginFields.svelte";
 	import { sendMessage } from "../helper";
 	import { setCredentialStore } from "../../../store/storeHelper";
-	import { spawn } from "child_process";
 
 	export let edit = false;
 	export let credentialFields = [
@@ -63,18 +62,14 @@
 	};
 
 	const totpValidator = (secretKey) => {
-		if (secretKey.length < 16 || secretKey.length > 32) {
+		// Base32 encoded TOTP secrets typically range in size, allowing for flexibility
+		if (secretKey.length < 10 || secretKey.length > 64) {
 			return false;
 		}
 
 		// Check character set: Only uppercase letters A-Z and digits 2-7 are valid
 		const validBase32Regex = /^[A-Z2-7]+$/;
 		if (!validBase32Regex.test(secretKey)) {
-			return false;
-		}
-
-		// Check padding: Base32 strings should be a multiple of 8 characters
-		if (secretKey.length % 8 !== 0) {
 			return false;
 		}
 

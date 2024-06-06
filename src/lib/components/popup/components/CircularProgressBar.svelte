@@ -1,6 +1,6 @@
 <!-- ChildComponent.svelte -->
 <script>
-	import { onMount, onDestroy, afterUpdate } from "svelte";
+	import { onMount, afterUpdate } from "svelte";
 	export let counter;
 
 	let progress = 1;
@@ -99,8 +99,8 @@
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		version="1.1"
-		width="var(--size)"
-		height="var(--size)">
+		width="24px"
+		height="24px">
 		<circle class="track" cx="50%" cy="50%" r="10" stroke-linecap="round"
 		></circle>
 		<circle class="progress" cx="50%" cy="50%" r="10" stroke-linecap="round"
