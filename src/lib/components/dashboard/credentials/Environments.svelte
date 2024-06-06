@@ -45,6 +45,12 @@
 		credentials = fieldsResponse.data;
 	};
 
+	const closeAddCredToEnv = async () => {
+		addcredentialToEnv = false;
+		const fieldsResponse = await fetchEnvFields($selectedEnv.id);
+		credentials = fieldsResponse.data;
+	};
+
 	const handleSaveChange = async () => {
 		const { credentialId, ...editRequestData } = editedCredential;
 		const editResponse = await EditEnvCredentialField(editRequestData);
@@ -164,7 +170,7 @@
 		class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
 		on:click="{() => !addcredentialToEnv}">
 		<button class="p-6 rounded bg-transparent" on:click|stopPropagation>
-			<AddCredentialToEnv on:close="{() => (addcredentialToEnv = false)}" />
+			<AddCredentialToEnv on:close="{closeAddCredToEnv}" />
 		</button>
 	</button>
 {/if}
