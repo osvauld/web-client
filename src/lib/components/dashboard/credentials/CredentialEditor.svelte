@@ -15,6 +15,7 @@
 		addCredential,
 		updateCredential,
 		fetchCredentialUsersForDataSync,
+		getEnvFieldsByCredentialId
 	} from "../apis";
 
 	import {
@@ -77,11 +78,14 @@
 		let addCredentialFields: Fields[] = [];
 		if (edit) {
 			const editedUserFields = [];
+			const editedEnvFields = [];
 
 			const users = usersToShare.map((user) => ({
 				userId: user.id,
 				publicKey: user.publicKey,
 			}));
+			const envFieldsResponse = await getEnvFieldsByCredentialId(credentialId);
+			const envFieldMap = envFieldsResponse.data;
 			for (const field of credentialFields) {
 				let editedUserField;
 				if (changedFields.has(field.fieldId)) {
@@ -91,6 +95,26 @@
 						fieldType: field.fieldType,
 						fieldValues: [],
 					};
+					if(envFieldMap[field.fieldId]){
+						// making envFieldId as userId to reuse 'encryptEditFields' case
+						const envFieldPayloadForEncryption = envFieldMap[field.fieldId].map((envField) => {
+							return {
+								userId: envField.envFieldId,
+								publicKey: envField.cliUserPublicKey,
+							}
+						})
+						const response = await sendMessage('encryptEditFields', {
+							fieldValue: field.fieldValue,
+							usersToShare: envFieldPayloadForEncryption
+						})
+						const envFieldPayload = response.data.map((envField) => {
+							return {
+								envFieldId: envField.userId,
+								fieldValue: envField.fieldValue
+							}
+						})
+						editedEnvFields.push(...envFieldPayload)
+					}
 					const response = await sendMessage("encryptEditFields", {
 						fieldValue: field.fieldValue,
 						usersToShare: users,
@@ -105,10 +129,14 @@
 				credentialId,
 				credentialType,
 				editedUserFields,
-				editedEnvFields: [],
+				editedEnvFields,
 				newFields: []
 			}
+			console.log(JSON.stringify(payload))
 			updateCredential(payload, credentialId)
+			await setCredentialStore();
+			isLoaderActive = false;
+			dispatcher("close");
 			return;
 		}
 		for (const field of credentialFields) {

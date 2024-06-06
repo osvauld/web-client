@@ -9,7 +9,7 @@
 	import AddCredentialToEnv from "./AddCredentialToEnv.svelte";
 	import AddCliUser from "./AddCliUser.svelte";
 	import { Add } from "../icons";
-	import { fetchEnvFields, EditEnvCredentialField } from "../apis";
+	import { fetchEnvFields, editEnvCredentialField } from "../apis";
 	import EnvironmentAdd from "../../basic/icons/environmentAdd.svelte";
 	import UserPlus from "../../basic/icons/userPlus.svelte";
 	import AddEnvironment from "./AddEnvironment.svelte";

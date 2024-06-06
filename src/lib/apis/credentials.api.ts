@@ -333,7 +333,7 @@ export const shareCredentialsWithEnv = async (data: any) => {
 	return response;
 };
 
-export const EditEnvCredentialField = async (data: any) => {
+export const editEnvCredentialField = async (data: any) => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	const signatureResponse = await sendMessage("hashAndSign", {
@@ -351,3 +351,20 @@ export const EditEnvCredentialField = async (data: any) => {
 
 	return response;
 };
+
+
+export const getEnvFieldsByCredentialId = async (credentialId: string) => {
+	const headers = new Headers();
+	const { token, baseUrl } = await getTokenAndBaseUrl();
+	headers.append("Authorization", `Bearer ${token}`);
+
+	const response = await fetch(
+		`${baseUrl}/environments/${credentialId}/fields`,
+		{
+			method: "GET",
+			headers,
+		},
+	).then((response) => response.json());
+
+	return response;
+}
