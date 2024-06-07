@@ -21,7 +21,7 @@
 	let accountRole = JSON.parse(accountDetails).type;
 	let adminStatus = false;
 	let hoveringIndex = null;
-	if (accountRole === "admin") {
+	if (accountRole === "admin"|| accountRole === "superadmin") {
 		adminStatus = true;
 	}
 	let iconColor = "#6E7681"; //sheffieldgrey:
