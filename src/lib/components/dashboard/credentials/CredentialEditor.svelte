@@ -230,6 +230,7 @@
 				}, 1000);
 				return;
 			}
+		}
 		
 		let domain = "";
 		let addCredentialFields: Fields[] = [];
@@ -298,7 +299,6 @@
 		isLoaderActive = false;
 		dispatcher("close");
 	};
-}
 
 	const credentialTypeSelection = (isLogin: boolean) => {
 		credentialType = isLogin ? "Login" : "Other";

@@ -114,6 +114,7 @@ export const decryptCredentialFieldsHandlerNew = async (
 
 export const addCredentialHandler = async (payload) => {
 	try {
+		console.log('add credential')
 		return await encrypt_new_credential(
 			payload.users,
 			payload.addCredentialFields,

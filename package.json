@@ -7,6 +7,7 @@
   "scripts": {
     "build:rollup": "NODE_ENV=production rollup -c",
     "dev": "rollup -c rollup.config.dev.js -w",
+    "firefox": "rollup -c rollup_firefox.config.js -w",
     "build:popup": "browserify public/build/popup.js -p [ lavamoat-browserify --writeAutoPolicy --policy lavamoat/browserify/popup-policy.json ] -o public/build/popup.js",
     "build:background": "browserify public/background.js -p [ lavamoat-browserify --writeAutoPolicy   --policy lavamoat/browserify/background-policy.json] -o public/background.js",
     "build:dashboard": "browserify public/build/dashboard.js -p [ lavamoat-browserify --writeAutoPolicy --policy lavamoat/browserify/dashboard-policy.json ] -o public/build/dashboard.js",

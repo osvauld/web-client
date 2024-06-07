@@ -19,11 +19,17 @@ export const getTokenAndBaseUrl = async () => {
 };
 
 export const sendMessage = async (action: string, data: any = {}) => {
-	const response = await browser.runtime.sendMessage({
-		action,
-		data,
-	});
-	return response;
+	try {
+
+		const response = await browser.runtime.sendMessage({
+			action,
+			data,
+		});
+		return response;
+	} catch (error) {
+
+		console.error("Error sending message:", error);
+	}
 };
 export const searchObjects = (query, objects) => {
 	const searchResults = [];
