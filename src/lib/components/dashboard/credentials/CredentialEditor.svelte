@@ -78,127 +78,6 @@
 
 		return true;
 	};
-
-	const saveCredential = async () => {
-		isLoaderActive = true;
-		errorMessage = "";
-		if ($selectedFolder === null) throw new Error("folder not selected");
-		if (name.length === 0) {
-			isLoaderActive = false;
-			notNamed = true;
-			setTimeout(() => {
-				notNamed = false;
-			}, 1000);
-			return;
-		}
-		if (edit) {
-			await editCredential();
-			return;
-    }
-		// We need to do the totp validation here.
-		let totpPresence = credentialFields.filter(
-			(field) => field.fieldName === "TOTP",
-		);
-		if (totpPresence.length !== 0) {
-			const isTotpValid = totpValidator(totpPresence[0].fieldValue);
-			if (!isTotpValid) {
-				isLoaderActive = false;
-				invalidTotp = true;
-				setTimeout(() => {
-					invalidTotp = false;
-				}, 1000);
-				return;
-			}
-		
-		let domain = "";
-		let addCredentialFields: Fields[] = [];
-		for (const field of credentialFields) {
-			if (field.fieldName === "URL" && field.fieldValue.length !== 0) {
-				try {
-					if (
-						!field.fieldValue.startsWith("https://") &&
-						!field.fieldValue.startsWith("http://")
-					) {
-						errorMessage = "Invalid URL";
-						isLoaderActive = false;
-						return;
-					}
-					const url = new URL(field.fieldValue);
-					const hostname = url.hostname;
-					const parts = hostname.split(".");
-					if (parts.length > 2) {
-						domain = parts.slice(-2).join(".");
-					} else {
-						domain = hostname;
-					}
-					addCredentialFields.push({
-						fieldName: "Domain",
-						fieldValue: domain,
-						fieldType: "additional",
-					});
-				} catch (error) {
-					errorMessage = "Invalid URL";
-					isLoaderActive = false;
-					return;
-				}
-			}
-			if (
-				(field.fieldName.length !== 0 || field.fieldValue.length !== 0) &&
-				field.fieldName !== "Domain"
-			) {
-				const baseField: Fields = {
-					fieldName: field.fieldName,
-					fieldValue: field.fieldValue,
-					fieldType: field.sensitive ? "sensitive" : "meta",
-				};
-				if (field.fieldName === "TOTP") {
-					baseField.fieldType = "totp";
-				}
-				addCredentialFields.push(baseField);
-			}
-		}
-
-		addCredentialPaylod = {
-			name: name,
-			description: description,
-			folderId: $selectedFolder.id,
-			credentialType,
-			userFields: [],
-			domain,
-		};
-
-		const response = await sendMessage("addCredential", {
-			users: usersToShare,
-			addCredentialFields,
-		});
-		addCredentialPaylod.userFields = response;
-		await addCredential(addCredentialPaylod);
-		await setCredentialStore();
-		isLoaderActive = false;
-		dispatcher("close");
-	};
-
-	const credentialTypeSelection = (isLogin: boolean) => {
-		credentialType = isLogin ? "Login" : "Other";
-		if (credentialType === "Other") {
-			credentialFields = [
-				{
-					fieldName: "Field Name",
-					fieldValue: "",
-					sensitive: false,
-				},
-				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
-			];
-		} else {
-			credentialFields = [
-				{ fieldName: "Username", fieldValue: "", sensitive: false },
-				{ fieldName: "Password", fieldValue: "", sensitive: true },
-				{ fieldName: "URL", fieldValue: "https://", sensitive: false },
-				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
-			];
-		}
-	};
-
 	const editCredential = async () => {
 		const editedUserFields = [];
 		const editedEnvFields = [];
@@ -318,6 +197,128 @@
 		await setCredentialStore();
 		isLoaderActive = false;
 		dispatcher("close");
+	};
+
+
+	const saveCredential = async () => {
+		isLoaderActive = true;
+		errorMessage = "";
+		if ($selectedFolder === null) throw new Error("folder not selected");
+		if (name.length === 0) {
+			isLoaderActive = false;
+			notNamed = true;
+			setTimeout(() => {
+				notNamed = false;
+			}, 1000);
+			return;
+		}
+		if (edit) {
+			await editCredential();
+			return;
+    }
+		// We need to do the totp validation here.
+		let totpPresence = credentialFields.filter(
+			(field) => field.fieldName === "TOTP",
+		);
+		if (totpPresence.length !== 0) {
+			const isTotpValid = totpValidator(totpPresence[0].fieldValue);
+			if (!isTotpValid) {
+				isLoaderActive = false;
+				invalidTotp = true;
+				setTimeout(() => {
+					invalidTotp = false;
+				}, 1000);
+				return;
+			}
+		
+		let domain = "";
+		let addCredentialFields: Fields[] = [];
+		for (const field of credentialFields) {
+			if (field.fieldName === "URL" && field.fieldValue.length !== 0) {
+				try {
+					if (
+						!field.fieldValue.startsWith("https://") &&
+						!field.fieldValue.startsWith("http://")
+					) {
+						errorMessage = "Invalid URL";
+						isLoaderActive = false;
+						return;
+					}
+					const url = new URL(field.fieldValue);
+					const hostname = url.hostname;
+					const parts = hostname.split(".");
+					if (parts.length > 2) {
+						domain = parts.slice(-2).join(".");
+					} else {
+						domain = hostname;
+					}
+					addCredentialFields.push({
+						fieldName: "Domain",
+						fieldValue: domain,
+						fieldType: "additional",
+					});
+				} catch (error) {
+					errorMessage = "Invalid URL";
+					isLoaderActive = false;
+					return;
+				}
+			}
+			if (
+				(field.fieldName.length !== 0 || field.fieldValue.length !== 0) &&
+				field.fieldName !== "Domain"
+			) {
+				const baseField: Fields = {
+					fieldName: field.fieldName,
+					fieldValue: field.fieldValue,
+					fieldType: field.sensitive ? "sensitive" : "meta",
+				};
+				if (field.fieldName === "TOTP") {
+					baseField.fieldType = "totp";
+				}
+				addCredentialFields.push(baseField);
+			}
+		}
+
+		addCredentialPaylod = {
+			name: name,
+			description: description,
+			folderId: $selectedFolder.id,
+			credentialType,
+			userFields: [],
+			domain,
+		};
+
+		const response = await sendMessage("addCredential", {
+			users: usersToShare,
+			addCredentialFields,
+		});
+		addCredentialPaylod.userFields = response;
+		await addCredential(addCredentialPaylod);
+		await setCredentialStore();
+		isLoaderActive = false;
+		dispatcher("close");
+	};
+}
+
+	const credentialTypeSelection = (isLogin: boolean) => {
+		credentialType = isLogin ? "Login" : "Other";
+		if (credentialType === "Other") {
+			credentialFields = [
+				{
+					fieldName: "Field Name",
+					fieldValue: "",
+					sensitive: false,
+				},
+				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
+			];
+		} else {
+			credentialFields = [
+				{ fieldName: "Username", fieldValue: "", sensitive: false },
+				{ fieldName: "Password", fieldValue: "", sensitive: true },
+				{ fieldName: "URL", fieldValue: "https://", sensitive: false },
+				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
+			];
+		}
 	};
 
 	onMount(async () => {
