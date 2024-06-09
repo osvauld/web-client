@@ -11,7 +11,7 @@
 	import AddUserToGroup from "./AddUserToGroup.svelte";
 
 	import { User } from "../dtos";
-	import { groupUsers, groupStore } from "../store";
+	import { groupUsers } from "../store";
 	import { fetchGroupUsers, fetchSignedUpUsers } from "../apis";
 	import AllUsersList from "./AllUsersList.svelte";
 	import OtherGroupsList from "./OtherGroupsList.svelte";
@@ -25,7 +25,7 @@
 	onMount(() => {
 		const accountDetails = localStorage.getItem("user");
 		let accountRole = JSON.parse(accountDetails).type;
-		if (accountRole === "admin") {
+		if (accountRole === "admin" || accountRole === "superadmin") {
 			adminStatus = true;
 		}
 		if (adminStatus) {
@@ -53,8 +53,7 @@
 	{#if $showAddUserToGroupDrawer}
 		<button
 			class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-			on:click="{() => {}}"
-		>
+			on:click="{() => {}}">
 			<button class="p-6 rounded bg-transparent" on:click|stopPropagation>
 				<AddUserToGroup />
 			</button>
