@@ -39,9 +39,12 @@
 			id="{`key-${index}`}"
 			type="text"
 			placeholder="Enter field name"
-			required
+			required="{field.fieldName !== 'TOTP'}"
 			autofocus
-			bind:value="{field.fieldName}" />
+			bind:value="{field.fieldName}"
+			on:change="{() => dispatch('change')}"
+		/>
+
 		<input
 			class="py-1 pr-10 rounded-lg items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[16rem] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
 			id="{`value-${index}`}"
@@ -49,7 +52,10 @@
 			placeholder="Enter value"
 			autocomplete="off"
 			required="{field.fieldName !== 'TOTP'}"
-			bind:value="{field.fieldValue}" />
+			bind:value="{field.fieldValue}"
+			on:change="{() => dispatch('change')}"
+		/>
+
 		<div
 			class="flex items-center justify-center {index === hoveredIndex
 				? 'relative'
@@ -73,7 +79,10 @@
 							type="checkbox"
 							id="{`toggle-${index}`}"
 							class="absolute opacity-0 w-0 h-0"
-							bind:checked="{field.sensitive}" />
+							bind:checked="{field.sensitive}"
+							on:change="{() => dispatch('change')}"
+						/>
+
 					</span>
 				</span>
 			</label>

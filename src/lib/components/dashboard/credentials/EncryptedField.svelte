@@ -118,6 +118,7 @@
 				<Locked color="{hoverEffect ? '#89B4FA' : '#4D4F60'}" />
 			</button>
 		{:else}
+
 			<div class="max-w-2/5 flex gap-2 items-center justify-end">
 				{#if fieldType !== "totp"}
 					<button on:click|stopPropagation="{lockCredential}">

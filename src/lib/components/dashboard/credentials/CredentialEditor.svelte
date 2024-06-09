@@ -15,6 +15,8 @@
 		addCredential,
 		updateCredential,
 		fetchCredentialUsersForDataSync,
+		getEnvFieldsByCredentialId,
+		getEnvsForCredential,
 	} from "../apis";
 
 	import {
@@ -28,7 +30,7 @@
 	import { setCredentialStore } from "../../../store/storeHelper";
 
 	export let edit = false;
-	export let credentialFields = [
+	export let credentialFields: any = [
 		{ fieldName: "Username", fieldValue: "", sensitive: false },
 		{ fieldName: "Password", fieldValue: "", sensitive: true },
 		{ fieldName: "URL", fieldValue: "https://", sensitive: false },
@@ -45,6 +47,7 @@
 	let addCredentialPaylod: AddCredentialPayload;
 	let hoveredIndex: Number | null = null;
 	let errorMessage = "";
+	let changedFields = new Set();
 
 	const dispatcher = createEventDispatcher();
 	const addField = () => {
@@ -75,6 +78,127 @@
 
 		return true;
 	};
+	const editCredential = async () => {
+		const editedUserFields = [];
+		const editedEnvFields = [];
+		const newFields = [];
+		const envResponse = await getEnvsForCredential(credentialId);
+		const users = usersToShare.map((user) => ({
+			userId: user.id,
+			publicKey: user.publicKey,
+		}));
+		const envFieldsResponse = await getEnvFieldsByCredentialId(credentialId);
+
+		let userEnvMap = envResponse.data.reduce((obj, item) => {
+			if (!obj[item.cliUserCreatedBy]) {
+				obj[item.cliUserCreatedBy] = [];
+			}
+			obj[item.cliUserCreatedBy].push(item);
+			return obj;
+		}, {});
+		const envFieldMap = envFieldsResponse.data;
+		for (const field of credentialFields) {
+			let editedUserField;
+			if (changedFields.has(field.fieldId)) {
+				editedUserField = {
+					fieldId: field.fieldId,
+					fieldName: field.fieldName,
+					fieldType: field.fieldType,
+					fieldValues: [],
+				};
+				if (envFieldMap[field.fieldId]) {
+					// making envFieldId as userId to reuse 'encryptEditFields' case
+					const envFieldPayloadForEncryption = envFieldMap[field.fieldId].map(
+						(envField) => {
+							return {
+								userId: envField.envFieldId,
+								publicKey: envField.cliUserPublicKey,
+							};
+						},
+					);
+					const response = await sendMessage("encryptEditFields", {
+						fieldValue: field.fieldValue,
+						usersToShare: envFieldPayloadForEncryption,
+					});
+					const envFieldPayload = response.data.map((envField) => {
+						return {
+							envFieldId: envField.userId,
+							fieldValue: envField.fieldValue,
+						};
+					});
+					editedEnvFields.push(...envFieldPayload);
+				}
+				const response = await sendMessage("encryptEditFields", {
+					fieldValue: field.fieldValue,
+					usersToShare: users,
+				});
+				editedUserField.fieldValues = response.data;
+				editedUserFields.push(editedUserField);
+			} else if (!field.fieldId) {
+				const newFieldPayload = {
+					fieldName: field.fieldName,
+					fieldType:
+						field.fieldName === "TOTP"
+							? "totp"
+							: field.sensitive
+								? "sensitive"
+								: "meta",
+					fieldValues: [],
+				};
+
+				const response = await sendMessage("encryptEditFields", {
+					fieldValue: field.fieldValue,
+					usersToShare: users,
+				});
+				for (const fieldData of response.data) {
+					if (!userEnvMap[fieldData.userId]) {
+						continue;
+					}
+					let payload = {
+						fieldValue: fieldData.fieldValue,
+						userId: fieldData.userId,
+						envFieldvalues: [],
+					};
+					const cliUsersToShare = userEnvMap[fieldData.userId].map(
+						(envData) => {
+							return {
+								userId: envData.envId,
+								publicKey: envData.cliUserPublicKey,
+							};
+						},
+					);
+					const response = await sendMessage("encryptEditFields", {
+						fieldValue: field.fieldValue,
+						usersToShare: cliUsersToShare,
+					});
+					const envFieldsValues = response.data.map((envField) => {
+						return {
+							envId: envField.userId,
+							fieldValue: envField.fieldValue,
+						};
+					});
+					payload.envFieldvalues = envFieldsValues;
+					newFieldPayload.fieldValues.push(payload);
+				}
+				newFields.push(newFieldPayload);
+			}
+		}
+		const payload = {
+			name,
+			description,
+			credentialId,
+			credentialType,
+			editedUserFields,
+			editedEnvFields,
+			newFields,
+		};
+		console.log(payload);
+		updateCredential(payload, credentialId);
+		await setCredentialStore();
+		isLoaderActive = false;
+		dispatcher("close");
+	};
+
 
 	const saveCredential = async () => {
 		isLoaderActive = true;
@@ -88,6 +212,10 @@
 			}, 1000);
 			return;
 		}
+		if (edit) {
+			await editCredential();
+			return;
+    }
 		// We need to do the totp validation here.
 		let totpPresence = credentialFields.filter(
 			(field) => field.fieldName === "TOTP",
@@ -103,6 +231,7 @@
 				return;
 			}
 		}
+		
 		let domain = "";
 		let addCredentialFields: Fields[] = [];
 		for (const field of credentialFields) {
@@ -165,14 +294,7 @@
 			addCredentialFields,
 		});
 		addCredentialPaylod.userFields = response;
-		if (edit) {
-			if (credentialId == null) {
-				throw new Error("credential not selected for edit");
-			}
-			await updateCredential(addCredentialPaylod, credentialId);
-		} else {
-			await addCredential(addCredentialPaylod);
-		}
+		await addCredential(addCredentialPaylod);
 		await setCredentialStore();
 		isLoaderActive = false;
 		dispatcher("close");
@@ -211,11 +333,11 @@
 		}
 	});
 
-	function closeDialog() {
+	const closeDialog = () => {
 		dispatcher("close");
-	}
+	};
 
-	function deleteCredential() {
+	const deleteCredential = () => {
 		modalManager.set({
 			id: credentialId,
 			name: name,
@@ -223,11 +345,17 @@
 			private: $selectedFolder.type === "private",
 		});
 		DeleteConfirmationModal.set(true);
-	}
+	};
 
-	function triggerSensitiveBubble(index: number, isEnter: boolean) {
+	const triggerSensitiveBubble = (index: number, isEnter: boolean) => {
 		isEnter ? (hoveredIndex = index) : (hoveredIndex = null);
-	}
+	};
+
+	const fieldEditHandler = (field) => {
+		if (edit && field.fieldId) {
+			changedFields.add(field.fieldId);
+		}
+	};
 </script>
 
 <form on:submit|preventDefault="{saveCredential}">
@@ -295,7 +423,12 @@
 							{hoveredIndex}
 							on:select="{(e) =>
 								triggerSensitiveBubble(e.detail.index, e.detail.identifier)}"
-							on:remove="{(e) => removeField(e.detail)}" />
+							on:remove="{(e) => removeField(e.detail)}"
+							on:change="{() => {
+								fieldEditHandler(field);
+							}}"
+						/>
+
 					{/if}
 				{/each}
 			</div>

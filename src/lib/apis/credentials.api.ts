@@ -14,6 +14,7 @@ import {
 import {
 	getTokenAndBaseUrl,
 	sendMessage,
+	transformAddCredentialPayload,
 } from "../components/dashboard/helper";
 
 export const fetchCredentialsByFolder = async (
@@ -42,9 +43,9 @@ export const fetchCredentialById = async (credentialId: string) => {
 
 export const addCredential = async (payload: AddCredentialPayload) => {
 	const headers = new Headers();
-
+	const transformedPayload = transformAddCredentialPayload(payload);
 	const signatureResponse = await sendMessage("hashAndSign", {
-		message: JSON.stringify(payload),
+		message: JSON.stringify(transformedPayload),
 	});
 	headers.append("Signature", signatureResponse.signature);
 	const { token, baseUrl } = await getTokenAndBaseUrl();
@@ -54,16 +55,13 @@ export const addCredential = async (payload: AddCredentialPayload) => {
 	const response = await fetch(`${baseUrl}/credential/`, {
 		method: "POST",
 		headers,
-		body: JSON.stringify(payload),
+		body: JSON.stringify(transformedPayload),
 	}).then((response) => response.json());
 
 	return response;
 };
 
-export const updateCredential = async (
-	payload: AddCredentialPayload,
-	credentialId: string,
-) => {
+export const updateCredential = async (payload: any, credentialId: string) => {
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: JSON.stringify(payload),
 	});
@@ -330,7 +328,7 @@ export const shareCredentialsWithEnv = async (data: any) => {
 	return response;
 };
 
-export const EditEnvCredentialField = async (data: any) => {
+export const editEnvCredentialField = async (data: any) => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	const signatureResponse = await sendMessage("hashAndSign", {
@@ -344,6 +342,35 @@ export const EditEnvCredentialField = async (data: any) => {
 		method: "POST",
 		headers,
 		body: JSON.stringify(data),
+	}).then((response) => response.json());
+
+	return response;
+};
+
+export const getEnvFieldsByCredentialId = async (credentialId: string) => {
+	const headers = new Headers();
+	const { token, baseUrl } = await getTokenAndBaseUrl();
+	headers.append("Authorization", `Bearer ${token}`);
+
+	const response = await fetch(
+		`${baseUrl}/environments/${credentialId}/fields`,
+		{
+			method: "GET",
+			headers,
+		},
+	).then((response) => response.json());
+
+	return response;
+};
+
+export const getEnvsForCredential = async (credentialId: string) => {
+	const headers = new Headers();
+	const { token, baseUrl } = await getTokenAndBaseUrl();
+	headers.append("Authorization", `Bearer ${token}`);
+
+	const response = await fetch(`${baseUrl}/environments/${credentialId}`, {
+		method: "GET",
+		headers,
 	}).then((response) => response.json());
 
 	return response;

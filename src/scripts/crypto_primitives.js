@@ -561,6 +561,33 @@ export function sign_hash_message(text) {
 	}
 }
 
+/**
+ * @param {string} field_value
+ * @param {any} users
+ * @returns {any}
+ */
+export function encrypt_field_value(field_value, users) {
+	try {
+		const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+		const ptr0 = passStringToWasm0(
+			field_value,
+			wasm.__wbindgen_malloc,
+			wasm.__wbindgen_realloc,
+		);
+		const len0 = WASM_VECTOR_LEN;
+		wasm.encrypt_field_value(retptr, ptr0, len0, addHeapObject(users));
+		var r0 = getInt32Memory0()[retptr / 4 + 0];
+		var r1 = getInt32Memory0()[retptr / 4 + 1];
+		var r2 = getInt32Memory0()[retptr / 4 + 2];
+		if (r2) {
+			throw takeObject(r1);
+		}
+		return takeObject(r0);
+	} finally {
+		wasm.__wbindgen_add_to_stack_pointer(16);
+	}
+}
+
 function handleError(f, args) {
 	try {
 		return f.apply(this, args);
@@ -835,6 +862,10 @@ function __wbg_get_imports() {
 		const ret = new Date();
 		return addHeapObject(ret);
 	};
+	imports.wbg.__wbg_entries_488960b196cfb6a5 = function (arg0) {
+		const ret = Object.entries(getObject(arg0));
+		return addHeapObject(ret);
+	};
 	imports.wbg.__wbg_buffer_b914fb8b50ebbc3e = function (arg0) {
 		const ret = getObject(arg0).buffer;
 		return addHeapObject(ret);
@@ -879,6 +910,12 @@ function __wbg_get_imports() {
 	imports.wbg.__wbg_byteLength_4f4b58172d990c0a = function (arg0) {
 		const ret = getObject(arg0).byteLength;
 		return ret;
+	};
+	imports.wbg.__wbg_get_2e1049539d5995be = function () {
+		return handleError(function (arg0, arg1) {
+			const ret = Reflect.get(getObject(arg0), arg1 >>> 0);
+			return addHeapObject(ret);
+		}, arguments);
 	};
 	imports.wbg.__wbindgen_debug_string = function (arg0, arg1) {
 		const ret = debugString(getObject(arg1));

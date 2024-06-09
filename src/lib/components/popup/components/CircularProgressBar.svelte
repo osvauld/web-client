@@ -1,6 +1,7 @@
 <!-- ChildComponent.svelte -->
 <script>
-	import { onMount, afterUpdate } from "svelte";
+	import { onMount, onDestroy, afterUpdate } from "svelte";
+
 	export let counter;
 
 	let progress = 1;

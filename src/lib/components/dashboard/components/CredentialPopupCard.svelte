@@ -13,6 +13,8 @@
 	let nonSensitiveFields = credential.fields.filter(
 		(field) => field.fieldType !== "totp" && field.fieldType !== "sensitive",
 	);
+
+	console.log(credential, sensitiveFields, nonSensitiveFields);
 </script>
 
 <button
@@ -44,7 +46,9 @@
 		<div
 			class="{credential.description && credential.description.length !== 0
 				? 'visible'
-				: 'invisible'}">
+				: 'invisible'}"
+		>
+
 			<label
 				class="text-osvauld-dusklabel block text-left text-sm font-normal"
 				for="credential-description">

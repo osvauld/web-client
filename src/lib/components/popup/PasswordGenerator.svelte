@@ -151,23 +151,29 @@
 </style>
 
 <div
-	class="w-full h-full flex justify-center items-start text-osvauld-quarzowhite box-border">
+	class="w-full h-full flex justify-center items-start text-osvauld-quarzowhite box-border"
+>
 	<div
-		class="w-full h-[80%] rounded-xl bg-osvauld-cardshade text-osvauld-fieldText overflow-hidden">
+		class="w-full h-[80%] rounded-xl bg-osvauld-cardshade text-osvauld-fieldText overflow-hidden"
+	>
 		<div class="px-3 py-2">
 			<span class="text-osvauld-fieldText font-light text-xs"
-				>Generated Password</span>
+				>Generated Password</span
+			>
 			<div
-				class="text-osvauld-fieldTextActive flex justify-between items-center gap-2">
+				class="text-osvauld-fieldTextActive flex justify-between items-center gap-2"
+			>
 				<div
-					class="bg-osvauld-fieldActive rounded-md text-sm p-2 font-semibold text-osvauld-fieldText break-all min-w-[85%] max-w-[85%] min-h-[70px] max-h-[70px]">
+					class="bg-osvauld-fieldActive rounded-md text-sm p-2 font-semibold text-osvauld-fieldText break-all min-w-[85%] max-w-[85%] min-h-[70px] max-h-[70px]"
+				>
 					{generatedPassword}
 				</div>
 				<div class="flex flex-col justify-between items-center gap-2 pr-2">
 					<button
 						on:click|preventDefault|stopPropagation="{copyToClipboard}"
 						on:mouseenter="{() => (hoverEffect = true)}"
-						on:mouseleave="{() => (hoverEffect = false)}">
+						on:mouseleave="{() => (hoverEffect = false)}"
+					>
 						{#if copied}
 							<span in:scale>
 								<Tick />
@@ -181,18 +187,21 @@
 					<button
 						on:click|stopPropagation="{regenerationHandler}"
 						class="transition-transform duration-300 ease-in rotate-custom"
-						style="--rotation-deg: {rotationDegree}deg;"><Refresh /></button>
+						style="--rotation-deg: {rotationDegree}deg;"><Refresh /></button
+					>
 				</div>
 			</div>
 		</div>
-		<div class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-3">
-		</div>
+		<div
+			class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-3"
+		></div>
 
 		<div class="flex flex-col gap-2">
 			<div class="flex flex-col gap-2 mt-5 items-center">
 				<div class="flex justify-between items-center gap-2 w-[90%]">
 					<label class="w-[9rem]" for="lengthSlider"
-						>Entropy : {Math.floor(entropy)} bits</label>
+						>Entropy : {Math.floor(entropy)} bits</label
+					>
 					{#if strengthSticker === "Chad"}
 						<span class="flex justify-end items-center gap-1 w-[6rem]"
 							>Chad <Crown />
@@ -200,34 +209,42 @@
 					{:else if strengthSticker === "Very Strong"}
 						<span
 							class="flex justify-end items-center gap-1 w-[6rem] text-[#A6E3A1]"
-							>Very Strong <ShieldCheck /></span>
+							>Very Strong <ShieldCheck /></span
+						>
 					{:else if strengthSticker === "Strong"}
 						<span
 							class="flex justify-end items-center gap-1 w-[6rem] text-[#A6E3A1]"
-							>Strong <ShieldCheck /></span>
+							>Strong <ShieldCheck /></span
+						>
 					{:else if strengthSticker === "Fair"}
 						<span class="flex justify-end items-center w-[6rem]"
-							>Fair<CheckVerified /></span>
+							>Fair<CheckVerified /></span
+						>
 					{:else}
 						<span
 							class="flex justify-end items-center gap-1 w-[6rem] text-[#FF6A6A]"
-							>Weak<AlertOctagon /></span>
+							>Weak<AlertOctagon /></span
+						>
 					{/if}
 				</div>
 				<div class="w-[90%]">
 					<RangeSlider
 						on:change="{(e) => (passwordLength = e.detail.value)}"
-						id="basic-slider" />
+						id="basic-slider"
+					/>
 				</div>
 			</div>
-			<div class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-1">
-			</div>
 			<div
-				class="flex items-center justify-between px-4 text-osvauld-quarzowhite">
+				class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-1"
+			></div>
+			<div
+				class="flex items-center justify-between px-4 text-osvauld-quarzowhite"
+			>
 				<span class="">Special characters (!&*)</span>
 				<label
 					for="specialChar"
-					class="inline-flex items-center cursor-pointer">
+					class="inline-flex items-center cursor-pointer"
+				>
 					<span class="relative">
 						<span
 							class="block w-[36px] h-[1.25rem] {includeSpecialChars
@@ -237,20 +254,24 @@
 						<span
 							class="absolute block w-4 h-4 mt-0.5 ml-0.5 rounded-full shadow inset-y-0 left-0 focus-within:shadow-outline transform transition-transform duration-300 ease-in-out {includeSpecialChars
 								? 'bg-osvauld-plainwhite translate-x-full'
-								: 'bg-osvauld-chalkwhite'}">
+								: 'bg-osvauld-chalkwhite'}"
+						>
 							<input
 								type="checkbox"
 								id="specialChar"
 								class="absolute opacity-0 w-0 h-0"
-								bind:checked="{includeSpecialChars}" />
+								bind:checked="{includeSpecialChars}"
+							/>
 						</span>
 					</span>
 				</label>
 			</div>
-			<div class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-1">
-			</div>
 			<div
-				class="flex items-center justify-between px-4 text-osvauld-quarzowhite">
+				class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-1"
+			></div>
+			<div
+				class="flex items-center justify-between px-4 text-osvauld-quarzowhite"
+			>
 				<span>Capital letters (A-Z)</span>
 				<label for="capitals" class="inline-flex items-center cursor-pointer">
 					<span class="relative">
@@ -262,20 +283,24 @@
 						<span
 							class="absolute block w-4 h-4 mt-0.5 ml-0.5 rounded-full shadow inset-y-0 left-0 focus-within:shadow-outline transform transition-transform duration-300 ease-in-out {includeCapital
 								? 'bg-osvauld-plainwhite translate-x-full'
-								: 'bg-osvauld-chalkwhite'}">
+								: 'bg-osvauld-chalkwhite'}"
+						>
 							<input
 								type="checkbox"
 								id="capitals"
 								class="absolute opacity-0 w-0 h-0"
-								bind:checked="{includeCapital}" />
+								bind:checked="{includeCapital}"
+							/>
 						</span>
 					</span>
 				</label>
 			</div>
-			<div class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-1">
-			</div>
 			<div
-				class="flex items-center justify-between px-4 text-osvauld-quarzowhite">
+				class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-1"
+			></div>
+			<div
+				class="flex items-center justify-between px-4 text-osvauld-quarzowhite"
+			>
 				<span>Numbers (0-9)</span>
 				<label for="numbers" class="inline-flex items-center cursor-pointer">
 					<span class="relative">
@@ -287,25 +312,28 @@
 						<span
 							class="absolute block w-4 h-4 mt-0.5 ml-0.5 rounded-full shadow inset-y-0 left-0 focus-within:shadow-outline transform transition-transform duration-300 ease-in-out {includeNumbers
 								? 'bg-osvauld-plainwhite translate-x-full'
-								: 'bg-osvauld-chalkwhite'}">
+								: 'bg-osvauld-chalkwhite'}"
+						>
 							<input
 								type="checkbox"
 								id="numbers"
 								class="absolute opacity-0 w-0 h-0"
-								bind:checked="{includeNumbers}" />
+								bind:checked="{includeNumbers}"
+							/>
 						</span>
 					</span>
 				</label>
 			</div>
 			<div
-				class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-1.5">
-			</div>
+				class="border-b border-osvauld-iconblack w-[90%] translate-x-4 my-1.5"
+			></div>
 		</div>
 
 		<div class="flex justify-start items-center w-full pl-3 my-2">
 			<button
 				class=" rounded-md border border-osvauld-iconblack py-1 px-2"
-				on:click|preventDefault="{handleCancel}">Cancel</button>
+				on:click|preventDefault="{handleCancel}">Cancel</button
+			>
 		</div>
 	</div>
 </div>

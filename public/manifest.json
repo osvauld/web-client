@@ -20,7 +20,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["rust_openpgp_wasm_bg.wasm"],
+      "resources": ["crypto_primitives_bg.wasm"],
       "matches": ["<all_urls>"]
     }
   ],
