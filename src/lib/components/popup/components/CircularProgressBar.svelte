@@ -101,7 +101,8 @@
 		xmlns="http://www.w3.org/2000/svg"
 		version="1.1"
 		width="24px"
-		height="24px">
+		height="24px"
+	>
 		<circle class="track" cx="50%" cy="50%" r="10" stroke-linecap="round"
 		></circle>
 		<circle class="progress" cx="50%" cy="50%" r="10" stroke-linecap="round"

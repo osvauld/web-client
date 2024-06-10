@@ -26,13 +26,16 @@
 
 <div class="mb-2">
 	<div
-		class="label block mb-1 text-left bg-osvauld-frameblack text-osvauld-dusklabel text-xs font-normal">
+		class="label block mb-1 text-left bg-osvauld-frameblack text-osvauld-dusklabel text-xs font-normal"
+	>
 		{fieldName}
 	</div>
 	<div
-		class="w-full rounded-lg bg-osvauld-fieldActive text-osvauld-textActive font-normal text-sm flex justify-between items-center px-2 py-0">
+		class="w-full rounded-lg bg-osvauld-fieldActive text-osvauld-textActive font-normal text-sm flex justify-between items-center px-2 py-0"
+	>
 		<div
-			class=" border-0 rounded-lg py-1 w-2/3 flex justify-start items-center">
+			class=" border-0 rounded-lg py-1 w-2/3 flex justify-start items-center"
+		>
 			{decrypted && visibility ? decryptedValue : "*".repeat(8)}
 		</div>
 		{#if !decrypted}
@@ -44,7 +47,8 @@
 				<button
 					on:click|stopPropagation="{() => {
 						visibility = false;
-					}}">
+					}}"
+				>
 					<Unlocked />
 				</button>
 				<button on:click|stopPropagation="{toggleVisibility}">
@@ -56,7 +60,8 @@
 				</button>
 				<button
 					on:click|stopPropagation="{copyToClipboard}"
-					class="active:scale-90">
+					class="active:scale-90"
+				>
 					<ActiveCopy />
 				</button>
 			</div>

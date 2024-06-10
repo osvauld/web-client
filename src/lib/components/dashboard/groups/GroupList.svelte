@@ -53,7 +53,8 @@
 	{#if $showAddUserToGroupDrawer}
 		<button
 			class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-			on:click="{() => {}}">
+			on:click="{() => {}}"
+		>
 			<button class="p-6 rounded bg-transparent" on:click|stopPropagation>
 				<AddUserToGroup />
 			</button>

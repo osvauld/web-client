@@ -20,14 +20,12 @@ export const getTokenAndBaseUrl = async () => {
 
 export const sendMessage = async (action: string, data: any = {}) => {
 	try {
-
 		const response = await browser.runtime.sendMessage({
 			action,
 			data,
 		});
 		return response;
 	} catch (error) {
-
 		console.error("Error sending message:", error);
 	}
 };
