@@ -15,7 +15,7 @@
     "watch": "svelte-check --tsconfig ./tsconfig.app.json --watch",
     "build": "npm run build:rollup",
     "lint": "eslint \"src/**/*.{js,ts,svelte}\" --fix",
-    "prepare": "npx allow-scripts",
+    "prepare": "husky install",
     "format": "prettier --write \"src/**/*.{js,ts,svelte}\""
   },
   "keywords": [],
