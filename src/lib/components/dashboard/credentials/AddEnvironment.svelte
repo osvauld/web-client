@@ -56,20 +56,23 @@
 
 <form
 	class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[35rem] h-[36rem] flex flex-col items-start justify-center gap-3"
-	on:submit|preventDefault="{addEnvironmentHandler}">
+	on:submit|preventDefault="{addEnvironmentHandler}"
+>
 	<div class="flex justify-between items-center w-full">
 		<span class="text-[21px] font-medium text-osvauld-quarzowhite"
-			>Create Environment</span>
+			>Create Environment</span
+		>
 		<button class="cursor-pointer p-2" on:click|preventDefault="{handleClose}">
 			<ClosePanel />
 		</button>
 	</div>
 	<div
-		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4">
-	</div>
+		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
+	></div>
 
 	<label for="name" class="font-normal text-base text-osvauld-textActive"
-		>Name</label>
+		>Name</label
+	>
 	<input
 		id="name"
 		type="text"
@@ -77,11 +80,14 @@
 		required
 		bind:value="{name}"
 		class="py-1 rounded-md items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-8 mx-2 focus:border-osvauld-iconblack focus:ring-0 form-input"
-		autocomplete="off" />
+		autocomplete="off"
+	/>
 	<label for="name" class="font-light text-base text-osvauld-textActive"
-		>Add one CLI user to the environment</label>
+		>Add one CLI user to the environment</label
+	>
 	<div
-		class="h-8 w-[95%] px-2 mx-2 mb-2 py-1 flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer">
+		class="h-8 w-[95%] px-2 mx-2 mb-2 py-1 flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
+	>
 		<span class="w-4 h-4"><Lens /></span>
 		<input
 			type="text"
@@ -89,21 +95,25 @@
 			placeholder="Search.."
 			on:input="{handleInputChange}"
 			bind:value="{query}"
-			on:keyup="{handleKeyDown}" />
+			on:keyup="{handleKeyDown}"
+		/>
 	</div>
 	<div
-		class="min-h-[10rem] max-h-[14rem] overflow-y-scroll scrollbar-thin flex flex-col justify-start items-center w-[95%] px-1">
+		class="min-h-[10rem] max-h-[14rem] overflow-y-scroll scrollbar-thin flex flex-col justify-start items-center w-[95%] px-1"
+	>
 		{#each searchResults as user, index}
 			<label
 				class="w-full px-2 py-1.5 text-left rounded-md cursor-pointer text-osvauld-textActive hover:bg-osvauld-fieldActive hover:shadow-[0_0_0_1px_#292A36] flex justify-between items-center"
 				on:mouseenter="{() => (hoveredIndex = index)}"
-				on:mouseleave="{() => (hoveredIndex = null)}">
+				on:mouseleave="{() => (hoveredIndex = null)}"
+			>
 				<!-- <input type="radio" bind:group={selectedUser} value={user} /> -->
 				<span class="pl-1">{user.username}</span>
 				<button
 					class="p-1 relative"
 					type="button"
-					on:click="{() => addUsertoGroup(user, index)}">
+					on:click="{() => addUsertoGroup(user, index)}"
+				>
 					{#if selectedUserIndice === index}
 						<UserCheck />
 					{:else}
@@ -115,21 +125,24 @@
 			</label>
 		{:else}
 			<span class="text-osvauld-textActive font-normal"
-				>CLI user "{query}" not found!</span>
+				>CLI user "{query}" not found!</span
+			>
 		{/each}
 	</div>
 	<div
-		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4">
-	</div>
+		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
+	></div>
 
 	<div class="flex justify-end items-center gap-6 w-full">
 		<button
 			class="text-osvauld-fadedCancel font-medium text-base"
-			on:click|preventDefault="{handleClose}">Cancel</button>
+			on:click|preventDefault="{handleClose}">Cancel</button
+		>
 		<button
 			class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-normal text-osvauld-textActive rounded-md"
 			type="submit"
-			disabled="{name === '' || selectedUser === null}">
+			disabled="{name === '' || selectedUser === null}"
+		>
 			Create Environment
 		</button>
 	</div>
