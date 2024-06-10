@@ -159,6 +159,6 @@
 <style>
   .search-result:focus {
     border: 1px solid #89b4fa;
-    outline: none; /* Remove default focus outline */
+    outline: none;
   }
 </style>
