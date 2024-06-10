@@ -58,7 +58,7 @@ export const removeUserFromFolder = async (
 	headers.append("Authorization", `Bearer ${token}`);
 	const signatureResponse = await sendMessage(
 		"hashAndSign",
-		JSON.stringify({ userIds: [userId] }),
+		{ message: JSON.stringify({ userIds: [userId] }) },
 	);
 	headers.append("Signature", signatureResponse.signature);
 	return await fetch(`${baseUrl}/folder/${folderId}/remove-user-access`, {
