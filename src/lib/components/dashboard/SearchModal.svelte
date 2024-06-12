@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Key, Lens, Highlight, LinkIcon } from "./icons";
-	import { createEventDispatcher, onMount } from "svelte";
+	import { createEventDispatcher } from "svelte";
 
 	export let searchResults = [];
 	export let query = "";
@@ -21,6 +21,46 @@
 	const handleKeyDown = (event) => {
 		if (event.key === "Escape") {
 			closeModal();
+		} else if (event.key === "ArrowDown") {
+			event.preventDefault();
+			focusNextResult();
+		} else if (event.key === "ArrowUp") {
+			event.preventDefault();
+			focusPreviousResult();
+		} else if (event.key === "Enter") {
+			event.preventDefault();
+			if (currentFocusIndex !== -1) {
+				handleSearchClick(searchResults[currentFocusIndex]);
+			}
+		}
+	};
+
+	let currentFocusIndex = -1;
+	const focusNextResult = () => {
+		if (currentFocusIndex < searchResults.length - 1) {
+			currentFocusIndex++;
+			focusResult(currentFocusIndex);
+		}
+	};
+
+	const focusPreviousResult = () => {
+		if (currentFocusIndex > 0) {
+			currentFocusIndex--;
+			focusResult(currentFocusIndex);
+		}
+	};
+
+	const focusResult = (index) => {
+		const resultElements = document.querySelectorAll(".search-result");
+		if (resultElements[index]) {
+			resultElements[index].focus();
+			resultElements[index].setAttribute("aria-selected", "true");
+			if (currentFocusIndex !== -1 && currentFocusIndex !== index) {
+				resultElements[currentFocusIndex].setAttribute(
+					"aria-selected",
+					"false",
+				);
+			}
 		}
 	};
 
@@ -28,6 +68,13 @@
 		node.focus();
 	}
 </script>
+
+<style>
+	.search-result:focus {
+		border: 1px solid #89b4fa;
+		outline: none;
+	}
+</style>
 
 <button
 	class="fixed z-10 inset-0 backdrop-filter backdrop-blur-[2px]"
@@ -53,7 +100,11 @@
 				/>
 			</div>
 			<div class="w-full border-t-[1px] border-osvauld-iconblack my-2"></div>
-			<div class=" bg-osvauld-frameblack">
+			<div
+				class=" bg-osvauld-frameblack"
+				role="listbox"
+				aria-label="Search results"
+			>
 				{#if searchResults.length !== 0}
 					<p
 						class="text-osvauld-placeholderblack text-sm text-start w-1/2 pl-3"
@@ -67,7 +118,10 @@
 					{#each searchResults as result}
 						<button
 							on:click="{() => handleSearchClick(result)}"
-							class="p-2 border rounded-lg border-osvauld-iconblack hover:bg-osvauld-iconblack w-full my-1 flex justify-start items-center min-h-[60px]"
+							class="search-result p-2 border rounded-lg border-osvauld-iconblack hover:bg-osvauld-iconblack w-full my-1 flex justify-start items-center min-h-[60px]"
+							tabindex="-1"
+							role="option"
+							aria-selected="false"
 						>
 							<div
 								class="h-full flex justify-center items-center scale-150 px-2"

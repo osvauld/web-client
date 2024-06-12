@@ -48,7 +48,9 @@
 		</thead>
 	</table>
 
-	<div class="h-[35rem] overflow-y-auto scrollbar-thin">
+	<div
+		class="min-h-[35rem] max-h-[47rem] overflow-y-scroll overflow-x-hidden scrollbar-thin"
+	>
 		<table class="min-w-max w-full table-auto">
 			<tbody class="text-xl text-osvauld-dusklabel font-normal text-sm">
 				{#each allUsers as user}
@@ -71,7 +73,7 @@
 									? 'bg-osvauld-ownerGreen text-osvauld-ownerText'
 									: 'bg-osvauld-readerOrange text-osvauld-readerText'}"
 							>
-								{user.type}
+								{user.type || "Error"}
 							</span>
 						</td>
 						<td class="py-5 px-6 text-left w-1/5 transition-colors duration-300"

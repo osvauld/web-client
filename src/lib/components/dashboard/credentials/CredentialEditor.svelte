@@ -192,7 +192,6 @@
 			editedEnvFields,
 			newFields,
 		};
-		console.log(payload);
 		updateCredential(payload, credentialId);
 		await setCredentialStore();
 		isLoaderActive = false;

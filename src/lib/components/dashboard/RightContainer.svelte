@@ -47,6 +47,11 @@
 	const handleSearchClick = (e: any) => {
 		searchedCredential.set(e.detail);
 		selectedPage.set("Folders");
+		if (e.detail.folderType === "shared") {
+			selectedSection.set("SharedFolders");
+		} else if (e.detail.folderType === "private") {
+			selectedSection.set("PrivateFolders");
+		}
 		for (const folder of $folderStore) {
 			if (folder.id === e.detail.folderId) {
 				selectedFolder.set(folder);
@@ -118,7 +123,7 @@
 		>
 			<div class="flex justify-center items-center">
 				<Profile color="{isProfileClicked ? '#F2F2F0' : '#85889C'}" /><span
-					class="font-inter text-base overflow-hidden text-ellipsis whitespace-nowrap {isProfileClicked
+					class="font-inter text-base overflow-hidden max-w-[6rem] text-ellipsis whitespace-nowrap {isProfileClicked
 						? 'text-osvauld-sideListTextActive'
 						: 'text-osvauld-fieldText'} ">{username}</span
 				>

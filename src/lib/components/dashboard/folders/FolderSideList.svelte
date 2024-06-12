@@ -80,7 +80,10 @@
 	onMount(async () => {
 		await setFolderStore();
 		await setEnvStore();
-		selectSection("SharedFolders");
+		if (!$selectedFolder) {
+			selectedSection.set("SharedFolders");
+		}
+		// selectSection("SharedFolders");
 	});
 </script>
 
@@ -128,13 +131,13 @@
 								: '#85889C'}"
 						/>
 						<span
-							class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem] {$selectedFolder?.id ==
-								folder.id || hoveringIndex === folder.id
+							class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left relative inline-block min-w-[2rem] max-w-[9rem] pr-6 {$selectedFolder?.id ==
+								folder.id || hoveringIndex === index
 								? 'text-osvauld-sideListTextActive'
 								: 'text-osvauld-fieldText'}"
 							>{folder.name}
 							<span
-								class="ml-2 text-osvauld-fieldText font-light {$selectedFolder?.id ===
+								class="ml-2 text-osvauld-fieldText font-light absolute right-0 {$selectedFolder?.id ===
 								folder.id
 									? 'visible delay-200'
 									: 'invisible'}">{$credentialStore.length}</span
@@ -222,8 +225,8 @@
 										? 'text-osvauld-sideListTextActive'
 										: 'text-osvauld-fieldText'}"
 									>{folder.name}
-								</span></button
-							>
+								</span>
+							</button>
 						</li>
 					{/if}
 				{/each}

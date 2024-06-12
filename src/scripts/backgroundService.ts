@@ -114,7 +114,6 @@ export const decryptCredentialFieldsHandlerNew = async (
 
 export const addCredentialHandler = async (payload) => {
 	try {
-		console.log("add credential");
 		return await encrypt_new_credential(
 			payload.users,
 			payload.addCredentialFields,
@@ -289,6 +288,5 @@ export const encryptEditFields = async (data: any) => {
 	const encryptedFieldsObject = encryptedFields.map((field) =>
 		Object.fromEntries(field),
 	);
-	console.log(encryptedFieldsObject);
 	return { data: encryptedFieldsObject };
 };

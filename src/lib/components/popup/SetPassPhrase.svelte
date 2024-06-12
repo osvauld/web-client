@@ -11,12 +11,24 @@
 	const dispatch = createEventDispatcher();
 	let passphrase = "";
 	let confirmPassphrase = "";
-	let showPassword = false;
+	let showFirstPassword = false;
+	let showSecondPassword = false;
 	let showPassphraseMismatchError = false;
+	let passphraseEmpty = false;
 	let isLoaderActive = false;
 
-	$: type = showPassword ? "text" : "password";
+	$: type1 = showFirstPassword ? "text" : "password";
+	$: type2 = showSecondPassword ? "text" : "password";
+
 	const handlePassPhraseSubmit = async () => {
+		if (passphrase.length === 0) {
+			passphraseEmpty = true;
+			isLoaderActive = false;
+			setTimeout(() => {
+				passphraseEmpty = false;
+			}, 1500);
+			return;
+		}
 		isLoaderActive = true;
 		if (passphrase === confirmPassphrase) {
 			const response = await sendMessage("savePassphrase", {
@@ -28,15 +40,23 @@
 				isLoaderActive = false;
 				dispatch("signedUp");
 			}
-		} else showPassphraseMismatchError = true;
+		} else {
+			showPassphraseMismatchError = true;
+			isLoaderActive = false;
+			setTimeout(() => {
+				showPassphraseMismatchError = false;
+			}, 1500);
+		}
 	};
 	function onInput(event: any, type: string) {
 		if (type === "passphrase") passphrase = event.target.value;
 		else confirmPassphrase = event.target.value;
 	}
 
-	const togglePassword = () => {
-		showPassword = !showPassword;
+	const togglePassword = (identification: boolean) => {
+		identification
+			? (showFirstPassword = !showFirstPassword)
+			: (showSecondPassword = !showSecondPassword);
 	};
 </script>
 
@@ -51,7 +71,7 @@
 	>
 		<input
 			class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 w-full"
-			{type}
+			type="{type1}"
 			autocomplete="off"
 			id="password"
 			on:input="{(e) => onInput(e, 'passphrase')}"
@@ -60,9 +80,9 @@
 		<button
 			type="button"
 			class="flex justify-center items-center"
-			on:click="{togglePassword}"
+			on:click="{() => togglePassword(true)}"
 		>
-			{#if showPassword}
+			{#if showFirstPassword}
 				<ClosedEye />
 			{:else}
 				<Eye />
@@ -76,7 +96,7 @@
 	>
 		<input
 			class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 w-full"
-			{type}
+			type="{type2}"
 			autocomplete="off"
 			id="password"
 			on:input="{(e) => onInput(e, 'confirmPassphrase')}"
@@ -85,18 +105,30 @@
 		<button
 			type="button"
 			class="flex justify-center items-center"
-			on:click="{togglePassword}"
+			on:click="{() => togglePassword(false)}"
 		>
-			{#if showPassword}
+			{#if showSecondPassword}
 				<ClosedEye />
 			{:else}
 				<Eye />
 			{/if}
 		</button>
 	</div>
-	{#if showPassphraseMismatchError}
-		<span class="text-xs text-red-500 font-thin">Passphrase doesn't match</span>
+
+	{#if passphraseEmpty}
+		<span
+			class="mt-2 text-xs text-red-400 font-light {passphraseEmpty
+				? 'visible'
+				: 'invisible'}">Passphrase Empty!</span
+		>
+	{:else}
+		<span
+			class="mt-2 text-xs text-red-400 font-light {showPassphraseMismatchError
+				? 'visible'
+				: 'invisible'}">Passphrase doesn't match</span
+		>
 	{/if}
+
 	<button
 		class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
 		type="submit"

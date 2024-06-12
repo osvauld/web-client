@@ -28,11 +28,6 @@ document.addEventListener("readystatechange", function () {
 						'input[type="text"], input[type="email"]',
 					)?.value;
 					const password = form.querySelector('input[type="password"]')?.value;
-					console.log(
-						"username and password during submission",
-						username,
-						password,
-					);
 					if (username && password && !formSubmitted) {
 						// Send message to the background script
 						browser.runtime.sendMessage({
