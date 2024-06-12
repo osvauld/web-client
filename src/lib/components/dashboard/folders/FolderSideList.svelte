@@ -80,7 +80,10 @@
 	onMount(async () => {
 		await setFolderStore();
 		await setEnvStore();
-		selectSection("SharedFolders");
+		if (!$selectedFolder) {
+			selectedSection.set("SharedFolders");
+		}
+		// selectSection("SharedFolders");
 	});
 </script>
 
