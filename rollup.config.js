@@ -51,7 +51,7 @@ function buildConfig(inputFileName, outputFileName) {
     plugins: [
       svelte({
         compilerOptions: {
-          dev: false,
+          dev: !production,
         },
         preprocess: preprocess({
           typescript: {
@@ -65,12 +65,12 @@ function buildConfig(inputFileName, outputFileName) {
       postcss({
         extract: `${outputFileName}.css`,
         minimize: true,
-        sourceMap: false,
+        sourceMap: !production,
         config: {
           path: "./postcss.config.cjs",
         },
       }),
-      typescript({ sourceMap: true, tsconfig: "./tsconfig.app.json" }),
+      typescript({ sourceMap: !production, tsconfig: "./tsconfig.app.json" }),
       resolve({ browser: true }),
       commonjs(),
     ],
@@ -92,7 +92,7 @@ export default [
     plugins: [
       typescript({
         tsconfig: "./tsconfig.background.json",
-        sourceMap: true,
+        sourceMap: !production,
       }),
       commonjs(),
       resolve({ browser: true, preferBuiltins: false }),
