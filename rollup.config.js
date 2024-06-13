@@ -47,6 +47,7 @@ function buildConfig(inputFileName, outputFileName) {
       file: `public/build/${outputFileName}.js`,
       format: "iife",
       name: "app",
+      sourcemap: !production,
     },
     plugins: [
       svelte({
@@ -88,6 +89,7 @@ export default [
       format: buildEnv === 'firefox' ? 'iife' : 'es',
       name: "background",
       file: "public/background.js",
+      sourcemap: !production,
     },
     plugins: [
       typescript({
@@ -107,6 +109,7 @@ export default [
       format: "iife",
       name: "content",
       file: "public/content.js",
+      sourcemap: !production,
     },
     plugins: [
       typescript({
