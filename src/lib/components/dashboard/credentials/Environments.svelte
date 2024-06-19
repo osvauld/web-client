@@ -53,7 +53,7 @@
 
 	const handleSaveChange = async () => {
 		const { credentialId, ...editRequestData } = editedCredential;
-		const editResponse = await EditEnvCredentialField(editRequestData);
+		const editResponse = await editEnvCredentialField(editRequestData);
 		editedCredential = null;
 		toastStore.set({
 			type: editResponse.success,
