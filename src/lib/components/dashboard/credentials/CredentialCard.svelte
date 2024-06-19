@@ -55,16 +55,17 @@
 		hoverEffect = false;
 	}
 
-	const triggerMoreActions = (e: any) => {
-		buttonRef.set(e.currentTarget);
-		modalManager.set({
-			id: credential.credentialId,
-			name: credential.name,
-			type: "Credential",
-			private: privateFolder,
-		});
-		showMoreOptions.set(true);
-	};
+
+  const triggerMoreActions = (e: any) => {
+    buttonRef.set(e.currentTarget);
+    modalManager.set({
+      id: credential.credentialId,
+      name: credential.name,
+      type: "Credential",
+    });
+    dispatch("action", true);
+    showMoreOptions.set(true);
+  };
 
 	const handleClick = async () => {
 		if (sensitiveFields.length) {
