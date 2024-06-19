@@ -1,4 +1,5 @@
 <script lang="ts">
+
   import BinIcon from "../../basic/icons/binIcon.svelte";
   import EditIcon from "../../basic/icons/editIcon.svelte";
   import { FolderShare } from "../icons";
@@ -15,44 +16,45 @@
   import { derived } from "svelte/store";
   import { onMount, onDestroy } from "svelte";
 
-  let isShareHovered = false;
-  let isEditHovered = false;
-  let isBinHovered = false;
+	let isShareHovered = false;
+	let isEditHovered = false;
+	let isBinHovered = false;
 
-  function closeModal() {
-    showMoreOptions.set(false);
-    modalManager.set(null);
-  }
+	function closeModal() {
+		showMoreOptions.set(false);
+		modalManager.set(null);
+	}
 
-  export const buttonCoords = derived(buttonRef, ($buttonRef) => {
-    if ($buttonRef) {
-      const rect = $buttonRef.getBoundingClientRect();
-      const leftVal =
-        $modalManager.type === "Folder"
-          ? rect.left + window.scrollX
-          : rect.left + window.scrollX - 2.7 * rect.width;
-      return {
-        top: rect.top + window.scrollY + rect.height,
-        left: leftVal,
-      };
-    }
-    return { top: 0, left: 0 };
-  });
+	export const buttonCoords = derived(buttonRef, ($buttonRef) => {
+		if ($buttonRef) {
+			const rect = $buttonRef.getBoundingClientRect();
+			const leftVal =
+				$modalManager.type === "Folder"
+					? rect.left + window.scrollX
+					: rect.left + window.scrollX - 2.7 * rect.width;
+			return {
+				top: rect.top + window.scrollY + rect.height,
+				left: leftVal,
+			};
+		}
+		return { top: 0, left: 0 };
+	});
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      closeModal();
-    }
-  };
+	const handleKeyDown = (event: KeyboardEvent) => {
+		if (event.key === "Escape") {
+			closeModal();
+		}
+	};
 
-  const handleClickOutside = () => {
-    closeModal();
-  };
+	const handleClickOutside = () => {
+		closeModal();
+	};
 
-  const callShareFolderModal = () => {
-    closeModal();
-    showFolderShareDrawer.set(true);
-  };
+	const callShareFolderModal = () => {
+		closeModal();
+		showFolderShareDrawer.set(true);
+	};
+
 
   const callShareCredentialModal = () => {
     showMoreOptions.set(false);
@@ -64,22 +66,23 @@
     showFolderRenameDrawer.set(true);
   };
 
-  const deleteInitiate = () => {
-    showMoreOptions.set(false);
-    buttonRef.set(null);
-    DeleteConfirmationModal.set(true);
-  };
+	const deleteInitiate = () => {
+		showMoreOptions.set(false);
+		buttonRef.set(null);
+		DeleteConfirmationModal.set(true);
+	};
 
-  onMount(() => {
-    window.addEventListener("keydown", handleKeyDown);
-  });
+	onMount(() => {
+		window.addEventListener("keydown", handleKeyDown);
+	});
 
-  onDestroy(() => {
-    window.removeEventListener("keydown", handleKeyDown);
-  });
+	onDestroy(() => {
+		window.removeEventListener("keydown", handleKeyDown);
+	});
 </script>
 
 {#if $showMoreOptions && $buttonRef}
+
   <div
     class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack {$modalManager.type ===
     'Folder'
