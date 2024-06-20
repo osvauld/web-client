@@ -214,9 +214,8 @@
 			await editCredential();
 			return;
 		}
-		// We need to do the totp validation here.
 		let totpPresence = credentialFields.filter(
-			(field) => field.fieldName === "TOTP",
+			(field) => field.fieldName === "TOTP" && field.fieldValue.length !== 0,
 		);
 		if (totpPresence.length !== 0) {
 			const isTotpValid = totpValidator(totpPresence[0].fieldValue);
@@ -272,9 +271,15 @@
 					fieldType: field.sensitive ? "sensitive" : "meta",
 				};
 				if (field.fieldName === "TOTP") {
-					baseField.fieldType = "totp";
+					if (field.fieldValue.length !== 0) {
+						baseField.fieldType = "totp";
+						addCredentialFields.push(baseField);
+					} else {
+						continue;
+					}
+				} else {
+					addCredentialFields.push(baseField);
 				}
-				addCredentialFields.push(baseField);
 			}
 		}
 
@@ -291,6 +296,7 @@
 			users: usersToShare,
 			addCredentialFields,
 		});
+
 		addCredentialPaylod.userFields = response;
 		await addCredential(addCredentialPaylod);
 		await setCredentialStore();
