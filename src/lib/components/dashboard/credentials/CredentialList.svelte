@@ -45,22 +45,22 @@
 	$: minOneCredentialManager = sortedCredentials.some(
 		(credential) => credential.accessType === "manager",
 	);
-  const handleCheck = (isChecked: boolean, card: Credential) => {
-    if (isChecked) {
-      checkedCards = [...checkedCards, card];
-    } else {
-      checkedCards = checkedCards.filter(
-        (c) => c.credentialId !== card.credentialId
-      );
-    }
-  };
+	const handleCheck = (isChecked: boolean, card: Credential) => {
+		if (isChecked) {
+			checkedCards = [...checkedCards, card];
+		} else {
+			checkedCards = checkedCards.filter(
+				(c) => c.credentialId !== card.credentialId,
+			);
+		}
+	};
 
-  const handleActionModalCall = (triggerAction: boolean, card: Credential) => {
-    // When the action modal is called from a credential, it clears all other checked credentials and make that credential checked.
-    checkedCards = [card];
-  };
+	const handleActionModalCall = (triggerAction: boolean, card: Credential) => {
+		// When the action modal is called from a credential, it clears all other checked credentials and make that credential checked.
+		checkedCards = [card];
+	};
 
-const subscribe = selectedFolder.subscribe(async (folder) => {
+	const subscribe = selectedFolder.subscribe(async (folder) => {
 		if (folder === null) {
 			return;
 		}
@@ -316,7 +316,7 @@ const subscribe = selectedFolder.subscribe(async (folder) => {
 					)}"
 					on:check="{(e) => handleCheck(e.detail, credential)}"
 					on:select="{(e) => onSelectingCard(e.detail, credential)}"
-          on:action="{(e) => handleActionModalCall(e.detail, credential)}"
+					on:action="{(e) => handleActionModalCall(e.detail, credential)}"
 				/>
 			{/each}
 		</div>

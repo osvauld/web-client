@@ -2,9 +2,8 @@
 	import { fly } from "svelte/transition";
 	import { onMount } from "svelte";
 
-
-  import { showCredentialShareDrawer, modalManager } from "../store";
-  import { fetchCredentialsFieldsByIds } from "../apis";
+	import { showCredentialShareDrawer, modalManager } from "../store";
+	import { fetchCredentialsFieldsByIds } from "../apis";
 
 	import { User, Group, Credential, CredentialFields } from "../dtos";
 
@@ -27,10 +26,8 @@
 	onMount(async () => {
 		const responseJson = await fetchCredentialsFieldsByIds(credIds);
 		credentialsFields = responseJson.data;
-   modalManager.set(null);
+		modalManager.set(null);
 	});
-
-  
 
 	let selectedTab = "Groups";
 	const toggleSelect = (e: any) => {
@@ -67,7 +64,6 @@
 				><ClosePanel /></button
 			>
 		</div>
-
 
 		{#if showInfoTab}
 			<div
