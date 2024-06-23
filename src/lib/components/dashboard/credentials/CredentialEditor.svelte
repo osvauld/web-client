@@ -87,6 +87,7 @@
 			userId: user.id,
 			publicKey: user.publicKey,
 		}));
+		console.log(users, "users to share");
 		const envFieldsResponse = await getEnvFieldsByCredentialId(credentialId);
 
 		let userEnvMap = envResponse.data.reduce((obj, item) => {
