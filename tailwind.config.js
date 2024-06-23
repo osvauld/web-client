@@ -95,6 +95,7 @@ export default {
 					permissionGreenText: "#74C7EC",
 					borderColor: "#292A36",
 					cancelBackground: "#21222C",
+					tickGreen: "#00FF00",
 				},
 			},
 			fontFamily: {
