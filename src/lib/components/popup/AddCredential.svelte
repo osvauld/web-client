@@ -44,7 +44,6 @@
 
 	const closeEventDispatcher = async () => {
 		dispatch("close", true);
-		if (windowId !== "manual") await browser.windows.remove(windowId);
 	};
 
 	const handleSave = async () => {
@@ -220,7 +219,10 @@
 		</button>
 	</form>
 	<button
-		class="text-osvauld-fadedCancel rounded-md border border-osvauld-iconblack font-normal text-sm absolute left-2 bottom-2 px-2 py-1"
+		class="text-osvauld-fadedCancel rounded-md border border-osvauld-iconblack font-normal text-sm absolute left-2 bottom-2 px-2 py-1 {windowId ===
+		'manual'
+			? 'visible'
+			: 'invisible'}"
 		on:click|preventDefault|stopPropagation="{closeEventDispatcher}"
 		>Cancel</button
 	>
