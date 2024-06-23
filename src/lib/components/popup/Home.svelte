@@ -67,6 +67,7 @@
 	const fetchCredentialsOfCurrentDomin = async () => {
 		const responseJson = await fetchAllUserUrls();
 		const urls = responseJson.data;
+		console.log(urls, "urls");
 		await readDomain();
 		const { credIds } = await sendMessage("updateAllUrls", {
 			urls,

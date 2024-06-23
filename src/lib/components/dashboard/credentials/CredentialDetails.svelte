@@ -22,6 +22,7 @@
 	import { Credential, Fields, Group, UserWithAccessType } from "../dtos";
 	import Tick from "../../basic/icons/tick.svelte";
 	import FileText from "../../basic/icons/fileText.svelte";
+	import { setCredentialStore } from "../../../store/storeHelper";
 	export let credential: Credential;
 	export let sensitiveFields: Fields[];
 	let selectedTab = "Groups";
@@ -140,6 +141,7 @@
 
 	const closeCredentialEditor = async () => {
 		showEditCredentialModal = false;
+		await setCredentialStore();
 		showCredentialDetailsDrawer.set(false);
 	};
 	onMount(async () => {
