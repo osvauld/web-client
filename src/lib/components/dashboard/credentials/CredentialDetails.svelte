@@ -283,7 +283,7 @@
 						{#if credential.accessType === "manager"}
 							<button
 								class="p-2 rounded-lg {editPermissionTrigger
-									? 'bg-osvauld-sensitivebgblue'
+									? 'bg-osvauld-sensitivebgblue ml-2'
 									: ''}"
 								on:click="{() => {
 									editPermissionTrigger = !editPermissionTrigger;
