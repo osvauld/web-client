@@ -23,6 +23,7 @@
 	import Tick from "../../basic/icons/tick.svelte";
 	import FileText from "../../basic/icons/fileText.svelte";
 	import { setCredentialStore } from "../../../store/storeHelper";
+	import { buffer } from "stream/consumers";
 	export let credential: Credential;
 	export let sensitiveFields: Fields[];
 	let selectedTab = "Groups";
@@ -269,17 +270,6 @@
 				<div class="flex justify-between items-center">
 					<Toggle on:select="{toggleSelect}" />
 					<div class="mr-3">
-						{#if accessChangeDetected}
-							<button
-								class="p-2 mr-1 rounded-lg bg-osvauld-sensitivebgblue"
-								on:click="{() => {
-									savePermissions();
-									editPermissionTrigger = false;
-								}}"
-							>
-								<Tick />
-							</button>
-						{/if}
 						{#if credential.accessType === "manager"}
 							<button
 								class="p-2 rounded-lg {editPermissionTrigger
@@ -321,6 +311,24 @@
 						{/each}
 					{/if}
 				</div>
+				{#if accessChangeDetected}
+					<div class="flex justify-end items-center gap-4">
+						<button
+							class="px-3 py-1.5 bg-osvauld-cancelBackground rounded-md text-osvauld-quarzowhite text-base font-normal"
+							on:click="{() => {
+								editPermissionTrigger = false;
+								accessChangeDetected = false;
+							}}">Cancel</button
+						>
+						<button
+							class="px-3 py-1.5 bg-osvauld-carolinablue text-osvauld-frameblack font-normal text-base rounded-md"
+							on:click="{() => {
+								savePermissions();
+								editPermissionTrigger = false;
+							}}">Save Changes</button
+						>
+					</div>
+				{/if}
 			{/if}
 		</div>
 	</div>
