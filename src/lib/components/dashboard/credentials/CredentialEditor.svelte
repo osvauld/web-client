@@ -133,7 +133,6 @@
 					fieldValue: field.fieldValue,
 					usersToShare: users,
 				});
-				console.log(response.data, "response data");
 				editedUserField.fieldValues = response.data;
 				editedUserFields.push(editedUserField);
 			} else if (!field.fieldId) {
@@ -152,7 +151,6 @@
 					fieldValue: field.fieldValue,
 					usersToShare: users,
 				});
-				console.log("users to share", users);
 				for (const fieldData of response.data) {
 					if (!userEnvMap[fieldData.userId]) {
 						continue;
