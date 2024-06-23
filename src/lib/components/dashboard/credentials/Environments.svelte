@@ -118,40 +118,43 @@
 </div>
 
 {#if $selectedEnv}
-	{#each credentials as credential}
-		<ul
-			class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden my-6"
-		>
-			<div
-				class="text-osvauld-fieldTextActive text-lg font-medium py-2 border-b border-osvauld-iconblack"
+	<div class="overflow-y-scroll max-h-[75rem] scrollbar-thin">
+		{#each credentials as credential}
+			<ul
+				class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden my-6"
 			>
-				{credential.credentialName}
-			</div>
-			<div class="flex flex-col pr-4 pb-2 pl-0 pt-0 mt-2">
-				<EnvironmentCredential
-					{credential}
-					on:edit="{(e) => handleEditField(credential.credentialId, e.detail)}"
-					activefieldId="{credential.credentialId ===
-					editedCredential?.credentialId
-						? editedCredential?.fieldID
-						: null}"
-				/>
-			</div>
-			{#if credential.credentialId === editedCredential?.credentialId}
-				<div class="flex justify-end items-center pr-4">
-					<button
-						class="px-3 py-1 mr-2 text-osvauld-fadedCancel border border-osvauld-iconblack rounded-md hover:text-osvauld-textActive text-sm font-medium"
-						type="button"
-						on:click="{closeEditOption}">Cancel</button
-					>
-					<button
-						class="px-3 py-1 whitespace-nowrap text-sm font-medium rounded-md border bg-osvauld-carolinablue border-osvauld-iconblack text-osvauld-frameblack"
-						on:click="{handleSaveChange}">Save Changes</button
-					>
+				<div
+					class="text-osvauld-fieldTextActive text-lg font-medium py-2 border-b border-osvauld-iconblack"
+				>
+					{credential.credentialName}
 				</div>
-			{/if}
-		</ul>
-	{/each}
+				<div class="flex flex-col pr-4 pb-2 pl-0 pt-0 mt-2">
+					<EnvironmentCredential
+						{credential}
+						on:edit="{(e) =>
+							handleEditField(credential.credentialId, e.detail)}"
+						activefieldId="{credential.credentialId ===
+						editedCredential?.credentialId
+							? editedCredential?.fieldID
+							: null}"
+					/>
+				</div>
+				{#if credential.credentialId === editedCredential?.credentialId}
+					<div class="flex justify-end items-center pr-4">
+						<button
+							class="px-3 py-1 mr-2 text-osvauld-fadedCancel border border-osvauld-iconblack rounded-md hover:text-osvauld-textActive text-sm font-medium"
+							type="button"
+							on:click="{closeEditOption}">Cancel</button
+						>
+						<button
+							class="px-3 py-1 whitespace-nowrap text-sm font-medium rounded-md border bg-osvauld-carolinablue border-osvauld-iconblack text-osvauld-frameblack"
+							on:click="{handleSaveChange}">Save Changes</button
+						>
+					</div>
+				{/if}
+			</ul>
+		{/each}
+	</div>
 {:else}
 	<div class="w-full">
 		<ul class="w-[90%] mx-auto text-osvauld-fieldText font-light">
