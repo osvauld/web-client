@@ -26,7 +26,7 @@
 				on:click="{() => select(item)}"
 				type="button"
 			>
-				{#if item === "Groups"}
+				{#if item === "Groups" || item === "shared"}
 					<span class="scale-100">
 						<GroupIcon
 							color="{selectedItem === 'Groups' ? 'white' : '#85889C'}"
@@ -39,7 +39,9 @@
 						/>
 					</span>
 				{/if}
-				<span class="{item === 'Groups' ? 'ml-2' : 'ml-0'}">{item}</span>
+				<span class="{item === 'Groups' || item === 'shared' ? 'ml-2' : 'ml-0'}"
+					>{item}</span
+				>
 			</button>
 		{/each}
 	</div>
