@@ -31,7 +31,7 @@
 	let scrollableElement;
 	let passwordGenerator = false;
 	let showAddOptions = false;
-
+	let currentUrl = "";
 	let port: browser.Runtime.Port;
 	let addNewCredential = false;
 	let newCredential: any | null = {
@@ -51,6 +51,7 @@
 		});
 		const activeTab = tabs[0];
 		if (activeTab && activeTab.url) {
+			currentUrl = activeTab.url;
 			const url = new URL(activeTab.url);
 			const hostname = url.hostname;
 			const parts = hostname.split(".");
@@ -254,6 +255,7 @@
 						password="{newCredential.password}"
 						domain="{newCredential.domain || domain}"
 						windowId="{newCredential.windowId || 'manual'}"
+						{currentUrl}
 						on:close="{closeAddCredential}"
 					/>
 				{:else if passwordGenerator}

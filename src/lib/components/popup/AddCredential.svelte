@@ -1,5 +1,4 @@
 <script lang="ts">
-	import browser from "webextension-polyfill";
 	import {
 		addCredential,
 		fetchAllFolders,
@@ -15,6 +14,7 @@
 	export let password = "";
 	export let domain = "";
 	export let windowId;
+	export let currentUrl;
 	let visibility = false;
 	let name = "";
 	let description = "";
@@ -63,7 +63,7 @@
 				fieldValue: domain,
 				fieldType: "additional",
 			},
-			{ fieldName: "URL", fieldValue: domain, fieldType: "meta" },
+			{ fieldName: "URL", fieldValue: currentUrl, fieldType: "meta" },
 		];
 		addCredentialPayload.folderId = selectedFolderId;
 		const userFields = await sendMessage("addCredential", {
