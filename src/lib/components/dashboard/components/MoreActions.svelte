@@ -10,6 +10,7 @@
 		showFolderShareDrawer,
 		showFolderRenameDrawer,
 		showCredentialShareDrawer,
+		selectedSection,
 	} from "../store";
 	import { clickOutside } from "../helper";
 	import { derived } from "svelte/store";
@@ -90,25 +91,26 @@
 		on:clickedOutside="{handleClickOutside}"
 	>
 		<div class="flex flex-col items-start p-2 gap-2 w-full h-full">
-			<button
-				class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
-				on:mouseenter="{() => (isShareHovered = true)}"
-				on:mouseleave="{() => (isShareHovered = false)}"
-			>
-				<FolderShare
-					size="{24}"
-					color="{isShareHovered ? '#F2F2F0' : '#85889C'}"
-				/>
+			{#if $selectedSection !== "PrivateFolders"}
 				<button
-					class="font-inter text-base whitespace-nowrap"
-					on:click|stopPropagation="{$modalManager.type === 'Folder'
-						? callShareFolderModal
-						: callShareCredentialModal}"
+					class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
+					on:mouseenter="{() => (isShareHovered = true)}"
+					on:mouseleave="{() => (isShareHovered = false)}"
 				>
-					Share {$modalManager.type === "Folder" ? "folder" : ""}
+					<FolderShare
+						size="{24}"
+						color="{isShareHovered ? '#F2F2F0' : '#85889C'}"
+					/>
+					<button
+						class="font-inter text-base whitespace-nowrap"
+						on:click|stopPropagation="{$modalManager.type === 'Folder'
+							? callShareFolderModal
+							: callShareCredentialModal}"
+					>
+						Share {$modalManager.type === "Folder" ? "folder" : ""}
+					</button>
 				</button>
-			</button>
-
+			{/if}
 			{#if $modalManager.type === "Folder"}
 				<button
 					class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"

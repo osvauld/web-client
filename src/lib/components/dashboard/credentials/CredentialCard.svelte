@@ -136,7 +136,7 @@
 		class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
 	>
 		<div
-			class="flex {credential.accessType !== 'manager' || privateFolder
+			class="flex {credential.accessType !== 'manager' && !privateFolder
 				? 'justify-start'
 				: 'justify-center'} items-center border-osvauld-iconblack pb-2"
 			on:click|stopPropagation

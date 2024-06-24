@@ -45,6 +45,7 @@
 
 	const closeEventDispatcher = async () => {
 		dispatch("close", true);
+		if (windowId !== "manual") await browser.windows.remove(windowId);
 	};
 
 	const handleSave = async () => {
@@ -86,36 +87,38 @@
 		class="flex flex-col p-4 max-w-sm mx-auto space-y-2 text-osvauld-textActive bg-osvauld-cardshade max-h-[26rem] rounded-lg overflow-y-scroll w-full overflow-x-hidden scrollbar-thin"
 	>
 		{#each folderData as folder, index}
-			<li
-				class="{selectedFolderId == folder.id
-					? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
-					: 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center transition-colors duration-100"
-				on:mouseenter="{() => (hoveringIndex = index)}"
-				on:mouseleave="{() => (hoveringIndex = null)}"
-			>
-				<button
-					on:click="{() => handleFolderSelect(folder.id)}"
-					class="w-full py-1 px-2 text-lg rounded-2xl flex items-center cursor-pointer"
+			{#if folder.accessType === "manager"}
+				<li
+					class="{selectedFolderId == folder.id
+						? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
+						: 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center transition-colors duration-100"
+					on:mouseenter="{() => (hoveringIndex = index)}"
+					on:mouseleave="{() => (hoveringIndex = null)}"
 				>
-					<FolderIcon
-						color="{selectedFolderId == folder.id || hoveringIndex === index
-							? '#F2F2F0'
-							: '#85889C'}"
-					/>
-					<span
-						class="max-w-[75%] ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap {selectedFolderId ==
-							folder.id || hoveringIndex === index
-							? 'text-osvauld-sideListTextActive'
-							: 'text-osvauld-fieldText'}"
-						>{folder.name}
-					</span>
-					{#if folder.type === "private"}
-						<span class="ml-auto">
-							<Locked />
+					<button
+						on:click="{() => handleFolderSelect(folder.id)}"
+						class="w-full py-1 px-2 text-lg rounded-2xl flex items-center cursor-pointer"
+					>
+						<FolderIcon
+							color="{selectedFolderId == folder.id || hoveringIndex === index
+								? '#F2F2F0'
+								: '#85889C'}"
+						/>
+						<span
+							class="max-w-[75%] ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap {selectedFolderId ==
+								folder.id || hoveringIndex === index
+								? 'text-osvauld-sideListTextActive'
+								: 'text-osvauld-fieldText'}"
+							>{folder.name}
 						</span>
-					{/if}
-				</button>
-			</li>
+						{#if folder.type === "private"}
+							<span class="ml-auto">
+								<Locked />
+							</span>
+						{/if}
+					</button>
+				</li>
+			{/if}
 		{/each}
 	</ul>
 	<button

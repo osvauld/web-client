@@ -220,12 +220,33 @@
 										: '#85889C'}"
 								/>
 								<span
-									class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem] {$selectedFolder?.id ==
+									class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left relative inline-block min-w-[2rem] max-w-[9rem] pr-6 {$selectedFolder?.id ==
 										folder.id || hoveringIndex === folder.id
 										? 'text-osvauld-sideListTextActive'
 										: 'text-osvauld-fieldText'}"
 									>{folder.name}
+									<span
+										class="ml-2 text-osvauld-fieldText font-light absolute right-0 {$selectedFolder?.id ===
+										folder.id
+											? 'visible delay-200'
+											: 'invisible'}">{$credentialStore.length}</span
+									>
 								</span>
+								<div
+									class="relative z-100 ml-auto flex justify-center items-center {$selectedFolder?.id ==
+										folder.id || hoveringIndex === folder.id
+										? 'visible'
+										: 'invisible'}"
+								>
+									<button
+										class="p-2"
+										on:click="{(e) => {
+											openFolderMenu(e, folder.id, folder.name, folder.type);
+										}}"
+									>
+										<Menu />
+									</button>
+								</div>
 							</button>
 						</li>
 					{/if}

@@ -124,14 +124,14 @@
 		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
 	></div>
 
-	<div class="flex justify-end items-center gap-6 w-full">
+	<div class="flex justify-end items-center gap-4 w-full">
 		<button
-			class="text-osvauld-fadedCancel font-medium text-base"
+			class="text-osvauld-fadedCancel font-medium text-base py-[5px] px-[15px] rounded-md hover:text-osvauld-quarzowhite hover:bg-osvauld-cancelBackground"
 			type="button"
 			on:click|preventDefault="{handleClose}">Cancel</button
 		>
 		<button
-			class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md"
+			class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md hover:bg-osvauld-carolinablue hover:border-osvauld-carolinablue hover:text-osvauld-frameblack"
 			type="submit"
 			disabled="{!name}"
 			>{$showFolderRenameDrawer ? "Save Changes" : "Add Folder"}</button
