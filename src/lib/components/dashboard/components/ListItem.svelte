@@ -58,7 +58,7 @@
 				><BinIcon color="{'#67697C'}" /></button
 			>
 			<button
-				class="w-[9.8rem] rounded-md font-normal cursor-pointer px-2 py-0.5 pl-2 text-base flex justify-around items-center {setbackground(
+				class="w-[8rem] rounded-md font-normal cursor-pointer px-2 py-0.5 pl-2 text-base flex justify-around items-center {setbackground(
 					item.accessType,
 				)}"
 				>{item.accessType}
@@ -74,7 +74,7 @@
 	{/if}
 	{#if !isBottomList && hoveredOverThisItem}
 		<span
-			class="cursor-pointer text-osvauld-permissionGreenText bg-osvauld-permissionsGreen rounded-md px-1 py-0.5 w-[9.8rem] flex justify-around items-center text-base font-normal"
+			class="cursor-pointer text-osvauld-permissionGreenText bg-osvauld-permissionsGreen rounded-md px-1 py-0.5 w-[8rem] flex justify-around items-center text-base font-normal"
 			>Permissions <span class="-rotate-90"
 				><DownArrow type="{'indicator'}" /></span
 			></span

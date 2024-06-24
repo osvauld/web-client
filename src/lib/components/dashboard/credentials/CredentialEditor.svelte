@@ -482,11 +482,11 @@
 				disabled="{isLoaderActive}"
 			>
 				{#if isLoaderActive}
-					<span class="w-[8rem] flex justify-center items-center"
+					<span class="w-[8.6rem] flex justify-center items-center"
 						><Loader size="{24}" color="#1F242A" duration="{1}" /></span
 					>
 				{:else}
-					<span class="w-[8rem]"
+					<span class="w-[8.6rem]"
 						>{edit ? "Save Changes" : "Add credential"}</span
 					>
 				{/if}
