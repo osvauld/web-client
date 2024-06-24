@@ -6,6 +6,7 @@
 		showMoreOptions,
 		selectedFolder,
 		credentialStore,
+		toastStore,
 	} from "../store";
 	import { fly } from "svelte/transition";
 	import { Warning } from "../icons";
@@ -26,7 +27,14 @@
 			selectedFolder.set(null);
 			credentialStore.set([]);
 		}
-		await removeFolder($modalManager.id);
+		let removalResponse = await removeFolder($modalManager.id);
+		if (removalResponse.success) {
+			toastStore.set({
+				type: removalResponse.success,
+				message: removalResponse.message,
+				show: true,
+			});
+		}
 		withdrawFolderDeleteModal();
 		await setFolderStore();
 	}
