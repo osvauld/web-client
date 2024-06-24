@@ -24,6 +24,7 @@ let newCredential: any = {
 	password: "",
 	domain: "",
 	windowId: "",
+	url: "",
 };
 
 let urlObj = new Map<string, Set<string>>();
@@ -165,6 +166,7 @@ browser.runtime.onConnect.addListener(async (port) => {
 				password: newCredential.password,
 				domain: newCredential.domain,
 				windowId: newCredential.windowId,
+				url: newCredential.url,
 			});
 			newCredential = {};
 		}
