@@ -118,7 +118,7 @@
 </div>
 
 {#if $selectedEnv}
-	<div class="overflow-y-scroll max-h-[75rem] scrollbar-thin">
+	<div class="overflow-y-scroll max-h-[65rem] scrollbar-thin">
 		{#each credentials as credential}
 			<ul
 				class="border border-osvauld-iconblack rounded-xl bg-osvauld-cardshade text-osvauld-fieldText mx-4 px-4 py-2 overflow-x-hidden my-6"

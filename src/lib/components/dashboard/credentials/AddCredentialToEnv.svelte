@@ -9,7 +9,7 @@
 	import { ClosePanel } from "../icons";
 	import { searchObjects, sendMessage } from "../helper";
 	import { Lens } from "../icons";
-	import { selectedEnv } from "../store";
+	import { selectedEnv, toastStore } from "../store";
 
 	let saveEnabled = false;
 	let query = "";
@@ -42,9 +42,13 @@
 		searchData = searchFieldSResponse.data;
 		searchResults = searchData;
 	};
-	const handleInputChange = (e: any) => {
+	const handleInputChange = async (e: any) => {
 		const query = e.type === "input" ? e.target.value : e.detail;
-		searchResults = query.length >= 1 ? searchObjects(query, searchData) : [];
+		if (query.length === 0) {
+			await getSearchData();
+		} else {
+			searchResults = searchObjects(query, searchData);
+		}
 	};
 
 	const addCredentialToEnv = async () => {
@@ -62,7 +66,16 @@
 			],
 		});
 		encryptedCreds[0].envId = $selectedEnv.id;
-		await shareCredentialsWithEnv(encryptedCreds[0]);
+		let shareCredentialsWithEnvResponse = await shareCredentialsWithEnv(
+			encryptedCreds[0],
+		);
+		if (shareCredentialsWithEnvResponse.success) {
+			toastStore.set({
+				type: shareCredentialsWithEnvResponse.success,
+				message: shareCredentialsWithEnvResponse.message,
+				show: true,
+			});
+		}
 		dispatch("close");
 	};
 
@@ -122,7 +135,7 @@
 </style>
 
 <div
-	class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 flex justify-end rounded-2xl border border-osvauld-activeBorder blur-none"
+	class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 flex justify-end rounded-2xl border border-osvauld-activeBorder"
 	in:fly
 	out:fly
 >
@@ -178,7 +191,7 @@
 		</div>
 		<div class="p-2 w-full flex justify-end items-center box-border mt-0">
 			<button
-				class="ml-auto p-2 whitespace-nowrap text-sm font-medium text-osvauld-fadedCancel"
+				class=" text-base py-[5px] px-[15px] rounded-md hover:bg-osvauld-cancelBackground hover:text-osvauld-quarzowhite text-osvauld-fadedCancel"
 				on:click="{() => dispatch('close')}">Cancel</button
 			>
 

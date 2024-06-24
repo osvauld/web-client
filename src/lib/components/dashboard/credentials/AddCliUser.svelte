@@ -117,7 +117,7 @@
 		>
 		{#if userString.length === 0}
 			<button
-				class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-normal text-osvauld-textActive rounded-md"
+				class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-normal text-osvauld-textActive rounded-md hover:border-osvauld-carolinablue hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue"
 				type="submit"
 				disabled="{name === ''}"
 				on:click|preventDefault="{createCliUser}"
