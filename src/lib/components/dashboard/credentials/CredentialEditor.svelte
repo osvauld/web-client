@@ -48,6 +48,7 @@
 	let hoveredIndex: Number | null = null;
 	let errorMessage = "";
 	let changedFields = new Set();
+	let deletedFields = [];
 
 	const dispatcher = createEventDispatcher();
 	const addField = () => {
@@ -60,6 +61,8 @@
 	};
 	//TODO: change user type
 	const removeField = (index: number) => {
+		credentialFields[index].fieldId &&
+			deletedFields.push(credentialFields[index].fieldId);
 		credentialFields.splice(index, 1);
 		credentialFields = [...credentialFields];
 	};
@@ -196,8 +199,8 @@
 			editedEnvFields,
 			newFields,
 			domain,
+			deletedFields,
 		};
-		console.log("edit credential payload", payload);
 		updateCredential(payload, credentialId);
 		await setCredentialStore();
 		isLoaderActive = false;
