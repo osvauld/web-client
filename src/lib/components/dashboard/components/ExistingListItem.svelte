@@ -98,7 +98,7 @@
 	{/if}
 	<div class="flex justify-center items-center ml-2">
 		<button
-			class="w-[8.6rem] rounded-md cursor-pointer px-1 py-0.5 flex justify-around items-center {setbackground(
+			class="w-[9.8rem] rounded-md cursor-pointer px-1 py-0.5 flex justify-around items-center {setbackground(
 				item.accessType,
 			)}"
 			on:click="{changePermissionHandler}"

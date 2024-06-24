@@ -2,7 +2,12 @@
 	import { Lens, ClosePanel, EditIcon, InfoIcon } from "../icons";
 	import ExistingListParent from "../components/ExistingListParent.svelte";
 	import Toggle from "../Toggle.svelte";
-	import { accessListSelected, selectedFolder, buttonRef } from "../store";
+	import {
+		accessListSelected,
+		selectedFolder,
+		buttonRef,
+		toastStore,
+	} from "../store";
 	import {
 		fetchFolderUsers,
 		removeUserFromFolder,
@@ -70,18 +75,27 @@
 	};
 
 	const handlePermissionChange = async (e: any) => {
+		let editPermissionResponse;
 		if (selectedTab === "Users") {
-			await editFolderPermissionForUser(
+			editPermissionResponse = await editFolderPermissionForUser(
 				$selectedFolder.id,
 				e.detail.item.id,
 				e.detail.permission,
 			);
 		} else {
-			await editFolderPermissionForGroup(
+			editPermissionResponse = await editFolderPermissionForGroup(
 				$selectedFolder.id,
 				e.detail.item.groupId,
 				e.detail.permission,
 			);
+		}
+
+		if (editPermissionResponse.success) {
+			toastStore.set({
+				show: editPermissionResponse.success,
+				message: editPermissionResponse.message,
+				type: true,
+			});
 		}
 		await existingItems();
 	};
