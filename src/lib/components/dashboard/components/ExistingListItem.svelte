@@ -91,7 +91,7 @@
 			>
 				<InfoIcon />
 				{#if showTooltip}
-					<div class="tooltip">Inherited Access</div>
+					<div class="tooltip">Inherited from folder</div>
 				{/if}
 			</span>
 		{/if}

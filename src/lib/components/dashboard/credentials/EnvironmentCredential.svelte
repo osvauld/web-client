@@ -98,7 +98,7 @@
 				autocomplete="off"
 				value="{visibility[field.fieldId]
 					? decryptedValues[field.fieldId]
-					: '*'.repeat(8)}"
+					: '*'.repeat(50)}"
 			/>
 			<div class="w-2/5 flex gap-2 items-center justify-end">
 				<button

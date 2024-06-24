@@ -9,6 +9,7 @@
 
 	import { Eye, ClosedEye, FolderIcon } from "./icons";
 	import { createEventDispatcher } from "svelte";
+	import Locked from "../basic/icons/locked.svelte";
 	const dispatch = createEventDispatcher();
 	export let username = "";
 	export let password = "";
@@ -44,7 +45,6 @@
 
 	const closeEventDispatcher = async () => {
 		dispatch("close", true);
-		if (windowId !== "manual") await browser.windows.remove(windowId);
 	};
 
 	const handleSave = async () => {
@@ -83,7 +83,7 @@
 		Select Folder to add this credential
 	</div>
 	<ul
-		class="flex flex-col p-4 max-w-sm mx-auto space-y-2 text-osvauld-textActive bg-osvauld-cardshade rounded-lg overflow-y-scroll w-full overflow-x-hidden scrollbar-thin"
+		class="flex flex-col p-4 max-w-sm mx-auto space-y-2 text-osvauld-textActive bg-osvauld-cardshade max-h-[26rem] rounded-lg overflow-y-scroll w-full overflow-x-hidden scrollbar-thin"
 	>
 		{#each folderData as folder, index}
 			<li
@@ -95,7 +95,7 @@
 			>
 				<button
 					on:click="{() => handleFolderSelect(folder.id)}"
-					class="w-full p-2 text-lg rounded-2xl flex items-center cursor-pointer"
+					class="w-full py-1 px-2 text-lg rounded-2xl flex items-center cursor-pointer"
 				>
 					<FolderIcon
 						color="{selectedFolderId == folder.id || hoveringIndex === index
@@ -108,20 +108,25 @@
 							? 'text-osvauld-sideListTextActive'
 							: 'text-osvauld-fieldText'}"
 						>{folder.name}
-					</span></button
-				>
+					</span>
+					{#if folder.type === "private"}
+						<span class="ml-auto">
+							<Locked />
+						</span>
+					{/if}
+				</button>
 			</li>
 		{/each}
-		<button
-			on:click="{handleSave}"
-			class="px-4 py-2 font-normal rounded-md active::scale-95 {selectedFolderId ===
-			null
-				? 'bg-osvauld-cardshade text-osvauld-textActive border border-osvauld-iconblack'
-				: 'bg-osvauld-carolinablue text-osvauld-frameblack'}"
-		>
-			Save
-		</button>
 	</ul>
+	<button
+		on:click="{handleSave}"
+		class="w-full mt-2 px-4 py-2 font-normal rounded-md active::scale-95 {selectedFolderId ===
+		null
+			? 'bg-osvauld-cardshade text-osvauld-textActive border border-osvauld-iconblack'
+			: 'bg-osvauld-carolinablue text-osvauld-frameblack'}"
+	>
+		Save
+	</button>
 {:else}
 	<div class="text-osvauld-textActive text-base max-w-full pl-4">
 		{windowId === "manual"
@@ -220,7 +225,10 @@
 		</button>
 	</form>
 	<button
-		class="text-osvauld-fadedCancel rounded-md border border-osvauld-iconblack font-normal text-sm absolute left-2 bottom-2 px-2 py-1"
+		class="text-osvauld-fadedCancel rounded-md border border-osvauld-iconblack font-normal text-sm absolute left-2 bottom-2 px-2 py-1 {windowId ===
+		'manual'
+			? 'visible'
+			: 'invisible'}"
 		on:click|preventDefault|stopPropagation="{closeEventDispatcher}"
 		>Cancel</button
 	>

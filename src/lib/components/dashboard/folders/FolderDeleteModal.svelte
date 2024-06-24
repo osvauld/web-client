@@ -12,6 +12,9 @@
 	import { removeFolder } from "../apis";
 	import { setFolderStore } from "../../../store/storeHelper";
 
+	let cancelHovered = false;
+	let finalActionHovered = false;
+
 	function withdrawFolderDeleteModal() {
 		showMoreOptions.set(false);
 		DeleteConfirmationModal.set(false);
@@ -67,14 +70,23 @@
 		<div
 			class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
 		></div>
-		<div class="flex justify-end items-center gap-6 w-full">
+		<div class="flex justify-end items-center gap-4 w-full">
 			<button
-				class="text-osvauld-fadedCancel font-medium text-base"
-				on:click|preventDefault="{withdrawFolderDeleteModal}">Cancel</button
+				class="font-medium text-base rounded-md py-[5px] px-[15px] {cancelHovered
+					? 'bg-osvauld-cancelBackground text-osvauld-quarzowhite'
+					: 'text-osvauld-fadedCancel'}"
+				on:click|preventDefault="{withdrawFolderDeleteModal}"
+				on:mouseenter="{() => (cancelHovered = true)}"
+				on:mouseleave="{() => (cancelHovered = false)}">Cancel</button
 			>
 			<button
-				class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md"
-				on:click|preventDefault="{DeleteConfirmation}">Delete Folder</button
+				class="border border-osvauld-dangerRed py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md {finalActionHovered
+					? 'bg-osvauld-dangerRed text-osvauld-frameblack'
+					: 'text-osvauld-dangerRed'}"
+				on:click|preventDefault="{DeleteConfirmation}"
+				on:mouseenter="{() => (finalActionHovered = true)}"
+				on:mouseleave="{() => (finalActionHovered = false)}"
+				>Delete Folder</button
 			>
 		</div>
 	</div>

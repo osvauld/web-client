@@ -110,9 +110,9 @@
 		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
 	></div>
 
-	<div class="flex justify-end items-center gap-6 w-full">
+	<div class="flex justify-end items-center gap-4 w-full">
 		<button
-			class="text-osvauld-fadedCancel font-medium text-base"
+			class="font-medium text-base py-[5px] px-[15px] rounded-md hover:bg-osvauld-cancelBackground hover:text-osvauld-quarzowhite text-osvauld-fadedCancel"
 			on:click|preventDefault="{handleClose}">Cancel</button
 		>
 		{#if userString.length === 0}
@@ -130,7 +130,11 @@
 				type="submit"
 				on:click|preventDefault="{finishSetup}"
 			>
-				Copy Secret info
+				{#if userStringCopied}
+					<span class="text-osvauld-tickGreen w-[7.5rem]">Copied</span>
+				{:else}
+					<span class="w-[7.5rem] whitespace-nowrap">Copy Secret info</span>
+				{/if}
 				{#if userStringCopied}
 					<span in:scale>
 						<Tick />

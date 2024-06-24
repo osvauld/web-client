@@ -1,20 +1,19 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { BlueClose } from "../icons";
 	import { toastStore } from "../store";
-	let closehovered = false;
+	// let closehovered = false;
 	const triggerCloseEvent = () => {
 		toastStore.set({ show: false, message: "", type: null });
 	};
 	onMount(() => {
 		setTimeout(() => {
 			triggerCloseEvent();
-		}, 1000);
+		}, 2000);
 	});
 </script>
 
 <div
-	class="fixed w-[20%] max-w-[30%] h-[12%] top-auto left-auto right-6 bottom-6 flex items-center justify-center px-4 py-5 my-2 rounded-lg bg-transparent font-normal text-xl !z-[1000] mr-4 mb-4"
+	class="fixed w-[20%] max-w-[30%] h-[12%] top-auto left-[40%] right-auto bottom-6 flex items-center justify-center px-6 py-5 my-2 rounded-lg bg-transparent font-normal text-xl !z-[1000] mr-4 mb-4"
 >
 	<div
 		class="flex justify-center items-center rounded-xl border {$toastStore.type
