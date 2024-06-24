@@ -26,7 +26,7 @@
 		AddCredentialField,
 	} from "../dtos";
 	import AddLoginFields from "./AddLoginFields.svelte";
-	import { sendMessage } from "../helper";
+	import { sendMessage, getDomain } from "../helper";
 	import { setCredentialStore } from "../../../store/storeHelper";
 
 	export let edit = false;
@@ -87,7 +87,6 @@
 			userId: user.id,
 			publicKey: user.publicKey,
 		}));
-		console.log(users, "users to share");
 		const envFieldsResponse = await getEnvFieldsByCredentialId(credentialId);
 
 		let userEnvMap = envResponse.data.reduce((obj, item) => {
@@ -97,8 +96,12 @@
 			obj[item.cliUserCreatedBy].push(item);
 			return obj;
 		}, {});
+		let domain = "";
 		const envFieldMap = envFieldsResponse.data;
 		for (const field of credentialFields) {
+			if (field.fieldName === "URL") {
+				domain = getDomain(field.fieldValue);
+			}
 			let editedUserField;
 			if (changedFields.has(field.fieldId)) {
 				editedUserField = {
@@ -192,7 +195,9 @@
 			editedUserFields,
 			editedEnvFields,
 			newFields,
+			domain,
 		};
+		console.log("edit credential payload", payload);
 		updateCredential(payload, credentialId);
 		await setCredentialStore();
 		isLoaderActive = false;
@@ -230,8 +235,8 @@
 			}
 		}
 
-		let domain = "";
 		let addCredentialFields: Fields[] = [];
+		let domain = "";
 		for (const field of credentialFields) {
 			if (field.fieldName === "URL" && field.fieldValue.length !== 0) {
 				try {
@@ -243,14 +248,7 @@
 						isLoaderActive = false;
 						return;
 					}
-					const url = new URL(field.fieldValue);
-					const hostname = url.hostname;
-					const parts = hostname.split(".");
-					if (parts.length > 2) {
-						domain = parts.slice(-2).join(".");
-					} else {
-						domain = hostname;
-					}
+					domain = getDomain(field.fieldValue);
 					addCredentialFields.push({
 						fieldName: "Domain",
 						fieldValue: domain,
@@ -359,6 +357,15 @@
 	const fieldEditHandler = (field) => {
 		if (edit && field.fieldId) {
 			changedFields.add(field.fieldId);
+			if (field.fieldName === "URL") {
+				for (const fieldData of credentialFields) {
+					if (fieldData.fieldName === "Domain") {
+						changedFields.add(fieldData.fieldId);
+						const updatedDomain = getDomain(field.fieldValue);
+						fieldData.fieldValue = updatedDomain;
+					}
+				}
+			}
 		}
 	};
 </script>

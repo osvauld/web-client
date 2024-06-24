@@ -145,3 +145,16 @@ export const transformAddCredentialPayload = (
 		fields: transformedFields,
 	};
 };
+
+export const getDomain = (urlString: string) => {
+	const url = new URL(urlString);
+	const hostname = url.hostname;
+	const parts = hostname.split(".");
+	let domain;
+	if (parts.length > 2) {
+		domain = parts.slice(-2).join(".");
+	} else {
+		domain = hostname;
+	}
+	return domain;
+};

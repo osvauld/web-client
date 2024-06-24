@@ -24,6 +24,7 @@ export type Credential = CredentialBasic & {
 	accessType: string;
 	description: string;
 	folderId: UUID;
+	domain: string;
 	credentialType: string;
 	createdAt: string;
 	createdBy: string;
