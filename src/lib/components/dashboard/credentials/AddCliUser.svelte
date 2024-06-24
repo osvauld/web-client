@@ -1,15 +1,24 @@
 <script lang="ts">
+	import { onMount, onDestroy } from "svelte";
 	import { scale } from "svelte/transition";
 	import { addCliUser } from "../apis";
 	import { getTokenAndBaseUrl, sendMessage } from "../helper";
 	import { Tick, CopyIcon, Warning } from "../icons";
-	import { showAddCliDrawer } from "../store";
+	import { showAddCliDrawer, toastStore } from "../store";
 	import ClosePanel from "../../basic/icons/closePanel.svelte";
 
 	let name = "";
 	let userString = "";
 	let userStringCopied = false;
 	let timer;
+
+	function autofocus(node: any) {
+		node.focus();
+	}
+
+	const handleClose = () => {
+		showAddCliDrawer.set(false);
+	};
 
 	const copyToClipboard = async () => {
 		try {
@@ -33,6 +42,7 @@
 			timer = null;
 		}, 1500);
 	};
+
 	const createCliUser = async () => {
 		const keys = await sendMessage("generateCliKeys", {
 			username: name,
@@ -42,19 +52,37 @@
 			deviceKey: keys.sign_public_key,
 			encryptionKey: keys.enc_public_key,
 		};
-		await addCliUser(payload);
+		const creatingUser = await addCliUser(payload);
 		const { baseUrl } = await getTokenAndBaseUrl();
 		keys.base_url = baseUrl;
 		userString = btoa(JSON.stringify(keys));
+		return creatingUser;
 	};
 
-	function autofocus(node: any) {
-		node.focus();
-	}
+	const handleKeyDown = async (event: KeyboardEvent) => {
+		if (event.key === "Escape") {
+			handleClose();
+		}
 
-	const handleClose = () => {
-		showAddCliDrawer.set(false);
+		if (event.key === "Enter" && name.length !== 0) {
+			const tryingToCreateUser = await createCliUser();
+			if (tryingToCreateUser.success) {
+				toastStore.set({
+					show: tryingToCreateUser.success,
+					message: tryingToCreateUser.message,
+					type: true,
+				});
+			}
+		}
 	};
+
+	onMount(async () => {
+		window.addEventListener("keydown", handleKeyDown);
+	});
+
+	onDestroy(() => {
+		window.removeEventListener("keydown", handleKeyDown);
+	});
 </script>
 
 <form
