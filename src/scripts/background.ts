@@ -134,7 +134,9 @@ browser.runtime.onMessage.addListener(async (request) => {
 		case "credentialSubmit": {
 			newCredential.username = request.data.username;
 			newCredential.password = request.data.password;
-			newCredential.domain = await getCurrentDomain();
+			const urlData = await getCurrentDomain();
+			newCredential.domain = urlData?.hostname;
+			newCredential.url = urlData?.href;
 			const credIds = Array.from(
 				urlObj.get(newCredential.domain.replace(/^www\./, "")) || [],
 			);

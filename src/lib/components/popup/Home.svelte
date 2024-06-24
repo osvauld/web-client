@@ -255,7 +255,7 @@
 						password="{newCredential.password}"
 						domain="{newCredential.domain || domain}"
 						windowId="{newCredential.windowId || 'manual'}"
-						{currentUrl}
+						currentUrl="{newCredential.url || currentUrl}"
 						on:close="{closeAddCredential}"
 					/>
 				{:else if passwordGenerator}

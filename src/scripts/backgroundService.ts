@@ -259,7 +259,7 @@ export const getCurrentDomain = async () => {
 		const tabs = await browser.tabs.query(queryOptions);
 		if (tabs[0] && tabs[0].url) {
 			const url = new URL(tabs[0].url);
-			return url.hostname; // Returns the domain of the current active tab
+			return url; // Returns the domain of the current active tab
 		}
 		return null;
 	} catch (error) {
