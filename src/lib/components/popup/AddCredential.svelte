@@ -1,4 +1,5 @@
 <script lang="ts">
+	import browser from "webextension-polyfill";
 	import {
 		addCredential,
 		fetchAllFolders,
