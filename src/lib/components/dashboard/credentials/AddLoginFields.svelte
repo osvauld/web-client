@@ -99,6 +99,7 @@
 			<button
 				class="rounded-md pr-2 pl-2 bg-osvauld-frameblack text-osvauld-quarzowhite flex justify-center items-center ml-5"
 				on:click="{() => removeEventDispatcher(index)}"
+				type="button"
 			>
 				<BinIcon />
 			</button>
