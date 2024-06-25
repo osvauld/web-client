@@ -1,110 +1,107 @@
-import { Group } from './group.dto'
-import { UserWithAccessType, User } from './user.dto';
-import { Folder } from './folder.dto';
-import { Credential, CredentialFields } from './credential.dto';
+import { Group } from "./group.dto";
+import { UserWithAccessType, User } from "./user.dto";
+import { Folder } from "./folder.dto";
+import { Credential, CredentialFields } from "./credential.dto";
 
 export type BaseResponse = {
-    success: boolean;
-    message: string;
-    data: any
-}
+	success: boolean;
+	message: string;
+	data: any;
+};
 
 export type ChallengeResponse = BaseResponse & {
-    data: {
-        challenge: string;
-    }
-}
+	data: {
+		challenge: string;
+	};
+};
 
 export type AuthResponse = BaseResponse & {
-    data: {
-        token: string;
-    }
-}
+	data: {
+		token: string;
+	};
+};
 
 export type FolderGroupResponse = BaseResponse & {
-    data: Group[];
-}
+	data: Group[];
+};
 
 export type FolderUserResponse = BaseResponse & {
-    data: UserWithAccessType[];
-}
-
-
+	data: UserWithAccessType[];
+};
 
 export type FetchAllUsersResponse = BaseResponse & {
-    data: User[]
-}
+	data: User[];
+};
 
 export type FetchAllFoldersResponse = BaseResponse & {
-    data: Folder[]
-}
-
+	data: Folder[];
+};
 
 export type FetchCredentialsByFolderResponse = BaseResponse & {
-    data: Credential[];
-}
+	data: Credential[];
+};
 
 export type FetchCredentialsFieldsByFolderIdResponse = BaseResponse & {
-    data: CredentialFields[];
-}
+	data: CredentialFields[];
+};
 
 export type FetchCredentialsFieldsByIdsResponse = BaseResponse & {
-    data: CredentialFields[];
-}
+	data: CredentialFields[];
+};
 
 export type FetchCredsByIdsResponse = BaseResponse & {
-    data: Credential[];
-}
+	data: Credential[];
+};
 
 type UrlCredMap = {
-    value: string;
-    credentialId: string;
-}
+	value: string;
+	credentialId: string;
+};
 export type FetchAllUserUrlsResponse = BaseResponse & {
-    data: UrlCredMap[];
-}
+	data: UrlCredMap[];
+};
 
 export type FetchSensitiveFieldsByCredenitalIdResponse = BaseResponse & {
-    data: {
-        credentialId: string;
-        fieldName: string;
-        fieldValue: string;
-    }[]
-}
+	data: {
+		credentialId: string;
+		fieldName: string;
+		fieldValue: string;
+	}[];
+};
 
 export type FetchAllUserGroupsResponse = BaseResponse & {
-    data: Group[]
-}
+	data: Group[];
+};
 
 export type FetchGroupUsersResponse = BaseResponse & {
-    data: UserWithAccessType[];
-}
+	data: UserWithAccessType[];
+};
 
 export type fetchUsersByGroupIdsResponse = BaseResponse & {
-    data: {
-        groupId: string;
-        userDetails: {
-            id: string;
-            publicKey: string;
-        }[]
-    }[]
-}
+	data: {
+		groupId: string;
+		userDetails: {
+			id: string;
+			publicKey: string;
+		}[];
+	}[];
+};
 
 export type FetchGroupsWithoutAccessResponse = BaseResponse & {
-    data: Group[];
-}
+	data: Group[];
+};
 
 export type FetchGroupCredentialResponse = BaseResponse & {
-    data: CredentialFields[];
-}
+	data: CredentialFields[];
+};
 
 export type FetchCredentialUsersResponse = BaseResponse & {
-    data: UserWithAccessType[]
-}
+	data: UserWithAccessType[];
+};
 
 export type FetchCredentialGroupsResponse = BaseResponse & {
-    data: Group[]
-}
+	data: Group[];
+};
 export type FetchUsersWithoutGroupAccess = BaseResponse & {
-    data: User[]
-}
+	data: User[];
+};
