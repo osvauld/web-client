@@ -49,7 +49,7 @@
 	</table>
 
 	<div
-		class="min-h-[35rem] max-h-[47rem] overflow-y-scroll overflow-x-hidden scrollbar-thin"
+		class="min-h-[25rem] max-h-[35rem] overflow-y-scroll overflow-x-hidden scrollbar-thin"
 	>
 		<table class="min-w-max w-full table-auto">
 			<tbody class="text-xl text-osvauld-dusklabel font-normal text-sm">
