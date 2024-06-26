@@ -158,33 +158,33 @@
 					usersToShare: users,
 				});
 				for (const fieldData of response.data) {
-					if (!userEnvMap[fieldData.userId]) {
-						continue;
-					}
 					let payload = {
 						fieldValue: fieldData.fieldValue,
 						userId: fieldData.userId,
 						envFieldvalues: [],
 					};
-					const cliUsersToShare = userEnvMap[fieldData.userId].map(
-						(envData) => {
+
+					if (userEnvMap[fieldData.userId]) {
+						const cliUsersToShare = userEnvMap[fieldData.userId].map(
+							(envData) => {
+								return {
+									userId: envData.envId,
+									publicKey: envData.cliUserPublicKey,
+								};
+							},
+						);
+						const response = await sendMessage("encryptEditFields", {
+							fieldValue: field.fieldValue,
+							usersToShare: cliUsersToShare,
+						});
+						const envFieldsValues = response.data.map((envField) => {
 							return {
-								userId: envData.envId,
-								publicKey: envData.cliUserPublicKey,
+								envId: envField.userId,
+								fieldValue: envField.fieldValue,
 							};
-						},
-					);
-					const response = await sendMessage("encryptEditFields", {
-						fieldValue: field.fieldValue,
-						usersToShare: cliUsersToShare,
-					});
-					const envFieldsValues = response.data.map((envField) => {
-						return {
-							envId: envField.userId,
-							fieldValue: envField.fieldValue,
-						};
-					});
-					payload.envFieldvalues = envFieldsValues;
+						});
+						payload.envFieldvalues = envFieldsValues;
+					}
 					newFieldPayload.fieldValues.push(payload);
 				}
 				newFields.push(newFieldPayload);
