@@ -245,7 +245,7 @@
 				></div>
 			{/if}
 			<div
-				class="h-[35rem] overflow-y-scroll scrollbar-thin pt-3"
+				class="h-[25rem] overflow-y-scroll scrollbar-thin pt-3"
 				on:scroll="{handleScroll}"
 				bind:this="{scrollableElement}"
 			>
