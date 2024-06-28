@@ -50,7 +50,7 @@ It utilizes [WASM](https://webassembly.org) module, compiled from [Rust](https:/
 
 ## 🚢 Onboard osvauld
 
-Osvauld is still in its early days, not everything will be perfect yet, and hiccups may happen. Please let us know of any suggestions, ideas, or bugs that you encounter on our [Discord](https://discord.gg/u43atWCS) or GitHub issues, and we will use your feedback to improve on our upcoming releases.
+Osvauld is still in its early days, not everything will be perfect yet, and hiccups may happen. Please let us know of any suggestions, ideas, or bugs that you encounter on our [Discord](https://discord.gg/BVQtV6gS2c) or GitHub issues, and we will use your feedback to improve on our upcoming releases.
 
 For setting up osvauld, please refer to our [deployment documentation](https://docs.osvauld.com/installation/setting-up-osvauld/)
 
@@ -58,7 +58,7 @@ For setting up osvauld, please refer to our [deployment documentation](https://d
 
 Contributors guide for setting up osvauld [Guide](https://docs.osvauld.com/installation/setting-up-dev-server/)
 
-Join our Discord server [Discord](https://discord.gg/u43atWCS), let us help you get started.
+Join our Discord server [Discord](https://discord.gg/BVQtV6gS2c), let us help you get started.
 
 
 ## 📸 Screenshots
@@ -96,15 +96,7 @@ Join our Discord server [Discord](https://discord.gg/u43atWCS), let us help you 
       />
     </a>
 </p>
-<p>
-    <a href="https://osvauld.com" target="_blank">
-      <img
-        src="https://raw.githubusercontent.com/osvauld/Docs/master/assets/ShareFolder.png"
-        alt="Osvauld Sharing folder"
-        width="100%"
-      />
 
-</p>
 
  
 
@@ -118,10 +110,8 @@ To see how to Contribute, visit [here](https://github.com/osvauld/web-client/Osv
 
 The Osvauld community can be found on GitHub Discussions, where you can ask questions, voice ideas, and share your projects.
 
-To chat with other community members you can join the [osvauld Discord](https://discord.gg/u43atWCS).
+To chat with other community members you can join the [osvauld Discord](https://discord.gg/BVQtV6gS2c).
 
 Our [Code of Conduct](https://github.com/osvauld/web-client/Osvauld/blob/master/CODE_OF_CONDUCT.md) applies to all Osvauld community channels.
 
-## ⛓️ Security
 
-If you believe you have found a security vulnerability in Osvauld, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. Email abe@osvauld.com to disclose any security vulnerabilities.
