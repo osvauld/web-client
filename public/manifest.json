@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "osvauld",
   "version": "2.1",
   "description": "Open source credentials management tool",
@@ -9,27 +9,32 @@
     "128": "icons/icon128.png"
   },
   "background": {
-    "scripts": ["background.js"]
+    "type": "module",
+    "service_worker": "background.js"
   },
-  "permissions": [
-    "storage",
-    "activeTab",
-    "tabs",
-    "<all_urls>"
+  "permissions": ["storage", "activeTab", "windows"],
+
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["crypto_primitives_bg.wasm"],
+      "matches": ["<all_urls>"]
+    }
   ],
-  "browser_action": {
-    "default_icon": "icons/icon48.png",
-    "default_popup": "popup.html",
-    "default_title": "Osvauld"
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "headers": {
+    "Cross-Origin-Opener-Policy": "same-origin",
+    "Cross-Origin-Embedder-Policy": "require-corp"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
-  ],
-  "web_accessible_resources": [
-    "crypto_primitives_bg.wasm"
-  ],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  ]
 }
