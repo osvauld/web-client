@@ -154,7 +154,7 @@
 	class="w-full h-full flex justify-center items-start text-osvauld-quarzowhite box-border"
 >
 	<div
-		class="w-full h-[80%] rounded-xl bg-osvauld-cardshade text-osvauld-fieldText overflow-hidden"
+		class="w-full h-[80%] rounded-xl bg-osvauld-cardshade text-osvauld-fieldText"
 	>
 		<div class="px-3 py-2">
 			<span class="text-osvauld-fieldText font-light text-xs"
