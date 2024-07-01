@@ -145,6 +145,9 @@ browser.runtime.onMessage.addListener(async (request) => {
 				newCredential,
 				credIds,
 			);
+			if (newCredential.windowId) {
+				return false;
+			}
 			return true;
 		}
 		case "encryptEditFields": {
@@ -160,7 +163,12 @@ browser.runtime.onMessage.addListener(async (request) => {
 browser.runtime.onConnect.addListener(async (port) => {
 	if (port.name === "popup") {
 		// When you have data to send:
-		if (newCredential && newCredential.username && newCredential.password) {
+		if (
+			newCredential &&
+			newCredential.username &&
+			newCredential.password &&
+			newCredential.windowId
+		) {
 			port.postMessage({
 				username: newCredential.username,
 				password: newCredential.password,

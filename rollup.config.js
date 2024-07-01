@@ -22,7 +22,7 @@ function serve() {
       }else {
         let command;
         if (os.platform() === "linux") {
-          command = "brave-browser  --reload-extension=public/build";
+          command = "brave --reload-extension=public/build";
         } else {
           command =
           "'/Applications/Brave Browser.app/Contents/MacOS/Brave Browser' --reload-extension=public/build";
