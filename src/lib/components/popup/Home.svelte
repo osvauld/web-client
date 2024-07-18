@@ -95,8 +95,7 @@
 	onMount(async () => {
 		query = await localStorage.getItem("query");
 		if (query && query.length >= 1) {
-			const searchFieldSResponse = await getSearchFields();
-			searchData = searchFieldSResponse.data;
+			await prepareSearchData();
 			listedCredentials = searchObjects(query, searchData);
 		} else {
 			await fetchCredentialsOfCurrentDomin();
@@ -128,12 +127,30 @@
 		port.onMessage.removeListener(handleMessage);
 	});
 
+	const prepareSearchData = async () => {
+		const searchFieldSResponse = await getSearchFields();
+		searchData = searchFieldSResponse.data;
+		const urlJson = await fetchAllUserUrls();
+		const urls = urlJson.data;
+		const decryptedData = await sendMessage("getDecryptedUrls", urls);
+
+		const mergedArray = searchData.map((item) => {
+			const replacement = decryptedData.find(
+				(decryptedItem) => decryptedItem.credentialId === item.credentialId,
+			);
+			if (replacement) {
+				return { ...item, domain: replacement.value };
+			}
+			return item;
+		});
+		searchData = mergedArray;
+	};
+
 	const handleInputChange = async (e) => {
 		const query = e.target.value;
 		if (query.length >= 1) {
 			if (searchData.length === 0) {
-				const searchFieldSResponse = await getSearchFields();
-				searchData = searchFieldSResponse.data;
+				await prepareSearchData();
 			}
 			passwordFound = false;
 			listedCredentials = searchObjects(query, searchData);

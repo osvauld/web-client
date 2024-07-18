@@ -198,7 +198,7 @@
 			editedUserFields,
 			editedEnvFields,
 			newFields,
-			domain,
+			domain: "",
 			deletedFields,
 		};
 		updateCredential(payload, credentialId);
@@ -291,7 +291,7 @@
 			folderId: $selectedFolder.id,
 			credentialType,
 			userFields: [],
-			domain,
+			domain: "",
 		};
 
 		const response = await sendMessage("addCredential", {

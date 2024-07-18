@@ -588,6 +588,26 @@ export function encrypt_field_value(field_value, users) {
 	}
 }
 
+/**
+ * @param {any} urls
+ * @returns {any}
+ */
+export function decrypt_urls(urls) {
+	try {
+		const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+		wasm.decrypt_urls(retptr, addHeapObject(urls));
+		var r0 = getInt32Memory0()[retptr / 4 + 0];
+		var r1 = getInt32Memory0()[retptr / 4 + 1];
+		var r2 = getInt32Memory0()[retptr / 4 + 2];
+		if (r2) {
+			throw takeObject(r1);
+		}
+		return takeObject(r0);
+	} finally {
+		wasm.__wbindgen_add_to_stack_pointer(16);
+	}
+}
+
 function handleError(f, args) {
 	try {
 		return f.apply(this, args);
@@ -716,6 +736,10 @@ function __wbg_get_imports() {
 		const ret = typeof getObject(arg0) === "string";
 		return ret;
 	};
+	imports.wbg.__wbg_msCrypto_10fc94afee92bd76 = function (arg0) {
+		const ret = getObject(arg0).msCrypto;
+		return addHeapObject(ret);
+	};
 	imports.wbg.__wbg_require_9a7e0f667ead4995 = function () {
 		return handleError(function () {
 			const ret = module.require;
@@ -725,10 +749,6 @@ function __wbg_get_imports() {
 	imports.wbg.__wbindgen_is_function = function (arg0) {
 		const ret = typeof getObject(arg0) === "function";
 		return ret;
-	};
-	imports.wbg.__wbg_msCrypto_10fc94afee92bd76 = function (arg0) {
-		const ret = getObject(arg0).msCrypto;
-		return addHeapObject(ret);
 	};
 	imports.wbg.__wbg_randomFillSync_b70ccbdf4926a99d = function () {
 		return handleError(function (arg0, arg1) {
