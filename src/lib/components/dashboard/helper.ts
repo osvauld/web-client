@@ -147,7 +147,12 @@ export const transformAddCredentialPayload = (
 };
 
 export const getDomain = (urlString: string) => {
-	const url = new URL(urlString);
+	let url;
+	try {
+		url = new URL(urlString);
+	} catch (_) {
+		throw new Error("Invalid URL");
+	}
 	const hostname = url.hostname;
 	const parts = hostname.split(".");
 	let domain;
