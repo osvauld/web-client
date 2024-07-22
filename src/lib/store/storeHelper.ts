@@ -18,7 +18,6 @@ export const setFolderStore = async () => {
 	if (!selectedFolderValue) {
 		const storedFolder = browser.storage.local.get("selectedFolder");
 		storedFolder.then((value) => {
-			console.log("Stored folder", value);
 			if (value.selectedFolder) {
 				for (const folder of sortedData) {
 					if (folder.id === value.selectedFolder.id) {
