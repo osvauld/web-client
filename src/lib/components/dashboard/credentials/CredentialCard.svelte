@@ -179,26 +179,46 @@
 				? 'active'
 				: ''} mt-2"
 		>
-			{#each credential.fields as field}
-				{#if field.fieldName !== "Domain"}
-					<PlainField
-						bgColor="{null}"
-						fieldName="{field.fieldName}"
-						fieldValue="{field.fieldValue}"
-						{hoverEffect}
-					/>
-				{/if}
-			{/each}
-			{#if sensitiveFields}
-				{#each sensitiveFields as field}
-					<EncryptedField
-						bgColor="{null}"
-						fieldName="{field.fieldName}"
-						fieldValue="{field.fieldValue}"
-						fieldType="{field.fieldType}"
-						{hoverEffect}
-					/>
+			{#if credential.credentialType !== "Note"}
+				{#each credential.fields as field}
+					{#if field.fieldName !== "Domain"}
+						<PlainField
+							bgColor="{null}"
+							fieldName="{field.fieldName}"
+							fieldValue="{field.fieldValue}"
+							{hoverEffect}
+						/>
+					{/if}
 				{/each}
+				{#if sensitiveFields}
+					{#each sensitiveFields as field}
+						<EncryptedField
+							bgColor="{null}"
+							fieldName="{field.fieldName}"
+							fieldValue="{field.fieldValue}"
+							fieldType="{field.fieldType}"
+							{hoverEffect}
+						/>
+					{/each}
+				{/if}
+			{:else}
+				<div>
+					<label
+						class="text-osvauld-dusklabel block text-left text-xs font-normal"
+						for="Note"
+					>
+						Note
+					</label>
+					<div
+						class="mt-1 w-[14.3rem] h-[10rem] py-1 px-2 overflow-y-scroll rounded-lg text-left scrollbar-thin resize-none text-sm
+    {hoverEffect
+							? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive'
+							: 'text-osvauld-fieldText'}"
+						id="credential-description"
+					>
+						{credential.fields[0].fieldValue}
+					</div>
+				</div>
 			{/if}
 		</div>
 		<div

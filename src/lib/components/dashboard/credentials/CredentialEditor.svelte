@@ -83,6 +83,7 @@
 		return true;
 	};
 	const editCredential = async () => {
+		console.log("start edit");
 		const editedUserFields = [];
 		const editedEnvFields = [];
 		const newFields = [];
@@ -202,6 +203,7 @@
 			domain: "",
 			deletedFields,
 		};
+		console.log(payload);
 		updateCredential(payload, credentialId);
 		await setCredentialStore();
 		isLoaderActive = false;
@@ -329,9 +331,9 @@
 		dispatcher("close");
 	};
 
-	const credentialTypeSelection = (isLogin: boolean) => {
-		credentialType = isLogin ? "Login" : "Other";
-		if (credentialType === "Other") {
+	const credentialTypeSelection = (type: string) => {
+		credentialType = type;
+		if (credentialType === "Custom") {
 			credentialFields = [
 				{
 					fieldName: "Field Name",
@@ -340,12 +342,16 @@
 				},
 				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
 			];
-		} else {
+		} else if (credentialType === "Login") {
 			credentialFields = [
 				{ fieldName: "Username", fieldValue: "", sensitive: false },
 				{ fieldName: "Password", fieldValue: "", sensitive: true },
 				{ fieldName: "URL", fieldValue: "https://", sensitive: false },
 				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
+			];
+		} else if (credentialType == "Note") {
+			credentialFields = [
+				{ fieldName: "Note", fieldValue: "", sensitive: false },
 			];
 		}
 	};
@@ -409,19 +415,30 @@
 						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
 						: 'text-osvauld-sheffieldgrey '}"
 					type="button"
-					on:click="{() => credentialTypeSelection(true)}"
+					on:click="{() => credentialTypeSelection('Login')}"
 				>
-					{edit ? "Edit login credential" : "Add Login credential"}
+					{edit ? "Edit Login" : "Login"}
 				</button>
 				<button
 					class="text-[28px] font-sans font-normal ml-8 {credentialType ===
-					'Other'
+					'Custom'
 						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
 						: 'text-osvauld-sheffieldgrey '}"
 					type="button"
-					on:click="{() => credentialTypeSelection(false)}"
+					on:click="{() => credentialTypeSelection('Custom')}"
 				>
-					{edit ? "Edit other" : "Other"}
+					{edit ? "Edit Custom" : "Custom"}
+				</button>
+
+				<button
+					class="text-[28px] font-sans font-normal ml-8 {credentialType ===
+					'Note'
+						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
+						: 'text-osvauld-sheffieldgrey '}"
+					type="button"
+					on:click="{() => credentialTypeSelection('Note')}"
+				>
+					{edit ? "Edit Note" : "Note"}
 				</button>
 			</div>
 			<div>
@@ -460,31 +477,45 @@
 					autofocus
 					bind:value="{name}"
 				/>
-				{#each credentialFields as field, index}
-					{#if field.fieldName !== "Domain"}
-						<AddLoginFields
-							{field}
-							{index}
-							{hoveredIndex}
-							on:select="{(e) =>
-								triggerSensitiveBubble(e.detail.index, e.detail.identifier)}"
-							on:remove="{(e) => removeField(e.detail)}"
-							on:change="{() => {
-								fieldEditHandler(field);
-							}}"
-						/>
-					{/if}
-				{/each}
+				{#if credentialType != "Note"}
+					{#each credentialFields as field, index}
+						{#if field.fieldName !== "Domain"}
+							<AddLoginFields
+								{field}
+								{index}
+								{hoveredIndex}
+								on:select="{(e) =>
+									triggerSensitiveBubble(e.detail.index, e.detail.identifier)}"
+								on:remove="{(e) => removeField(e.detail)}"
+								on:change="{() => {
+									fieldEditHandler(field);
+								}}"
+							/>
+						{/if}
+					{/each}
+				{:else}
+					<textarea
+						rows="2"
+						class="w-5/6 mt-4 h-auto min-h-[6rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base focus:border-osvauld-iconblack focus:ring-0"
+						bind:value="{credentialFields[0].fieldValue}"
+						on:change="{() => {
+							fieldEditHandler(credentialFields[0]);
+						}}"
+						placeholder="Enter note"
+					></textarea>
+				{/if}
 			</div>
-			<div class="flex mr-24">
-				<button
-					class="py-2 m-4 bg-osvauld-addfieldgrey flex-1 flex justify-center items-center rounded-md text-osvauld-chalkwhite border-2 border-dashed border-osvauld-iconblack"
-					on:click="{addField}"
-					type="button"
-				>
-					<Add color="{'#6E7681'}" />
-				</button>
-			</div>
+			{#if credentialType != "Note"}
+				<div class="flex mr-24">
+					<button
+						class="py-2 m-4 bg-osvauld-addfieldgrey flex-1 flex justify-center items-center rounded-md text-osvauld-chalkwhite border-2 border-dashed border-osvauld-iconblack"
+						on:click="{addField}"
+						type="button"
+					>
+						<Add color="{'#6E7681'}" />
+					</button>
+				</div>
+			{/if}
 		</div>
 		<div class=" mx-6 pl-3 flex justify-start items-center mb-5">
 			<textarea

@@ -29,7 +29,7 @@ type MoreActions = {
 	id: string;
 	name: string;
 	type: string;
-	private: boolean;
+	private?: boolean;
 };
 storedPage.then((value) => {
 	if (value.selectedPage) {

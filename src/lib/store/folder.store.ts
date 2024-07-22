@@ -6,8 +6,9 @@ export let folderStore = writable<Folder[]>([]);
 export let envStore = writable<Env[]>([]);
 export let selectedEnv = writable<Env | null>(null);
 
-export let selectedFolder = writable<Folder | null>(null);
+export let selectedFolder = writable<Folder | null>();
 
 selectedFolder.subscribe((value) => {
+	console.log(value);
 	browser.storage.local.set({ selectedFolder: value });
 });

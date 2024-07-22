@@ -7,6 +7,7 @@ import { fetchCredentialsByFolder } from "../apis/credentials.api";
 import { sendMessage } from "../components/dashboard/helper";
 import { get } from "svelte/store";
 import browser from "webextension-polyfill";
+import { selectedSection } from "./ui.store";
 
 export const setFolderStore = async () => {
 	const responseJson = await fetchAllFolders();
@@ -17,10 +18,14 @@ export const setFolderStore = async () => {
 	if (!selectedFolderValue) {
 		const storedFolder = browser.storage.local.get("selectedFolder");
 		storedFolder.then((value) => {
+			console.log("Stored folder", value);
 			if (value.selectedFolder) {
 				for (const folder of sortedData) {
 					if (folder.id === value.selectedFolder.id) {
 						selectedFolder.set(folder);
+						if (folder.type === "private") {
+							selectedSection.set("PrivateFolders");
+						}
 						return;
 					}
 				}
