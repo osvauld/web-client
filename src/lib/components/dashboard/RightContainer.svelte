@@ -4,8 +4,9 @@
 	import SearchModal from "./SearchModal.svelte";
 	import Environments from "./credentials/Environments.svelte";
 	import { searchObjects } from "./helper";
-	import { getSearchFields } from "./apis";
+	import { getSearchFields, fetchAllUserUrls } from "./apis";
 	import { Profile, Lens, DownArrow } from "./icons";
+	import { sendMessage } from "./helper";
 	import { onMount } from "svelte";
 	import {
 		selectedFolder,
@@ -31,6 +32,21 @@
 		showModal = true;
 		const searchFieldSResponse = await getSearchFields();
 		searchData = searchFieldSResponse.data;
+
+		const urlJson = await fetchAllUserUrls();
+		const urls = urlJson.data;
+		const decryptedData = await sendMessage("getDecryptedUrls", urls);
+
+		const mergedArray = searchData.map((item) => {
+			const replacement = decryptedData.find(
+				(decryptedItem) => decryptedItem.credentialId === item.credentialId,
+			);
+			if (replacement) {
+				return { ...item, domain: replacement.value };
+			}
+			return item;
+		});
+		searchData = mergedArray;
 		searchResults = query.length !== 0 ? searchObjects(query, searchData) : [];
 	};
 

@@ -20,6 +20,7 @@ import init, {
 	sign_hash_message,
 	generate_keys_without_password,
 	encrypt_field_value,
+	decrypt_urls,
 } from "./crypto_primitives.js";
 
 type CredentialsForUsersPayload = {
@@ -289,4 +290,9 @@ export const encryptEditFields = async (data: any) => {
 		Object.fromEntries(field),
 	);
 	return { data: encryptedFieldsObject };
+};
+
+export const getDecryptedUrls = async (urls: any) => {
+	const decryptedUrls = await decrypt_urls(urls);
+	return decryptedUrls;
 };

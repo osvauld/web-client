@@ -49,6 +49,7 @@
 	let errorMessage = "";
 	let changedFields = new Set();
 	let deletedFields = [];
+	let invalidUrl = false;
 
 	const dispatcher = createEventDispatcher();
 	const addField = () => {
@@ -198,7 +199,7 @@
 			editedUserFields,
 			editedEnvFields,
 			newFields,
-			domain,
+			domain: "",
 			deletedFields,
 		};
 		updateCredential(payload, credentialId);
@@ -219,13 +220,23 @@
 			}, 1000);
 			return;
 		}
-		if (edit) {
-			await editCredential();
-			return;
-		}
+
 		let totpPresence = credentialFields.filter(
 			(field) => field.fieldName === "TOTP" && field.fieldValue.length !== 0,
 		);
+
+		let isValidUrl = !credentialFields.some((field) => {
+			if (field.fieldName === "URL") {
+				try {
+					getDomain(field.fieldValue);
+					return false;
+				} catch (_) {
+					return true;
+				}
+			}
+			return false;
+		});
+
 		if (totpPresence.length !== 0) {
 			const isTotpValid = totpValidator(totpPresence[0].fieldValue);
 			if (!isTotpValid) {
@@ -237,7 +248,19 @@
 				return;
 			}
 		}
+		if (!isValidUrl) {
+			isLoaderActive = false;
+			invalidUrl = true;
+			setTimeout(() => {
+				invalidUrl = false;
+			}, 1000);
+			return;
+		}
 
+		if (edit) {
+			await editCredential();
+			return;
+		}
 		let addCredentialFields: Fields[] = [];
 		let domain = "";
 		for (const field of credentialFields) {
@@ -291,7 +314,7 @@
 			folderId: $selectedFolder.id,
 			credentialType,
 			userFields: [],
-			domain,
+			domain: "",
 		};
 
 		const response = await sendMessage("addCredential", {
@@ -479,6 +502,12 @@
 			{#if invalidTotp}
 				<span class="text-red-500 text-base font-normal mr-3 mb-6"
 					>TOTP Secret key invalid!</span
+				>
+			{/if}
+
+			{#if invalidUrl}
+				<span class="text-red-500 text-base font-normal mr-3 mb-6"
+					>invalid url!!</span
 				>
 			{/if}
 			<button
