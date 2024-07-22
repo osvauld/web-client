@@ -83,7 +83,6 @@
 		return true;
 	};
 	const editCredential = async () => {
-		console.log("start edit");
 		const editedUserFields = [];
 		const editedEnvFields = [];
 		const newFields = [];
@@ -203,7 +202,6 @@
 			domain: "",
 			deletedFields,
 		};
-		console.log(payload);
 		updateCredential(payload, credentialId);
 		await setCredentialStore();
 		isLoaderActive = false;
