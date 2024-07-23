@@ -1,10 +1,12 @@
 import { Group } from "./group.dto";
-import { UserWithAccessType, User } from "./user.dto";
+import { User } from "./user.dto";
 import { Folder } from "./folder.dto";
 import {
 	Credential,
 	CredentialFields,
 	SearchedCredential,
+	Field,
+	UsersForDataSync,
 } from "./credential.dto";
 import {
 	CliUsersData,
@@ -34,7 +36,7 @@ export type FolderGroupResponse = BaseResponse & {
 };
 
 export type FolderUserResponse = BaseResponse & {
-	data: UserWithAccessType[];
+	data: User[];
 };
 
 export type FetchAllUsersResponse = BaseResponse & {
@@ -70,11 +72,7 @@ export type FetchAllUserUrlsResponse = BaseResponse & {
 };
 
 export type FetchSensitiveFieldsByCredenitalIdResponse = BaseResponse & {
-	data: {
-		credentialId: string;
-		fieldName: string;
-		fieldValue: string;
-	}[];
+	data: Field[];
 };
 
 export type FetchAllUserGroupsResponse = BaseResponse & {
@@ -82,7 +80,7 @@ export type FetchAllUserGroupsResponse = BaseResponse & {
 };
 
 export type FetchGroupUsersResponse = BaseResponse & {
-	data: UserWithAccessType[];
+	data: User[];
 };
 
 export type fetchUsersByGroupIdsResponse = BaseResponse & {
@@ -104,7 +102,7 @@ export type FetchGroupCredentialResponse = BaseResponse & {
 };
 
 export type FetchCredentialUsersResponse = BaseResponse & {
-	data: UserWithAccessType[];
+	data: User[];
 };
 
 export type FetchCredentialGroupsResponse = BaseResponse & {
@@ -146,17 +144,12 @@ export type GetCliUsersResponse = BaseResponse & {
 	}[];
 };
 
-export type UsersForDataSync = {
-	id: string;
-	publicKey: string;
-};
-
 export type FetchFolderUsersForDataSyncResponse = BaseResponse & {
 	data: UsersForDataSync[];
 };
 
 export type FetchCredentialUsersForDataSyncResponse = BaseResponse & {
-	data: UserWithAccessType[];
+	data: UsersForDataSync[];
 };
 
 export type GetEnvironmentsResponse = BaseResponse & {

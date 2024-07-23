@@ -2,21 +2,26 @@
 
 type UUID = string;
 type FieldType = "meta" | "sensitive" | "additional" | "totp";
-export type Fields = {
+export type Field = {
 	fieldId?: string;
-	fieldName?: string;
+	fieldName: string;
 	fieldValue: string;
-	fieldType?: FieldType;
+	fieldType: FieldType;
+};
+
+export type UsersForDataSync = {
+	id: string;
+	publicKey: string;
 };
 
 export type UserEncryptedFields = {
 	userId: string;
-	fields: Fields[];
+	fields: Field[];
 };
 
 export type CredentialBasic = {
 	credentialId: string;
-	fields: Fields[];
+	fields: Field[];
 };
 
 export type Credential = CredentialBasic & {
@@ -68,4 +73,13 @@ export type CredentialFieldWithId = AddCredentialField & {
 export type InjectionPayload = {
 	id: string | undefined;
 	username: string;
+};
+
+type fieldType = "meta" | "sensitive" | "additional" | "totp";
+export type CredentialFieldComponentProps = {
+	fieldId?: string;
+	fieldName: string;
+	fieldValue: string;
+	fieldType?: fieldType;
+	sensitive: boolean;
 };

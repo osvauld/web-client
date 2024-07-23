@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		User,
-		UserWithAccessType,
 		CredentialFields,
 		ShareCredentialsWithUsersPayload,
 	} from "../dtos";
@@ -15,7 +14,7 @@
 	const dispatch = createEventDispatcher();
 	export let users: User[];
 	export let credentialsFields: CredentialFields[] = [];
-	let selectedUsers: UserWithAccessType[] = [];
+	let selectedUsers: User[] = [];
 	let showOptions = false;
 	let selectionIndex: number | null = null;
 	let topList = false;
@@ -100,7 +99,6 @@
 				item="{user}"
 				isSelected="{index === selectionIndex && !topList}"
 				on:click="{() => handleClick(index, false)}"
-				{setbackground}
 				{showOptions}
 				reverseModal="{filteredUsers.length > 3 &&
 					index > filteredUsers.length - 3}"
@@ -121,7 +119,6 @@
 				isBottomList="{true}"
 				on:click="{() => handleClick(index, true)}"
 				on:remove="{() => handleItemRemove(index)}"
-				{setbackground}
 				{showOptions}
 				reverseModal="{selectedUsers.length > 3 &&
 					index > selectedUsers.length - 3}"

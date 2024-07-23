@@ -5,15 +5,18 @@
 	import { createEventDispatcher } from "svelte";
 	import AccessSelector from "./AccessSelector.svelte";
 	import InfoIcon from "../../basic/icons/infoIcon.svelte";
+	import { User } from "../../../dtos/user.dto";
+	import { Group } from "../../../dtos/group.dto";
+	import { onMount } from "svelte";
 
 	const dispatch = createEventDispatcher();
-	export let item;
-	export let index;
-	export let isUser;
-	export let editPermissionTrigger;
-	export let reverseModal;
+	export let item: User | Group;
+	export let index: number;
+	export let isUser: boolean;
+	export let editPermissionTrigger: boolean;
+	export let reverseModal: boolean;
 	let permissionChanged = false;
-	let accessSelectorIdentifier = null;
+	let accessSelectorIdentifier: number | null = null;
 	let showTooltip = false;
 
 	$: if (!editPermissionTrigger) accessSelectorIdentifier = null;
@@ -22,7 +25,7 @@
 		dispatch("remove");
 	};
 
-	const eventPasser = (e) => {
+	const eventPasser = (e: any) => {
 		item = { ...item, accessType: e.detail.permission };
 		permissionChanged = !permissionChanged;
 		dispatch("permissonChange", e.detail.permission);
@@ -39,6 +42,12 @@
 			}
 		}
 	};
+	let background: string;
+	onMount(() => {
+		if (item.accessType) {
+			background = setbackground(item.accessType);
+		}
+	});
 </script>
 
 <style>
@@ -98,9 +107,7 @@
 	{/if}
 	<div class="flex justify-center items-center ml-2">
 		<button
-			class="w-[9.8rem] rounded-md cursor-pointer px-1 py-0.5 flex justify-around items-center {setbackground(
-				item.accessType,
-			)}"
+			class="w-[9.8rem] rounded-md cursor-pointer px-1 py-0.5 flex justify-around items-center {background}"
 			on:click="{changePermissionHandler}"
 		>
 			<span>{item.accessType === "manager" ? "Manager" : "Reader"}</span>

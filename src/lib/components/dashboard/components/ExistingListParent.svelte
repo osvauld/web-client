@@ -1,18 +1,20 @@
 <script lang="ts">
 	import { createEventDispatcher } from "svelte";
 	import ExistingListItem from "./ExistingListItem.svelte";
+	import { User } from "../../../dtos/user.dto";
+	import { Group } from "../../../dtos/group.dto";
 
-	export let existingItemsData;
+	export let existingItemsData: User[] | Group[];
 	export let editPermissionTrigger;
-	export let isUser;
+	export let isUser: boolean;
 
 	const dispatch = createEventDispatcher();
 
-	const handleRemoval = (item) => {
+	const handleRemoval = (item: User | Group) => {
 		dispatch("remove", item);
 	};
 
-	const handlePermissionChange = (e, item) => {
+	const handlePermissionChange = (e: any, item: User | Group) => {
 		dispatch("permissionChange", { item, permission: e.detail });
 	};
 </script>

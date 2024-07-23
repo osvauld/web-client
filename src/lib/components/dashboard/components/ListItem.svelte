@@ -1,8 +1,9 @@
 <script lang="ts">
-	export let item: any;
+	import { User, Group } from "../dtos";
+	import { setbackground } from "../helper";
+	export let item: User | Group;
 	export let isSelected: boolean;
 	export let isBottomList = false;
-	export let setbackground: any;
 	export let showOptions: boolean;
 	export let reverseModal: boolean = false;
 
@@ -18,7 +19,7 @@
 	const handleRemove = () => {
 		dispatch("remove", item);
 	};
-	const eventPasser = (e) => {
+	const eventPasser = (e: any) => {
 		hoveredOverThisItem = false;
 		dispatch("select", { item, permission: e.detail.permission });
 	};
@@ -30,7 +31,7 @@
 	/* eslint-disable */
 </script>
 
-<div
+<button
 	class="relative w-[98%] my-1 ml-1 pl-2 pr-0.5 rounded-lg cursor-pointer flex items-center justify-between text-osvauld-sheffieldgrey text-base font-normal {(isSelected &&
 		!isBottomList) ||
 	(hoveredOverThisItem && !isBottomList)
@@ -80,4 +81,4 @@
 			></span
 		>
 	{/if}
-</div>
+</button>

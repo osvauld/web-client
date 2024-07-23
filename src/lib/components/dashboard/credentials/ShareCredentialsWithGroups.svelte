@@ -128,7 +128,6 @@
 				item="{group}"
 				isSelected="{index === selectionIndex && !topList}"
 				on:click="{() => handleClick(index, false)}"
-				{setbackground}
 				{showOptions}
 				reverseModal="{filteredGroups.length > 3 &&
 					index > filteredGroups.length - 3}"
@@ -149,7 +148,6 @@
 				isBottomList="{true}"
 				on:click="{() => handleClick(index, true)}"
 				on:remove="{() => handleItemRemove(groupId)}"
-				{setbackground}
 				{showOptions}
 				reverseModal="{$selectedGroups.size > 3 &&
 					index > $selectedGroups.size - 3}"

@@ -12,6 +12,7 @@
 	import { getUser } from "../../apis/user.api";
 	import { searchObjects } from "../dashboard/helper";
 	import { getSearchFields } from "../dashboard/apis";
+	import { SearchedCredential } from "../../dtos/credential.dto";
 	import ListedCredentials from "./components/ListedCredentials.svelte";
 	import PasswordNotFound from "./components/PasswordNotFound.svelte";
 	import AddCredential from "./AddCredential.svelte";
@@ -24,7 +25,7 @@
 	let listedCredentials: Credential[] = [];
 	let domainAssociatedCredentials: Credential[] = [];
 	let selectedCredentialId: string | null = null;
-	let searchData = [];
+	let searchData: SearchedCredential[] = [];
 	let query = "";
 	let scrollPosition = 0;
 	let clickedCredential: any | null = null;
@@ -186,9 +187,9 @@
 		credentialClicked = !credentialClicked;
 	};
 
-	const handleScroll = async (e) => {
+	const handleScroll = async (e: any) => {
 		scrollPosition = e.target.scrollTop;
-		await localStorage.setItem("scrollPosition", scrollPosition.toString());
+		localStorage.setItem("scrollPosition", scrollPosition.toString());
 	};
 
 	const addCredentialManual = async () => {

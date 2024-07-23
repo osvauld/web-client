@@ -4,40 +4,43 @@
 	import { sendMessage } from "../helper";
 	import { Eye, ClosedEye, CopyIcon, Tick } from "../icons";
 	import { createEventDispatcher } from "svelte";
+	import { Field } from "../dtos";
 	const dispatch = createEventDispatcher();
 	export let credential;
 	export let activefieldId = null;
-	let decryptedValues = {};
-	let fieldCopied = {};
-	let visibility = {};
+	let decryptedValues: {
+		[key: string]: string;
+	} = {};
+	let fieldCopied: {
+		[key: string]: boolean;
+	} = {};
+	let visibility: {
+		[key: string]: boolean;
+	} = {};
 	let fieldNameEdited = false;
 	let initialCredential = structuredClone(credential);
 
-	const copyToClipboard = async (value, fieldName) => {
+	const copyToClipboard = async (value: string, fieldName: string) => {
 		fieldCopied[fieldName] = true;
-		try {
-			await navigator.clipboard.writeText(value);
-		} catch (err) {
-			console.error("Failed to copy: ", err);
-		}
+		await navigator.clipboard.writeText(value);
 		setTimeout(() => {
 			fieldCopied[fieldName] = false;
 		}, 2000);
 	};
 
-	const decrypt = async (fieldId, fieldValue) => {
+	const decrypt = async (fieldId: string, fieldValue: string) => {
 		const response = await sendMessage("decryptField", fieldValue);
 		decryptedValues[fieldId] = response.data;
 	};
 
-	const toggleVisibility = (fieldId) => {
+	const toggleVisibility = (fieldId: string) => {
 		visibility[fieldId] = !visibility[fieldId];
 		setTimeout(() => {
 			visibility[fieldId] = false;
 		}, 3000);
 	};
 
-	const checkValueChanged = (fieldId) => {
+	const checkValueChanged = (fieldId: string) => {
 		const currentFieldData = credential.fields.find(
 			(field) => field.fieldId === fieldId,
 		);
@@ -52,7 +55,7 @@
 	};
 
 	const initializeDecryption = () => {
-		credential.fields.forEach((field) => {
+		credential.fields.forEach((field: Field) => {
 			decrypt(field.fieldId, field.fieldValue);
 		});
 	};
@@ -60,6 +63,7 @@
 	onMount(() => {
 		initializeDecryption();
 	});
+	// TODO: Change the fields to another component
 </script>
 
 {#each credential.fields as field}

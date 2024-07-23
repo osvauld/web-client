@@ -21,34 +21,35 @@
 
 	import {
 		AddCredentialPayload,
-		Fields,
-		User,
+		Field,
+		UsersForDataSync,
 		AddCredentialField,
+		CredentialFieldComponentProps,
 	} from "../dtos";
 	import AddLoginFields from "./AddLoginFields.svelte";
 	import { sendMessage, getDomain } from "../helper";
 	import { setCredentialStore } from "../../../store/storeHelper";
 
 	export let edit = false;
-	export let credentialFields: any = [
+	export let credentialFields: CredentialFieldComponentProps[] = [
 		{ fieldName: "Username", fieldValue: "", sensitive: false },
 		{ fieldName: "Password", fieldValue: "", sensitive: true },
 		{ fieldName: "URL", fieldValue: "https://", sensitive: false },
 		{ fieldName: "TOTP", fieldValue: "", sensitive: true },
 	];
-	export let credentialId = null;
+	export let credentialId: string | null = null;
 	export let description = "";
 	export let name = "";
 	export let credentialType = "Login";
 	let notNamed = false;
 	let invalidTotp = false;
 	let isLoaderActive: boolean = false;
-	let usersToShare: User[] = [];
+	let usersToShare: UsersForDataSync[] = [];
 	let addCredentialPaylod: AddCredentialPayload;
 	let hoveredIndex: Number | null = null;
 	let errorMessage = "";
 	let changedFields = new Set();
-	let deletedFields = [];
+	let deletedFields: string[] = [];
 	let invalidUrl = false;
 
 	const dispatcher = createEventDispatcher();
@@ -207,7 +208,11 @@
 			domain: "",
 			deletedFields,
 		};
-		updateCredential(payload, credentialId);
+		if (credentialId === null) {
+			dispatcher("close");
+			throw new Error("Credential Id is null");
+		}
+		await updateCredential(payload, credentialId);
 		await setCredentialStore();
 		isLoaderActive = false;
 		dispatcher("close");
@@ -226,24 +231,30 @@
 			return;
 		}
 
-		let totpPresence = credentialFields.filter(
-			(field) => field.fieldName === "TOTP" && field.fieldValue.length !== 0,
+		let totpPresence = credentialFields.find(
+			(field: CredentialFieldComponentProps) => {
+				if (field.fieldName === "TOTP" && field.fieldValue.length !== 0) {
+					return field;
+				}
+			},
 		);
 
-		let isValidUrl = !credentialFields.some((field) => {
-			if (field.fieldName === "URL") {
-				try {
-					getDomain(field.fieldValue);
-					return false;
-				} catch (_) {
-					return true;
+		let isValidUrl = !credentialFields.some(
+			(field: CredentialFieldComponentProps) => {
+				if (field.fieldName === "URL") {
+					try {
+						getDomain(field.fieldValue);
+						return false;
+					} catch (_) {
+						return true;
+					}
 				}
-			}
-			return false;
-		});
+				return false;
+			},
+		);
 
-		if (totpPresence.length !== 0) {
-			const isTotpValid = totpValidator(totpPresence[0].fieldValue);
+		if (totpPresence) {
+			const isTotpValid = totpValidator(totpPresence.fieldValue);
 			if (!isTotpValid) {
 				isLoaderActive = false;
 				invalidTotp = true;
@@ -264,9 +275,10 @@
 
 		if (edit) {
 			await editCredential();
-			return;
+			isLoaderActive = false;
+			dispatcher("close");
 		}
-		let addCredentialFields: Fields[] = [];
+		let addCredentialFields: Field[] = [];
 		let domain = "";
 		for (const field of credentialFields) {
 			if (field.fieldName === "URL" && field.fieldValue.length !== 0) {
@@ -295,7 +307,7 @@
 				(field.fieldName.length !== 0 || field.fieldValue.length !== 0) &&
 				field.fieldName !== "Domain"
 			) {
-				const baseField: Fields = {
+				const baseField: Field = {
 					fieldName: field.fieldName,
 					fieldValue: field.fieldValue,
 					fieldType: field.sensitive ? "sensitive" : "meta",
@@ -360,10 +372,13 @@
 	};
 
 	onMount(async () => {
-		if (edit) {
+		if (edit && credentialId) {
 			const responseJson = await fetchCredentialUsersForDataSync(credentialId);
 			usersToShare = responseJson.data;
 		} else {
+			if ($selectedFolder === null) {
+				return;
+			}
 			const responseJson = await fetchFolderUsersForDataSync(
 				$selectedFolder.id,
 			);
@@ -376,6 +391,9 @@
 	};
 
 	const deleteCredential = () => {
+		if ($selectedFolder === null || credentialId === null) {
+			throw new Error("Folder not selected");
+		}
 		modalManager.set({
 			id: credentialId,
 			name: name,
@@ -389,7 +407,7 @@
 		isEnter ? (hoveredIndex = index) : (hoveredIndex = null);
 	};
 
-	const fieldEditHandler = (field) => {
+	const fieldEditHandler = (field: CredentialFieldComponentProps) => {
 		if (edit && field.fieldId) {
 			changedFields.add(field.fieldId);
 			if (field.fieldName === "URL") {

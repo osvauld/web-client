@@ -1,3 +1,6 @@
+type accessType = "reader" | "manager";
+type accessSource = "acquired" | "inherited";
+
 export type User = {
 	id: string;
 	name: string;
@@ -6,8 +9,6 @@ export type User = {
 	type?: string;
 	status?: string;
 	checked?: boolean;
-};
-
-export type UserWithAccessType = User & {
-	accessType: string;
+	accessType?: accessType;
+	accessSource?: accessSource;
 };

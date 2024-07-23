@@ -9,6 +9,7 @@ import {
 	SearchResponse,
 	FetchCredentialUsersForDataSyncResponse,
 	GetEnvFieldsByCredentialIdResponse,
+	GetEnvsForCredentialResponse,
 } from "../dtos/response.dto";
 import {
 	AddCredentialPayload,
@@ -378,7 +379,7 @@ export const getEnvFieldsByCredentialId = async (
 
 export const getEnvsForCredential = async (
 	credentialId: string,
-): Promise<GetEnvFieldsByCredentialIdResponse> => {
+): Promise<GetEnvsForCredentialResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);

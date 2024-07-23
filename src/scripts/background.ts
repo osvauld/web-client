@@ -64,7 +64,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 				await loadWasmModule();
 				await initiateAuthHandler(passphrase);
 				return { isAuthenticated: true };
-			} catch (error) {
+			} catch (error: any) {
 				return { isAuthenticated: false, error: error.message };
 			}
 		}

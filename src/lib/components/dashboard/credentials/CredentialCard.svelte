@@ -11,13 +11,13 @@
 		buttonRef,
 		modalManager,
 	} from "../store";
-	import { Credential, Fields } from "../dtos";
+	import { Credential, Field } from "../dtos";
 	import { tweened } from "svelte/motion";
 	const dispatch = createEventDispatcher();
 	export let credential: Credential;
 	export let checked = false;
-	export let privateFolder;
-	let sensitiveFields: Fields[] = [];
+	export let privateFolder: boolean;
+	let sensitiveFields: Field[] = [];
 	let decrypted = false;
 	let hoverEffect = false;
 	let hoverTimeout: any;
@@ -135,7 +135,8 @@
 	<button
 		class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
 	>
-		<div
+		<!-- svelte-ignore a11y-<code> -->
+		<button
 			class="flex {credential.accessType !== 'manager' && !privateFolder
 				? 'justify-start'
 				: 'justify-center'} items-center border-osvauld-iconblack pb-2"
@@ -168,7 +169,7 @@
 					<More />
 				</button>
 			{/if}
-		</div>
+		</button>
 		<div
 			class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
 		></div>
@@ -181,9 +182,8 @@
 		>
 			{#if credential.credentialType !== "Note"}
 				{#each credential.fields as field}
-					{#if field.fieldName !== "Domain"}
+					{#if field.fieldName !== "Domain" && field.fieldName && field.fieldValue}
 						<PlainField
-							bgColor="{null}"
 							fieldName="{field.fieldName}"
 							fieldValue="{field.fieldValue}"
 							{hoverEffect}
@@ -192,13 +192,14 @@
 				{/each}
 				{#if sensitiveFields}
 					{#each sensitiveFields as field}
-						<EncryptedField
-							bgColor="{null}"
-							fieldName="{field.fieldName}"
-							fieldValue="{field.fieldValue}"
-							fieldType="{field.fieldType}"
-							{hoverEffect}
-						/>
+						{#if field.fieldName && field.fieldValue}
+							<EncryptedField
+								fieldName="{field.fieldName}"
+								fieldValue="{field.fieldValue}"
+								fieldType="{field.fieldType}"
+								{hoverEffect}
+							/>
+						{/if}
 					{/each}
 				{/if}
 			{:else}

@@ -10,7 +10,10 @@
 	import { setGroupStore } from "../../../store/storeHelper";
 	import { Unsubscriber } from "svelte/store";
 	export let groupName;
-	const handleRemoveUserFromGroup = async (userId) => {
+	const handleRemoveUserFromGroup = async (userId: string) => {
+		if ($selectedGroup === null) {
+			throw new Error("Group not selected");
+		}
 		await removeUserFromGroup($selectedGroup.groupId, userId);
 		const accountDetails = localStorage.getItem("user");
 		const user = JSON.parse(accountDetails);

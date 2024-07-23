@@ -17,11 +17,13 @@
 		editFolderPermissionForGroup,
 	} from "../apis";
 	import { clickOutside } from "../helper";
+	import { User } from "../../../dtos/user.dto";
+	import { Group } from "../../../dtos/group.dto";
 	import { derived } from "svelte/store";
 	import { onMount } from "svelte";
 	import { fly } from "svelte/transition";
-	let existingUserData = [];
-	let existingGroupsData = [];
+	let existingUserData: User[] = [];
+	let existingGroupsData: Group[] = [];
 	let selectedTab = "Groups";
 	let editPermissionTrigger = false;
 	let infoOnHover = false;

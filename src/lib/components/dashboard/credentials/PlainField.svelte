@@ -1,19 +1,14 @@
 <script lang="ts">
 	import { scale } from "svelte/transition";
 	import { ActiveCopy, Tick, CopyIcon } from "../icons";
-	export let fieldName;
-	export let fieldValue;
-	export let hoverEffect;
-	export let bgColor;
+	export let fieldName: string;
+	export let fieldValue: string;
+	export let hoverEffect: boolean;
 	export let copied = false;
 
-	const copyToClipboard = async (e) => {
+	const copyToClipboard = async () => {
 		copied = true;
-		try {
-			await navigator.clipboard.writeText(fieldValue);
-		} catch (err) {
-			console.error("Failed to copy: ", err);
-		}
+		await navigator.clipboard.writeText(fieldValue);
 		setTimeout(() => {
 			copied = false;
 		}, 2000);
