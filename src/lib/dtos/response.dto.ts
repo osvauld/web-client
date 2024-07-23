@@ -177,3 +177,12 @@ export type FetchEnvFieldsResponse = BaseResponse & {
 export type GetEnvFieldsByCredentialIdResponse = BaseResponse & {
 	data: CliUsersData[];
 };
+
+export type GetEnvsForCredentialResponse = BaseResponse & {
+	data: {
+		envId: string;
+		cliUserPublickey: string;
+		cliUserId: string;
+		cliUserCreatedBy: string;
+	}[];
+};

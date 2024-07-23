@@ -376,7 +376,9 @@ export const getEnvFieldsByCredentialId = async (
 	return response;
 };
 
-export const getEnvsForCredential = async (credentialId: string) => {
+export const getEnvsForCredential = async (
+	credentialId: string,
+): Promise<GetEnvFieldsByCredentialIdResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);

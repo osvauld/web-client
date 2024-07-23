@@ -108,7 +108,6 @@
 			}
 			let editedUserField;
 			if (changedFields.has(field.fieldId)) {
-				console.log("changed field", field);
 				editedUserField = {
 					fieldId: field.fieldId,
 					fieldName: field.fieldName,
@@ -392,7 +391,6 @@
 
 	const fieldEditHandler = (field) => {
 		if (edit && field.fieldId) {
-			console.log("changed....");
 			changedFields.add(field.fieldId);
 			if (field.fieldName === "URL") {
 				for (const fieldData of credentialFields) {
