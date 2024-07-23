@@ -1,16 +1,17 @@
  {"svelte.plugin.typescript.enable": true,
   "svelte.plugin.typescript.diagnostics.enable": true,
   "svelte.plugin.css.diagnostics.enable": true,
+  "svelte.enable-ts-plugin": true,
   "svelte.plugin.svelte.diagnostics.enable": true,
   "editor.insertSpaces": false,
   "editor.tabSize": 2, 
   "[svelte]": {
     "editor.insertSpaces": false,
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
   },
   "[typescript]": {
     "editor.insertSpaces": false,
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
   },
 
 "svelte.plugin.svelte.compilerWarnings": {
@@ -28,6 +29,8 @@
     "a11y-no-static-element-interactions": "ignore",
     "a11y-role-has-required-aria-props": "ignore",
     "a11y-tabindex-no-positive": "ignore"
-}
+},
+
+
 
 }   

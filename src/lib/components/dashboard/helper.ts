@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import { SearchedCredential } from "../../dtos/credential.dto";
 type TypeToClassKey = "reader" | "manager";
 
 export const setbackground = (type: TypeToClassKey): string => {
@@ -29,8 +30,8 @@ export const sendMessage = async (action: string, data: any = {}) => {
 		console.error("Error sending message:", error);
 	}
 };
-export const searchObjects = (query, objects) => {
-	const searchResults = [];
+export const searchObjects = (query: string, objects: SearchedCredential[]) => {
+	const searchResults: SearchedCredential[] = [];
 
 	for (const obj of objects) {
 		for (const prop in obj) {

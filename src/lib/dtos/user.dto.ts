@@ -1,9 +1,11 @@
 export type User = {
-	checked: boolean;
 	id: string;
 	name: string;
 	username: string;
-	publicKey: string;
+	publicKey?: string;
+	type?: string;
+	status?: string;
+	checked?: boolean;
 };
 
 export type UserWithAccessType = User & {

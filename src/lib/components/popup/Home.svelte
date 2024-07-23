@@ -162,9 +162,9 @@
 	};
 
 	const dropDownClicked = async (e: any) => {
-		const credentialId = e.detail.credentialId;
+		const credentialId: string | null = e.detail.credentialId;
 		if (!credentialClicked && credentialId) {
-			const credentialResponse: any = await fetchCredsByIds([credentialId]);
+			const credentialResponse = await fetchCredsByIds([credentialId]);
 			clickedCredential = credentialResponse?.data[0];
 			const decyrptedResponse = await sendMessage("decryptMeta", [
 				clickedCredential,
@@ -176,6 +176,7 @@
 				...(clickedCredential?.fields ?? []),
 				...(sensitiveResponse.data ?? []),
 			];
+
 			selectedCredentialId = credentialId;
 			localStorage.setItem("selectedCredentialId", selectedCredentialId);
 		} else {

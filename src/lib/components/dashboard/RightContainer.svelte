@@ -18,8 +18,9 @@
 	} from "./store";
 
 	import ProfileModal from "./components/ProfileModal.svelte";
-	let searchResults = [];
-	let searchData = [];
+	import { SearchedCredential } from "../../dtos/credential.dto";
+	let searchResults: SearchedCredential[] = [];
+	let searchData: SearchedCredential[] = [];
 	let showModal = false;
 	let isProfileClicked = false;
 	let clickedOutside = false;

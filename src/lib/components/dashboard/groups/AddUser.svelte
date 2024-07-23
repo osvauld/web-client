@@ -15,7 +15,7 @@
 	let assignedRole = "user";
 	$: activeButton = username.length >= 3 && name.length >= 3;
 
-	const submit = async (event) => {
+	const submit = async (event: any) => {
 		event.preventDefault();
 		isLoaderActive = true;
 		const response = await checkUserNameExists(username, name);

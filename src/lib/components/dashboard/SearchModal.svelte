@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { SearchedCredential } from "../../dtos/credential.dto";
 	import { Key, Lens, Highlight, LinkIcon } from "./icons";
 	import { createEventDispatcher } from "svelte";
 
-	export let searchResults = [];
+	export let searchResults: SearchedCredential[] = [];
 	export let query = "";
 	const dispatch = createEventDispatcher();
 
@@ -14,11 +15,11 @@
 		dispatch("change", query);
 	};
 
-	const handleSearchClick = (result) => {
+	const handleSearchClick = (result: SearchedCredential) => {
 		dispatch("select", result);
 	};
 
-	const handleKeyDown = (event) => {
+	const handleKeyDown = (event: any) => {
 		if (event.key === "Escape") {
 			closeModal();
 		} else if (event.key === "ArrowDown") {
@@ -51,7 +52,7 @@
 	};
 
 	const focusResult = (index) => {
-		const resultElements = document.querySelectorAll(".search-result");
+		const resultElements: any = document.querySelectorAll(".search-result");
 		if (resultElements[index]) {
 			resultElements[index].focus();
 			resultElements[index].setAttribute("aria-selected", "true");

@@ -5,6 +5,7 @@
 		showAddGroupDrawer,
 		selectedPage,
 	} from "../store";
+	import { getUser } from "../apis";
 	import { Add } from "../icons";
 	let isFirstCardHovered = false;
 	let isSecondCardHovered = false;
@@ -20,7 +21,13 @@
 	};
 
 	onMount(async () => {
-		username = localStorage.getItem("username");
+		const usernameString = localStorage.getItem("username");
+		if (usernameString === null || !username) {
+			const userData = await getUser();
+			console.log(userData, "username");
+			username = userData.data.username;
+			localStorage.setItem("username", username);
+		}
 	});
 </script>
 

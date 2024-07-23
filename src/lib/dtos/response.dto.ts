@@ -15,7 +15,6 @@ import {
 export type BaseResponse = {
 	success: boolean;
 	message: string;
-	data: any;
 };
 
 export type ChallengeResponse = BaseResponse & {
@@ -125,19 +124,13 @@ export type UserNameAvailabilityResponse = BaseResponse & {
 		message: string;
 	};
 };
-type UserType = {
-	id: string;
-	name: string;
-	username: string;
-	type: string;
-};
 
 export type GetUserResponse = BaseResponse & {
-	data: UserType;
+	data: User;
 };
 
 export type GetAllUsersResponse = BaseResponse & {
-	data: UserType[];
+	data: User[];
 };
 
 export type AddCliUserResponse = BaseResponse & {

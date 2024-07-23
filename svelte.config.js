@@ -1,5 +1,12 @@
+import preprocess from "svelte-preprocess";
+
 const config = {
-  compilerOptions: {},
+  preprocess: preprocess({
+    typescript: {
+      tsconfigFile: './tsconfig.app.json',
+      reportDiagnostics: true
+    },
+    }),
 };
 
 export default config;

@@ -64,4 +64,5 @@ export {
 	fetchAllUsers,
 	addCliUser,
 	fetchCliUsers,
+	getUser,
 } from "../../apis/user.api";
