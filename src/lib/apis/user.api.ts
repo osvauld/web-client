@@ -1,6 +1,12 @@
 import {
+	AddCliUserResponse,
+	BaseResponse,
 	FetchAllUsersResponse,
 	FetchCredentialUsersResponse,
+	GetAllUsersResponse,
+	GetCliUsersResponse,
+	GetUserResponse,
+	UserNameAvailabilityResponse,
 } from "../dtos/response.dto";
 import {
 	getTokenAndBaseUrl,
@@ -52,7 +58,7 @@ export const fetchCredentialUsers = async (
 export const removeUserFromFolder = async (
 	folderId: string,
 	userId: string,
-) => {
+): Promise<BaseResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -72,7 +78,7 @@ export const removeUserFromFolder = async (
 export const removeUserFromCredential = async (
 	credentialId: string,
 	userId: string,
-) => {
+): Promise<BaseResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -91,7 +97,7 @@ export const removeUserFromCredential = async (
 	).then((response) => response.json());
 };
 
-export const deleteUser = async (userId: string) => {
+export const deleteUser = async (userId: string): Promise<BaseResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -102,7 +108,10 @@ export const deleteUser = async (userId: string) => {
 	}).then((response) => response.json());
 };
 
-export const checkUserNameExists = async (username: string, name: string) => {
+export const checkUserNameExists = async (
+	username: string,
+	name: string,
+): Promise<UserNameAvailabilityResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -114,7 +123,7 @@ export const checkUserNameExists = async (username: string, name: string) => {
 	}).then((response) => response.json());
 };
 
-export const getUser = async () => {
+export const getUser = async (): Promise<GetUserResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -125,7 +134,7 @@ export const getUser = async () => {
 	}).then((response) => response.json());
 };
 
-export const fetchAllUsers = async (): Promise<any> => {
+export const fetchAllUsers = async (): Promise<GetAllUsersResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -136,7 +145,7 @@ export const fetchAllUsers = async (): Promise<any> => {
 	}).then((response) => response.json());
 };
 
-export const addCliUser = async (data: any) => {
+export const addCliUser = async (data: any): Promise<AddCliUserResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -151,7 +160,7 @@ export const addCliUser = async (data: any) => {
 	return response;
 };
 
-export const fetchCliUsers = async () => {
+export const fetchCliUsers = async (): Promise<GetCliUsersResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);

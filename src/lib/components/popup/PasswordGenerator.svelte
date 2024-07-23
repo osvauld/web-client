@@ -18,7 +18,7 @@
 	let includeCapital = true;
 	let passwordLength = 16;
 	let generatedPassword = "";
-	let entropy = null;
+	let entropy: number | null = null;
 	let copied = false;
 	let hoverEffect = false;
 	let strengthSticker: string = "";
@@ -69,10 +69,10 @@
 	}
 
 	const generatePassword = (
-		passwordLength,
-		includeSpecialChars,
-		includeNumbers,
-		includeCapital,
+		passwordLength: number,
+		includeSpecialChars: boolean,
+		includeNumbers: boolean,
+		includeCapital: boolean,
 	) => {
 		let allChars = lowerCase;
 		let mandatoryChars = "";

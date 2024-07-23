@@ -10,6 +10,7 @@
 	import { searchObjects, sendMessage } from "../helper";
 	import { Lens } from "../icons";
 	import { selectedEnv, toastStore } from "../store";
+	import { SearchedCredential } from "../../../dtos/credential.dto";
 
 	let saveEnabled = false;
 	let query = "";
@@ -21,8 +22,8 @@
 			dispatch("close");
 		}
 	};
-	let searchData = [];
-	let searchResults = [];
+	let searchData: SearchedCredential[] = [];
+	let searchResults: SearchedCredential[] = [];
 	let checkedCredentials = new Set();
 
 	function toggleFolder(result, event) {

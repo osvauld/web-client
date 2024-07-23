@@ -5,13 +5,15 @@
 	import { ClosePanel, Lens, UserCheck, UserPlus } from "../icons";
 	import { setEnvStore } from "../../../store/storeHelper";
 
-	let name = "";
+	type CliUser = { id: string; username: string };
+	let name: string = "";
 	let selectedUser = null;
-	let cliUsers = [];
-	let query = "";
-	let searchResults = [];
-	let hoveredIndex = null;
-	let selectedUserIndice = null;
+	let cliUsers: CliUser[];
+	let query: string = "";
+	let searchResults: CliUser[] = [];
+
+	let hoveredIndex: number | null = null;
+	let selectedUserIndice: number | null = null;
 
 	const dispatch = createEventDispatcher();
 

@@ -1,7 +1,12 @@
 import { Group } from "./group.dto";
 import { UserWithAccessType, User } from "./user.dto";
 import { Folder } from "./folder.dto";
-import { Credential, CredentialFields } from "./credential.dto";
+import {
+	Credential,
+	CredentialFields,
+	SearchedCredential,
+} from "./credential.dto";
+import { EnvironmentFields, Environments } from "./environments.dto";
 
 export type BaseResponse = {
 	success: boolean;
@@ -104,4 +109,63 @@ export type FetchCredentialGroupsResponse = BaseResponse & {
 };
 export type FetchUsersWithoutGroupAccess = BaseResponse & {
 	data: User[];
+};
+
+export type SearchResponse = BaseResponse & {
+	data: SearchedCredential[];
+};
+
+export type UserNameAvailabilityResponse = BaseResponse & {
+	data: {
+		available: boolean;
+		message: string;
+	};
+};
+type UserType = {
+	id: string;
+	name: string;
+	username: string;
+	type: string;
+};
+
+export type GetUserResponse = BaseResponse & {
+	data: UserType;
+};
+
+export type GetAllUsersResponse = BaseResponse & {
+	data: UserType[];
+};
+
+export type AddCliUserResponse = BaseResponse & {
+	data: {
+		user: string;
+	};
+};
+
+export type GetCliUsersResponse = BaseResponse & {
+	data: {
+		id: string;
+		username: string;
+	}[];
+};
+
+export type UsersForDataSync = {
+	id: string;
+	publicKey: string;
+};
+
+export type FetchFolderUsersForDataSyncResponse = BaseResponse & {
+	data: UsersForDataSync[];
+};
+
+export type FetchCredentialUsersForDataSyncResponse = BaseResponse & {
+	data: UserWithAccessType[];
+};
+
+export type GetEnvironmentsResponse = BaseResponse & {
+	data: Environments[];
+};
+
+export type FetchEnvFieldsResponse = BaseResponse & {
+	data: EnvironmentFields[];
 };

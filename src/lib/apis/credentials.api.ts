@@ -6,6 +6,8 @@ import {
 	FetchCredentialsFieldsByIdsResponse,
 	FetchCredsByIdsResponse,
 	FetchSensitiveFieldsByCredenitalIdResponse,
+	SearchResponse,
+	FetchCredentialUsersForDataSyncResponse,
 } from "../dtos/response.dto";
 import {
 	AddCredentialPayload,
@@ -205,7 +207,7 @@ export const fetchSensitiveFieldsByCredentialId = async (
 	return response.json();
 };
 
-export const getSearchFields = async () => {
+export const getSearchFields = async (): Promise<SearchResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -226,7 +228,7 @@ export const editUserPermissionForCredential = async (
 	credentialId: string,
 	userId: string,
 	accessType: string,
-) => {
+): Promise<BaseResponse> => {
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: JSON.stringify({ userId, accessType }),
 	});
@@ -252,7 +254,7 @@ export const editGroupPermissionForCredential = async (
 	credentialId: string,
 	groupId: string,
 	accessType: string,
-) => {
+): Promise<BaseResponse> => {
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: JSON.stringify({ groupId, accessType }),
 	});
@@ -274,7 +276,9 @@ export const editGroupPermissionForCredential = async (
 	return response;
 };
 
-export const fetchCredentialUsersForDataSync = async (credentialId: string) => {
+export const fetchCredentialUsersForDataSync = async (
+	credentialId: string,
+): Promise<FetchCredentialUsersForDataSyncResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);

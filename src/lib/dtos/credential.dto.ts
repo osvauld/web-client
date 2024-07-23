@@ -31,7 +31,7 @@ export type Credential = CredentialBasic & {
 	updatedAt: string;
 };
 
-export type SearchResponse = {
+export type SearchedCredential = {
 	description: string;
 	domain: string;
 	folderId: UUID;
