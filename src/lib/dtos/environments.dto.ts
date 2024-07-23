@@ -17,3 +17,14 @@ export type EnvironmentFields = {
 		fieldValue: string;
 	}[];
 };
+
+type CliUser = {
+	envFieldId: string;
+	envId: string;
+	cliUserId: string;
+	cliUserPublicKey: string;
+};
+
+export type CliUsersData = {
+	[key: string]: CliUser[];
+};

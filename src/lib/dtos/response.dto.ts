@@ -6,7 +6,11 @@ import {
 	CredentialFields,
 	SearchedCredential,
 } from "./credential.dto";
-import { EnvironmentFields, Environments } from "./environments.dto";
+import {
+	CliUsersData,
+	EnvironmentFields,
+	Environments,
+} from "./environments.dto";
 
 export type BaseResponse = {
 	success: boolean;
@@ -168,4 +172,8 @@ export type GetEnvironmentsResponse = BaseResponse & {
 
 export type FetchEnvFieldsResponse = BaseResponse & {
 	data: EnvironmentFields[];
+};
+
+export type GetEnvFieldsByCredentialIdResponse = BaseResponse & {
+	data: CliUsersData[];
 };

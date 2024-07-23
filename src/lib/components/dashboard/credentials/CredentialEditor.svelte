@@ -108,10 +108,16 @@
 			}
 			let editedUserField;
 			if (changedFields.has(field.fieldId)) {
+				console.log("changed field", field);
 				editedUserField = {
 					fieldId: field.fieldId,
 					fieldName: field.fieldName,
-					fieldType: field.fieldType,
+					fieldType:
+						field.fieldName === "TOTP"
+							? "totp"
+							: field.sensitive
+								? "sensitive"
+								: "meta",
 					fieldValues: [],
 				};
 				if (envFieldMap[field.fieldId]) {
@@ -386,6 +392,7 @@
 
 	const fieldEditHandler = (field) => {
 		if (edit && field.fieldId) {
+			console.log("changed....");
 			changedFields.add(field.fieldId);
 			if (field.fieldName === "URL") {
 				for (const fieldData of credentialFields) {
