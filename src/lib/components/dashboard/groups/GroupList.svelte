@@ -16,15 +16,16 @@
 	import AllUsersList from "./AllUsersList.svelte";
 	import OtherGroupsList from "./OtherGroupsList.svelte";
 	import Placeholder from "../components/Placeholder.svelte";
+	import { getUserDetails } from "../helper";
 
 	let unsubscribe: Unsubscriber;
 	let groupName = "";
 	let allUsers: User[] = [];
 
 	let adminStatus = false;
-	onMount(() => {
-		const accountDetails = localStorage.getItem("user");
-		let accountRole = JSON.parse(accountDetails).type;
+	onMount(async () => {
+		const accountDetails = await getUserDetails();
+		const accountRole = accountDetails.type;
 		if (accountRole === "admin" || accountRole === "superadmin") {
 			adminStatus = true;
 		}

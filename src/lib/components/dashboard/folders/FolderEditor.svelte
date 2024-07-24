@@ -12,10 +12,10 @@
 	import { fly } from "svelte/transition";
 	import Toggle from "../Toggle.svelte";
 
-	let name = $showFolderRenameDrawer ? $selectedFolder.name : "";
+	export let name = "";
+	export let description = "";
+	export let addFolder = true;
 	let selectedTab = "shared";
-
-	let description = $showFolderRenameDrawer ? $selectedFolder.description : "";
 
 	function autofocus(node: any) {
 		node.focus();
@@ -26,6 +26,10 @@
 			name: name,
 			description: description,
 		};
+		if ($selectedFolder == null) {
+			showFolderRenameDrawer.set(false);
+			throw new Error("folder not selected");
+		}
 		const renameResponse = await renameFolder(payload, $selectedFolder.id);
 		await setFolderStore();
 		showFolderRenameDrawer.set(false);
@@ -64,27 +68,25 @@
 		});
 	};
 
-	const handleClose = (message) => {
+	const handleClose = () => {
 		showFolderRenameDrawer.set(false);
 		showAddFolderDrawer.set(false);
 	};
 
-	const toggleSelect = (e) => {
+	const toggleSelect = (e: any) => {
 		selectedTab = e.detail;
 	};
 </script>
 
 <form
 	class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[25rem] flex flex-col items-start justify-center gap-3"
-	on:submit|preventDefault="{$showFolderRenameDrawer
-		? renameFolderFunc
-		: addFolderFunc}"
+	on:submit|preventDefault="{addFolder ? addFolderFunc : renameFolderFunc}"
 	in:fly
 	out:fly
 >
 	<div class="flex justify-between items-center w-full">
 		<span class="text-[21px] font-medium text-osvauld-quarzowhite"
-			>{$showFolderRenameDrawer ? "Rename Folder" : "Create Folder"}</span
+			>{addFolder ? "Create Folder" : "Rename Folder"}</span
 		>
 		<button
 			class="cursor-pointer p-2"
@@ -94,13 +96,15 @@
 			<ClosePanel />
 		</button>
 	</div>
-	<Toggle on:select="{toggleSelect}" tabs="{['shared', 'private']}" />
+	{#if addFolder}
+		<Toggle on:select="{toggleSelect}" tabs="{['shared', 'private']}" />
+	{/if}
 	<div
 		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
 	></div>
 
 	<label for="name" class="font-bold text-base text-osvauld-textActive"
-		>{$showFolderRenameDrawer ? "Folder Name" : "Name:"}</label
+		>{addFolder ? "Name:" : "Folder Name"}</label
 	>
 	<input
 		id="name"

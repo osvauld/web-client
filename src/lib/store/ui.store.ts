@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 import browser from "webextension-polyfill";
+import { SelectedSection } from "../dtos/ui.dto";
 export let selectedPage = writable("");
 export let showAddFolderDrawer = writable(false);
 export let showAddGroupDrawer = writable(false);
@@ -19,12 +20,11 @@ export let DeleteConfirmationModal = writable(false);
 export let accessListSelected = writable(false);
 export let showMoreGroupOptions = writable(false);
 export let toastStore = writable({ show: false, message: "", type: true });
-export let selectedSection = writable("SharedFolders");
+export let selectedSection = writable<SelectedSection>("SharedFolders");
 export let showAddCliDrawer = writable(false);
 export let showAddEnvDrawer = writable(false);
 
 const storedPage = browser.storage.local.get("selectedPage");
-
 type MoreActions = {
 	id: string;
 	name: string;

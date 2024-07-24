@@ -8,7 +8,8 @@
 	import ClosePanel from "../../basic/icons/closePanel.svelte";
 	import { groupStore, toastStore } from "../store";
 	import { setGroupStore } from "../../../store/storeHelper";
-	let name = $showRenameGroupDrawer ? $selectedGroup.name : "";
+	export let name = "";
+	export let rename = false;
 
 	const renameGroupFunc = async () => {
 		const payload = {
@@ -64,13 +65,11 @@
 
 <form
 	class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[17rem] flex flex-col items-start justify-center gap-3"
-	on:submit|preventDefault="{$showRenameGroupDrawer
-		? renameGroupFunc
-		: addGroupFunc}"
+	on:submit|preventDefault="{rename ? renameGroupFunc : addGroupFunc}"
 >
 	<div class="flex justify-between items-center w-full">
 		<span class="text-[21px] font-medium text-osvauld-quarzowhite"
-			>{$showRenameGroupDrawer ? "Rename Group" : "Create Group"}</span
+			>{rename ? "Rename Group" : "Create Group"}</span
 		>
 		<button
 			class="cursor-pointer p-2"
@@ -112,7 +111,7 @@
 			type="submit"
 			disabled="{name === ''}"
 		>
-			{$showRenameGroupDrawer ? "Save Changes" : "Add Group"}
+			{rename ? "Save Changes" : "Add Group"}
 		</button>
 	</div>
 </form>

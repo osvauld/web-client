@@ -6,7 +6,7 @@
 	import { searchObjects } from "./helper";
 	import { getSearchFields, fetchAllUserUrls } from "./apis";
 	import { Profile, Lens, DownArrow } from "./icons";
-	import { sendMessage } from "./helper";
+	import { sendMessage, getUserDetails } from "./helper";
 	import { onMount } from "svelte";
 	import {
 		selectedFolder,
@@ -108,10 +108,9 @@
 		}, 100);
 	};
 
-	onMount(() => {
-		username =
-			localStorage.getItem("username") ||
-			JSON.parse(localStorage.getItem("user")).username;
+	onMount(async () => {
+		const account = await getUserDetails();
+		username = account.username;
 	});
 </script>
 

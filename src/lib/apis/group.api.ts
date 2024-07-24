@@ -7,6 +7,7 @@ import {
 	FetchGroupCredentialResponse,
 	FetchCredentialGroupsResponse,
 	BaseResponse,
+	CreateGroupResponse,
 } from "../dtos/response.dto";
 import {
 	AddUserToGroupPayload,
@@ -40,7 +41,9 @@ export const fetchGroupUsers = async (
 	}).then((response) => response.json());
 };
 
-export const createGroup = async (payload: CreateGroupPayload) => {
+export const createGroup = async (
+	payload: CreateGroupPayload,
+): Promise<CreateGroupResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);

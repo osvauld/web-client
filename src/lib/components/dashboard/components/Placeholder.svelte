@@ -7,6 +7,7 @@
 	} from "../store";
 	import { getUser } from "../apis";
 	import { Add } from "../icons";
+	import { getUserDetails } from "../helper";
 	let isFirstCardHovered = false;
 	let isSecondCardHovered = false;
 	let username = "";
@@ -21,13 +22,8 @@
 	};
 
 	onMount(async () => {
-		const usernameString = localStorage.getItem("username");
-		if (usernameString === null || !username) {
-			const userData = await getUser();
-			console.log(userData, "username");
-			username = userData.data.username;
-			localStorage.setItem("username", username);
-		}
+		const accountDetails = await getUserDetails();
+		username = accountDetails.username;
 	});
 </script>
 

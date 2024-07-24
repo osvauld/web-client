@@ -10,6 +10,7 @@ import {
 	FetchFolderUsersForDataSyncResponse,
 	GetEnvironmentsResponse,
 	FetchEnvFieldsResponse,
+	CreateFolderResponse,
 } from "../dtos/response.dto";
 import {
 	getTokenAndBaseUrl,
@@ -69,7 +70,9 @@ export const fetchFolderGroups = async (
 	}).then((response) => response.json());
 };
 
-export const createFolder = async (payload: any): Promise<BaseResponse> => {
+export const createFolder = async (
+	payload: any,
+): Promise<CreateFolderResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);

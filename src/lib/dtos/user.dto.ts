@@ -1,14 +1,15 @@
-type accessType = "reader" | "manager";
-type accessSource = "acquired" | "inherited";
+type AccessType = "reader" | "manager";
+type AccessSource = "acquired" | "inherited";
+type UserType = "admin" | "superadmin" | "user";
 
 export type User = {
 	id: string;
 	name: string;
 	username: string;
 	publicKey?: string;
-	type?: string;
+	type?: UserType;
 	status?: string;
 	checked?: boolean;
-	accessType?: accessType;
-	accessSource?: accessSource;
+	accessType?: AccessType;
+	accessSource?: AccessSource;
 };

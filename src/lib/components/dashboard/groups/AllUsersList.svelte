@@ -5,6 +5,7 @@
 	import AddUser from "./AddUser.svelte";
 	import { User } from "../dtos";
 	import { onMount } from "svelte";
+	import { getUserDetails } from "../helper";
 	let accountRole: string = "user";
 	let addUserHovered = false;
 	let allUsers: User[] = [];
@@ -14,11 +15,8 @@
 		allUsers = allUsersResponse.data;
 	};
 	onMount(async () => {
-		const accountDetails = localStorage.getItem("user");
-		if (accountDetails) {
-			const role = JSON.parse(accountDetails).type;
-			accountRole = role;
-		}
+		const accountDetails = await getUserDetails();
+		accountRole = accountDetails.type;
 		const fetchAllUsersResponse = await fetchAllUsers();
 		allUsers = fetchAllUsersResponse.data;
 	});

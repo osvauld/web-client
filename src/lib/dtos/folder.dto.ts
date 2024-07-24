@@ -1,9 +1,11 @@
+type FolderType = "private" | "shared";
+type FolderAccessType = "reader" | "manager";
 export type Folder = {
 	id: string;
 	name: string;
 	description?: string;
-	accessType: string;
-	type: string;
+	accessType: FolderAccessType;
+	type: FolderType;
 };
 
 export type Env = {

@@ -172,3 +172,19 @@ export type GetEnvsForCredentialResponse = BaseResponse & {
 		cliUserCreatedBy: string;
 	}[];
 };
+
+export type CreateGroupResponse = BaseResponse & {
+	data: {
+		groupId: string;
+	};
+};
+
+export type CreateFolderResponse = BaseResponse & {
+	data: {
+		folderId: string;
+		name: string;
+		description: string;
+		createdBy: string;
+		createdAt: string;
+	};
+};
