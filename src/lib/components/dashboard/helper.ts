@@ -1,4 +1,3 @@
-// @ts-nocheck
 import browser from "webextension-polyfill";
 import { SearchedCredential } from "../../dtos/credential.dto";
 // import { getUser } from "../../components/dashboard/apis";
@@ -33,16 +32,21 @@ export const sendMessage = async (action: string, data: any = {}) => {
 		console.error("Error sending message:", error);
 	}
 };
-export const searchObjects = (query: string, objects: SearchedCredential[]) => {
+export const searchObjects = (
+	query: string,
+	credentials: SearchedCredential[],
+) => {
 	const searchResults: SearchedCredential[] = [];
 
-	for (const obj of objects) {
-		for (const prop in obj) {
+	for (const credential of credentials) {
+		for (const prop in credential) {
 			if (
-				typeof obj[prop] === "string" &&
-				obj[prop].toLowerCase().includes(query.toLowerCase())
+				typeof credential[prop as keyof SearchedCredential] === "string" &&
+				credential[prop as keyof SearchedCredential]
+					.toLowerCase()
+					.includes(query.toLowerCase())
 			) {
-				searchResults.push(obj);
+				searchResults.push(credential);
 				break;
 			}
 		}
@@ -83,16 +87,6 @@ export const generatePassword = (length: number) => {
 	}
 	return password;
 };
-
-export function debounce(func, delay: number) {
-	let timeoutId;
-	return function (...args) {
-		clearTimeout(timeoutId);
-		timeoutId = setTimeout(() => {
-			func.apply(this, args);
-		}, delay);
-	};
-}
 
 type TransformedPayload = {
 	name: string;
