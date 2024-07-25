@@ -83,3 +83,8 @@ export type CredentialFieldComponentProps = {
 	fieldType?: fieldType;
 	sensitive: boolean;
 };
+
+export type UrlCredMap = {
+	value: string;
+	credentialId: string;
+};

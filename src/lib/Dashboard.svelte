@@ -75,12 +75,14 @@
 		{#if $showMoreOptions}
 			<MoreActions />
 		{/if}
-		{#if $DeleteConfirmationModal && $modalManager.type === "Credential"}
-			<CredentialDeleteModal />
-		{:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
-			<FolderDeleteModal />
-		{:else if $DeleteConfirmationModal && $modalManager.type === "Group"}
-			<GroupDeleteModal />
+		{#if $modalManager}
+			{#if $DeleteConfirmationModal && $modalManager.type === "Credential"}
+				<CredentialDeleteModal />
+			{:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
+				<FolderDeleteModal />
+			{:else if $DeleteConfirmationModal && $modalManager.type === "Group"}
+				<GroupDeleteModal />
+			{/if}
 		{/if}
 		{#if $accessListSelected}
 			<AccessListModal />

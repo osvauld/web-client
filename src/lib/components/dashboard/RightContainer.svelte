@@ -18,7 +18,7 @@
 	} from "./store";
 
 	import ProfileModal from "./components/ProfileModal.svelte";
-	import { SearchedCredential } from "../../dtos/credential.dto";
+	import { SearchedCredential, UrlCredMap } from "../../dtos/credential.dto";
 	let searchResults: SearchedCredential[] = [];
 	let searchData: SearchedCredential[] = [];
 	let showModal = false;
@@ -33,11 +33,12 @@
 		showModal = true;
 		const searchFieldSResponse = await getSearchFields();
 		searchData = searchFieldSResponse.data;
-
 		const urlJson = await fetchAllUserUrls();
 		const urls = urlJson.data;
-		const decryptedData = await sendMessage("getDecryptedUrls", urls);
-
+		const decryptedData: UrlCredMap[] = await sendMessage(
+			"getDecryptedUrls",
+			urls,
+		);
 		const mergedArray = searchData.map((item) => {
 			const replacement = decryptedData.find(
 				(decryptedItem) => decryptedItem.credentialId === item.credentialId,
@@ -82,7 +83,7 @@
 		credentialStore.set([]);
 	});
 
-	function handleKeyDown(event) {
+	function handleKeyDown(event: any) {
 		if (event.key === "Enter") {
 			getSearchData();
 		}
@@ -97,7 +98,7 @@
 		}
 	}
 
-	function autofocus(node) {
+	function autofocus(node: any) {
 		node.focus();
 	}
 	const handleProfileClose = () => {

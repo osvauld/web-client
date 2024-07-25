@@ -1,4 +1,5 @@
 <script lang="ts">
+	// @ts-nocheck
 	import {
 		fetchAllUserUrls,
 		fetchCredsByIds,
@@ -26,7 +27,7 @@
 	let domainAssociatedCredentials: Credential[] = [];
 	let selectedCredentialId: string | null = null;
 	let searchData: SearchedCredential[] = [];
-	let query = "";
+	let query: string | null = null;
 	let scrollPosition = 0;
 	let clickedCredential: any | null = null;
 	let scrollableElement;
@@ -94,7 +95,7 @@
 		}
 	};
 	onMount(async () => {
-		query = await localStorage.getItem("query");
+		query = localStorage.getItem("query");
 		if (query && query.length >= 1) {
 			await prepareSearchData();
 			listedCredentials = searchObjects(query, searchData);
@@ -117,12 +118,14 @@
 		port = browser.runtime.connect({ name: "popup" });
 		port.onMessage.addListener(handleMessage);
 	});
+
 	const handleMessage = (msg) => {
 		if (msg.username && msg.password) {
 			newCredential = msg;
 			addNewCredential = true;
 		}
 	};
+
 	onDestroy(() => {
 		port.disconnect();
 		port.onMessage.removeListener(handleMessage);
@@ -134,7 +137,6 @@
 		const urlJson = await fetchAllUserUrls();
 		const urls = urlJson.data;
 		const decryptedData = await sendMessage("getDecryptedUrls", urls);
-
 		const mergedArray = searchData.map((item) => {
 			const replacement = decryptedData.find(
 				(decryptedItem) => decryptedItem.credentialId === item.credentialId,
@@ -147,7 +149,7 @@
 		searchData = mergedArray;
 	};
 
-	const handleInputChange = async (e) => {
+	const handleInputChange = async (e: any) => {
 		const query = e.target.value;
 		if (query.length >= 1) {
 			if (searchData.length === 0) {

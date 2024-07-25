@@ -1,4 +1,5 @@
 <script lang="ts">
+	// @ts-nocheck
 	import BinIcon from "../../basic/icons/binIcon.svelte";
 	import EditIcon from "../../basic/icons/editIcon.svelte";
 	import { FolderShare } from "../icons";

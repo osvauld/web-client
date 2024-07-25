@@ -1,5 +1,5 @@
-import { Group } from "./group.dto";
-import { User } from "./user.dto";
+import { Group, SelectedGroup } from "./group.dto";
+import { GroupUser, User } from "./user.dto";
 import { Folder } from "./folder.dto";
 import {
 	Credential,
@@ -7,6 +7,7 @@ import {
 	SearchedCredential,
 	Field,
 	UsersForDataSync,
+	UrlCredMap,
 } from "./credential.dto";
 import {
 	CliUsersData,
@@ -63,10 +64,6 @@ export type FetchCredsByIdsResponse = BaseResponse & {
 	data: Credential[];
 };
 
-type UrlCredMap = {
-	value: string;
-	credentialId: string;
-};
 export type FetchAllUserUrlsResponse = BaseResponse & {
 	data: UrlCredMap[];
 };
@@ -76,11 +73,11 @@ export type FetchSensitiveFieldsByCredenitalIdResponse = BaseResponse & {
 };
 
 export type FetchAllUserGroupsResponse = BaseResponse & {
-	data: Group[];
+	data: SelectedGroup[];
 };
 
 export type FetchGroupUsersResponse = BaseResponse & {
-	data: User[];
+	data: GroupUser[];
 };
 
 export type fetchUsersByGroupIdsResponse = BaseResponse & {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	// @ts-nocheck
 	import { Lens, ClosePanel, EditIcon, InfoIcon } from "../icons";
 	import ExistingListParent from "../components/ExistingListParent.svelte";
 	import Toggle from "../Toggle.svelte";

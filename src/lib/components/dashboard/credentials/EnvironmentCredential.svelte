@@ -4,10 +4,10 @@
 	import { sendMessage } from "../helper";
 	import { Eye, ClosedEye, CopyIcon, Tick } from "../icons";
 	import { createEventDispatcher } from "svelte";
-	import { Field } from "../dtos";
+	import { EnvironmentFields } from "../../../dtos/environments.dto";
 	const dispatch = createEventDispatcher();
-	export let credential;
-	export let activefieldId = null;
+	export let credential: EnvironmentFields;
+	export let activefieldId: string;
 	let decryptedValues: {
 		[key: string]: string;
 	} = {};
@@ -55,8 +55,10 @@
 	};
 
 	const initializeDecryption = () => {
-		credential.fields.forEach((field: Field) => {
-			decrypt(field.fieldId, field.fieldValue);
+		credential.fields.forEach((field) => {
+			if (field.fieldId) {
+				decrypt(field.fieldId, field.fieldValue);
+			}
 		});
 	};
 
@@ -75,7 +77,7 @@
 				class="py-1 px-2 inline-block w-[90%] overflow-x-hidden text-ellipsis rounded-lg items-center text-base bg-osvauld-fieldActive border-0 h-10 mx-2 focus:ring-0"
 				id="{field.fieldId}"
 				type="text"
-				disabled="{activefieldId && activefieldId !== field.fieldId}"
+				disabled="{activefieldId !== field.fieldId}"
 				bind:value="{field.fieldName}"
 				on:input="{() => checkValueChanged(field.fieldId)}"
 			/>

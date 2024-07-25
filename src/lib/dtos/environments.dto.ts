@@ -2,8 +2,8 @@ export type Environments = {
 	id: string;
 	cliUser: string;
 	name: string;
-	createdAt: string;
-	updatedAt: string;
+	createdat: string;
+	updatedat: string;
 	publicKey: string;
 	cliUsername: string;
 };

@@ -3,7 +3,7 @@ type accessSource = "acquired" | "inherited";
 export type Group = {
 	groupId: string;
 	name: string;
-	accessType: accessType;
+	accessType?: accessType;
 	accessSource?: accessSource;
 };
 

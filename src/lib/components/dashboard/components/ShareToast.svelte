@@ -3,7 +3,7 @@
 	import { toastStore } from "../store";
 	// let closehovered = false;
 	const triggerCloseEvent = () => {
-		toastStore.set({ show: false, message: "", type: null });
+		toastStore.set({ show: false, message: "", type: false });
 	};
 	onMount(() => {
 		setTimeout(() => {

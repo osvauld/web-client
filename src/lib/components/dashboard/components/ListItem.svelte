@@ -27,8 +27,6 @@
 	const handleClick = () => {
 		dispatch("click");
 	};
-
-	/* eslint-disable */
 </script>
 
 <button

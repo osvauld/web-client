@@ -43,7 +43,7 @@
 		};
 		for (const groupUsers of groupUsersList) {
 			const group = $selectedGroups.get(groupUsers.groupId);
-			if (group === undefined) continue;
+			if (group === undefined || !group.accessType) continue;
 			const userData = await sendMessage("createShareCredPayload", {
 				creds: credentialsFields,
 				users: groupUsers.userDetails,

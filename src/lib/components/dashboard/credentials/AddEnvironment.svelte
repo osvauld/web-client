@@ -6,14 +6,14 @@
 	import { setEnvStore } from "../../../store/storeHelper";
 
 	type CliUser = { id: string; username: string };
-	let name: string = "";
-	let selectedUser = null;
-	let cliUsers: CliUser[];
-	let query: string = "";
+	let name: string;
+	let selectedUser: CliUser;
+	let cliUsers: CliUser[] = [];
+	let query: string;
 	let searchResults: CliUser[] = [];
 
-	let hoveredIndex: number | null = null;
-	let selectedUserIndice: number | null = null;
+	let hoveredIndex: number;
+	let selectedUserIndice: number;
 
 	const dispatch = createEventDispatcher();
 
@@ -31,7 +31,7 @@
 				: cliUsers.filter((item) => item.username.startsWith(query));
 	};
 
-	const addUsertoGroup = async (user, index) => {
+	const addUsertoGroup = async (user: CliUser, index: number) => {
 		selectedUserIndice = index;
 		selectedUser = user;
 	};
@@ -107,7 +107,7 @@
 			<label
 				class="w-full px-2 py-1.5 text-left rounded-md cursor-pointer text-osvauld-textActive hover:bg-osvauld-fieldActive hover:shadow-[0_0_0_1px_#292A36] flex justify-between items-center"
 				on:mouseenter="{() => (hoveredIndex = index)}"
-				on:mouseleave="{() => (hoveredIndex = null)}"
+				on:mouseleave="{() => (hoveredIndex = -1)}"
 			>
 				<!-- <input type="radio" bind:group={selectedUser} value={user} /> -->
 				<span class="pl-1">{user.username}</span>
@@ -143,7 +143,7 @@
 		<button
 			class="border border-osvauld-iconblack py-[5px] px-[15px] text-base font-medium text-osvauld-textActive rounded-md hover:bg-osvauld-carolinablue hover:border-osvauld-carolinablue hover:text-osvauld-frameblack"
 			type="submit"
-			disabled="{name === '' || selectedUser === null}"
+			disabled="{name === '' || !selectedUser}"
 		>
 			Create Environment
 		</button>

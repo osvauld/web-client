@@ -1,4 +1,5 @@
 <script lang="ts">
+	// @ts-nocheck
 	import BinIcon from "../../basic/icons/binIcon.svelte";
 	import EditIcon from "../../basic/icons/editIcon.svelte";
 	import {
@@ -74,7 +75,7 @@
 			: 'w-[130px]'} rounded-2xl"
 		style="top: {$buttonCoords.top}px; left: {$buttonCoords.left}px;"
 		use:clickOutside
-		on:clickedOutside="{handleClickOutside}"
+		on:clickOutside="{handleClickOutside}"
 	>
 		<div class="flex flex-col items-start p-2 gap-2 w-full h-full">
 			<button

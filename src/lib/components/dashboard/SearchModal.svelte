@@ -51,7 +51,7 @@
 		}
 	};
 
-	const focusResult = (index) => {
+	const focusResult = (index: number) => {
 		const resultElements: any = document.querySelectorAll(".search-result");
 		if (resultElements[index]) {
 			resultElements[index].focus();
@@ -65,7 +65,7 @@
 		}
 	};
 
-	function autofocus(node) {
+	function autofocus(node: any) {
 		node.focus();
 	}
 </script>

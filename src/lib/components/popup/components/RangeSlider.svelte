@@ -6,7 +6,6 @@
 	export let min = 8;
 	export let max = 64;
 	export let initialValue = 16;
-	export let id = null;
 	export let value =
 		typeof initialValue === "string" ? parseInt(initialValue) : initialValue;
 
@@ -264,7 +263,6 @@
 		aria-valuemin="{min}"
 		aria-valuemax="{max}"
 		aria-valuenow="{value}"
-		{id}
 		on:mousedown="{onTrackEvent}"
 		on:touchstart="{onTrackEvent}"
 	>

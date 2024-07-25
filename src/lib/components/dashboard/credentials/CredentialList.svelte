@@ -8,7 +8,7 @@
 
 	import { Share, Add, EyeScan, FolderShare } from "../icons";
 	import { fetchSignedUpUsers, fetchAllUserGroups, addCliUser } from "../apis";
-	import { User, Group, Credential, Field } from "../dtos";
+	import { User, Group, Credential, Field, SelectedGroup } from "../dtos";
 
 	import {
 		credentialStore,
@@ -26,7 +26,7 @@
 
 	let checkedCards: Credential[] = [];
 	let users: User[] = [];
-	let allGroups: Group[] = [];
+	let allGroups: SelectedGroup[] = [];
 	let selectedCard: any;
 	let sensitiveFields: Field[] = [];
 	let areCardsSelected = false;

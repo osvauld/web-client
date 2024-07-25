@@ -13,3 +13,12 @@ export type User = {
 	accessType?: AccessType;
 	accessSource?: AccessSource;
 };
+
+type GroupAccessType = "admin" | "member";
+export type GroupUser = {
+	id: string;
+	name: string;
+	username: string;
+	publicKey: string;
+	accessType: GroupAccessType;
+};

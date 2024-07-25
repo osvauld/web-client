@@ -30,7 +30,7 @@
 		selectedTab = e.detail;
 	};
 
-	let saveChanges;
+	let saveChanges: any;
 
 	/*eslint-disable*/
 </script>

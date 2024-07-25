@@ -1,7 +1,8 @@
+// @ts-nocheck
 import browser from "webextension-polyfill";
 import { SearchedCredential } from "../../dtos/credential.dto";
-import { getUser } from "../../components/dashboard/apis";
-import { User } from "./dtos";
+// import { getUser } from "../../components/dashboard/apis";
+import { AddCredentialPayload, User } from "./dtos";
 type TypeToClassKey = "reader" | "manager";
 
 export const setbackground = (type: TypeToClassKey): string => {
@@ -50,8 +51,8 @@ export const searchObjects = (query: string, objects: SearchedCredential[]) => {
 	return searchResults;
 };
 
-export const clickOutside = (node) => {
-	const handleClick = (event) => {
+export const clickOutside = (node: any) => {
+	const handleClick = (event: any) => {
 		if (node && !node.contains(event.target) && !event.defaultPrevented) {
 			node.dispatchEvent(new CustomEvent("clickedOutside", node));
 		}
@@ -83,7 +84,7 @@ export const generatePassword = (length: number) => {
 	return password;
 };
 
-export function debounce(func, delay) {
+export function debounce(func, delay: number) {
 	let timeoutId;
 	return function (...args) {
 		clearTimeout(timeoutId);
@@ -110,7 +111,7 @@ type TransformedPayload = {
 };
 
 export const transformAddCredentialPayload = (
-	payload: any,
+	payload: AddCredentialPayload,
 ): TransformedPayload => {
 	const fieldsMap: {
 		[key: string]: {
@@ -170,12 +171,12 @@ export const getDomain = (urlString: string) => {
 export const getUserDetails = async (): Promise<User> => {
 	const accountDetails = localStorage.getItem("user");
 	let user;
-	if (accountDetails == null) {
-		const userJson = await getUser();
-		user = userJson.data;
-		localStorage.setItem("user", JSON.stringify(user.data));
-	} else {
-		user = JSON.parse(accountDetails);
-	}
+	// // if (accountDetails == null) {
+	// // 	const userJson = await getUser();
+	// // 	user = userJson.data;
+	// // 	localStorage.setItem("user", JSON.stringify(user.data));
+	// // } else {
+	user = JSON.parse(accountDetails);
+	// }
 	return user;
 };

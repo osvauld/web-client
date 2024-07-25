@@ -122,7 +122,6 @@
 	};
 
 	const handleEditCredential = async () => {
-		console.log(sensitiveFields, "sensitivefields");
 		for (let field of sensitiveFields) {
 			const response = await sendMessage("decryptField", field.fieldValue);
 			let decryptedValue = response.data;

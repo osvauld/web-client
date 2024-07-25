@@ -8,10 +8,12 @@ import { sendMessage } from "../components/dashboard/helper";
 import { get } from "svelte/store";
 import browser from "webextension-polyfill";
 import { selectedSection } from "./ui.store";
+import { Group, SelectedGroup } from "../dtos/group.dto";
+import { Folder } from "../dtos/folder.dto";
 
 export const setFolderStore = async () => {
 	const responseJson = await fetchAllFolders();
-	const sortedData = responseJson.data.sort((a, b) =>
+	const sortedData = responseJson.data.sort((a: Folder, b: Folder) =>
 		a.name.localeCompare(b.name),
 	);
 	const selectedFolderValue = get(selectedFolder);
@@ -36,8 +38,8 @@ export const setFolderStore = async () => {
 
 export const setGroupStore = async () => {
 	const responseJson = await fetchAllUserGroups();
-	const sortedData = responseJson.data.sort((a, b) =>
-		a.name.localeCompare(b.name),
+	const sortedData = responseJson.data.sort(
+		(a: SelectedGroup, b: SelectedGroup) => a.name.localeCompare(b.name),
 	);
 	groupStore.set(sortedData);
 };

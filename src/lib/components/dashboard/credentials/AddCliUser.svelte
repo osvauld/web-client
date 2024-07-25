@@ -10,7 +10,7 @@
 	let name = "";
 	let userString = "";
 	let userStringCopied = false;
-	let timer;
+	let timer: NodeJS.Timeout | null;
 
 	function autofocus(node: any) {
 		node.focus();

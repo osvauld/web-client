@@ -16,9 +16,9 @@
 	let includeSpecialChars = false;
 	let includeNumbers = true;
 	let includeCapital = true;
-	let passwordLength = 16;
+	let passwordLength: number = 16;
 	let generatedPassword = "";
-	let entropy: number | null = null;
+	let entropy: number;
 	let copied = false;
 	let hoverEffect = false;
 	let strengthSticker: string = "";
@@ -117,11 +117,7 @@
 
 	const copyToClipboard = async () => {
 		copied = true;
-		try {
-			await navigator.clipboard.writeText(generatedPassword);
-		} catch (err) {
-			console.error("Failed to copy: ", err);
-		}
+		await navigator.clipboard.writeText(generatedPassword);
 		setTimeout(() => {
 			copied = false;
 		}, 2000);
@@ -228,10 +224,7 @@
 					{/if}
 				</div>
 				<div class="w-[90%]">
-					<RangeSlider
-						on:change="{(e) => (passwordLength = e.detail.value)}"
-						id="basic-slider"
-					/>
+					<RangeSlider on:change="{(e) => (passwordLength = e.detail.value)}" />
 				</div>
 			</div>
 			<div

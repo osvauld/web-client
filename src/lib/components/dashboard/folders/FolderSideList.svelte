@@ -17,14 +17,13 @@
 		showFolderRenameDrawer,
 	} from "../store";
 
-	import { Folder, SelectedSection } from "../dtos";
+	import { Folder, SelectedSection, Environments } from "../dtos";
 	import { Menu, FolderIcon, Add, RightArrow } from "../icons";
 	import { onMount } from "svelte";
 	import { setFolderStore, setEnvStore } from "../../../store/storeHelper";
 	import FolderAdd from "../../basic/icons/folderAdd.svelte";
 	import EnvironmentAdd from "../../basic/icons/environmentAdd.svelte";
 	import ExistingEnvironment from "../../basic/icons/existingEnvironment.svelte";
-	import { Env } from "../../../dtos/folder.dto";
 	let iconColor = "#6E7681";
 	let hoveringFolderId: string | null = null;
 	let hoveringEnvId: string | null = null;
@@ -64,7 +63,7 @@
 		showMoreOptions.set(true);
 	};
 
-	const selectEnv = (env: Env) => {
+	const selectEnv = (env: Environments) => {
 		selectedEnv.set(env);
 		selectedFolder.set(null);
 		selectedSection.set("Environments");

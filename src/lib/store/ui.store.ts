@@ -25,10 +25,11 @@ export let showAddCliDrawer = writable(false);
 export let showAddEnvDrawer = writable(false);
 
 const storedPage = browser.storage.local.get("selectedPage");
+type MoreActionsTypes = "Folder" | "Group" | "Credential";
 type MoreActions = {
 	id: string;
 	name: string;
-	type: string;
+	type: MoreActionsTypes;
 	private?: boolean;
 };
 storedPage.then((value) => {

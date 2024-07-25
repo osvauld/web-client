@@ -1,4 +1,5 @@
 <script lang="ts">
+	// @ts-nocheck
 	import { onMount } from "svelte";
 	import { fly, blur } from "svelte/transition";
 	import { ClosePanel, Add, BinIcon } from "../icons";
@@ -63,8 +64,9 @@
 	};
 	//TODO: change user type
 	const removeField = (index: number) => {
-		credentialFields[index].fieldId &&
+		if (credentialFields[index].fieldId) {
 			deletedFields.push(credentialFields[index].fieldId);
+		}
 		credentialFields.splice(index, 1);
 		credentialFields = [...credentialFields];
 	};

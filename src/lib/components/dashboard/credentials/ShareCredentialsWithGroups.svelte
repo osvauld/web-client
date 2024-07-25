@@ -3,6 +3,7 @@
 		Group,
 		CredentialFields,
 		ShareCredentialsWithGroupsPayload,
+		SelectedGroup,
 	} from "../dtos";
 	import { writable } from "svelte/store";
 	import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
@@ -13,7 +14,10 @@
 	import { toastStore } from "../store";
 	import { createEventDispatcher, onMount } from "svelte";
 	const dispatch = createEventDispatcher();
-	export let groups: Group[];
+	export let allGroups: SelectedGroup[];
+	export let groups: Group[] = allGroups.map((group) => {
+		return { groupId: group.groupId, name: group.name };
+	});
 	export let credentialsFields: CredentialFields[];
 	let selectedGroups = writable(new Map<string, Group>());
 	let showOptions = false;
@@ -38,7 +42,7 @@
 		};
 		for (const groupUsers of groupUsersList) {
 			const group = $selectedGroups.get(groupUsers.groupId);
-			if (group == undefined) continue;
+			if (group == undefined || !group.accessType) continue;
 			const userData = await sendMessage("createShareCredPayload", {
 				creds: credentialsFields,
 				users: groupUsers.userDetails,
@@ -104,6 +108,7 @@
 	onMount(() => {
 		//Below will disable save changes button when group/user button switched
 		dispatch("enable", false);
+		console.log("groups", groups);
 	});
 </script>
 

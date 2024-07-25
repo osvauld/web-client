@@ -16,7 +16,9 @@
 	};
 	onMount(async () => {
 		const accountDetails = await getUserDetails();
-		accountRole = accountDetails.type;
+		if (accountDetails.type) {
+			accountRole = accountDetails.type;
+		}
 		const fetchAllUsersResponse = await fetchAllUsers();
 		allUsers = fetchAllUsersResponse.data;
 	});
