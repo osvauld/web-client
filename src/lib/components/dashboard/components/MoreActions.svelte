@@ -90,7 +90,7 @@
 	});
 </script>
 
-{#if $showMoreOptions && $buttonRef}
+{#if $showMoreOptions && $buttonRef && $modalManager}
 	<div
 		class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack {moreOptionType ===
 		'Folder'

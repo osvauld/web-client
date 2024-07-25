@@ -1,5 +1,4 @@
 <script lang="ts">
-	// @ts-nocheck
 	import BinIcon from "../../basic/icons/binIcon.svelte";
 	import EditIcon from "../../basic/icons/editIcon.svelte";
 	import {
@@ -24,6 +23,7 @@
 	export const buttonCoords = derived(buttonRef, ($buttonRef) => {
 		if ($buttonRef) {
 			const rect = $buttonRef.getBoundingClientRect();
+			// @ts-ignore
 			const leftVal =
 				$modalManager.type === "Group"
 					? rect.left + window.scrollX
@@ -67,7 +67,7 @@
 	});
 </script>
 
-{#if $showMoreGroupOptions && $buttonRef}
+{#if $showMoreGroupOptions && $buttonRef && $modalManager}
 	<div
 		class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack {$modalManager.type ===
 		'Folder'
