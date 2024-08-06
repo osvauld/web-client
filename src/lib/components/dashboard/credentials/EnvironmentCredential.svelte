@@ -29,8 +29,8 @@
 	};
 
 	const decrypt = async (fieldId: string, fieldValue: string) => {
-		const response = await sendMessage("decryptField", fieldValue);
-		decryptedValues[fieldId] = response.data;
+		const decryptedValue = await sendMessage("decryptField", fieldValue);
+		decryptedValues[fieldId] = decryptedValue;
 	};
 
 	const toggleVisibility = (fieldId: string) => {

@@ -140,11 +140,11 @@
 							};
 						},
 					);
-					const response = await sendMessage("encryptEditFields", {
+					const encryptedEditFields = await sendMessage("encryptEditFields", {
 						fieldValue: field.fieldValue,
 						usersToShare: envFieldPayloadForEncryption,
 					});
-					const envFieldPayload = response.data.map((envField) => {
+					const envFieldPayload = encryptedEditFields.map((envField) => {
 						return {
 							envFieldId: envField.userId,
 							fieldValue: envField.fieldValue,
@@ -152,11 +152,11 @@
 					});
 					editedEnvFields.push(...envFieldPayload);
 				}
-				const response = await sendMessage("encryptEditFields", {
+				const encryptedEditFields = await sendMessage("encryptEditFields", {
 					fieldValue: field.fieldValue,
 					usersToShare: users,
 				});
-				editedUserField.fieldValues = response.data;
+				editedUserField.fieldValues = encryptedEditFields;
 				editedUserFields.push(editedUserField);
 			} else if (!field.fieldId) {
 				const newFieldPayload = {
@@ -170,11 +170,11 @@
 					fieldValues: [],
 				};
 
-				const response = await sendMessage("encryptEditFields", {
+				const encryptedEditFields = await sendMessage("encryptEditFields", {
 					fieldValue: field.fieldValue,
 					usersToShare: users,
 				});
-				for (const fieldData of response.data) {
+				for (const fieldData of encryptedEditFields) {
 					let payload = {
 						fieldValue: fieldData.fieldValue,
 						userId: fieldData.userId,
@@ -190,11 +190,11 @@
 								};
 							},
 						);
-						const response = await sendMessage("encryptEditFields", {
+						const encryptedFields = await sendMessage("encryptEditFields", {
 							fieldValue: field.fieldValue,
 							usersToShare: cliUsersToShare,
 						});
-						const envFieldsValues = response.data.map((envField) => {
+						const envFieldsValues = encryptedFields.map((envField) => {
 							return {
 								envId: envField.userId,
 								fieldValue: envField.fieldValue,

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import browser from "webextension-polyfill";
 import {
 	createChallenge,
@@ -6,7 +5,13 @@ import {
 	initiateAuth,
 } from "../lib/apis/auth.api";
 import { fetchCredsByIds } from "../lib/apis/credentials.api";
-import { Credential, CredentialFields } from "../lib/dtos/credential.dto";
+import {
+	Credential,
+	CredentialFields,
+	Field,
+	UserEncryptedFields,
+	UsersForDataSync,
+} from "../lib/dtos/credential.dto";
 import init, {
 	generate_and_encrypt_keys,
 	sign_message,
@@ -15,7 +20,6 @@ import init, {
 	encrypt_new_credential,
 	decrypt_credentials,
 	decrypt_text,
-	decrypt_fields,
 	encrypt_fields,
 	get_pub_key,
 	sign_hash_message,
@@ -23,6 +27,7 @@ import init, {
 	encrypt_field_value,
 	decrypt_urls,
 } from "./crypto_primitives.js";
+import { User } from "../lib/dtos/user.dto.js";
 
 type CredentialsForUsersPayload = {
 	accessType?: string;
@@ -35,18 +40,9 @@ type UserListForEncryption = {
 	accessType?: string;
 };
 
-export const decryptCredentialFieldsHandler = async (
-	credentials: CredentialFields[],
-) => {
-	try {
-		const response = await decrypt_fields(credentials);
-		return { data: response };
-	} catch (error) {
-		console.error("Error decrypting credentials:", error);
-	}
-};
-
-export const initiateAuthHandler = async (passphrase: string) => {
+export const initiateAuthHandler = async (
+	passphrase: string,
+): Promise<string> => {
 	const encryptionPvtKeyObj =
 		await browser.storage.local.get("encryptionPvtKey");
 	const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
@@ -103,26 +99,21 @@ export const savePassphraseHandler = async (
 	return { isSaved: true };
 };
 
-export const decryptCredentialFieldsHandlerNew = async (
+export const decryptCredentialFieldsHandler = async (
 	credentials: Credential[],
 ) => {
-	try {
-		const response = await decrypt_credentials(credentials);
-		return { data: response };
-	} catch (error) {
-		console.error("Error decrypting credentials:", error);
-	}
+	const response: Credential[] = await decrypt_credentials(credentials);
+	return { data: response };
 };
 
-export const addCredentialHandler = async (payload) => {
-	try {
-		return await encrypt_new_credential(
-			payload.users,
-			payload.addCredentialFields,
-		);
-	} catch (error) {
-		console.error("Error adding credential:", error);
-	}
+export const addCredentialHandler = async (payload: {
+	users: UsersForDataSync[];
+	addCredentialFields: Field[];
+}): Promise<UserEncryptedFields[]> => {
+	return await encrypt_new_credential(
+		payload.users,
+		payload.addCredentialFields,
+	);
 };
 
 export const decryptFieldHandler = async (text: string) => {
@@ -234,7 +225,7 @@ export const credentialSubmitHandler = async (
 		const responseJson = await fetchCredsByIds(credIds);
 		const listedCredentials = responseJson.data;
 		const decryptedData =
-			await decryptCredentialFieldsHandlerNew(listedCredentials);
+			await decryptCredentialFieldsHandler(listedCredentials);
 		if (decryptedData) {
 			for (const credential of decryptedData.data) {
 				for (const field of credential.fields) {
@@ -270,9 +261,8 @@ export const getCurrentDomain = async () => {
 	}
 };
 
-export const sign_hashed_message = async (message: string) => {
+export const sign_hashed_message = async (message: string): Promise<string> => {
 	const response = await sign_hash_message(message);
-
 	return response;
 };
 
@@ -290,7 +280,7 @@ export const encryptEditFields = async (data: any) => {
 	const encryptedFieldsObject = encryptedFields.map((field) =>
 		Object.fromEntries(field),
 	);
-	return { data: encryptedFieldsObject };
+	return encryptedFieldsObject;
 };
 
 export const getDecryptedUrls = async (urls: any) => {

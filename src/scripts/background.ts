@@ -1,10 +1,9 @@
 import browser from "webextension-polyfill";
 
 import {
-	decryptCredentialFieldsHandler,
 	initiateAuthHandler,
 	savePassphraseHandler,
-	decryptCredentialFieldsHandlerNew,
+	decryptCredentialFieldsHandler,
 	loadWasmModule,
 	addCredentialHandler,
 	decryptFieldHandler,
@@ -36,12 +35,8 @@ browser.runtime.onInstalled.addListener(async () => {
 
 browser.runtime.onMessage.addListener(async (request) => {
 	switch (request.action) {
-		case "decrypt": {
-			return decryptCredentialFieldsHandler(request.data);
-		}
 		case "decryptField": {
-			const field = await decryptFieldHandler(request.data);
-			return { data: field };
+			return await decryptFieldHandler(request.data);
 		}
 
 		case "encryptFields": {
@@ -128,7 +123,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 		case "checkPvtLoaded":
 			return is_global_context_set();
 		case "decryptMeta":
-			return decryptCredentialFieldsHandlerNew(request.data);
+			return decryptCredentialFieldsHandler(request.data);
 		case "addCredential":
 			return addCredentialHandler(request.data);
 		case "createShareCredPayload":

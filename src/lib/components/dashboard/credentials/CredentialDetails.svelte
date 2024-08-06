@@ -123,8 +123,10 @@
 
 	const handleEditCredential = async () => {
 		for (let field of sensitiveFields) {
-			const response = await sendMessage("decryptField", field.fieldValue);
-			let decryptedValue = response.data;
+			const decryptedValue = await sendMessage(
+				"decryptField",
+				field.fieldValue,
+			);
 			fieldsForEdit.push({
 				fieldId: field.fieldId,
 				fieldName: field.fieldName,

@@ -28,8 +28,7 @@
 	let totpInterval: any;
 
 	const decrypt = async () => {
-		const response = await sendMessage("decryptField", fieldValue);
-		decryptedValue = response.data;
+		decryptedValue = await sendMessage("decryptField", fieldValue);
 		decrypted = true;
 
 		if (fieldType === "totp") {

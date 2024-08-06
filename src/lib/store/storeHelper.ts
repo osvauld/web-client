@@ -10,6 +10,7 @@ import browser from "webextension-polyfill";
 import { selectedSection } from "./ui.store";
 import { Group, SelectedGroup } from "../dtos/group.dto";
 import { Folder } from "../dtos/folder.dto";
+import { Credential } from "../dtos/credential.dto";
 
 export const setFolderStore = async () => {
 	const responseJson = await fetchAllFolders();
@@ -54,7 +55,10 @@ export const setCredentialStore = async () => {
 		credentialStore.set([]);
 		return;
 	}
-	const response = await sendMessage("decryptMeta", responseJson.data);
+	const response: { data: Credential[] } = await sendMessage(
+		"decryptMeta",
+		responseJson.data,
+	);
 	credentialStore.set(response.data);
 };
 

@@ -169,9 +169,10 @@
 		if (!credentialClicked && credentialId) {
 			const credentialResponse = await fetchCredsByIds([credentialId]);
 			clickedCredential = credentialResponse?.data[0];
-			const decyrptedResponse = await sendMessage("decryptMeta", [
-				clickedCredential,
-			]);
+			const decyrptedResponse: { data: Credential[] } = await sendMessage(
+				"decryptMeta",
+				[clickedCredential],
+			);
 			clickedCredential = decyrptedResponse?.data[0] || {};
 			const sensitiveResponse =
 				await fetchSensitiveFieldsByCredentialId(credentialId);
