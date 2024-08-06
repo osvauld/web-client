@@ -29,7 +29,14 @@ export const sendMessage = async (action: string, data: any = {}) => {
 		});
 		return response;
 	} catch (error) {
-		console.error("Error sending message:", error);
+		console.error(
+			"Error sending message:",
+			error,
+			"\ndata",
+			data,
+			"action\n",
+			action,
+		);
 	}
 };
 export const searchObjects = (

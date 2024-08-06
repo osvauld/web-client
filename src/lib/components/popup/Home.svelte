@@ -90,7 +90,7 @@
 				"decryptMeta",
 				listedCredentials,
 			);
-			listedCredentials = decyrptedResponse.data;
+			listedCredentials = decyrptedResponse;
 			domainAssociatedCredentials = listedCredentials;
 		}
 	};
@@ -169,11 +169,10 @@
 		if (!credentialClicked && credentialId) {
 			const credentialResponse = await fetchCredsByIds([credentialId]);
 			clickedCredential = credentialResponse?.data[0];
-			const decyrptedResponse: { data: Credential[] } = await sendMessage(
-				"decryptMeta",
-				[clickedCredential],
-			);
-			clickedCredential = decyrptedResponse?.data[0] || {};
+			const decyrptedResponse = await sendMessage("decryptMeta", [
+				clickedCredential,
+			]);
+			clickedCredential = decyrptedResponse || {};
 			const sensitiveResponse =
 				await fetchSensitiveFieldsByCredentialId(credentialId);
 			clickedCredential.fields = [
@@ -256,7 +255,6 @@
 					placeholder="Find what you need faster.."
 					on:keyup="{handleInputChange}"
 					bind:value="{query}"
-					autofocus
 				/>
 			</div>
 		{/if}

@@ -29,6 +29,7 @@
 	import AddLoginFields from "./AddLoginFields.svelte";
 	import { sendMessage, getDomain } from "../helper";
 	import { setCredentialStore } from "../../../store/storeHelper";
+	import { EncryptedEditField } from "../../../dtos/credential.dto";
 
 	export let edit = false;
 	export let credentialFields: CredentialFieldComponentProps[] = [
@@ -112,13 +113,17 @@
 		}, {});
 		let domain = "";
 		const envFieldMap = envFieldsResponse.data;
-		console.log(envFieldMap, "EnvFieldMap");
 		for (const field of credentialFields) {
 			if (field.fieldName === "URL") {
 				domain = getDomain(field.fieldValue);
 			}
-			let editedUserField;
-			if (changedFields.has(field.fieldId)) {
+			let editedUserField: {
+				fieldId: string;
+				fieldName: string;
+				fieldType: string;
+				fieldValues: EncryptedEditField[];
+			};
+			if (field.fieldId && changedFields.has(field.fieldId)) {
 				editedUserField = {
 					fieldId: field.fieldId,
 					fieldName: field.fieldName,
@@ -140,10 +145,13 @@
 							};
 						},
 					);
-					const encryptedEditFields = await sendMessage("encryptEditFields", {
-						fieldValue: field.fieldValue,
-						usersToShare: envFieldPayloadForEncryption,
-					});
+					const encryptedEditFields: EncryptedEditField[] = await sendMessage(
+						"encryptEditFields",
+						{
+							fieldValue: field.fieldValue,
+							usersToShare: envFieldPayloadForEncryption,
+						},
+					);
 					const envFieldPayload = encryptedEditFields.map((envField) => {
 						return {
 							envFieldId: envField.userId,
@@ -152,14 +160,25 @@
 					});
 					editedEnvFields.push(...envFieldPayload);
 				}
-				const encryptedEditFields = await sendMessage("encryptEditFields", {
-					fieldValue: field.fieldValue,
-					usersToShare: users,
-				});
+				const encryptedEditFields: EncryptedEditField[] = await sendMessage(
+					"encryptEditFields",
+					{
+						fieldValue: field.fieldValue,
+						usersToShare: users,
+					},
+				);
 				editedUserField.fieldValues = encryptedEditFields;
 				editedUserFields.push(editedUserField);
 			} else if (!field.fieldId) {
-				const newFieldPayload = {
+				const newFieldPayload: {
+					fieldName: string;
+					fieldType: string;
+					fieldValues: {
+						fieldValue: string;
+						userId: string;
+						envFieldValues: { envId: string; fieldValue: string }[];
+					}[];
+				} = {
 					fieldName: field.fieldName,
 					fieldType:
 						field.fieldName === "TOTP"
@@ -170,37 +189,47 @@
 					fieldValues: [],
 				};
 
-				const encryptedEditFields = await sendMessage("encryptEditFields", {
-					fieldValue: field.fieldValue,
-					usersToShare: users,
-				});
+				const encryptedEditFields: EncryptedEditField[] = await sendMessage(
+					"encryptEditFields",
+					{
+						fieldValue: field.fieldValue,
+						usersToShare: users,
+					},
+				);
 				for (const fieldData of encryptedEditFields) {
-					let payload = {
+					let payload: {
+						fieldValue: string;
+						userId: string;
+						envFieldValues: { envId: string; fieldValue: string }[];
+					} = {
 						fieldValue: fieldData.fieldValue,
 						userId: fieldData.userId,
-						envFieldvalues: [],
+						envFieldValues: [],
 					};
 
 					if (userEnvMap[fieldData.userId]) {
 						const cliUsersToShare = userEnvMap[fieldData.userId].map(
-							(envData) => {
+							(envData: any) => {
 								return {
 									userId: envData.envId,
 									publicKey: envData.cliUserPublicKey,
 								};
 							},
 						);
-						const encryptedFields = await sendMessage("encryptEditFields", {
-							fieldValue: field.fieldValue,
-							usersToShare: cliUsersToShare,
-						});
+						const encryptedFields: EncryptedEditField[] = await sendMessage(
+							"encryptEditFields",
+							{
+								fieldValue: field.fieldValue,
+								usersToShare: cliUsersToShare,
+							},
+						);
 						const envFieldsValues = encryptedFields.map((envField) => {
 							return {
 								envId: envField.userId,
 								fieldValue: envField.fieldValue,
 							};
 						});
-						payload.envFieldvalues = envFieldsValues;
+						payload.envFieldValues = envFieldsValues;
 					}
 					newFieldPayload.fieldValues.push(payload);
 				}
@@ -283,6 +312,7 @@
 			await editCredential();
 			isLoaderActive = false;
 			dispatcher("close");
+			return;
 		}
 		let addCredentialFields: Field[] = [];
 		let domain = "";
@@ -501,7 +531,6 @@
 					type="text"
 					placeholder="Enter Credential name...."
 					autocomplete="off"
-					autofocus
 					bind:value="{name}"
 				/>
 				{#if credentialType != "Note"}

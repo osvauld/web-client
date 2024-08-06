@@ -11,6 +11,7 @@
 	import { Lens } from "../icons";
 	import ListItem from "../components/ListItem.svelte";
 	import { toastStore } from "../store";
+	import { UserEncryptedDataForShareCredentials } from "../../../dtos/request.dto";
 	const dispatch = createEventDispatcher();
 	export let users: User[];
 	export let credentialsFields: CredentialFields[] = [];
@@ -29,10 +30,13 @@
 		: users;
 
 	export const shareCredentialHandler = async () => {
-		const userData = await sendMessage("createShareCredPayload", {
-			creds: credentialsFields,
-			users: selectedUsers,
-		});
+		const userData: UserEncryptedDataForShareCredentials[] = await sendMessage(
+			"createShareCredPayload",
+			{
+				creds: credentialsFields,
+				users: selectedUsers,
+			},
+		);
 
 		const payload: ShareCredentialsWithUsersPayload = { userData };
 		const shareStatus = await shareCredentialsWithUsers(payload);

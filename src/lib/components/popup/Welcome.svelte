@@ -47,8 +47,8 @@
 				class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 focus:border-osvauld-activeBorder"
 				{type}
 				id="passphrase"
-				autocomplete="off"
 				autofocus
+				autocomplete="off"
 				on:input="{onInput}"
 			/>
 			<button

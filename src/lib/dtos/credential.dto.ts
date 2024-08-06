@@ -88,3 +88,8 @@ export type UrlCredMap = {
 	value: string;
 	credentialId: string;
 };
+
+export type EncryptedEditField = {
+	fieldValue: string;
+	userId: string;
+};

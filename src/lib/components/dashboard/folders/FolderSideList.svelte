@@ -154,7 +154,7 @@
 								class="ml-2 text-osvauld-fieldText font-light absolute right-0 {$selectedFolder?.id ===
 								folder.id
 									? 'visible delay-200'
-									: 'invisible'}">{$credentialStore.length}</span
+									: 'invisible'}">{$credentialStore?.length}</span
 							></span
 						>
 						<div
@@ -243,7 +243,7 @@
 										class="ml-2 text-osvauld-fieldText font-light absolute right-0 {$selectedFolder?.id ===
 										folder.id
 											? 'visible delay-200'
-											: 'invisible'}">{$credentialStore.length}</span
+											: 'invisible'}">{$credentialStore?.length}</span
 									>
 								</span>
 								<div

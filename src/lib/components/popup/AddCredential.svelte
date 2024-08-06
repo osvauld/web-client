@@ -154,7 +154,6 @@
 				type="text"
 				required
 				placeholder="Enter credential name"
-				autofocus
 				bind:value="{name}"
 				class="mt-1 block w-full px-3 py-1 rounded-md shadow-sm sm:text-sm bg-osvauld-cardshade border-osvauld-iconblack focus:border-osvauld-iconblack focus:ring-0"
 				autocomplete="off"

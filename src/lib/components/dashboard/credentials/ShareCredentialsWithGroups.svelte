@@ -13,12 +13,13 @@
 	import ListItem from "../components/ListItem.svelte";
 	import { toastStore } from "../store";
 	import { createEventDispatcher, onMount } from "svelte";
+	import { UserEncryptedCredentials } from "../../../dtos/credential.dto";
 	const dispatch = createEventDispatcher();
 	export let allGroups: SelectedGroup[];
 	export let groups: Group[] = allGroups.map((group) => {
 		return { groupId: group.groupId, name: group.name };
 	});
-	export let credentialsFields: CredentialFields[];
+	export let credentialsFields: CredentialFields[] = [];
 	let selectedGroups = writable(new Map<string, Group>());
 	let showOptions = false;
 	let selectionIndex: number | null = null;
@@ -43,10 +44,13 @@
 		for (const groupUsers of groupUsersList) {
 			const group = $selectedGroups.get(groupUsers.groupId);
 			if (group == undefined || !group.accessType) continue;
-			const userData = await sendMessage("createShareCredPayload", {
-				creds: credentialsFields,
-				users: groupUsers.userDetails,
-			});
+			const userData: UserEncryptedCredentials[] = await sendMessage(
+				"createShareCredPayload",
+				{
+					creds: credentialsFields,
+					users: groupUsers.userDetails,
+				},
+			);
 
 			payload.groupData.push({
 				groupId: group.groupId,
@@ -108,7 +112,6 @@
 	onMount(() => {
 		//Below will disable save changes button when group/user button switched
 		dispatch("enable", false);
-		console.log("groups", groups);
 	});
 </script>
 

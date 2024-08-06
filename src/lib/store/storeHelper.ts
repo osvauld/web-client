@@ -55,11 +55,8 @@ export const setCredentialStore = async () => {
 		credentialStore.set([]);
 		return;
 	}
-	const response: { data: Credential[] } = await sendMessage(
-		"decryptMeta",
-		responseJson.data,
-	);
-	credentialStore.set(response.data);
+	const response = await sendMessage("decryptMeta", responseJson.data);
+	credentialStore.set(response);
 };
 
 export const setEnvStore = async () => {

@@ -40,7 +40,6 @@
 			type="text"
 			placeholder="Enter field name"
 			required="{field.fieldName !== 'TOTP'}"
-			autofocus
 			bind:value="{field.fieldName}"
 			on:change="{() => dispatch('change')}"
 		/>
@@ -57,6 +56,8 @@
 		/>
 
 		<div
+			role="button"
+			tabindex="0"
 			class="flex items-center justify-center {index === hoveredIndex
 				? 'relative'
 				: ''}"

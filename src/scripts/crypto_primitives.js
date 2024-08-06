@@ -463,6 +463,26 @@ export function decrypt_text(encrypted_text) {
 }
 
 /**
+ * @param {any} credentials
+ * @returns {any}
+ */
+export function decrypt_fields(credentials) {
+	try {
+		const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+		wasm.decrypt_fields(retptr, addHeapObject(credentials));
+		var r0 = getInt32Memory0()[retptr / 4 + 0];
+		var r1 = getInt32Memory0()[retptr / 4 + 1];
+		var r2 = getInt32Memory0()[retptr / 4 + 2];
+		if (r2) {
+			throw takeObject(r1);
+		}
+		return takeObject(r0);
+	} finally {
+		wasm.__wbindgen_add_to_stack_pointer(16);
+	}
+}
+
+/**
  * @param {Array<any>} fields
  * @param {string} public_key
  * @returns {any}

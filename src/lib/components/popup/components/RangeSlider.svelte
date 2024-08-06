@@ -276,6 +276,11 @@
 				on:mousedown="{onDragStart}"
 				on:mouseover="{() => (thumbHover = true)}"
 				on:mouseout="{() => (thumbHover = false)}"
+				on:blur="{() => (thumbHover = false)}"
+				on:focus="{() => (thumbHover = true)}"
+				role="slider"
+				tabindex="0"
+				aria-valuenow="{value}"
 			>
 				{#if holding || thumbHover}
 					<div

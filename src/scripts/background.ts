@@ -7,7 +7,6 @@ import {
 	loadWasmModule,
 	addCredentialHandler,
 	decryptFieldHandler,
-	encryptFieldHandler,
 	createShareCredsPayload,
 	handlePvtKeyImport,
 	credentialSubmitHandler,
@@ -37,10 +36,6 @@ browser.runtime.onMessage.addListener(async (request) => {
 	switch (request.action) {
 		case "decryptField": {
 			return await decryptFieldHandler(request.data);
-		}
-
-		case "encryptFields": {
-			return encryptFieldHandler(request.data.fields, request.data.publicKey);
 		}
 
 		case "openFullscreenTab":

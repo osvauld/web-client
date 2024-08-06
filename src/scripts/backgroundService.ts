@@ -8,6 +8,7 @@ import { fetchCredsByIds } from "../lib/apis/credentials.api";
 import {
 	Credential,
 	CredentialFields,
+	EncryptedEditField,
 	Field,
 	UserEncryptedFields,
 	UsersForDataSync,
@@ -26,6 +27,7 @@ import init, {
 	generate_keys_without_password,
 	encrypt_field_value,
 	decrypt_urls,
+	decrypt_fields,
 } from "./crypto_primitives.js";
 import { User } from "../lib/dtos/user.dto.js";
 
@@ -103,7 +105,7 @@ export const decryptCredentialFieldsHandler = async (
 	credentials: Credential[],
 ) => {
 	const response: Credential[] = await decrypt_credentials(credentials);
-	return { data: response };
+	return response;
 };
 
 export const addCredentialHandler = async (payload: {
@@ -116,18 +118,9 @@ export const addCredentialHandler = async (payload: {
 	);
 };
 
-export const decryptFieldHandler = async (text: string) => {
+export const decryptFieldHandler = async (text: string): Promise<string> => {
 	const decrypted = await decrypt_text(text);
 	return decrypted;
-};
-
-export const encryptFieldHandler = async (fields: any, publicKey: string) => {
-	try {
-		const response = await encrypt_fields(fields, publicKey);
-		return { data: response };
-	} catch (error) {
-		console.error("Error encrypting fields:", error);
-	}
 };
 
 export const loadWasmModule = async () => {
@@ -152,22 +145,24 @@ export const encryptCredentialsForUser = async (
 			fields: [],
 		};
 		encryptedCred.credentialId = credential.credentialId;
-		const response = await encryptFieldHandler(credential.fields, publicKeyStr);
-		encryptedCred.fields = response.data;
+		encryptedCred.fields = await encrypt_fields(
+			credential.fields,
+			publicKeyStr,
+		);
 		encryptedCredsForUser.push(encryptedCred);
 	}
 	return encryptedCredsForUser;
 };
 
 export const createShareCredsPayload = async (
-	creds: CredentialFields[],
-	selectedUsers: UserListForEncryption[],
+	creds: any,
+	selectedUsers: any,
 ): Promise<CredentialsForUsersPayload[]> => {
-	const response = await decryptCredentialFieldsHandler(creds);
+	const decryptedFields = await decrypt_fields(creds);
 	const userData: CredentialsForUsersPayload[] = [];
 	for (const user of selectedUsers) {
 		const userEncryptedFields = await encryptCredentialsForUser(
-			response.data,
+			decryptedFields,
 			user.publicKey,
 		);
 		if (user.accessType) {
@@ -227,7 +222,7 @@ export const credentialSubmitHandler = async (
 		const decryptedData =
 			await decryptCredentialFieldsHandler(listedCredentials);
 		if (decryptedData) {
-			for (const credential of decryptedData.data) {
+			for (const credential of decryptedData) {
 				for (const field of credential.fields) {
 					if (field.fieldName == "Username") {
 						if (field.fieldValue == newCredential.username) {
@@ -272,18 +267,24 @@ export const generateCliKeys = async (username: string) => {
 	return returnObj;
 };
 
-export const encryptEditFields = async (data: any) => {
+export const encryptEditFields = async (data: {
+	fieldValue: string;
+	usersToShare: { userId: string; publicKey: string }[];
+}): Promise<EncryptedEditField[]> => {
 	const encryptedFields = await encrypt_field_value(
 		data.fieldValue,
 		data.usersToShare,
 	);
-	const encryptedFieldsObject = encryptedFields.map((field) =>
+	const encryptedFieldsObject = encryptedFields.map((field: any) =>
 		Object.fromEntries(field),
 	);
 	return encryptedFieldsObject;
 };
 
-export const getDecryptedUrls = async (urls: any) => {
+export const getDecryptedUrls = async (urls: {
+	credentialId: string;
+	value: string;
+}): Promise<{ credentialId: string; value: string }> => {
 	const decryptedUrls = await decrypt_urls(urls);
 	return decryptedUrls;
 };

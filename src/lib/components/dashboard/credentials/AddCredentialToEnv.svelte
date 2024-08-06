@@ -68,10 +68,10 @@
 				},
 			],
 		});
-		encryptedCreds[0].envId = selectedEnvironment.id;
-		let shareCredentialsWithEnvResponse = await shareCredentialsWithEnv(
-			encryptedCreds[0],
-		);
+		let shareCredentialsWithEnvResponse = await shareCredentialsWithEnv({
+			...encryptedCreds[0],
+			envId: selectedEnvironment.id,
+		});
 		if (shareCredentialsWithEnvResponse.success) {
 			toastStore.set({
 				type: shareCredentialsWithEnvResponse.success,

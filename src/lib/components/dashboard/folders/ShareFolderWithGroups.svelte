@@ -16,6 +16,7 @@
 	import { onMount } from "svelte";
 	import { Lens } from "../icons";
 	import ListItem from "../components/ListItem.svelte";
+	import { UserEncryptedCredentials } from "../../../dtos/credential.dto";
 	const dispatch = createEventDispatcher();
 	let groups: Group[] = [];
 	export let credentialsFields: CredentialFields[];
@@ -44,10 +45,13 @@
 		for (const groupUsers of groupUsersList) {
 			const group = $selectedGroups.get(groupUsers.groupId);
 			if (group === undefined || !group.accessType) continue;
-			const userData = await sendMessage("createShareCredPayload", {
-				creds: credentialsFields,
-				users: groupUsers.userDetails,
-			});
+			const userData: UserEncryptedCredentials[] = await sendMessage(
+				"createShareCredPayload",
+				{
+					creds: credentialsFields,
+					users: groupUsers.userDetails,
+				},
+			);
 			payload.groupData.push({
 				groupId: group.groupId,
 				accessType: group.accessType,

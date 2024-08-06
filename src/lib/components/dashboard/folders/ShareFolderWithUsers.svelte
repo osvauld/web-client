@@ -6,6 +6,7 @@
 	import { sendMessage } from "../helper";
 	import { Lens } from "../icons";
 	import ListItem from "../components/ListItem.svelte";
+	import { UserEncryptedDataForShareCredentials } from "../../../dtos/request.dto";
 
 	const dispatch = createEventDispatcher();
 	export let users: User[];
@@ -28,14 +29,16 @@
 		if ($selectedFolder === undefined) {
 			throw new Error("Folder not selected");
 		}
-		const userData = await sendMessage("createShareCredPayload", {
-			creds: credentialsFields,
-			users: selectedUsers,
-		});
+		const userData: UserEncryptedDataForShareCredentials[] = await sendMessage(
+			"createShareCredPayload",
+			{
+				creds: credentialsFields,
+				users: selectedUsers,
+			},
+		);
 
 		const shareFolderPayload: ShareFolderWithUsersPayload = {
 			folderId: $selectedFolder.id,
-			// @ts-ignore
 			userData,
 		};
 		const shareStatus = await shareFolderWithUsers(shareFolderPayload);
