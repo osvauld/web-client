@@ -25,7 +25,7 @@
 		: users;
 
 	export const shareFolderHandler = async () => {
-		if ($selectedFolder === null) {
+		if ($selectedFolder === undefined) {
 			throw new Error("Folder not selected");
 		}
 		const userData = await sendMessage("createShareCredPayload", {

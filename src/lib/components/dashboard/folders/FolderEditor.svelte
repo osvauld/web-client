@@ -26,7 +26,7 @@
 			name: name,
 			description: description,
 		};
-		if ($selectedFolder == null) {
+		if ($selectedFolder == undefined) {
 			showFolderRenameDrawer.set(false);
 			throw new Error("folder not selected");
 		}

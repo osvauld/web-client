@@ -1,5 +1,4 @@
 <script lang="ts">
-	// @ts-nocheck
 	import { Lens, ClosePanel, EditIcon, InfoIcon } from "../icons";
 	import ExistingListParent from "../components/ExistingListParent.svelte";
 	import Toggle from "../Toggle.svelte";
@@ -53,13 +52,13 @@
 	};
 
 	const existingItems = async () => {
-		if ($selectedFolder !== null && selectedTab === "Users") {
+		if ($selectedFolder && selectedTab === "Users") {
 			const responseJson = await fetchFolderUsers($selectedFolder.id);
 			existingUserData = responseJson.data;
 		} else {
 			existingUserData.length = 0;
 		}
-		if ($selectedFolder !== null && selectedTab === "Groups") {
+		if ($selectedFolder && selectedTab === "Groups") {
 			const reponseJson = await fetchFolderGroups($selectedFolder.id);
 			existingGroupsData = reponseJson.data;
 		} else {
@@ -68,16 +67,25 @@
 	};
 
 	const removeExistingUser = async (e: any) => {
+		if ($selectedFolder === undefined) {
+			throw new Error("Folder not selected");
+		}
 		await removeUserFromFolder($selectedFolder.id, e.detail.id);
 		await existingItems();
 	};
 
 	const removeExistingGroup = async (e: any) => {
+		if ($selectedFolder === undefined) {
+			throw new Error("Folder not selected");
+		}
 		await removeGroupFromFolder($selectedFolder.id, e.detail.groupId);
 		await existingItems();
 	};
 
 	const handlePermissionChange = async (e: any) => {
+		if (!$selectedFolder) {
+			throw new Error("Folder not selected");
+		}
 		let editPermissionResponse;
 		if (selectedTab === "Users") {
 			editPermissionResponse = await editFolderPermissionForUser(
@@ -147,7 +155,7 @@
 			<button
 				class="p-2 rounded-lg {editPermissionTrigger
 					? 'bg-osvauld-cardshade'
-					: ''}  {$selectedFolder.accessType === 'manager'
+					: ''}  {$selectedFolder?.accessType === 'manager'
 					? 'visible'
 					: 'hidden'}"
 				on:click="{() => {

@@ -65,14 +65,14 @@
 
 	const selectEnv = (env: Environments) => {
 		selectedEnv.set(env);
-		selectedFolder.set(null);
+		selectedFolder.set(undefined);
 		selectedSection.set("Environments");
 		credentialStore.set([]);
 	};
 
 	const selectSection = (section: SelectedSection) => {
 		selectedSection.set(section);
-		selectedFolder.set(null);
+		selectedFolder.set(undefined);
 		selectedEnv.set(null);
 		credentialStore.set([]);
 	};

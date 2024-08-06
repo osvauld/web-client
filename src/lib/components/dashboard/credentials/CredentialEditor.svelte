@@ -1,5 +1,4 @@
 <script lang="ts">
-	// @ts-nocheck
 	import { onMount } from "svelte";
 	import { fly, blur } from "svelte/transition";
 	import { ClosePanel, Add, BinIcon } from "../icons";
@@ -38,7 +37,7 @@
 		{ fieldName: "URL", fieldValue: "https://", sensitive: false },
 		{ fieldName: "TOTP", fieldValue: "", sensitive: true },
 	];
-	export let credentialId: string | null = null;
+	export let credentialId: string = "";
 	export let description = "";
 	export let name = "";
 	export let credentialType = "Login";
@@ -64,14 +63,18 @@
 	};
 	//TODO: change user type
 	const removeField = (index: number) => {
-		if (credentialFields[index].fieldId) {
-			deletedFields.push(credentialFields[index].fieldId);
+		const field = credentialFields[index];
+		if (field && field.fieldId) {
+			const fieldId = field.fieldId;
+			if (typeof fieldId === "string") {
+				deletedFields.push(fieldId);
+			}
 		}
 		credentialFields.splice(index, 1);
 		credentialFields = [...credentialFields];
 	};
 
-	const totpValidator = (secretKey) => {
+	const totpValidator = (secretKey: string): boolean => {
 		// Base32 encoded TOTP secrets typically range in size, allowing for flexibility
 		if (secretKey.length < 10 || secretKey.length > 64) {
 			return false;
@@ -86,6 +89,10 @@
 		return true;
 	};
 	const editCredential = async () => {
+		if (!credentialId) {
+			dispatcher("close");
+			throw new Error("credential not selected");
+		}
 		const editedUserFields = [];
 		const editedEnvFields = [];
 		const newFields = [];
@@ -96,7 +103,7 @@
 		}));
 		const envFieldsResponse = await getEnvFieldsByCredentialId(credentialId);
 
-		let userEnvMap = envResponse.data.reduce((obj, item) => {
+		let userEnvMap = envResponse.data.reduce((obj: any, item) => {
 			if (!obj[item.cliUserCreatedBy]) {
 				obj[item.cliUserCreatedBy] = [];
 			}
@@ -105,6 +112,7 @@
 		}, {});
 		let domain = "";
 		const envFieldMap = envFieldsResponse.data;
+		console.log(envFieldMap, "EnvFieldMap");
 		for (const field of credentialFields) {
 			if (field.fieldName === "URL") {
 				domain = getDomain(field.fieldValue);
@@ -122,7 +130,7 @@
 								: "meta",
 					fieldValues: [],
 				};
-				if (envFieldMap[field.fieldId]) {
+				if (field?.fieldId && envFieldMap[field.fieldId]) {
 					// making envFieldId as userId to reuse 'encryptEditFields' case
 					const envFieldPayloadForEncryption = envFieldMap[field.fieldId].map(
 						(envField) => {
@@ -210,10 +218,6 @@
 			domain: "",
 			deletedFields,
 		};
-		if (credentialId === null) {
-			dispatcher("close");
-			throw new Error("Credential Id is null");
-		}
 		await updateCredential(payload, credentialId);
 		await setCredentialStore();
 		isLoaderActive = false;
@@ -223,7 +227,7 @@
 	const saveCredential = async () => {
 		isLoaderActive = true;
 		errorMessage = "";
-		if ($selectedFolder === null) throw new Error("folder not selected");
+		if ($selectedFolder === undefined) throw new Error("folder not selected");
 		if (name.length === 0) {
 			isLoaderActive = false;
 			notNamed = true;
@@ -378,8 +382,8 @@
 			const responseJson = await fetchCredentialUsersForDataSync(credentialId);
 			usersToShare = responseJson.data;
 		} else {
-			if ($selectedFolder === null) {
-				return;
+			if ($selectedFolder === undefined) {
+				throw new Error("Folder not selected");
 			}
 			const responseJson = await fetchFolderUsersForDataSync(
 				$selectedFolder.id,
@@ -393,7 +397,7 @@
 	};
 
 	const deleteCredential = () => {
-		if ($selectedFolder === null || credentialId === null) {
+		if ($selectedFolder === undefined || credentialId === null) {
 			throw new Error("Folder not selected");
 		}
 		modalManager.set({

@@ -21,9 +21,9 @@
 	}
 
 	export const buttonCoords = derived(buttonRef, ($buttonRef) => {
-		if ($buttonRef) {
-			const rect = $buttonRef.getBoundingClientRect();
+		if ($buttonRef && $modalManager != null) {
 			// @ts-ignore
+			const rect = $buttonRef.getBoundingClientRect();
 			const leftVal =
 				$modalManager.type === "Group"
 					? rect.left + window.scrollX

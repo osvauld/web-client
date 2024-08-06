@@ -12,7 +12,7 @@
 	import { BinIcon, DownArrow } from "../icons";
 	import AccessSelector from "./AccessSelector.svelte";
 
-	import { createEventDispatcher } from "svelte";
+	import { createEventDispatcher, onMount } from "svelte";
 
 	const dispatch = createEventDispatcher();
 
@@ -58,7 +58,7 @@
 			>
 			<button
 				class="w-[9.8rem] rounded-md font-normal cursor-pointer px-2 py-0.5 pl-2 text-base flex justify-around items-center {setbackground(
-					item.accessType,
+					item.accessType === undefined ? 'reader' : item.accessType,
 				)}"
 				>{item.accessType}
 				<span> <DownArrow type="{item.accessType}" /></span>

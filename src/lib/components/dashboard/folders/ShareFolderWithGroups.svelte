@@ -36,9 +36,9 @@
 		const groupIds = Array.from($selectedGroups.keys());
 		const response = await fetchUsersByGroupIds(groupIds);
 		const groupUsersList = response.data;
-		if ($selectedFolder === null) throw new Error("Folder not selected");
+		if ($selectedFolder === undefined) throw new Error("Folder not selected");
 		const payload: ShareFolderWithGroupsPayload = {
-			folderId: $selectedFolder.id,
+			folderId: $selectedFolder!.id,
 			groupData: [],
 		};
 		for (const groupUsers of groupUsersList) {
@@ -105,11 +105,11 @@
 
 	onMount(async () => {
 		// TODO: change fetch all groups to fetch groups where folder not shared.
-		if ($selectedFolder === null) throw new Error("Folder not selected");
+		if ($selectedFolder === undefined) throw new Error("Folder not selected");
 		//Below will disable save changes button when group/user button switched
 		dispatch("enable", false);
 
-		const responseJson = await fetchGroupsWithoutAccess($selectedFolder.id);
+		const responseJson = await fetchGroupsWithoutAccess($selectedFolder!.id);
 		groups = responseJson.data;
 	});
 </script>
