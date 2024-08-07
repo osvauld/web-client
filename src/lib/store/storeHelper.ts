@@ -11,7 +11,8 @@ import { selectedSection } from "./ui.store";
 import { Group, SelectedGroup } from "../dtos/group.dto";
 import { Folder } from "../dtos/folder.dto";
 import { Credential } from "../dtos/credential.dto";
-
+import { getUser } from "../apis/user.api";
+import { User } from "../dtos/user.dto";
 export const setFolderStore = async () => {
 	const responseJson = await fetchAllFolders();
 	const sortedData = responseJson.data.sort((a: Folder, b: Folder) =>
@@ -63,4 +64,16 @@ export const setEnvStore = async () => {
 	const responseJson = await getEnvironments();
 	const envs = responseJson.data;
 	envStore.set(envs);
+};
+export const getUserDetails = async (): Promise<User> => {
+	const accountDetails = localStorage.getItem("user");
+	let user;
+	if (accountDetails == null) {
+		const userJson = await getUser();
+		user = userJson.data;
+		localStorage.setItem("user", JSON.stringify(user));
+	} else {
+		user = JSON.parse(accountDetails);
+	}
+	return user;
 };

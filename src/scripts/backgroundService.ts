@@ -284,7 +284,7 @@ export const encryptEditFields = async (data: {
 export const getDecryptedUrls = async (urls: {
 	credentialId: string;
 	value: string;
-}): Promise<{ credentialId: string; value: string }> => {
+}): Promise<{ credentialId: string; value: string }[]> => {
 	const decryptedUrls = await decrypt_urls(urls);
 	return decryptedUrls;
 };

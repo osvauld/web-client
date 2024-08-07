@@ -1,5 +1,4 @@
 <script lang="ts">
-	// @ts-nocheck
 	import {
 		fetchAllUserUrls,
 		fetchCredsByIds,
@@ -19,23 +18,30 @@
 	import AddCredential from "./AddCredential.svelte";
 	import { Add } from "./icons";
 	import PasswordGenerator from "./PasswordGenerator.svelte";
-
+	type ListedCredential = {
+		description: string;
+		domain: string;
+		folderId: string;
+		credentialId: string;
+		name: string;
+	};
 	let passwordFound = false;
 	let credentialClicked = false;
 	let domain: string | null = null;
-	let listedCredentials: Credential[] = [];
-	let domainAssociatedCredentials: Credential[] = [];
+	let listedCredentials: ListedCredential[] = [];
+	let domainAssociatedCredentials: ListedCredential[] = [];
 	let selectedCredentialId: string | null = null;
 	let searchData: SearchedCredential[] = [];
 	let query: string | null = null;
 	let scrollPosition = 0;
 	let clickedCredential: any | null = null;
-	let scrollableElement;
+	let scrollableElement: any;
 	let passwordGenerator = false;
 	let showAddOptions = false;
 	let currentUrl = "";
 	let port: browser.Runtime.Port;
 	let addNewCredential = false;
+	let storedCredentialId: string | null = null;
 	let newCredential: any | null = {
 		username: "",
 		password: "",
@@ -79,19 +85,6 @@
 			passwordFound = true;
 			const responseJson = await fetchCredsByIds(credIds);
 			listedCredentials = responseJson.data;
-			listedCredentials = listedCredentials.map((cred) => ({
-				...cred,
-				fields: cred.fields.filter(
-					(field) => field.fieldName !== "Domain" && field.fieldName !== "URL",
-				),
-			}));
-
-			const decyrptedResponse = await sendMessage(
-				"decryptMeta",
-				listedCredentials,
-			);
-			listedCredentials = decyrptedResponse;
-			domainAssociatedCredentials = listedCredentials;
 		}
 	};
 	onMount(async () => {
@@ -104,12 +97,7 @@
 		}
 		const user = await getUser();
 		localStorage.setItem("user", JSON.stringify(user.data));
-		const storedCredentialId = localStorage.getItem("selectedCredentialId");
-		if (storedCredentialId != "") {
-			await dropDownClicked({
-				detail: { credentialId: storedCredentialId },
-			});
-		}
+		storedCredentialId = localStorage.getItem("selectedCredentialId");
 		const storedScrollPosition = localStorage.getItem("scrollPosition");
 		if (storedScrollPosition !== null) {
 			scrollPosition = parseInt(storedScrollPosition);
@@ -119,7 +107,7 @@
 		port.onMessage.addListener(handleMessage);
 	});
 
-	const handleMessage = (msg) => {
+	const handleMessage = (msg: { username: string; password: string }) => {
 		if (msg.username && msg.password) {
 			newCredential = msg;
 			addNewCredential = true;
@@ -136,7 +124,8 @@
 		searchData = searchFieldSResponse.data;
 		const urlJson = await fetchAllUserUrls();
 		const urls = urlJson.data;
-		const decryptedData = await sendMessage("getDecryptedUrls", urls);
+		const decryptedData: { credentialId: string; value: string }[] =
+			await sendMessage("getDecryptedUrls", urls);
 		const mergedArray = searchData.map((item) => {
 			const replacement = decryptedData.find(
 				(decryptedItem) => decryptedItem.credentialId === item.credentialId,
@@ -164,31 +153,9 @@
 		await localStorage.setItem("query", query);
 	};
 
-	const dropDownClicked = async (e: any) => {
-		const credentialId: string | null = e.detail.credentialId;
-		if (!credentialClicked && credentialId) {
-			const credentialResponse = await fetchCredsByIds([credentialId]);
-			clickedCredential = credentialResponse?.data[0];
-			const decyrptedResponse = await sendMessage("decryptMeta", [
-				clickedCredential,
-			]);
-			clickedCredential = decyrptedResponse || {};
-			const sensitiveResponse =
-				await fetchSensitiveFieldsByCredentialId(credentialId);
-			clickedCredential.fields = [
-				...(clickedCredential?.fields ?? []),
-				...(sensitiveResponse.data ?? []),
-			];
-
-			selectedCredentialId = credentialId;
-			localStorage.setItem("selectedCredentialId", selectedCredentialId);
-		} else {
-			selectedCredentialId = null;
-			localStorage.setItem("selectedCredentialId", "");
-		}
-		credentialClicked = !credentialClicked;
+	const selectCredential = async (e: any) => {
+		storedCredentialId = e.detail.credentialId;
 	};
-
 	const handleScroll = async (e: any) => {
 		scrollPosition = e.target.scrollTop;
 		localStorage.setItem("scrollPosition", scrollPosition.toString());
@@ -288,9 +255,8 @@
 					{#each listedCredentials as credential}
 						<ListedCredentials
 							{credential}
-							{selectedCredentialId}
-							{clickedCredential}
-							on:select="{dropDownClicked}"
+							selectedCredentialId="{storedCredentialId}"
+							on:credentialClicked="{selectCredential}"
 						/>{/each}
 				{:else}
 					<PasswordNotFound />

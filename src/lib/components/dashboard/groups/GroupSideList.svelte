@@ -17,7 +17,7 @@
 	import { GroupIcon, Menu } from "../icons";
 	import { onMount } from "svelte";
 	import { setGroupStore } from "../../../store/storeHelper";
-	import { getUserDetails } from "../helper";
+	import { getUserDetails } from "../../../store/storeHelper";
 
 	let adminStatus = false;
 	let hoveringIndex: number | null = null;

@@ -1,6 +1,5 @@
 import browser from "webextension-polyfill";
 import { SearchedCredential } from "../../dtos/credential.dto";
-// import { getUser } from "../../components/dashboard/apis";
 import { AddCredentialPayload, User } from "./dtos";
 type TypeToClassKey = "reader" | "manager";
 
@@ -167,17 +166,4 @@ export const getDomain = (urlString: string) => {
 		domain = hostname;
 	}
 	return domain;
-};
-
-export const getUserDetails = async (): Promise<User> => {
-	const accountDetails = localStorage.getItem("user");
-	let user;
-	// // if (accountDetails == null) {
-	// // 	const userJson = await getUser();
-	// // 	user = userJson.data;
-	// // 	localStorage.setItem("user", JSON.stringify(user.data));
-	// // } else {
-	user = JSON.parse(accountDetails);
-	// }
-	return user;
 };

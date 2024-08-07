@@ -16,7 +16,7 @@
 	import AllUsersList from "./AllUsersList.svelte";
 	import OtherGroupsList from "./OtherGroupsList.svelte";
 	import Placeholder from "../components/Placeholder.svelte";
-	import { getUserDetails } from "../helper";
+	import { getUserDetails } from "../../../store/storeHelper";
 
 	let unsubscribe: Unsubscriber;
 	let groupName = "";

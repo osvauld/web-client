@@ -5,9 +5,9 @@
 		showAddGroupDrawer,
 		selectedPage,
 	} from "../store";
-	import { getUser } from "../apis";
 	import { Add } from "../icons";
-	import { getUserDetails } from "../helper";
+	import { getUserDetails } from "../../../store/storeHelper";
+
 	let isFirstCardHovered = false;
 	let isSecondCardHovered = false;
 	let username = "";

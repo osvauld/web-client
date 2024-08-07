@@ -6,7 +6,9 @@
 	import { searchObjects } from "./helper";
 	import { getSearchFields, fetchAllUserUrls } from "./apis";
 	import { Profile, Lens, DownArrow } from "./icons";
-	import { sendMessage, getUserDetails } from "./helper";
+	import { sendMessage } from "./helper";
+	import { getUserDetails } from "../../store/storeHelper";
+
 	import { onMount } from "svelte";
 	import {
 		selectedFolder,

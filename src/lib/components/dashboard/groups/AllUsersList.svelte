@@ -5,7 +5,8 @@
 	import AddUser from "./AddUser.svelte";
 	import { User } from "../dtos";
 	import { onMount } from "svelte";
-	import { getUserDetails } from "../helper";
+	import { getUserDetails } from "../../../store/storeHelper";
+
 	let accountRole: string = "user";
 	let addUserHovered = false;
 	let allUsers: User[] = [];

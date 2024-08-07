@@ -9,7 +9,7 @@
 	import { onMount, onDestroy } from "svelte";
 	import { setGroupStore } from "../../../store/storeHelper";
 	import { Unsubscriber } from "svelte/store";
-	import { getUserDetails } from "../helper";
+	import { getUserDetails } from "../../../store/storeHelper";
 	export let groupName;
 	const handleRemoveUserFromGroup = async (userId: string) => {
 		if ($selectedGroup === null) {

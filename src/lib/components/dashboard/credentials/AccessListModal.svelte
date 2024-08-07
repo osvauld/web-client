@@ -31,6 +31,7 @@
 
 	export const buttonCoords = derived(buttonRef, ($buttonRef) => {
 		if ($buttonRef) {
+			// @ts-ignore
 			const rect = $buttonRef.getBoundingClientRect();
 			const rightVal = rect.right + window.scrollX;
 			return {
