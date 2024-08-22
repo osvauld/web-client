@@ -93,3 +93,10 @@ export type EncryptedEditField = {
 	fieldValue: string;
 	userId: string;
 };
+
+export type CapturedCredentialData = {
+	username: string;
+	password: string;
+	domain: string;
+	url: string;
+};

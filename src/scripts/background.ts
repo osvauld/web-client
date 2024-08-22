@@ -18,11 +18,17 @@ import {
 } from "./backgroundService";
 import init, { is_global_context_set } from "./crypto_primitives";
 
-let newCredential: any = {
+type CapturedCredentialData = {
+	username: string;
+	password: string;
+	domain: string;
+	url: string;
+};
+
+let newCredential: CapturedCredentialData = {
 	username: "",
 	password: "",
 	domain: "",
-	windowId: "",
 	url: "",
 };
 
@@ -127,19 +133,22 @@ browser.runtime.onMessage.addListener(async (request) => {
 			newCredential.username = request.data.username;
 			newCredential.password = request.data.password;
 			const urlData = await getCurrentDomain();
-			newCredential.domain = urlData?.hostname;
-			newCredential.url = urlData?.href;
+			newCredential.domain = urlData.hostname;
+			newCredential.url = urlData.href;
 			const credIds = Array.from(
 				urlObj.get(newCredential.domain.replace(/^www\./, "")) || [],
 			);
-			newCredential.windowId = await credentialSubmitHandler(
+			const isNewCredential = await credentialSubmitHandler(
 				newCredential,
 				credIds,
 			);
-			if (newCredential.windowId) {
-				return false;
+			if (isNewCredential) {
+				setTimeout(async () => {
+					// Now we have confirmed this is indeed new credential and the npw we will be inside account
+					// now communicate with content script manager and show otherscripts with captured username and password
+				}, 3000);
 			}
-			return true;
+			return null;
 		}
 		case "encryptEditFields": {
 			return encryptEditFields(request.data);
@@ -154,26 +163,26 @@ browser.runtime.onMessage.addListener(async (request) => {
 	}
 });
 
-browser.runtime.onConnect.addListener(async (port) => {
-	if (port.name === "popup") {
-		// When you have data to send:
-		if (
-			newCredential &&
-			newCredential.username &&
-			newCredential.password &&
-			newCredential.windowId
-		) {
-			port.postMessage({
-				username: newCredential.username,
-				password: newCredential.password,
-				domain: newCredential.domain,
-				windowId: newCredential.windowId,
-				url: newCredential.url,
-			});
-			newCredential = {};
-		}
-	}
-});
+// browser.runtime.onConnect.addListener(async (port) => {
+// 	if (port.name === "popup") {
+// 		// When you have data to send:
+// 		if (
+// 			newCredential &&
+// 			newCredential.username &&
+// 			newCredential.password &&
+// 			newCredential.windowId
+// 		) {
+// 			port.postMessage({
+// 				username: newCredential.username,
+// 				password: newCredential.password,
+// 				domain: newCredential.domain,
+// 				windowId: newCredential.windowId,
+// 				url: newCredential.url,
+// 			});
+// 			newCredential = {};
+// 		}
+// 	}
+// });
 
 function saveTimestamp() {
 	const timestamp = new Date().toISOString();
