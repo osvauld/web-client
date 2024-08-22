@@ -1,8 +1,9 @@
 <script lang="ts">
-	export let item: any;
+	import { User, Group } from "../dtos";
+	import { setbackground } from "../helper";
+	export let item: User | Group;
 	export let isSelected: boolean;
 	export let isBottomList = false;
-	export let setbackground: any;
 	export let showOptions: boolean;
 	export let reverseModal: boolean = false;
 
@@ -11,14 +12,14 @@
 	import { BinIcon, DownArrow } from "../icons";
 	import AccessSelector from "./AccessSelector.svelte";
 
-	import { createEventDispatcher } from "svelte";
+	import { createEventDispatcher, onMount } from "svelte";
 
 	const dispatch = createEventDispatcher();
 
 	const handleRemove = () => {
 		dispatch("remove", item);
 	};
-	const eventPasser = (e) => {
+	const eventPasser = (e: any) => {
 		hoveredOverThisItem = false;
 		dispatch("select", { item, permission: e.detail.permission });
 	};
@@ -26,11 +27,9 @@
 	const handleClick = () => {
 		dispatch("click");
 	};
-
-	/* eslint-disable */
 </script>
 
-<div
+<button
 	class="relative w-[98%] my-1 ml-1 pl-2 pr-0.5 rounded-lg cursor-pointer flex items-center justify-between text-osvauld-sheffieldgrey text-base font-normal {(isSelected &&
 		!isBottomList) ||
 	(hoveredOverThisItem && !isBottomList)
@@ -59,7 +58,7 @@
 			>
 			<button
 				class="w-[9.8rem] rounded-md font-normal cursor-pointer px-2 py-0.5 pl-2 text-base flex justify-around items-center {setbackground(
-					item.accessType,
+					item.accessType === undefined ? 'reader' : item.accessType,
 				)}"
 				>{item.accessType}
 				<span> <DownArrow type="{item.accessType}" /></span>
@@ -80,4 +79,4 @@
 			></span
 		>
 	{/if}
-</div>
+</button>

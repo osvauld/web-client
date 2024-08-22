@@ -15,21 +15,25 @@
 	import { clickOutside } from "../helper";
 	import { derived } from "svelte/store";
 	import { onMount, onDestroy } from "svelte";
+	import { get } from "svelte/store";
 
+	type MoreActionsTypes = "Folder" | "Group" | "Credential";
+	let moreOptionType: MoreActionsTypes;
 	let isShareHovered = false;
 	let isEditHovered = false;
 	let isBinHovered = false;
 
 	function closeModal() {
-		showMoreOptions.set(false);
 		modalManager.set(null);
+		showMoreOptions.set(false);
 	}
 
 	export const buttonCoords = derived(buttonRef, ($buttonRef) => {
 		if ($buttonRef) {
+			// @ts-ignore
 			const rect = $buttonRef.getBoundingClientRect();
 			const leftVal =
-				$modalManager.type === "Folder"
+				moreOptionType === "Folder"
 					? rect.left + window.scrollX
 					: rect.left + window.scrollX - 2.7 * rect.width;
 			return {
@@ -73,6 +77,13 @@
 
 	onMount(() => {
 		window.addEventListener("keydown", handleKeyDown);
+		if (modalManager && get(modalManager)) {
+			// @ts-ignore
+			moreOptionType = get(modalManager).type;
+		} else {
+			closeModal();
+			throw new Error("modal manager is not set");
+		}
 	});
 
 	onDestroy(() => {
@@ -80,9 +91,9 @@
 	});
 </script>
 
-{#if $showMoreOptions && $buttonRef}
+{#if $showMoreOptions && $buttonRef && $modalManager}
 	<div
-		class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack {$modalManager.type ===
+		class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack {moreOptionType ===
 		'Folder'
 			? 'w-[166px]'
 			: 'w-[130px]'} rounded-2xl"
@@ -103,15 +114,15 @@
 					/>
 					<button
 						class="font-inter text-base whitespace-nowrap"
-						on:click|stopPropagation="{$modalManager.type === 'Folder'
+						on:click|stopPropagation="{moreOptionType === 'Folder'
 							? callShareFolderModal
 							: callShareCredentialModal}"
 					>
-						Share {$modalManager.type === "Folder" ? "folder" : ""}
+						Share {moreOptionType === "Folder" ? "folder" : ""}
 					</button>
 				</button>
 			{/if}
-			{#if $modalManager.type === "Folder"}
+			{#if moreOptionType === "Folder"}
 				<button
 					class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
 					on:mouseenter="{() => (isEditHovered = true)}"
@@ -135,7 +146,7 @@
 					<BinIcon color="{isBinHovered ? '#F2F2F0' : '#85889C'}" />
 				</div>
 				<div class="font-inter text-base whitespace-nowrap">
-					Delete {$modalManager.type === "Folder" ? "folder" : ""}
+					Delete {moreOptionType === "Folder" ? "folder" : ""}
 				</div>
 			</button>
 		</div>

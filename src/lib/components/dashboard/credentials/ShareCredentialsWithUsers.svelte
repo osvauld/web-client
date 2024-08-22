@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		User,
-		UserWithAccessType,
 		CredentialFields,
 		ShareCredentialsWithUsersPayload,
 	} from "../dtos";
@@ -12,10 +11,11 @@
 	import { Lens } from "../icons";
 	import ListItem from "../components/ListItem.svelte";
 	import { toastStore } from "../store";
+	import { UserEncryptedDataForShareCredentials } from "../../../dtos/request.dto";
 	const dispatch = createEventDispatcher();
 	export let users: User[];
 	export let credentialsFields: CredentialFields[] = [];
-	let selectedUsers: UserWithAccessType[] = [];
+	let selectedUsers: User[] = [];
 	let showOptions = false;
 	let selectionIndex: number | null = null;
 	let topList = false;
@@ -30,10 +30,13 @@
 		: users;
 
 	export const shareCredentialHandler = async () => {
-		const userData = await sendMessage("createShareCredPayload", {
-			creds: credentialsFields,
-			users: selectedUsers,
-		});
+		const userData: UserEncryptedDataForShareCredentials[] = await sendMessage(
+			"createShareCredPayload",
+			{
+				creds: credentialsFields,
+				users: selectedUsers,
+			},
+		);
 
 		const payload: ShareCredentialsWithUsersPayload = { userData };
 		const shareStatus = await shareCredentialsWithUsers(payload);
@@ -100,7 +103,6 @@
 				item="{user}"
 				isSelected="{index === selectionIndex && !topList}"
 				on:click="{() => handleClick(index, false)}"
-				{setbackground}
 				{showOptions}
 				reverseModal="{filteredUsers.length > 3 &&
 					index > filteredUsers.length - 3}"
@@ -121,7 +123,6 @@
 				isBottomList="{true}"
 				on:click="{() => handleClick(index, true)}"
 				on:remove="{() => handleItemRemove(index)}"
-				{setbackground}
 				{showOptions}
 				reverseModal="{selectedUsers.length > 3 &&
 					index > selectedUsers.length - 3}"

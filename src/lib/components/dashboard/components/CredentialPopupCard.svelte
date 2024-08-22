@@ -27,7 +27,6 @@
 			{#each nonSensitiveFields as field}
 				{#if field.fieldName !== "Domain"}
 					<PlainField
-						bgColor="{null}"
 						fieldName="{field.fieldName}"
 						fieldValue="{field.fieldValue}"
 						hoverEffect="{true}"
@@ -37,7 +36,6 @@
 			{#if sensitiveFields}
 				{#each sensitiveFields as field}
 					<EncryptedField
-						bgColor="{null}"
 						fieldName="{field.fieldName}"
 						fieldValue="{field.fieldValue}"
 						fieldType="{field.fieldType}"

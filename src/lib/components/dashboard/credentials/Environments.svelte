@@ -14,13 +14,19 @@
 	import UserPlus from "../../basic/icons/userPlus.svelte";
 	import AddEnvironment from "./AddEnvironment.svelte";
 	import EnvironmentCredential from "./EnvironmentCredential.svelte";
+	import { EnvironmentFields } from "../../../dtos/environments.dto";
 
 	let addCredentialHovered = false;
 	let addcredentialToEnv = false;
 	let addNewUserHovered = false;
 	let addNewCliUserHovered = false;
-	let editedCredential = null;
-	let credentials = [];
+	let editedCredential: {
+		fieldId: string;
+		fieldName: string;
+		credentialId: string;
+		environmentId: string;
+	} | null;
+	let credentials: EnvironmentFields[] = [];
 
 	const addEnv = () => {
 		showAddEnvDrawer.set(true);
@@ -30,30 +36,41 @@
 		showAddCliDrawer.set(true);
 	};
 
-	const handleEditField = (credentialId, FieldData) => {
+	const handleEditField = (
+		credentialId: string,
+		fieldId: string,
+		fieldName: string,
+	) => {
+		if ($selectedEnv === null) return;
 		editedCredential = {
 			credentialId,
-			environmentID: $selectedEnv.id,
-			fieldID: FieldData.fieldId,
-			fieldName: FieldData.fieldName,
+			environmentId: $selectedEnv.id,
+			fieldId: fieldId,
+			fieldName: fieldName,
 		};
 	};
 
 	const closeEditOption = async () => {
 		editedCredential = null;
+		if ($selectedEnv === null) return;
 		const fieldsResponse = await fetchEnvFields($selectedEnv.id);
 		credentials = fieldsResponse.data;
 	};
 
 	const closeAddCredToEnv = async () => {
 		addcredentialToEnv = false;
+		if ($selectedEnv === null) return;
 		const fieldsResponse = await fetchEnvFields($selectedEnv.id);
 		credentials = fieldsResponse.data;
 	};
 
 	const handleSaveChange = async () => {
-		const { credentialId, ...editRequestData } = editedCredential;
-		const editResponse = await editEnvCredentialField(editRequestData);
+		if (editedCredential === null || $selectedEnv === null) return;
+		const editResponse = await editEnvCredentialField({
+			fieldID: editedCredential.fieldId,
+			fieldName: editedCredential.fieldName,
+			environmentID: editedCredential.environmentId,
+		});
 		editedCredential = null;
 		toastStore.set({
 			type: editResponse.success,
@@ -64,12 +81,11 @@
 		credentials = fieldsResponse.data;
 	};
 
-	selectedEnv.subscribe(async (value) => {
-		if (value) {
-			const fieldsResponse = await fetchEnvFields(value.id);
-			credentials = fieldsResponse.data;
-		}
-	});
+	$: if ($selectedEnv) {
+		fetchEnvFields($selectedEnv.id).then((res) => {
+			credentials = res.data;
+		});
+	}
 </script>
 
 <div class="flex justify-between items-center my-4 p-2">
@@ -132,11 +148,15 @@
 					<EnvironmentCredential
 						{credential}
 						on:edit="{(e) =>
-							handleEditField(credential.credentialId, e.detail)}"
+							handleEditField(
+								credential.credentialId,
+								e.detail.fieldId,
+								e.detail.fieldName,
+							)}"
 						activefieldId="{credential.credentialId ===
 						editedCredential?.credentialId
-							? editedCredential?.fieldID
-							: null}"
+							? editedCredential?.fieldId
+							: ''}"
 					/>
 				</div>
 				{#if credential.credentialId === editedCredential?.credentialId}

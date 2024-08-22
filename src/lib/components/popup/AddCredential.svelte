@@ -10,6 +10,8 @@
 	import { Eye, ClosedEye, FolderIcon } from "./icons";
 	import { createEventDispatcher } from "svelte";
 	import Locked from "../basic/icons/locked.svelte";
+	import { Folder } from "../dashboard/dtos";
+	import FolderShare from "../basic/icons/FolderShare.svelte";
 	const dispatch = createEventDispatcher();
 	export let username = "";
 	export let password = "";
@@ -20,9 +22,9 @@
 	let name = "";
 	let description = "";
 	let showFolderList = false;
-	let folderData = [];
-	let selectedFolderId = null;
-	let hoveringIndex = null;
+	let folderData: Folder[] = [];
+	let selectedFolderId: string | null = null;
+	let hoveringIndex: number | null = null;
 	$: type = visibility ? "text" : "password";
 
 	let addCredentialPayload = {
@@ -36,11 +38,13 @@
 	// Function to handle form submission
 	const handleSubmit = async () => {
 		const responseJson = await fetchAllFolders();
-		folderData = responseJson.data.sort((a, b) => a.name.localeCompare(b.name));
+		folderData = responseJson.data.sort((a: Folder, b: Folder) =>
+			a.name.localeCompare(b.name),
+		);
 		showFolderList = true;
 	};
 
-	const handleFolderSelect = async (folderId) => {
+	const handleFolderSelect = async (folderId: string) => {
 		selectedFolderId = folderId;
 	};
 
@@ -50,6 +54,9 @@
 	};
 
 	const handleSave = async () => {
+		if (selectedFolderId === null) {
+			throw new Error("Please select a folder to save the credential");
+		}
 		const response = await fetchFolderUsersForDataSync(selectedFolderId);
 		const usersToShare = response.data;
 		const fieldPayload = [
@@ -147,7 +154,6 @@
 				type="text"
 				required
 				placeholder="Enter credential name"
-				autofocus
 				bind:value="{name}"
 				class="mt-1 block w-full px-3 py-1 rounded-md shadow-sm sm:text-sm bg-osvauld-cardshade border-osvauld-iconblack focus:border-osvauld-iconblack focus:ring-0"
 				autocomplete="off"

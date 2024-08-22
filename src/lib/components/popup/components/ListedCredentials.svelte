@@ -1,14 +1,42 @@
 <script>
+	import { onMount } from "svelte";
+	import {
+		fetchCredentialById,
+		fetchSensitiveFieldsByCredentialId,
+	} from "../../dashboard/apis";
 	import CredentialPopupCard from "../../dashboard/components/CredentialPopupCard.svelte";
+	import { sendMessage } from "../../dashboard/helper";
 	import { RightArrow, DownArrow } from "../icons";
-	export let credential;
-	export let selectedCredentialId;
-	export let clickedCredential;
 	import { createEventDispatcher } from "svelte";
 	const dispatch = createEventDispatcher();
-	const dropDownClicked = () => {
-		dispatch("select", { credentialId: credential.credentialId });
+	export let credential;
+	export let selectedCredentialId;
+	let credentialDetails;
+	let credentialClicked = false;
+	const dropDownClicked = async () => {
+		const credentialValues = await Promise.all([
+			fetchCredentialById(credential.credentialId),
+			fetchSensitiveFieldsByCredentialId(credential.credentialId),
+		]);
+		credentialDetails = credentialValues[0].data;
+		const credentialDecryptedResponse = await sendMessage("decryptMeta", [
+			credentialDetails,
+		]);
+		credentialDetails = credentialDecryptedResponse[0];
+		credentialDetails.fields = [
+			...credentialDetails.fields,
+			...credentialValues[1].data,
+		];
+		selectedCredentialId = credential.credentialId;
+		credentialClicked = !credentialClicked;
+		localStorage.setItem("selectedCredentialId", selectedCredentialId);
+		dispatch("credentialClicked", { credentialId: credential.credentialId });
 	};
+	onMount(async () => {
+		if (selectedCredentialId === credential.credentialId) {
+			await dropDownClicked();
+		}
+	});
 </script>
 
 <button
@@ -37,8 +65,8 @@
 			{/if}
 		</button>
 	</div>
-	{#if selectedCredentialId == credential.credentialId}
+	{#if selectedCredentialId == credential.credentialId && credentialClicked}
 		<div class="border-b border-osvauld-iconblack w-full mb-3"></div>
-		<CredentialPopupCard credential="{clickedCredential}" />
+		<CredentialPopupCard credential="{credentialDetails}" />
 	{/if}
 </button>

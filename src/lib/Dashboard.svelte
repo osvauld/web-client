@@ -22,6 +22,7 @@
 	import GroupDeleteModal from "./components/dashboard/groups/GroupDeleteModal.svelte";
 	import ShareToast from "./components/dashboard/components/ShareToast.svelte";
 	import { setFolderStore } from "./store/storeHelper";
+	import { selectedFolder } from "./store/folder.store";
 	let showWelcome = false;
 	let signedUp = true;
 	onMount(async () => {
@@ -75,14 +76,16 @@
 		{#if $showMoreOptions}
 			<MoreActions />
 		{/if}
-		{#if $DeleteConfirmationModal && $modalManager.type === "Credential"}
-			<CredentialDeleteModal />
-		{:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
-			<FolderDeleteModal />
-		{:else if $DeleteConfirmationModal && $modalManager.type === "Group"}
-			<GroupDeleteModal />
+		{#if $modalManager}
+			{#if $DeleteConfirmationModal && $modalManager.type === "Credential"}
+				<CredentialDeleteModal />
+			{:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
+				<FolderDeleteModal />
+			{:else if $DeleteConfirmationModal && $modalManager.type === "Group"}
+				<GroupDeleteModal />
+			{/if}
 		{/if}
-		{#if $accessListSelected}
+		{#if $accessListSelected && $selectedFolder}
 			<AccessListModal />
 		{/if}
 		{#if $showMoreGroupOptions}

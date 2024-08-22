@@ -1,12 +1,23 @@
-import { Group } from "./group.dto";
-import { UserWithAccessType, User } from "./user.dto";
+import { Group, SelectedGroup } from "./group.dto";
+import { GroupUser, User } from "./user.dto";
 import { Folder } from "./folder.dto";
-import { Credential, CredentialFields } from "./credential.dto";
+import {
+	Credential,
+	CredentialFields,
+	SearchedCredential,
+	Field,
+	UsersForDataSync,
+	UrlCredMap,
+} from "./credential.dto";
+import {
+	CliUsersData,
+	EnvironmentFields,
+	Environments,
+} from "./environments.dto";
 
 export type BaseResponse = {
 	success: boolean;
 	message: string;
-	data: any;
 };
 
 export type ChallengeResponse = BaseResponse & {
@@ -26,7 +37,7 @@ export type FolderGroupResponse = BaseResponse & {
 };
 
 export type FolderUserResponse = BaseResponse & {
-	data: UserWithAccessType[];
+	data: User[];
 };
 
 export type FetchAllUsersResponse = BaseResponse & {
@@ -53,28 +64,20 @@ export type FetchCredsByIdsResponse = BaseResponse & {
 	data: Credential[];
 };
 
-type UrlCredMap = {
-	value: string;
-	credentialId: string;
-};
 export type FetchAllUserUrlsResponse = BaseResponse & {
 	data: UrlCredMap[];
 };
 
 export type FetchSensitiveFieldsByCredenitalIdResponse = BaseResponse & {
-	data: {
-		credentialId: string;
-		fieldName: string;
-		fieldValue: string;
-	}[];
+	data: Field[];
 };
 
 export type FetchAllUserGroupsResponse = BaseResponse & {
-	data: Group[];
+	data: SelectedGroup[];
 };
 
 export type FetchGroupUsersResponse = BaseResponse & {
-	data: UserWithAccessType[];
+	data: GroupUser[];
 };
 
 export type fetchUsersByGroupIdsResponse = BaseResponse & {
@@ -96,7 +99,7 @@ export type FetchGroupCredentialResponse = BaseResponse & {
 };
 
 export type FetchCredentialUsersResponse = BaseResponse & {
-	data: UserWithAccessType[];
+	data: User[];
 };
 
 export type FetchCredentialGroupsResponse = BaseResponse & {
@@ -104,4 +107,81 @@ export type FetchCredentialGroupsResponse = BaseResponse & {
 };
 export type FetchUsersWithoutGroupAccess = BaseResponse & {
 	data: User[];
+};
+
+export type SearchResponse = BaseResponse & {
+	data: SearchedCredential[];
+};
+
+export type UserNameAvailabilityResponse = BaseResponse & {
+	data: {
+		available: boolean;
+		message: string;
+	};
+};
+
+export type GetUserResponse = BaseResponse & {
+	data: User;
+};
+
+export type GetAllUsersResponse = BaseResponse & {
+	data: User[];
+};
+
+export type AddCliUserResponse = BaseResponse & {
+	data: {
+		user: string;
+	};
+};
+
+export type GetCliUsersResponse = BaseResponse & {
+	data: {
+		id: string;
+		username: string;
+	}[];
+};
+
+export type FetchFolderUsersForDataSyncResponse = BaseResponse & {
+	data: UsersForDataSync[];
+};
+
+export type FetchCredentialUsersForDataSyncResponse = BaseResponse & {
+	data: UsersForDataSync[];
+};
+
+export type GetEnvironmentsResponse = BaseResponse & {
+	data: Environments[];
+};
+
+export type FetchEnvFieldsResponse = BaseResponse & {
+	data: EnvironmentFields[];
+};
+
+export type GetEnvFieldsByCredentialIdResponse = BaseResponse & {
+	data: CliUsersData;
+};
+
+export type GetEnvsForCredentialResponse = BaseResponse & {
+	data: {
+		envId: string;
+		cliUserPublickey: string;
+		cliUserId: string;
+		cliUserCreatedBy: string;
+	}[];
+};
+
+export type CreateGroupResponse = BaseResponse & {
+	data: {
+		groupId: string;
+	};
+};
+
+export type CreateFolderResponse = BaseResponse & {
+	data: {
+		folderId: string;
+		name: string;
+		description: string;
+		createdBy: string;
+		createdAt: string;
+	};
 };

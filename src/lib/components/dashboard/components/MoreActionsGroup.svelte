@@ -21,7 +21,8 @@
 	}
 
 	export const buttonCoords = derived(buttonRef, ($buttonRef) => {
-		if ($buttonRef) {
+		if ($buttonRef && $modalManager != null) {
+			// @ts-ignore
 			const rect = $buttonRef.getBoundingClientRect();
 			const leftVal =
 				$modalManager.type === "Group"
@@ -66,7 +67,7 @@
 	});
 </script>
 
-{#if $showMoreGroupOptions && $buttonRef}
+{#if $showMoreGroupOptions && $buttonRef && $modalManager}
 	<div
 		class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack {$modalManager.type ===
 		'Folder'
@@ -74,7 +75,7 @@
 			: 'w-[130px]'} rounded-2xl"
 		style="top: {$buttonCoords.top}px; left: {$buttonCoords.left}px;"
 		use:clickOutside
-		on:clickedOutside="{handleClickOutside}"
+		on:clickOutside="{handleClickOutside}"
 	>
 		<div class="flex flex-col items-start p-2 gap-2 w-full h-full">
 			<button

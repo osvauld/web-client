@@ -7,6 +7,8 @@
 	import { getSearchFields, fetchAllUserUrls } from "./apis";
 	import { Profile, Lens, DownArrow } from "./icons";
 	import { sendMessage } from "./helper";
+	import { getUserDetails } from "../../store/storeHelper";
+
 	import { onMount } from "svelte";
 	import {
 		selectedFolder,
@@ -18,8 +20,9 @@
 	} from "./store";
 
 	import ProfileModal from "./components/ProfileModal.svelte";
-	let searchResults = [];
-	let searchData = [];
+	import { SearchedCredential, UrlCredMap } from "../../dtos/credential.dto";
+	let searchResults: SearchedCredential[] = [];
+	let searchData: SearchedCredential[] = [];
 	let showModal = false;
 	let isProfileClicked = false;
 	let clickedOutside = false;
@@ -32,11 +35,12 @@
 		showModal = true;
 		const searchFieldSResponse = await getSearchFields();
 		searchData = searchFieldSResponse.data;
-
 		const urlJson = await fetchAllUserUrls();
 		const urls = urlJson.data;
-		const decryptedData = await sendMessage("getDecryptedUrls", urls);
-
+		const decryptedData: UrlCredMap[] = await sendMessage(
+			"getDecryptedUrls",
+			urls,
+		);
 		const mergedArray = searchData.map((item) => {
 			const replacement = decryptedData.find(
 				(decryptedItem) => decryptedItem.credentialId === item.credentialId,
@@ -81,7 +85,7 @@
 		credentialStore.set([]);
 	});
 
-	function handleKeyDown(event) {
+	function handleKeyDown(event: any) {
 		if (event.key === "Enter") {
 			getSearchData();
 		}
@@ -96,7 +100,7 @@
 		}
 	}
 
-	function autofocus(node) {
+	function autofocus(node: any) {
 		node.focus();
 	}
 	const handleProfileClose = () => {
@@ -107,10 +111,9 @@
 		}, 100);
 	};
 
-	onMount(() => {
-		username =
-			localStorage.getItem("username") ||
-			JSON.parse(localStorage.getItem("user")).username;
+	onMount(async () => {
+		const account = await getUserDetails();
+		username = account.username;
 	});
 </script>
 

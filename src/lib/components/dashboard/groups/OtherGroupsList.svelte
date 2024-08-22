@@ -8,11 +8,15 @@
 	import { removeUserFromGroup } from "../apis";
 	import { onMount, onDestroy } from "svelte";
 	import { setGroupStore } from "../../../store/storeHelper";
+	import { Unsubscriber } from "svelte/store";
+	import { getUserDetails } from "../../../store/storeHelper";
 	export let groupName;
-	const handleRemoveUserFromGroup = async (userId) => {
+	const handleRemoveUserFromGroup = async (userId: string) => {
+		if ($selectedGroup === null) {
+			throw new Error("Group not selected");
+		}
 		await removeUserFromGroup($selectedGroup.groupId, userId);
-		const accountDetails = localStorage.getItem("user");
-		const user = JSON.parse(accountDetails);
+		const user = await getUserDetails();
 		if (user.id === userId) {
 			selectedGroup.set(null);
 			await setGroupStore();
@@ -23,7 +27,7 @@
 
 	let groupAdmin = false;
 	let addUserHovered = false;
-	let unsubscribe;
+	let unsubscribe: Unsubscriber;
 	onMount(() => {
 		unsubscribe = selectedGroup.subscribe((value) => {
 			if (value === null) return;

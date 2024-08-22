@@ -3,7 +3,8 @@
 	import { createEventDispatcher } from "svelte";
 	export let reverseModal = false;
 	const dispatch = createEventDispatcher();
-	const select = (permission) => {
+	type permissionType = "reader" | "manager";
+	const select = (permission: permissionType) => {
 		dispatch("select", { permission });
 	};
 </script>

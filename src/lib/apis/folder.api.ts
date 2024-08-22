@@ -7,6 +7,10 @@ import {
 	FolderUserResponse,
 	BaseResponse,
 	FetchAllFoldersResponse,
+	FetchFolderUsersForDataSyncResponse,
+	GetEnvironmentsResponse,
+	FetchEnvFieldsResponse,
+	CreateFolderResponse,
 } from "../dtos/response.dto";
 import {
 	getTokenAndBaseUrl,
@@ -42,7 +46,7 @@ export const fetchFolderUsers = async (
 
 export const fetchFolderUsersForDataSync = async (
 	folderId: string,
-): Promise<any> => {
+): Promise<FetchFolderUsersForDataSyncResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -66,7 +70,9 @@ export const fetchFolderGroups = async (
 	}).then((response) => response.json());
 };
 
-export const createFolder = async (payload: any): Promise<BaseResponse> => {
+export const createFolder = async (
+	payload: any,
+): Promise<CreateFolderResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -159,7 +165,7 @@ export const editFolderPermissionForUser = async (
 	folderId: string,
 	userId: string,
 	accessType: string,
-) => {
+): Promise<BaseResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	const signatureResponse = await sendMessage("hashAndSign", {
@@ -189,7 +195,7 @@ export const editFolderPermissionForGroup = async (
 	folderId: string,
 	groupId: string,
 	accessType: string,
-) => {
+): Promise<BaseResponse> => {
 	const headers = new Headers();
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: JSON.stringify({ accessType, groupId }),
@@ -215,7 +221,7 @@ export const editFolderPermissionForGroup = async (
 	return response.json();
 };
 
-export const removeFolder = async (folderId: string) => {
+export const removeFolder = async (folderId: string): Promise<BaseResponse> => {
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: folderId,
 	});
@@ -236,7 +242,7 @@ export const removeFolder = async (folderId: string) => {
 	return response.json();
 };
 
-export const getEnvironments = async () => {
+export const getEnvironments = async (): Promise<GetEnvironmentsResponse> => {
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	const headers = new Headers();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -247,7 +253,10 @@ export const getEnvironments = async () => {
 	}).then((response) => response.json());
 };
 
-export const addEnvironment = async (name: string, cliUser: string) => {
+export const addEnvironment = async (
+	name: string,
+	cliUser: string,
+): Promise<BaseResponse> => {
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	const headers = new Headers();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -265,7 +274,9 @@ export const addEnvironment = async (name: string, cliUser: string) => {
 	}).then((response) => response.json());
 };
 
-export const fetchEnvFields = async (envId: string) => {
+export const fetchEnvFields = async (
+	envId: string,
+): Promise<FetchEnvFieldsResponse> => {
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	const headers = new Headers();
 	headers.append("Authorization", `Bearer ${token}`);

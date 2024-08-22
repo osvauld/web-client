@@ -25,7 +25,7 @@
 		}
 	};
 
-	const handleClickOutside = (e) => {
+	const handleClickOutside = (e: any) => {
 		e.stopPropagation();
 		e.preventDefault();
 		closeModal();
@@ -68,7 +68,7 @@
 	class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack w-[14rem] rounded-2xl"
 	style="top: {top + 10}px; left: {left - 100}px;"
 	use:clickOutside
-	on:clickedOutside="{handleClickOutside}"
+	on:clickOutside="{handleClickOutside}"
 >
 	<div class="flex flex-col items-start p-2 gap-2 w-full h-full">
 		<button

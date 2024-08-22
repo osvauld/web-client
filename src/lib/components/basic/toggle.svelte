@@ -7,7 +7,7 @@
 	const select = async (choice: string) => {
 		selectedPage.set(choice);
 		selectedGroup.set(null);
-		selectedFolder.set(null);
+		selectedFolder.set(undefined);
 	};
 </script>
 

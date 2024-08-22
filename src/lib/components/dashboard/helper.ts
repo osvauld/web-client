@@ -1,4 +1,6 @@
 import browser from "webextension-polyfill";
+import { SearchedCredential } from "../../dtos/credential.dto";
+import { AddCredentialPayload, User } from "./dtos";
 type TypeToClassKey = "reader" | "manager";
 
 export const setbackground = (type: TypeToClassKey): string => {
@@ -26,19 +28,31 @@ export const sendMessage = async (action: string, data: any = {}) => {
 		});
 		return response;
 	} catch (error) {
-		console.error("Error sending message:", error);
+		console.error(
+			"Error sending message:",
+			error,
+			"\ndata",
+			data,
+			"action\n",
+			action,
+		);
 	}
 };
-export const searchObjects = (query, objects) => {
-	const searchResults = [];
+export const searchObjects = (
+	query: string,
+	credentials: SearchedCredential[],
+) => {
+	const searchResults: SearchedCredential[] = [];
 
-	for (const obj of objects) {
-		for (const prop in obj) {
+	for (const credential of credentials) {
+		for (const prop in credential) {
 			if (
-				typeof obj[prop] === "string" &&
-				obj[prop].toLowerCase().includes(query.toLowerCase())
+				typeof credential[prop as keyof SearchedCredential] === "string" &&
+				credential[prop as keyof SearchedCredential]
+					.toLowerCase()
+					.includes(query.toLowerCase())
 			) {
-				searchResults.push(obj);
+				searchResults.push(credential);
 				break;
 			}
 		}
@@ -47,8 +61,8 @@ export const searchObjects = (query, objects) => {
 	return searchResults;
 };
 
-export const clickOutside = (node) => {
-	const handleClick = (event) => {
+export const clickOutside = (node: any) => {
+	const handleClick = (event: any) => {
 		if (node && !node.contains(event.target) && !event.defaultPrevented) {
 			node.dispatchEvent(new CustomEvent("clickedOutside", node));
 		}
@@ -80,16 +94,6 @@ export const generatePassword = (length: number) => {
 	return password;
 };
 
-export function debounce(func, delay) {
-	let timeoutId;
-	return function (...args) {
-		clearTimeout(timeoutId);
-		timeoutId = setTimeout(() => {
-			func.apply(this, args);
-		}, delay);
-	};
-}
-
 type TransformedPayload = {
 	name: string;
 	description: string;
@@ -107,7 +111,7 @@ type TransformedPayload = {
 };
 
 export const transformAddCredentialPayload = (
-	payload: any,
+	payload: AddCredentialPayload,
 ): TransformedPayload => {
 	const fieldsMap: {
 		[key: string]: {

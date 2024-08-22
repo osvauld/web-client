@@ -1,20 +1,25 @@
 <script lang="ts">
-	import { Lens, Add, BinIcon } from "../icons";
+	import { Add, BinIcon } from "../icons";
 	import { showAddUserDrawer } from "../store";
 	import { deleteUser, fetchAllUsers } from "../apis";
 	import AddUser from "./AddUser.svelte";
+	import { User } from "../dtos";
 	import { onMount } from "svelte";
-	let accountRole: string = "";
+	import { getUserDetails } from "../../../store/storeHelper";
+
+	let accountRole: string = "user";
 	let addUserHovered = false;
-	let allUsers = [];
-	const deleteUserHandler = async (id) => {
+	let allUsers: User[] = [];
+	const deleteUserHandler = async (id: string) => {
 		await deleteUser(id);
 		const allUsersResponse = await fetchAllUsers();
 		allUsers = allUsersResponse.data;
 	};
 	onMount(async () => {
-		const accountDetails = localStorage.getItem("user");
-		accountRole = JSON.parse(accountDetails).type;
+		const accountDetails = await getUserDetails();
+		if (accountDetails.type) {
+			accountRole = accountDetails.type;
+		}
 		const fetchAllUsersResponse = await fetchAllUsers();
 		allUsers = fetchAllUsersResponse.data;
 	});

@@ -1,14 +1,12 @@
 import browser from "webextension-polyfill";
 
 import {
-	decryptCredentialFieldsHandler,
 	initiateAuthHandler,
 	savePassphraseHandler,
-	decryptCredentialFieldsHandlerNew,
+	decryptCredentialFieldsHandler,
 	loadWasmModule,
 	addCredentialHandler,
 	decryptFieldHandler,
-	encryptFieldHandler,
 	createShareCredsPayload,
 	handlePvtKeyImport,
 	credentialSubmitHandler,
@@ -36,16 +34,8 @@ browser.runtime.onInstalled.addListener(async () => {
 
 browser.runtime.onMessage.addListener(async (request) => {
 	switch (request.action) {
-		case "decrypt": {
-			return decryptCredentialFieldsHandler(request.data);
-		}
 		case "decryptField": {
-			const field = await decryptFieldHandler(request.data);
-			return { data: field };
-		}
-
-		case "encryptFields": {
-			return encryptFieldHandler(request.data.fields, request.data.publicKey);
+			return await decryptFieldHandler(request.data);
 		}
 
 		case "openFullscreenTab":
@@ -64,7 +54,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 				await loadWasmModule();
 				await initiateAuthHandler(passphrase);
 				return { isAuthenticated: true };
-			} catch (error) {
+			} catch (error: any) {
 				return { isAuthenticated: false, error: error.message };
 			}
 		}
@@ -128,7 +118,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 		case "checkPvtLoaded":
 			return is_global_context_set();
 		case "decryptMeta":
-			return decryptCredentialFieldsHandlerNew(request.data);
+			return decryptCredentialFieldsHandler(request.data);
 		case "addCredential":
 			return addCredentialHandler(request.data);
 		case "createShareCredPayload":

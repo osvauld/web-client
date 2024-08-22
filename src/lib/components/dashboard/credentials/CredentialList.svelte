@@ -8,7 +8,7 @@
 
 	import { Share, Add, EyeScan, FolderShare } from "../icons";
 	import { fetchSignedUpUsers, fetchAllUserGroups, addCliUser } from "../apis";
-	import { User, Group, Credential, Fields } from "../dtos";
+	import { User, Group, Credential, Field, SelectedGroup } from "../dtos";
 
 	import {
 		credentialStore,
@@ -26,9 +26,9 @@
 
 	let checkedCards: Credential[] = [];
 	let users: User[] = [];
-	let allGroups: Group[] = [];
+	let allGroups: SelectedGroup[] = [];
 	let selectedCard: any;
-	let sensitiveFields: Fields[] = [];
+	let sensitiveFields: Field[] = [];
 	let areCardsSelected = false;
 	let noCardsSelected = false;
 	let showCreateCredentialModal = false;
@@ -61,6 +61,9 @@
 	};
 
 	const subscribe = selectedFolder.subscribe(async (folder) => {
+		if (folder === undefined) {
+			return;
+		}
 		if (folder === null) {
 			return;
 		}
@@ -85,7 +88,7 @@
 	};
 
 	const onSelectingCard = (
-		sensitiveFieldsfromCard: Fields[],
+		sensitiveFieldsfromCard: Field[],
 		credential: Credential,
 	) => {
 		sensitiveFields = [...sensitiveFieldsfromCard];

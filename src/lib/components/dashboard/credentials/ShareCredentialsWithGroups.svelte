@@ -3,6 +3,7 @@
 		Group,
 		CredentialFields,
 		ShareCredentialsWithGroupsPayload,
+		SelectedGroup,
 	} from "../dtos";
 	import { writable } from "svelte/store";
 	import { fetchUsersByGroupIds, shareCredentialsWithGroups } from "../apis";
@@ -12,9 +13,13 @@
 	import ListItem from "../components/ListItem.svelte";
 	import { toastStore } from "../store";
 	import { createEventDispatcher, onMount } from "svelte";
+	import { UserEncryptedCredentials } from "../../../dtos/credential.dto";
 	const dispatch = createEventDispatcher();
-	export let groups: Group[];
-	export let credentialsFields: CredentialFields[];
+	export let allGroups: SelectedGroup[];
+	export let groups: Group[] = allGroups.map((group) => {
+		return { groupId: group.groupId, name: group.name };
+	});
+	export let credentialsFields: CredentialFields[] = [];
 	let selectedGroups = writable(new Map<string, Group>());
 	let showOptions = false;
 	let selectionIndex: number | null = null;
@@ -38,11 +43,14 @@
 		};
 		for (const groupUsers of groupUsersList) {
 			const group = $selectedGroups.get(groupUsers.groupId);
-			if (group == undefined) continue;
-			const userData = await sendMessage("createShareCredPayload", {
-				creds: credentialsFields,
-				users: groupUsers.userDetails,
-			});
+			if (group == undefined || !group.accessType) continue;
+			const userData: UserEncryptedCredentials[] = await sendMessage(
+				"createShareCredPayload",
+				{
+					creds: credentialsFields,
+					users: groupUsers.userDetails,
+				},
+			);
 
 			payload.groupData.push({
 				groupId: group.groupId,
@@ -128,7 +136,6 @@
 				item="{group}"
 				isSelected="{index === selectionIndex && !topList}"
 				on:click="{() => handleClick(index, false)}"
-				{setbackground}
 				{showOptions}
 				reverseModal="{filteredGroups.length > 3 &&
 					index > filteredGroups.length - 3}"
@@ -149,7 +156,6 @@
 				isBottomList="{true}"
 				on:click="{() => handleClick(index, true)}"
 				on:remove="{() => handleItemRemove(groupId)}"
-				{setbackground}
 				{showOptions}
 				reverseModal="{$selectedGroups.size > 3 &&
 					index > $selectedGroups.size - 3}"

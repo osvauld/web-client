@@ -7,7 +7,7 @@
 	const dispatch = createEventDispatcher();
 
 	let selectedItem = tabs[0];
-	const select = (item) => {
+	const select = (item: string) => {
 		selectedItem = item;
 		dispatch("select", item);
 	};

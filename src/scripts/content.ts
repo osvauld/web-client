@@ -23,10 +23,12 @@ document.addEventListener("readystatechange", function () {
 
 		if (forms.length > 0) {
 			forms.forEach((form) => {
-				form.addEventListener("submit", function (event) {
-					const username = form.querySelector(
+				form.addEventListener("submit", function () {
+					const username: string = form.querySelector(
 						'input[type="text"], input[type="email"]',
+						// @ts-ignore
 					)?.value;
+					// @ts-ignore
 					const password = form.querySelector('input[type="password"]')?.value;
 					if (username && password && !formSubmitted) {
 						// Send message to the background script

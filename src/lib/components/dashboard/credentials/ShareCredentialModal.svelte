@@ -5,7 +5,13 @@
 	import { showCredentialShareDrawer, modalManager } from "../store";
 	import { fetchCredentialsFieldsByIds } from "../apis";
 
-	import { User, Group, Credential, CredentialFields } from "../dtos";
+	import {
+		User,
+		Group,
+		Credential,
+		CredentialFields,
+		SelectedGroup,
+	} from "../dtos";
 
 	import Toggle from "../Toggle.svelte";
 	import ShareCredentialsWithUser from "./ShareCredentialsWithUsers.svelte";
@@ -15,11 +21,11 @@
 	import ClosePanel from "../../basic/icons/closePanel.svelte";
 	export let credentials: Credential[];
 	export let users: User[];
-	export let groups: Group[];
+	export let groups: SelectedGroup[];
 	let credentialsFields: CredentialFields[] = [];
 	let showInfoTab = false;
 	let infoOnHover = false;
-	let saveChanges;
+	let saveChanges: any;
 	let saveEnabled = false;
 
 	const credIds = credentials.map((cred) => cred.credentialId);
@@ -101,7 +107,7 @@
 				/>
 			{:else if selectedTab == "Groups"}
 				<ShareCredentialsWithGroups
-					{groups}
+					allGroups="{groups}"
 					{credentialsFields}
 					bind:this="{saveChanges}"
 					on:cancel="{() => showCredentialShareDrawer.set(false)}"

@@ -17,11 +17,13 @@
 		editFolderPermissionForGroup,
 	} from "../apis";
 	import { clickOutside } from "../helper";
+	import { User } from "../../../dtos/user.dto";
+	import { Group } from "../../../dtos/group.dto";
 	import { derived } from "svelte/store";
 	import { onMount } from "svelte";
 	import { fly } from "svelte/transition";
-	let existingUserData = [];
-	let existingGroupsData = [];
+	let existingUserData: User[] = [];
+	let existingGroupsData: Group[] = [];
 	let selectedTab = "Groups";
 	let editPermissionTrigger = false;
 	let infoOnHover = false;
@@ -29,6 +31,7 @@
 
 	export const buttonCoords = derived(buttonRef, ($buttonRef) => {
 		if ($buttonRef) {
+			// @ts-ignore
 			const rect = $buttonRef.getBoundingClientRect();
 			const rightVal = rect.right + window.scrollX;
 			return {
@@ -50,13 +53,13 @@
 	};
 
 	const existingItems = async () => {
-		if ($selectedFolder !== null && selectedTab === "Users") {
+		if ($selectedFolder && selectedTab === "Users") {
 			const responseJson = await fetchFolderUsers($selectedFolder.id);
 			existingUserData = responseJson.data;
 		} else {
 			existingUserData.length = 0;
 		}
-		if ($selectedFolder !== null && selectedTab === "Groups") {
+		if ($selectedFolder && selectedTab === "Groups") {
 			const reponseJson = await fetchFolderGroups($selectedFolder.id);
 			existingGroupsData = reponseJson.data;
 		} else {
@@ -65,16 +68,25 @@
 	};
 
 	const removeExistingUser = async (e: any) => {
+		if ($selectedFolder === undefined) {
+			throw new Error("Folder not selected");
+		}
 		await removeUserFromFolder($selectedFolder.id, e.detail.id);
 		await existingItems();
 	};
 
 	const removeExistingGroup = async (e: any) => {
+		if ($selectedFolder === undefined) {
+			throw new Error("Folder not selected");
+		}
 		await removeGroupFromFolder($selectedFolder.id, e.detail.groupId);
 		await existingItems();
 	};
 
 	const handlePermissionChange = async (e: any) => {
+		if (!$selectedFolder) {
+			throw new Error("Folder not selected");
+		}
 		let editPermissionResponse;
 		if (selectedTab === "Users") {
 			editPermissionResponse = await editFolderPermissionForUser(
@@ -144,7 +156,7 @@
 			<button
 				class="p-2 rounded-lg {editPermissionTrigger
 					? 'bg-osvauld-cardshade'
-					: ''}  {$selectedFolder.accessType === 'manager'
+					: ''}  {$selectedFolder?.accessType === 'manager'
 					? 'visible'
 					: 'hidden'}"
 				on:click="{() => {

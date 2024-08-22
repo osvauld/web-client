@@ -23,9 +23,9 @@
 	let users: User[] = [];
 	let userDataForApproval: User;
 	let searchInput = "";
-	let hoveredIndex = null;
-	let selectedPermission = null;
-	let selectedUserIndice = null;
+	let hoveredIndex: number | null = null;
+	let selectedPermission: string | null = null;
+	let selectedUserIndice: number | null = null;
 	let roleSelectionPrompt = false;
 	let credentialFields: CredentialFields[] = [];
 	onMount(async () => {
@@ -41,7 +41,7 @@
 	});
 
 	const approveSelections = async () => {
-		if (!selectedPermission) return;
+		if (!selectedPermission || $selectedGroup === null) return;
 		const userData = await sendMessage("createShareCredPayload", {
 			creds: credentialFields,
 			users: [userDataForApproval],
@@ -73,7 +73,7 @@
 		}
 	};
 
-	const selectionMaker = async (e) => {
+	const selectionMaker = async (e: any) => {
 		selectedPermission = e.detail.permission;
 		roleSelectionPrompt = false;
 		await approveSelections();
@@ -81,6 +81,7 @@
 
 	const closeDrawer = () => {
 		showAddUserToGroupDrawer.set(false);
+		if ($selectedGroup === null) return;
 		fetchGroupUsers($selectedGroup.groupId).then((usersResponse) => {
 			groupUsers.set(usersResponse.data);
 		});

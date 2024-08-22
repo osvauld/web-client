@@ -1,13 +1,12 @@
 import { writable } from "svelte/store";
 import browser from "webextension-polyfill";
-import { Group } from "../dtos/group.dto";
-import { UserWithAccessType } from "../dtos/user.dto";
+import { SelectedGroup } from "../dtos/group.dto";
+import { GroupUser } from "../dtos/user.dto";
 
-export let groupStore = writable<Group[]>([]);
-export let groupList = writable<Group[]>([]);
-export let groupUsers = writable<UserWithAccessType[]>([]);
-export let selectedGroup = writable<Group | null>(null);
-
+export let groupStore = writable<SelectedGroup[]>([]);
+export let groupList = writable<SelectedGroup[]>([]);
+export let groupUsers = writable<GroupUser[]>([]);
+export let selectedGroup = writable<SelectedGroup | null>(null);
 const storedGroup = browser.storage.local.get("selectedGroup");
 storedGroup.then((value) => {
 	if (value.selectedGroup) {

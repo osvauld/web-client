@@ -6,6 +6,8 @@ import {
 	FetchUsersWithoutGroupAccess,
 	FetchGroupCredentialResponse,
 	FetchCredentialGroupsResponse,
+	BaseResponse,
+	CreateGroupResponse,
 } from "../dtos/response.dto";
 import {
 	AddUserToGroupPayload,
@@ -39,7 +41,9 @@ export const fetchGroupUsers = async (
 	}).then((response) => response.json());
 };
 
-export const createGroup = async (payload: CreateGroupPayload) => {
+export const createGroup = async (
+	payload: CreateGroupPayload,
+): Promise<CreateGroupResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -204,7 +208,7 @@ export const removeGroupFromFolder = async (
 export const removeGroupFromCredential = async (
 	credentialId: string,
 	groupId: string,
-) => {
+): Promise<BaseResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -222,7 +226,7 @@ export const removeGroupFromCredential = async (
 export const removeUserFromGroup = async (
 	groupId: string,
 	memberId: string,
-) => {
+): Promise<BaseResponse> => {
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: JSON.stringify({ memberId, groupId }),
 	});
@@ -237,7 +241,7 @@ export const removeUserFromGroup = async (
 	}).then((response) => response.json());
 };
 
-export const removeGroup = async (groupId: string) => {
+export const removeGroup = async (groupId: string): Promise<BaseResponse> => {
 	const headers = new Headers();
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: groupId,

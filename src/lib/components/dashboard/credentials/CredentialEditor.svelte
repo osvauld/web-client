@@ -21,34 +21,36 @@
 
 	import {
 		AddCredentialPayload,
-		Fields,
-		User,
+		Field,
+		UsersForDataSync,
 		AddCredentialField,
+		CredentialFieldComponentProps,
 	} from "../dtos";
 	import AddLoginFields from "./AddLoginFields.svelte";
 	import { sendMessage, getDomain } from "../helper";
 	import { setCredentialStore } from "../../../store/storeHelper";
+	import { EncryptedEditField } from "../../../dtos/credential.dto";
 
 	export let edit = false;
-	export let credentialFields: any = [
+	export let credentialFields: CredentialFieldComponentProps[] = [
 		{ fieldName: "Username", fieldValue: "", sensitive: false },
 		{ fieldName: "Password", fieldValue: "", sensitive: true },
 		{ fieldName: "URL", fieldValue: "https://", sensitive: false },
 		{ fieldName: "TOTP", fieldValue: "", sensitive: true },
 	];
-	export let credentialId = null;
+	export let credentialId: string = "";
 	export let description = "";
 	export let name = "";
 	export let credentialType = "Login";
 	let notNamed = false;
 	let invalidTotp = false;
 	let isLoaderActive: boolean = false;
-	let usersToShare: User[] = [];
+	let usersToShare: UsersForDataSync[] = [];
 	let addCredentialPaylod: AddCredentialPayload;
 	let hoveredIndex: Number | null = null;
 	let errorMessage = "";
 	let changedFields = new Set();
-	let deletedFields = [];
+	let deletedFields: string[] = [];
 	let invalidUrl = false;
 
 	const dispatcher = createEventDispatcher();
@@ -62,13 +64,18 @@
 	};
 	//TODO: change user type
 	const removeField = (index: number) => {
-		credentialFields[index].fieldId &&
-			deletedFields.push(credentialFields[index].fieldId);
+		const field = credentialFields[index];
+		if (field && field.fieldId) {
+			const fieldId = field.fieldId;
+			if (typeof fieldId === "string") {
+				deletedFields.push(fieldId);
+			}
+		}
 		credentialFields.splice(index, 1);
 		credentialFields = [...credentialFields];
 	};
 
-	const totpValidator = (secretKey) => {
+	const totpValidator = (secretKey: string): boolean => {
 		// Base32 encoded TOTP secrets typically range in size, allowing for flexibility
 		if (secretKey.length < 10 || secretKey.length > 64) {
 			return false;
@@ -83,6 +90,10 @@
 		return true;
 	};
 	const editCredential = async () => {
+		if (!credentialId) {
+			dispatcher("close");
+			throw new Error("credential not selected");
+		}
 		const editedUserFields = [];
 		const editedEnvFields = [];
 		const newFields = [];
@@ -93,7 +104,7 @@
 		}));
 		const envFieldsResponse = await getEnvFieldsByCredentialId(credentialId);
 
-		let userEnvMap = envResponse.data.reduce((obj, item) => {
+		let userEnvMap = envResponse.data.reduce((obj: any, item) => {
 			if (!obj[item.cliUserCreatedBy]) {
 				obj[item.cliUserCreatedBy] = [];
 			}
@@ -106,15 +117,25 @@
 			if (field.fieldName === "URL") {
 				domain = getDomain(field.fieldValue);
 			}
-			let editedUserField;
-			if (changedFields.has(field.fieldId)) {
+			let editedUserField: {
+				fieldId: string;
+				fieldName: string;
+				fieldType: string;
+				fieldValues: EncryptedEditField[];
+			};
+			if (field.fieldId && changedFields.has(field.fieldId)) {
 				editedUserField = {
 					fieldId: field.fieldId,
 					fieldName: field.fieldName,
-					fieldType: field.fieldType,
+					fieldType:
+						field.fieldName === "TOTP"
+							? "totp"
+							: field.sensitive
+								? "sensitive"
+								: "meta",
 					fieldValues: [],
 				};
-				if (envFieldMap[field.fieldId]) {
+				if (field?.fieldId && envFieldMap[field.fieldId]) {
 					// making envFieldId as userId to reuse 'encryptEditFields' case
 					const envFieldPayloadForEncryption = envFieldMap[field.fieldId].map(
 						(envField) => {
@@ -124,11 +145,14 @@
 							};
 						},
 					);
-					const response = await sendMessage("encryptEditFields", {
-						fieldValue: field.fieldValue,
-						usersToShare: envFieldPayloadForEncryption,
-					});
-					const envFieldPayload = response.data.map((envField) => {
+					const encryptedEditFields: EncryptedEditField[] = await sendMessage(
+						"encryptEditFields",
+						{
+							fieldValue: field.fieldValue,
+							usersToShare: envFieldPayloadForEncryption,
+						},
+					);
+					const envFieldPayload = encryptedEditFields.map((envField) => {
 						return {
 							envFieldId: envField.userId,
 							fieldValue: envField.fieldValue,
@@ -136,14 +160,25 @@
 					});
 					editedEnvFields.push(...envFieldPayload);
 				}
-				const response = await sendMessage("encryptEditFields", {
-					fieldValue: field.fieldValue,
-					usersToShare: users,
-				});
-				editedUserField.fieldValues = response.data;
+				const encryptedEditFields: EncryptedEditField[] = await sendMessage(
+					"encryptEditFields",
+					{
+						fieldValue: field.fieldValue,
+						usersToShare: users,
+					},
+				);
+				editedUserField.fieldValues = encryptedEditFields;
 				editedUserFields.push(editedUserField);
 			} else if (!field.fieldId) {
-				const newFieldPayload = {
+				const newFieldPayload: {
+					fieldName: string;
+					fieldType: string;
+					fieldValues: {
+						fieldValue: string;
+						userId: string;
+						envFieldValues: { envId: string; fieldValue: string }[];
+					}[];
+				} = {
 					fieldName: field.fieldName,
 					fieldType:
 						field.fieldName === "TOTP"
@@ -154,37 +189,47 @@
 					fieldValues: [],
 				};
 
-				const response = await sendMessage("encryptEditFields", {
-					fieldValue: field.fieldValue,
-					usersToShare: users,
-				});
-				for (const fieldData of response.data) {
-					let payload = {
+				const encryptedEditFields: EncryptedEditField[] = await sendMessage(
+					"encryptEditFields",
+					{
+						fieldValue: field.fieldValue,
+						usersToShare: users,
+					},
+				);
+				for (const fieldData of encryptedEditFields) {
+					let payload: {
+						fieldValue: string;
+						userId: string;
+						envFieldValues: { envId: string; fieldValue: string }[];
+					} = {
 						fieldValue: fieldData.fieldValue,
 						userId: fieldData.userId,
-						envFieldvalues: [],
+						envFieldValues: [],
 					};
 
 					if (userEnvMap[fieldData.userId]) {
 						const cliUsersToShare = userEnvMap[fieldData.userId].map(
-							(envData) => {
+							(envData: any) => {
 								return {
 									userId: envData.envId,
 									publicKey: envData.cliUserPublicKey,
 								};
 							},
 						);
-						const response = await sendMessage("encryptEditFields", {
-							fieldValue: field.fieldValue,
-							usersToShare: cliUsersToShare,
-						});
-						const envFieldsValues = response.data.map((envField) => {
+						const encryptedFields: EncryptedEditField[] = await sendMessage(
+							"encryptEditFields",
+							{
+								fieldValue: field.fieldValue,
+								usersToShare: cliUsersToShare,
+							},
+						);
+						const envFieldsValues = encryptedFields.map((envField) => {
 							return {
 								envId: envField.userId,
 								fieldValue: envField.fieldValue,
 							};
 						});
-						payload.envFieldvalues = envFieldsValues;
+						payload.envFieldValues = envFieldsValues;
 					}
 					newFieldPayload.fieldValues.push(payload);
 				}
@@ -202,7 +247,7 @@
 			domain: "",
 			deletedFields,
 		};
-		updateCredential(payload, credentialId);
+		await updateCredential(payload, credentialId);
 		await setCredentialStore();
 		isLoaderActive = false;
 		dispatcher("close");
@@ -211,7 +256,7 @@
 	const saveCredential = async () => {
 		isLoaderActive = true;
 		errorMessage = "";
-		if ($selectedFolder === null) throw new Error("folder not selected");
+		if ($selectedFolder === undefined) throw new Error("folder not selected");
 		if (name.length === 0) {
 			isLoaderActive = false;
 			notNamed = true;
@@ -221,24 +266,30 @@
 			return;
 		}
 
-		let totpPresence = credentialFields.filter(
-			(field) => field.fieldName === "TOTP" && field.fieldValue.length !== 0,
+		let totpPresence = credentialFields.find(
+			(field: CredentialFieldComponentProps) => {
+				if (field.fieldName === "TOTP" && field.fieldValue.length !== 0) {
+					return field;
+				}
+			},
 		);
 
-		let isValidUrl = !credentialFields.some((field) => {
-			if (field.fieldName === "URL") {
-				try {
-					getDomain(field.fieldValue);
-					return false;
-				} catch (_) {
-					return true;
+		let isValidUrl = !credentialFields.some(
+			(field: CredentialFieldComponentProps) => {
+				if (field.fieldName === "URL") {
+					try {
+						getDomain(field.fieldValue);
+						return false;
+					} catch (_) {
+						return true;
+					}
 				}
-			}
-			return false;
-		});
+				return false;
+			},
+		);
 
-		if (totpPresence.length !== 0) {
-			const isTotpValid = totpValidator(totpPresence[0].fieldValue);
+		if (totpPresence) {
+			const isTotpValid = totpValidator(totpPresence.fieldValue);
 			if (!isTotpValid) {
 				isLoaderActive = false;
 				invalidTotp = true;
@@ -259,9 +310,11 @@
 
 		if (edit) {
 			await editCredential();
+			isLoaderActive = false;
+			dispatcher("close");
 			return;
 		}
-		let addCredentialFields: Fields[] = [];
+		let addCredentialFields: Field[] = [];
 		let domain = "";
 		for (const field of credentialFields) {
 			if (field.fieldName === "URL" && field.fieldValue.length !== 0) {
@@ -290,7 +343,7 @@
 				(field.fieldName.length !== 0 || field.fieldValue.length !== 0) &&
 				field.fieldName !== "Domain"
 			) {
-				const baseField: Fields = {
+				const baseField: Field = {
 					fieldName: field.fieldName,
 					fieldValue: field.fieldValue,
 					fieldType: field.sensitive ? "sensitive" : "meta",
@@ -329,9 +382,9 @@
 		dispatcher("close");
 	};
 
-	const credentialTypeSelection = (isLogin: boolean) => {
-		credentialType = isLogin ? "Login" : "Other";
-		if (credentialType === "Other") {
+	const credentialTypeSelection = (type: string) => {
+		credentialType = type;
+		if (credentialType === "Custom") {
 			credentialFields = [
 				{
 					fieldName: "Field Name",
@@ -340,21 +393,28 @@
 				},
 				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
 			];
-		} else {
+		} else if (credentialType === "Login") {
 			credentialFields = [
 				{ fieldName: "Username", fieldValue: "", sensitive: false },
 				{ fieldName: "Password", fieldValue: "", sensitive: true },
 				{ fieldName: "URL", fieldValue: "https://", sensitive: false },
 				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
 			];
+		} else if (credentialType == "Note") {
+			credentialFields = [
+				{ fieldName: "Note", fieldValue: "", sensitive: false },
+			];
 		}
 	};
 
 	onMount(async () => {
-		if (edit) {
+		if (edit && credentialId) {
 			const responseJson = await fetchCredentialUsersForDataSync(credentialId);
 			usersToShare = responseJson.data;
 		} else {
+			if ($selectedFolder === undefined) {
+				throw new Error("Folder not selected");
+			}
 			const responseJson = await fetchFolderUsersForDataSync(
 				$selectedFolder.id,
 			);
@@ -367,6 +427,9 @@
 	};
 
 	const deleteCredential = () => {
+		if ($selectedFolder === undefined || credentialId === null) {
+			throw new Error("Folder not selected");
+		}
 		modalManager.set({
 			id: credentialId,
 			name: name,
@@ -380,7 +443,7 @@
 		isEnter ? (hoveredIndex = index) : (hoveredIndex = null);
 	};
 
-	const fieldEditHandler = (field) => {
+	const fieldEditHandler = (field: CredentialFieldComponentProps) => {
 		if (edit && field.fieldId) {
 			changedFields.add(field.fieldId);
 			if (field.fieldName === "URL") {
@@ -409,19 +472,30 @@
 						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
 						: 'text-osvauld-sheffieldgrey '}"
 					type="button"
-					on:click="{() => credentialTypeSelection(true)}"
+					on:click="{() => credentialTypeSelection('Login')}"
 				>
-					{edit ? "Edit login credential" : "Add Login credential"}
+					{edit ? "Edit Login" : "Login"}
 				</button>
 				<button
 					class="text-[28px] font-sans font-normal ml-8 {credentialType ===
-					'Other'
+					'Custom'
 						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
 						: 'text-osvauld-sheffieldgrey '}"
 					type="button"
-					on:click="{() => credentialTypeSelection(false)}"
+					on:click="{() => credentialTypeSelection('Custom')}"
 				>
-					{edit ? "Edit other" : "Other"}
+					{edit ? "Edit Custom" : "Custom"}
+				</button>
+
+				<button
+					class="text-[28px] font-sans font-normal ml-8 {credentialType ===
+					'Note'
+						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
+						: 'text-osvauld-sheffieldgrey '}"
+					type="button"
+					on:click="{() => credentialTypeSelection('Note')}"
+				>
+					{edit ? "Edit Note" : "Note"}
 				</button>
 			</div>
 			<div>
@@ -457,34 +531,47 @@
 					type="text"
 					placeholder="Enter Credential name...."
 					autocomplete="off"
-					autofocus
 					bind:value="{name}"
 				/>
-				{#each credentialFields as field, index}
-					{#if field.fieldName !== "Domain"}
-						<AddLoginFields
-							{field}
-							{index}
-							{hoveredIndex}
-							on:select="{(e) =>
-								triggerSensitiveBubble(e.detail.index, e.detail.identifier)}"
-							on:remove="{(e) => removeField(e.detail)}"
-							on:change="{() => {
-								fieldEditHandler(field);
-							}}"
-						/>
-					{/if}
-				{/each}
+				{#if credentialType != "Note"}
+					{#each credentialFields as field, index}
+						{#if field.fieldName !== "Domain"}
+							<AddLoginFields
+								{field}
+								{index}
+								{hoveredIndex}
+								on:select="{(e) =>
+									triggerSensitiveBubble(e.detail.index, e.detail.identifier)}"
+								on:remove="{(e) => removeField(e.detail)}"
+								on:change="{() => {
+									fieldEditHandler(field);
+								}}"
+							/>
+						{/if}
+					{/each}
+				{:else}
+					<textarea
+						rows="2"
+						class="w-5/6 mt-4 h-auto min-h-[6rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base focus:border-osvauld-iconblack focus:ring-0"
+						bind:value="{credentialFields[0].fieldValue}"
+						on:change="{() => {
+							fieldEditHandler(credentialFields[0]);
+						}}"
+						placeholder="Enter note"
+					></textarea>
+				{/if}
 			</div>
-			<div class="flex mr-24">
-				<button
-					class="py-2 m-4 bg-osvauld-addfieldgrey flex-1 flex justify-center items-center rounded-md text-osvauld-chalkwhite border-2 border-dashed border-osvauld-iconblack"
-					on:click="{addField}"
-					type="button"
-				>
-					<Add color="{'#6E7681'}" />
-				</button>
-			</div>
+			{#if credentialType != "Note"}
+				<div class="flex mr-24">
+					<button
+						class="py-2 m-4 bg-osvauld-addfieldgrey flex-1 flex justify-center items-center rounded-md text-osvauld-chalkwhite border-2 border-dashed border-osvauld-iconblack"
+						on:click="{addField}"
+						type="button"
+					>
+						<Add color="{'#6E7681'}" />
+					</button>
+				</div>
+			{/if}
 		</div>
 		<div class=" mx-6 pl-3 flex justify-start items-center mb-5">
 			<textarea

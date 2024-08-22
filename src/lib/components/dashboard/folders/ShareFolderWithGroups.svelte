@@ -16,6 +16,7 @@
 	import { onMount } from "svelte";
 	import { Lens } from "../icons";
 	import ListItem from "../components/ListItem.svelte";
+	import { UserEncryptedCredentials } from "../../../dtos/credential.dto";
 	const dispatch = createEventDispatcher();
 	let groups: Group[] = [];
 	export let credentialsFields: CredentialFields[];
@@ -36,18 +37,21 @@
 		const groupIds = Array.from($selectedGroups.keys());
 		const response = await fetchUsersByGroupIds(groupIds);
 		const groupUsersList = response.data;
-		if ($selectedFolder === null) throw new Error("Folder not selected");
+		if ($selectedFolder === undefined) throw new Error("Folder not selected");
 		const payload: ShareFolderWithGroupsPayload = {
-			folderId: $selectedFolder.id,
+			folderId: $selectedFolder!.id,
 			groupData: [],
 		};
 		for (const groupUsers of groupUsersList) {
 			const group = $selectedGroups.get(groupUsers.groupId);
-			if (group === undefined) continue;
-			const userData = await sendMessage("createShareCredPayload", {
-				creds: credentialsFields,
-				users: groupUsers.userDetails,
-			});
+			if (group === undefined || !group.accessType) continue;
+			const userData: UserEncryptedCredentials[] = await sendMessage(
+				"createShareCredPayload",
+				{
+					creds: credentialsFields,
+					users: groupUsers.userDetails,
+				},
+			);
 			payload.groupData.push({
 				groupId: group.groupId,
 				accessType: group.accessType,
@@ -105,11 +109,11 @@
 
 	onMount(async () => {
 		// TODO: change fetch all groups to fetch groups where folder not shared.
-		if ($selectedFolder === null) throw new Error("Folder not selected");
+		if ($selectedFolder === undefined) throw new Error("Folder not selected");
 		//Below will disable save changes button when group/user button switched
 		dispatch("enable", false);
 
-		const responseJson = await fetchGroupsWithoutAccess($selectedFolder.id);
+		const responseJson = await fetchGroupsWithoutAccess($selectedFolder!.id);
 		groups = responseJson.data;
 	});
 </script>
@@ -137,7 +141,6 @@
 				item="{group}"
 				isSelected="{index === selectionIndex && !topList}"
 				on:click="{() => handleClick(index, false)}"
-				{setbackground}
 				{showOptions}
 				reverseModal="{filteredGroups.length > 4 &&
 					index > filteredGroups.length - 3}"
@@ -161,7 +164,6 @@
 					isBottomList="{true}"
 					on:click="{() => handleClick(index, true)}"
 					on:remove="{() => handleItemRemove(groupId)}"
-					{setbackground}
 					{showOptions}
 					reverseModal="{$selectedGroups.size > 1 && index > 1}"
 					on:select="{(e) => handleRoleChange(e, index, 'selectedGroups')}"

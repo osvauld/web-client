@@ -10,10 +10,13 @@
 	import { searchObjects, sendMessage } from "../helper";
 	import { Lens } from "../icons";
 	import { selectedEnv, toastStore } from "../store";
+	import { SearchedCredential } from "../../../dtos/credential.dto";
+	import { get } from "svelte/store";
+	import { Environments } from "../../../dtos/environments.dto";
 
 	let saveEnabled = false;
 	let query = "";
-
+	let selectedEnvironment: Environments;
 	const dispatch = createEventDispatcher();
 
 	const handleKeyDown = (event: KeyboardEvent) => {
@@ -21,11 +24,11 @@
 			dispatch("close");
 		}
 	};
-	let searchData = [];
-	let searchResults = [];
+	let searchData: SearchedCredential[] = [];
+	let searchResults: SearchedCredential[] = [];
 	let checkedCredentials = new Set();
 
-	function toggleFolder(result, event) {
+	function toggleFolder(result: SearchedCredential, event: any) {
 		if (event.target.checked) {
 			checkedCredentials.add(result);
 		} else {
@@ -60,15 +63,15 @@
 			creds: responseJson.data,
 			users: [
 				{
-					id: $selectedEnv.cliUser,
-					publicKey: $selectedEnv.publicKey,
+					id: selectedEnvironment.cliUser,
+					publicKey: selectedEnvironment.publicKey,
 				},
 			],
 		});
-		encryptedCreds[0].envId = $selectedEnv.id;
-		let shareCredentialsWithEnvResponse = await shareCredentialsWithEnv(
-			encryptedCreds[0],
-		);
+		let shareCredentialsWithEnvResponse = await shareCredentialsWithEnv({
+			...encryptedCreds[0],
+			envId: selectedEnvironment.id,
+		});
 		if (shareCredentialsWithEnvResponse.success) {
 			toastStore.set({
 				type: shareCredentialsWithEnvResponse.success,
@@ -82,6 +85,13 @@
 	onMount(async () => {
 		window.addEventListener("keydown", handleKeyDown);
 		await getSearchData();
+		const value = get(selectedEnv);
+		if (value) {
+			selectedEnvironment = value;
+		} else {
+			dispatch("close");
+			throw new Error("No environment selected");
+		}
 	});
 
 	onDestroy(() => {

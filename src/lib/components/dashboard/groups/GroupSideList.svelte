@@ -11,22 +11,20 @@
 		modalManager,
 		showRenameGroupDrawer,
 	} from "../store";
-	import { Group } from "../dtos";
+	import { SelectedGroup } from "../dtos";
 
 	import Add from "../../basic/icons/add.svelte";
 	import { GroupIcon, Menu } from "../icons";
 	import { onMount } from "svelte";
 	import { setGroupStore } from "../../../store/storeHelper";
-	const accountDetails = localStorage.getItem("user");
-	let accountRole = JSON.parse(accountDetails).type;
+	import { getUserDetails } from "../../../store/storeHelper";
+
 	let adminStatus = false;
-	let hoveringIndex = null;
-	if (accountRole === "admin" || accountRole === "superadmin") {
-		adminStatus = true;
-	}
+	let hoveringIndex: number | null = null;
+
 	let iconColor = "#6E7681"; //sheffieldgrey:
 
-	const selectGroup = (group: Group) => {
+	const selectGroup = (group: SelectedGroup) => {
 		allUsersSelected.set(false);
 		selectedGroup.set(group);
 	};
@@ -48,7 +46,7 @@
 		allUsersSelected.set(true);
 	};
 
-	const showMoreOptionsHandler = (e, group) => {
+	const showMoreOptionsHandler = (e: any, group: SelectedGroup) => {
 		selectedGroup.set(group);
 		buttonRef.set(e.target);
 		modalManager.set({
@@ -62,6 +60,10 @@
 
 	onMount(async () => {
 		await setGroupStore();
+		const userDetails = await getUserDetails();
+		if (userDetails.type === "admin" || userDetails.type === "superadmin") {
+			adminStatus = true;
+		}
 	});
 </script>
 
@@ -75,13 +77,26 @@
 		<span class="mr-1 text-base font-normal">Create new group</span>
 		<Add color="{iconColor}" />
 	</button>
-	{#if $showAddGroupDrawer || $showRenameGroupDrawer}
+	{#if $showAddGroupDrawer}
 		<button
 			class="fixed inset-0 flex items-center justify-center z-50 backdrop-filter backdrop-blur-[2px]"
 			on:click|stopPropagation
 			on:keydown|stopPropagation
 		>
 			<GroupEditor on:close="{closeModal}" />
+		</button>
+	{/if}
+	{#if $showRenameGroupDrawer && $selectedGroup}
+		<button
+			class="fixed inset-0 flex items-center justify-center z-50 backdrop-filter backdrop-blur-[2px]"
+			on:click|stopPropagation
+			on:keydown|stopPropagation
+		>
+			<GroupEditor
+				rename="{true}"
+				name="{$selectedGroup.name}"
+				on:close="{closeModal}"
+			/>
 		</button>
 	{/if}
 	<ul

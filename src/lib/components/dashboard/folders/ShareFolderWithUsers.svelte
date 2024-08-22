@@ -1,22 +1,17 @@
 <script lang="ts">
 	import { shareFolderWithUsers } from "../apis";
-	import {
-		User,
-		UserWithAccessType,
-		ShareFolderWithUsersPayload,
-		CredentialFields,
-	} from "../dtos";
+	import { User, ShareFolderWithUsersPayload, CredentialFields } from "../dtos";
 	import { createEventDispatcher, onMount } from "svelte";
 	import { selectedFolder, toastStore } from "../store";
-	import { sendMessage, setbackground } from "../helper";
+	import { sendMessage } from "../helper";
 	import { Lens } from "../icons";
 	import ListItem from "../components/ListItem.svelte";
-	import { on } from "events";
+	import { UserEncryptedDataForShareCredentials } from "../../../dtos/request.dto";
 
 	const dispatch = createEventDispatcher();
 	export let users: User[];
 	export let credentialsFields: CredentialFields[];
-	let selectedUsers: UserWithAccessType[] = [];
+	let selectedUsers: User[] = [];
 	let showOptions = false;
 	let selectionIndex: number | null = null;
 	let topList = false;
@@ -31,17 +26,19 @@
 		: users;
 
 	export const shareFolderHandler = async () => {
-		if ($selectedFolder === null) {
+		if ($selectedFolder === undefined) {
 			throw new Error("Folder not selected");
 		}
-		const userData = await sendMessage("createShareCredPayload", {
-			creds: credentialsFields,
-			users: selectedUsers,
-		});
+		const userData: UserEncryptedDataForShareCredentials[] = await sendMessage(
+			"createShareCredPayload",
+			{
+				creds: credentialsFields,
+				users: selectedUsers,
+			},
+		);
 
 		const shareFolderPayload: ShareFolderWithUsersPayload = {
 			folderId: $selectedFolder.id,
-			// @ts-ignore
 			userData,
 		};
 		const shareStatus = await shareFolderWithUsers(shareFolderPayload);
@@ -113,7 +110,6 @@
 				item="{user}"
 				isSelected="{index === selectionIndex && !topList}"
 				on:click="{() => handleClick(index, false)}"
-				{setbackground}
 				{showOptions}
 				reverseModal="{filteredUsers.length > 3 &&
 					index > filteredUsers.length - 3}"
@@ -137,7 +133,6 @@
 					isBottomList="{true}"
 					on:click="{() => handleClick(index, true)}"
 					on:remove="{() => handleItemRemove(index)}"
-					{setbackground}
 					{showOptions}
 					reverseModal="{selectedUsers.length > 3 &&
 						index > selectedUsers.length - 3}"

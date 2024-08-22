@@ -6,6 +6,10 @@ import {
 	FetchCredentialsFieldsByIdsResponse,
 	FetchCredsByIdsResponse,
 	FetchSensitiveFieldsByCredenitalIdResponse,
+	SearchResponse,
+	FetchCredentialUsersForDataSyncResponse,
+	GetEnvFieldsByCredentialIdResponse,
+	GetEnvsForCredentialResponse,
 } from "../dtos/response.dto";
 import {
 	AddCredentialPayload,
@@ -205,7 +209,7 @@ export const fetchSensitiveFieldsByCredentialId = async (
 	return response.json();
 };
 
-export const getSearchFields = async () => {
+export const getSearchFields = async (): Promise<SearchResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -226,7 +230,7 @@ export const editUserPermissionForCredential = async (
 	credentialId: string,
 	userId: string,
 	accessType: string,
-) => {
+): Promise<BaseResponse> => {
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: JSON.stringify({ userId, accessType }),
 	});
@@ -252,7 +256,7 @@ export const editGroupPermissionForCredential = async (
 	credentialId: string,
 	groupId: string,
 	accessType: string,
-) => {
+): Promise<BaseResponse> => {
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: JSON.stringify({ groupId, accessType }),
 	});
@@ -274,7 +278,9 @@ export const editGroupPermissionForCredential = async (
 	return response;
 };
 
-export const fetchCredentialUsersForDataSync = async (credentialId: string) => {
+export const fetchCredentialUsersForDataSync = async (
+	credentialId: string,
+): Promise<FetchCredentialUsersForDataSyncResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -291,7 +297,9 @@ export const fetchCredentialUsersForDataSync = async (credentialId: string) => {
 	return response;
 };
 
-export const removeCredential = async (credentialId: string) => {
+export const removeCredential = async (
+	credentialId: string,
+): Promise<BaseResponse> => {
 	const signatureResponse = await sendMessage("hashAndSign", {
 		message: credentialId,
 	});
@@ -309,7 +317,9 @@ export const removeCredential = async (credentialId: string) => {
 	return response;
 };
 
-export const shareCredentialsWithEnv = async (data: any) => {
+export const shareCredentialsWithEnv = async (
+	data: any,
+): Promise<BaseResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	const signatureResponse = await sendMessage("hashAndSign", {
@@ -328,7 +338,9 @@ export const shareCredentialsWithEnv = async (data: any) => {
 	return response;
 };
 
-export const editEnvCredentialField = async (data: any) => {
+export const editEnvCredentialField = async (
+	data: any,
+): Promise<BaseResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	const signatureResponse = await sendMessage("hashAndSign", {
@@ -347,7 +359,9 @@ export const editEnvCredentialField = async (data: any) => {
 	return response;
 };
 
-export const getEnvFieldsByCredentialId = async (credentialId: string) => {
+export const getEnvFieldsByCredentialId = async (
+	credentialId: string,
+): Promise<GetEnvFieldsByCredentialIdResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
@@ -363,7 +377,9 @@ export const getEnvFieldsByCredentialId = async (credentialId: string) => {
 	return response;
 };
 
-export const getEnvsForCredential = async (credentialId: string) => {
+export const getEnvsForCredential = async (
+	credentialId: string,
+): Promise<GetEnvsForCredentialResponse> => {
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);

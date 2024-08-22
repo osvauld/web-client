@@ -15,22 +15,20 @@
 
 	import { sendMessage } from "../helper";
 	import CircularProgressBar from "../../popup/components/CircularProgressBar.svelte";
-	export let fieldName;
-	export let fieldValue;
+	export let fieldName: string;
+	export let fieldValue: string;
 	export let fieldType = "sensitive";
-	export let hoverEffect;
-	export let bgColor;
+	export let hoverEffect: boolean;
 	let visibility = false;
 	let decrypted = false;
-	let decryptedValue = null;
+	let decryptedValue: string | null = null;
 	let copied = false;
-	let totpToken = null;
+	let totpToken: string | null = null;
 	let timeRemaining = 0;
-	let totpInterval;
+	let totpInterval: any;
 
 	const decrypt = async () => {
-		const response = await sendMessage("decryptField", fieldValue);
-		decryptedValue = response.data;
+		decryptedValue = await sendMessage("decryptField", fieldValue);
 		decrypted = true;
 
 		if (fieldType === "totp") {
@@ -67,13 +65,12 @@
 		}, 3000);
 	};
 
-	const copyToClipboard = async (e) => {
-		copied = true;
-		try {
-			await navigator.clipboard.writeText(decryptedValue);
-		} catch (err) {
-			console.error("Failed to copy: ", err);
+	const copyToClipboard = async () => {
+		if (decryptedValue === null) {
+			return;
 		}
+		copied = true;
+		await navigator.clipboard.writeText(decryptedValue);
 		setTimeout(() => {
 			copied = false;
 		}, 2000);

@@ -19,17 +19,22 @@
 	import CredentialEditor from "./CredentialEditor.svelte";
 	import { sendMessage } from "../helper";
 
-	import { Credential, Fields, Group, UserWithAccessType } from "../dtos";
-	import Tick from "../../basic/icons/tick.svelte";
+	import {
+		Credential,
+		Field,
+		Group,
+		User,
+		CredentialFieldComponentProps,
+	} from "../dtos";
 	import FileText from "../../basic/icons/fileText.svelte";
 	import { setCredentialStore } from "../../../store/storeHelper";
-	import { buffer } from "stream/consumers";
 	export let credential: Credential;
-	export let sensitiveFields: Fields[];
-	let selectedTab = "Groups";
+	export let sensitiveFields: Field[];
+	type Tab = "Users" | "Groups";
+	let selectedTab: Tab = "Groups";
 	let accessListSelected = false;
 	let accessChangeDetected = false;
-	let fieldsForEdit = [];
+	let fieldsForEdit: CredentialFieldComponentProps[] = [];
 	let editPermissionTrigger = false;
 
 	let userPermissions: {
@@ -43,7 +48,7 @@
 		accessType: string;
 	};
 	let showEditCredentialModal = false;
-	let users: UserWithAccessType[] = [];
+	let users: User[] = [];
 	let groups: Group[] = [];
 
 	const toggleSelect = async (e: any) => {
@@ -63,7 +68,7 @@
 		await removeGroupFromCredential(credential.credentialId, group.groupId);
 		await toggleSelect({ detail: "Groups" });
 	};
-	const removeUserFromCredentialHandler = async (user: UserWithAccessType) => {
+	const removeUserFromCredentialHandler = async (user: User) => {
 		await removeUserFromCredential(credential.credentialId, user.id);
 		await toggleSelect({ detail: "Users" });
 	};
@@ -118,8 +123,10 @@
 
 	const handleEditCredential = async () => {
 		for (let field of sensitiveFields) {
-			const response = await sendMessage("decryptField", field.fieldValue);
-			let decryptedValue = response.data;
+			const decryptedValue = await sendMessage(
+				"decryptField",
+				field.fieldValue,
+			);
 			fieldsForEdit.push({
 				fieldId: field.fieldId,
 				fieldName: field.fieldName,
@@ -238,7 +245,6 @@
 						fieldName="{field.fieldName}"
 						fieldValue="{field.fieldValue}"
 						hoverEffect="{true}"
-						bgColor="{null}"
 					/>
 				{/each}
 				{#if sensitiveFields}
@@ -248,7 +254,6 @@
 							fieldValue="{field.fieldValue}"
 							fieldType="{field.fieldType}"
 							hoverEffect="{true}"
-							bgColor="{null}"
 						/>
 					{/each}
 				{/if}
@@ -291,6 +296,7 @@
 								isUser="{false}"
 								item="{group}"
 								{index}
+								reverseModal="{false}"
 								{editPermissionTrigger}
 								on:remove="{() => removeGroupFromCredentialHandler(group)}"
 								on:permissonChange="{(e) =>
@@ -303,6 +309,7 @@
 								isUser="{true}"
 								item="{user}"
 								{index}
+								reverseModal="{false}"
 								{editPermissionTrigger}
 								on:remove="{() => removeUserFromCredentialHandler(user)}"
 								on:permissonChange="{(e) =>

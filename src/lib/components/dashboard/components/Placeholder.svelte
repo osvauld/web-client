@@ -6,6 +6,8 @@
 		selectedPage,
 	} from "../store";
 	import { Add } from "../icons";
+	import { getUserDetails } from "../../../store/storeHelper";
+
 	let isFirstCardHovered = false;
 	let isSecondCardHovered = false;
 	let username = "";
@@ -20,7 +22,8 @@
 	};
 
 	onMount(async () => {
-		username = localStorage.getItem("username");
+		const accountDetails = await getUserDetails();
+		username = accountDetails.username;
 	});
 </script>
 

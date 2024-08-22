@@ -14,7 +14,8 @@
 		showPassword = !showPassword;
 	}
 
-	function handleInputChange(event, field) {
+	type inputField = "privateKey" | "passphrase";
+	function handleInputChange(event: any, field: inputField) {
 		if (field === "privateKey") {
 			privateKeys = event.target.value;
 		} else if (field === "passphrase") {

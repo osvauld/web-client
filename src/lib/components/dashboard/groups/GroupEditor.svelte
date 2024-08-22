@@ -8,16 +8,20 @@
 	import ClosePanel from "../../basic/icons/closePanel.svelte";
 	import { groupStore, toastStore } from "../store";
 	import { setGroupStore } from "../../../store/storeHelper";
-	let name = $showRenameGroupDrawer ? $selectedGroup.name : "";
+	export let name: string = "";
+	export let rename: boolean = false;
 
 	const renameGroupFunc = async () => {
 		const payload = {
 			name: name,
 		};
+		if ($selectedGroup === null) {
+			showRenameGroupDrawer.set(false);
+			throw new Error("Group not selected");
+		}
 		const groupResponse = await renameGroup(payload, $selectedGroup.groupId);
 
 		await setGroupStore();
-		showRenameGroupDrawer.set(false);
 		const actionMessage = groupResponse.success
 			? "Group Successfully Renamed"
 			: "Failed to Rename group";
@@ -26,6 +30,7 @@
 			message: actionMessage,
 			show: true,
 		});
+		showRenameGroupDrawer.set(false);
 	};
 
 	const addGroupFunc = async () => {
@@ -64,13 +69,11 @@
 
 <form
 	class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[17rem] flex flex-col items-start justify-center gap-3"
-	on:submit|preventDefault="{$showRenameGroupDrawer
-		? renameGroupFunc
-		: addGroupFunc}"
+	on:submit|preventDefault="{rename ? renameGroupFunc : addGroupFunc}"
 >
 	<div class="flex justify-between items-center w-full">
 		<span class="text-[21px] font-medium text-osvauld-quarzowhite"
-			>{$showRenameGroupDrawer ? "Rename Group" : "Create Group"}</span
+			>{rename ? "Rename Group" : "Create Group"}</span
 		>
 		<button
 			class="cursor-pointer p-2"
@@ -112,7 +115,7 @@
 			type="submit"
 			disabled="{name === ''}"
 		>
-			{$showRenameGroupDrawer ? "Save Changes" : "Add Group"}
+			{rename ? "Save Changes" : "Add Group"}
 		</button>
 	</div>
 </form>

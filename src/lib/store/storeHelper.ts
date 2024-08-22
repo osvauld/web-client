@@ -7,10 +7,15 @@ import { fetchCredentialsByFolder } from "../apis/credentials.api";
 import { sendMessage } from "../components/dashboard/helper";
 import { get } from "svelte/store";
 import browser from "webextension-polyfill";
-
+import { selectedSection } from "./ui.store";
+import { Group, SelectedGroup } from "../dtos/group.dto";
+import { Folder } from "../dtos/folder.dto";
+import { Credential } from "../dtos/credential.dto";
+import { getUser } from "../apis/user.api";
+import { User } from "../dtos/user.dto";
 export const setFolderStore = async () => {
 	const responseJson = await fetchAllFolders();
-	const sortedData = responseJson.data.sort((a, b) =>
+	const sortedData = responseJson.data.sort((a: Folder, b: Folder) =>
 		a.name.localeCompare(b.name),
 	);
 	const selectedFolderValue = get(selectedFolder);
@@ -21,6 +26,9 @@ export const setFolderStore = async () => {
 				for (const folder of sortedData) {
 					if (folder.id === value.selectedFolder.id) {
 						selectedFolder.set(folder);
+						if (folder.type === "private") {
+							selectedSection.set("PrivateFolders");
+						}
 						return;
 					}
 				}
@@ -32,8 +40,8 @@ export const setFolderStore = async () => {
 
 export const setGroupStore = async () => {
 	const responseJson = await fetchAllUserGroups();
-	const sortedData = responseJson.data.sort((a, b) =>
-		a.name.localeCompare(b.name),
+	const sortedData = responseJson.data.sort(
+		(a: SelectedGroup, b: SelectedGroup) => a.name.localeCompare(b.name),
 	);
 	groupStore.set(sortedData);
 };
@@ -49,11 +57,23 @@ export const setCredentialStore = async () => {
 		return;
 	}
 	const response = await sendMessage("decryptMeta", responseJson.data);
-	credentialStore.set(response.data);
+	credentialStore.set(response);
 };
 
 export const setEnvStore = async () => {
 	const responseJson = await getEnvironments();
 	const envs = responseJson.data;
 	envStore.set(envs);
+};
+export const getUserDetails = async (): Promise<User> => {
+	const accountDetails = localStorage.getItem("user");
+	let user;
+	if (accountDetails == null) {
+		const userJson = await getUser();
+		user = userJson.data;
+		localStorage.setItem("user", JSON.stringify(user));
+	} else {
+		user = JSON.parse(accountDetails);
+	}
+	return user;
 };

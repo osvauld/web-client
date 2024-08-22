@@ -7,7 +7,7 @@
 			? highlightMatch(text, query)
 			: [{ text, highlight: false }];
 
-	function highlightMatch(text, query) {
+	function highlightMatch(text: string, query: string) {
 		const regex = new RegExp(`(${query})`, "gi");
 		const parts = text.split(regex);
 		return parts.map((part) =>

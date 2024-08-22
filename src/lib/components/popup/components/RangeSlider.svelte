@@ -6,7 +6,6 @@
 	export let min = 8;
 	export let max = 64;
 	export let initialValue = 16;
-	export let id = null;
 	export let value =
 		typeof initialValue === "string" ? parseInt(initialValue) : initialValue;
 
@@ -264,7 +263,6 @@
 		aria-valuemin="{min}"
 		aria-valuemax="{max}"
 		aria-valuenow="{value}"
-		{id}
 		on:mousedown="{onTrackEvent}"
 		on:touchstart="{onTrackEvent}"
 	>
@@ -278,6 +276,11 @@
 				on:mousedown="{onDragStart}"
 				on:mouseover="{() => (thumbHover = true)}"
 				on:mouseout="{() => (thumbHover = false)}"
+				on:blur="{() => (thumbHover = false)}"
+				on:focus="{() => (thumbHover = true)}"
+				role="slider"
+				tabindex="0"
+				aria-valuenow="{value}"
 			>
 				{#if holding || thumbHover}
 					<div

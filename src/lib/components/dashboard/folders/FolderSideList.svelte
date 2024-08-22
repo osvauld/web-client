@@ -17,7 +17,7 @@
 		showFolderRenameDrawer,
 	} from "../store";
 
-	import { Folder } from "../dtos";
+	import { Folder, SelectedSection, Environments } from "../dtos";
 	import { Menu, FolderIcon, Add, RightArrow } from "../icons";
 	import { onMount } from "svelte";
 	import { setFolderStore, setEnvStore } from "../../../store/storeHelper";
@@ -25,10 +25,10 @@
 	import EnvironmentAdd from "../../basic/icons/environmentAdd.svelte";
 	import ExistingEnvironment from "../../basic/icons/existingEnvironment.svelte";
 	let iconColor = "#6E7681";
-	let hoveringIndex = null;
-	let hoveringEnvIndex = null;
+	let hoveringFolderId: string | null = null;
+	let hoveringEnvId: string | null = null;
 
-	const selectFolder = async (folder: Folder, section: string) => {
+	const selectFolder = async (folder: Folder, section: SelectedSection) => {
 		try {
 			selectedFolder.set(folder);
 			selectedEnv.set(null);
@@ -48,7 +48,7 @@
 	};
 
 	const openFolderMenu = (
-		e,
+		e: any,
 		folderId: string,
 		folderName: string,
 		type: string,
@@ -63,16 +63,16 @@
 		showMoreOptions.set(true);
 	};
 
-	const selectEnv = (env) => {
+	const selectEnv = (env: Environments) => {
 		selectedEnv.set(env);
-		selectedFolder.set(null);
+		selectedFolder.set(undefined);
 		selectedSection.set("Environments");
 		credentialStore.set([]);
 	};
 
-	const selectSection = (section) => {
+	const selectSection = (section: SelectedSection) => {
 		selectedSection.set(section);
-		selectedFolder.set(null);
+		selectedFolder.set(undefined);
 		selectedEnv.set(null);
 		credentialStore.set([]);
 	};
@@ -97,13 +97,27 @@
 		<span class="mr-1 text-base font-normal">Create new folder</span>
 		<Add color="{iconColor}" />
 	</button>
-	{#if $showAddFolderDrawer || $showFolderRenameDrawer}
+	{#if $showAddFolderDrawer}
 		<button
 			class="fixed inset-0 flex items-center justify-center z-50 backdrop-filter backdrop-blur-[2px]"
 			on:click="{closeModal}"
 		>
 			<button class="p-6 rounded" on:click|stopPropagation>
 				<FolderEditor />
+			</button>
+		</button>
+	{/if}
+	{#if $showFolderRenameDrawer && $selectedFolder}
+		<button
+			class="fixed inset-0 flex items-center justify-center z-50 backdrop-filter backdrop-blur-[2px]"
+			on:click="{closeModal}"
+		>
+			<button class="p-6 rounded" on:click|stopPropagation>
+				<FolderEditor
+					name="{$selectedFolder.name}"
+					description="{$selectedFolder.description}"
+					addFolder="{false}"
+				/>
 			</button>
 		</button>
 	{/if}
@@ -117,8 +131,8 @@
 					class="{$selectedFolder?.id == folder.id
 						? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
 						: 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center"
-					on:mouseenter="{() => (hoveringIndex = folder.id)}"
-					on:mouseleave="{() => (hoveringIndex = null)}"
+					on:mouseenter="{() => (hoveringFolderId = folder.id)}"
+					on:mouseleave="{() => (hoveringFolderId = null)}"
 				>
 					<button
 						on:click="{() => selectFolder(folder, 'SharedFolders')}"
@@ -126,13 +140,13 @@
 					>
 						<FolderIcon
 							color="{$selectedFolder?.id == folder.id ||
-							hoveringIndex === folder.id
+							hoveringFolderId === folder.id
 								? '#F2F2F0'
 								: '#85889C'}"
 						/>
 						<span
 							class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left relative inline-block min-w-[2rem] max-w-[9rem] pr-6 {$selectedFolder?.id ==
-								folder.id || hoveringIndex === index
+								folder.id || hoveringFolderId === folder.id
 								? 'text-osvauld-sideListTextActive'
 								: 'text-osvauld-fieldText'}"
 							>{folder.name}
@@ -140,12 +154,12 @@
 								class="ml-2 text-osvauld-fieldText font-light absolute right-0 {$selectedFolder?.id ===
 								folder.id
 									? 'visible delay-200'
-									: 'invisible'}">{$credentialStore.length}</span
+									: 'invisible'}">{$credentialStore?.length}</span
 							></span
 						>
 						<div
 							class="relative z-100 ml-auto flex justify-center items-center {$selectedFolder?.id ==
-								folder.id || hoveringIndex === folder.id
+								folder.id || hoveringFolderId === folder.id
 								? 'visible'
 								: 'invisible'}"
 						>
@@ -206,8 +220,8 @@
 							class="{$selectedFolder?.id === folder.id
 								? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
 								: 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} rounded-md my-0.5 pl-3 pr-3 mr-1 flex items-center"
-							on:mouseenter="{() => (hoveringIndex = folder.id)}"
-							on:mouseleave="{() => (hoveringIndex = null)}"
+							on:mouseenter="{() => (hoveringFolderId = folder.id)}"
+							on:mouseleave="{() => (hoveringFolderId = null)}"
 						>
 							<button
 								on:click="{() => selectFolder(folder, 'PrivateFolders')}"
@@ -215,13 +229,13 @@
 							>
 								<FolderIcon
 									color="{$selectedFolder?.id == folder.id ||
-									hoveringIndex === folder.id
+									hoveringFolderId === folder.id
 										? '#F2F2F0'
 										: '#85889C'}"
 								/>
 								<span
 									class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left relative inline-block min-w-[2rem] max-w-[9rem] pr-6 {$selectedFolder?.id ==
-										folder.id || hoveringIndex === folder.id
+										folder.id || hoveringFolderId === folder.id
 										? 'text-osvauld-sideListTextActive'
 										: 'text-osvauld-fieldText'}"
 									>{folder.name}
@@ -229,12 +243,12 @@
 										class="ml-2 text-osvauld-fieldText font-light absolute right-0 {$selectedFolder?.id ===
 										folder.id
 											? 'visible delay-200'
-											: 'invisible'}">{$credentialStore.length}</span
+											: 'invisible'}">{$credentialStore?.length}</span
 									>
 								</span>
 								<div
 									class="relative z-100 ml-auto flex justify-center items-center {$selectedFolder?.id ==
-										folder.id || hoveringIndex === folder.id
+										folder.id || hoveringFolderId === folder.id
 										? 'visible'
 										: 'invisible'}"
 								>
@@ -291,8 +305,8 @@
 							? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
 							: 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} 
           rounded-md my-1 pl-3 pr-3 mr-1 flex items-center transition-colors duration-0 ease-in"
-						on:mouseenter="{() => (hoveringEnvIndex = env.id)}"
-						on:mouseleave="{() => (hoveringEnvIndex = null)}"
+						on:mouseenter="{() => (hoveringEnvId = env.id)}"
+						on:mouseleave="{() => (hoveringEnvId = null)}"
 					>
 						<button
 							on:click="{() => {
@@ -301,14 +315,13 @@
 							class="w-full p-2 text-lg rounded-2xl flex items-center"
 						>
 							<ExistingEnvironment
-								color="{$selectedEnv?.id == env.id ||
-								hoveringEnvIndex === env.id
+								color="{$selectedEnv?.id == env.id || hoveringEnvId === env.id
 									? '#F2F2F0'
 									: '#85889C'}"
 							/>
 							<span
 								class="ml-2 text-base font-light overflow-hidden text-ellipsis whitespace-nowrap text-left inline-block w-[8rem] {$selectedEnv?.id ==
-									env.id || hoveringEnvIndex === env.id
+									env.id || hoveringEnvId === env.id
 									? 'text-osvauld-sideListTextActive'
 									: 'text-osvauld-fieldText'}"
 								>{env.name}

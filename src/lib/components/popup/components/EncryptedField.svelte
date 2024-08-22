@@ -8,8 +8,7 @@
 	let decryptedValue = "";
 
 	const decrypt = async () => {
-		const response = await sendMessage("decryptField", fieldValue);
-		decryptedValue = response.data;
+		decryptedValue = await sendMessage("decryptField", fieldValue);
 		decrypted = true;
 	};
 
