@@ -85,6 +85,7 @@ function buildConfig(inputFileName, outputFileName) {
 export default [
 	buildConfig("popup", "popup"),
 	buildConfig("dashboard", "dashboard"),
+	buildConfig("suggestions", "suggestions"),
 	{
 		input: "src/scripts/background.ts",
 		output: {

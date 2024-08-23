@@ -105,11 +105,9 @@ export const postLoginContent = (data) => {
       <!DOCTYPE html>
       <html lang="en">
       <head>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.2.0/dist/tailwind.min.css">
       </head>
       <body>
-        <div id="svelte-container"></div>
-        <script src="dist/svelteComponent.js"></script> <!-- Compiled Svelte component -->
+        <script src="build/suggestions.js"></script> 
       </body>
       </html>
     `);
