@@ -80,6 +80,8 @@
 // 	document.body.appendChild(infoDiv);
 // };
 
+import browser from "webextension-polyfill";
+
 export const postLoginContent = (data) => {
 	console.log("Injecting iframe for Svelte component");
 
@@ -93,26 +95,26 @@ export const postLoginContent = (data) => {
 	iframe.style.zIndex = "1000";
 	iframe.style.border = "none";
 	iframe.style.backgroundColor = "black";
+	iframe.src = `${browser.runtime.getURL("suggestions.html")}`;
 	// Append the iframe to the body
 	document.body.appendChild(iframe);
 
 	// Write the initial content of the iframe (HTML, head, body)
-	const iframeDocument =
-		iframe.contentDocument || iframe.contentWindow?.document;
-	if (iframeDocument) {
-		iframeDocument.open();
-		iframeDocument.write(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-      </head>
-      <body>
-        <script src="build/suggestions.js"></script> 
-      </body>
-      </html>
-    `);
-		iframeDocument.close();
-	}
+	// const iframeDocument =
+	// 	iframe.contentDocument || iframe.contentWindow?.document;
+	// if (iframeDocument) {
+	// 	iframeDocument.open();
+	// 	iframeDocument.write(`
+	//     <!DOCTYPE html>
+	//     <html lang="en" >
+	//     <head>
+	//     </head>
+	//     <body>
+	//     </body>
+	//     </html>
+	// 		`);
+	// 	// iframeDocument.close();
+	// }
 
 	// // Example of sending data to the iframe
 	// iframe.onload = () => {
@@ -120,3 +122,5 @@ export const postLoginContent = (data) => {
 	// 	iframe.contentWindow?.postMessage(message, "*");
 	// };
 };
+
+// <script src="${browser.runtime.getURL('build/suggestions.js')}"></script>
