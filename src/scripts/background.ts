@@ -146,6 +146,16 @@ browser.runtime.onMessage.addListener(async (request) => {
 				setTimeout(async () => {
 					// Now we have confirmed this is indeed new credential and the npw we will be inside account
 					// now communicate with content script manager and show otherscripts with captured username and password
+					browser.tabs
+						.query({ active: true, currentWindow: true })
+						.then((tabs) => {
+							if (tabs[0]?.id !== undefined) {
+								browser.tabs.sendMessage(tabs[0].id, {
+									action: "postCredSubmit",
+									data: newCredential,
+								});
+							}
+						});
 				}, 3000);
 			}
 			return null;

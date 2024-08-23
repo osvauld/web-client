@@ -35,7 +35,6 @@ export const loginScript = () => {
 				if (username && password) {
 					// Send message to the background script
 
-					console.log("username and password found", username, password);
 					browser.runtime.sendMessage({
 						action: "credentialSubmit",
 						data: { username, password },
