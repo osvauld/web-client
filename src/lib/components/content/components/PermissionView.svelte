@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from "svelte";
-
-	const dispatch = createEventDispatcher();
+	import { onMount } from "svelte";
 
 	let eventGlobal;
 	let usernameContent = "empty";
+	export let value = false;
 
 	onMount(async () => {
 		window.addEventListener("message", (event) => {
@@ -18,7 +17,7 @@
 	});
 
 	const handleUserInput = (input) => {
-		dispatch("save", input);
+		value = input;
 		eventGlobal.source.postMessage({ success: input }, eventGlobal.origin);
 	};
 </script>

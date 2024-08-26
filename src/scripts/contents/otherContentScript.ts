@@ -28,11 +28,12 @@ function getExtensionOrigin() {
 
 export const postLoginContent = () => {
 	const iframe = document.createElement("iframe");
+
 	iframe.style.position = "fixed";
 	iframe.style.top = "20px";
 	iframe.style.right = "20px";
 	iframe.style.width = "400px";
-	iframe.style.height = "15rem";
+	iframe.style.height = "240px";
 	iframe.style.zIndex = "1000";
 	iframe.style.border = "none";
 	iframe.style.padding = "20px";
