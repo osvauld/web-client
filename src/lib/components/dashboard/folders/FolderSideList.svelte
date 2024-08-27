@@ -125,7 +125,7 @@
 	<ul
 		class="overflow-y-scroll w-[90%] overflow-x-hidden scrollbar-thin min-h-[8rem] -pl-3"
 	>
-		{#each $folderStore as folder, index}
+		{#each $folderStore as folder}
 			{#if folder.type === "shared"}
 				<li
 					class="{$selectedFolder?.id == folder.id
