@@ -26,7 +26,7 @@ function getExtensionOrigin() {
 	return extensionOrigin;
 }
 
-export const postLoginContent = () => {
+export const postLoginContent = (data) => {
 	const iframe = document.createElement("iframe");
 
 	iframe.style.position = "fixed";
@@ -42,6 +42,8 @@ export const postLoginContent = () => {
 	document.body.appendChild(iframe);
 
 	iframe.onload = () => {
+		// Receive the data here
+		console.log("Relevant data other contentscript", data);
 		const message = { username: "tonyantony300", id: "osvauld" };
 		iframe.contentWindow?.postMessage(
 			message,
@@ -50,9 +52,8 @@ export const postLoginContent = () => {
 	};
 
 	window.addEventListener("message", (event) => {
-		// Check the origin to ensure it is from a trusted source
 		if (event.origin !== getExtensionOrigin()) {
-			return; // Ignore the message
+			return;
 		}
 
 		// Process the response from the iframe
@@ -60,6 +61,10 @@ export const postLoginContent = () => {
 		if (response.success) {
 			// Now go ahead and display the next screen where folders will be listed;
 			console.log("Folders will be shown now.");
+			// Send pass on the data along with the folderId to backend
+			// Send data to DB and if sucessfull
+			// Communicate the same down to iframe for final window
+			// Do remove the iframe
 		} else {
 			iframe.remove();
 		}

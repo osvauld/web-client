@@ -16,6 +16,10 @@ import {
 	encryptEditFields,
 	getDecryptedUrls,
 } from "./backgroundService";
+
+import { Folder } from "../lib/dtos/folder.dto";
+
+import { fetchAllFolders } from "../lib/apis/folder.api";
 import init, { is_global_context_set } from "./crypto_primitives";
 
 type CapturedCredentialData = {
@@ -146,13 +150,18 @@ browser.runtime.onMessage.addListener(async (request) => {
 				setTimeout(async () => {
 					// Now we have confirmed this is indeed new credential and the npw we will be inside account
 					// now communicate with content script manager and show otherscripts with captured username and password
+					// we will also embed folder data in the begininng iteslf
+					const responseJson = await fetchAllFolders();
+					const folderData = responseJson.data.sort((a: Folder, b: Folder) =>
+						a.name.localeCompare(b.name),
+					);
 					browser.tabs
 						.query({ active: true, currentWindow: true })
 						.then((tabs) => {
 							if (tabs[0]?.id !== undefined) {
 								browser.tabs.sendMessage(tabs[0].id, {
 									action: "postCredSubmit",
-									data: newCredential,
+									data: { ...newCredential, ...folderData },
 								});
 							}
 						});

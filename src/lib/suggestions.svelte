@@ -13,9 +13,6 @@
 			if (event.data.id !== "osvauld") {
 				return;
 			}
-			// const { username } = event.data;
-			// usernameContent = username;
-			// eventGlobal = event;
 			globalEvent = event;
 		});
 	});
@@ -30,6 +27,6 @@
 	{:else if folderView}
 		<FolderView bind:triggerSuccess="{successView}" />
 	{:else}
-		<PermissionView {globalEvent} bind:value="{folderView}" />
+		<PermissionView bind:value="{folderView}" />
 	{/if}
 </div>
