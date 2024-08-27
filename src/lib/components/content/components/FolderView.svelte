@@ -4,7 +4,8 @@
 	import FolderIcon from "../../basic/icons/folderIcon.svelte";
 
 	let gridDisplay;
-	let buttonCount = 5; // default number of buttons
+	let buttonCount = 40; // default number of buttons
+	export let triggerSuccess = false;
 
 	onMount(() => {
 		console.log("Mounted Folder view");
@@ -14,6 +15,10 @@
 	function generateButtons(count: number): number[] {
 		return Array.from({ length: count }, (_, i) => i + 1);
 	}
+
+	const successAnimation = () => {
+		triggerSuccess = true;
+	};
 </script>
 
 <div class="w-full h-[80%] py-3 relative">
@@ -27,27 +32,29 @@
 			{#each generateButtons(buttonCount) as button}
 				<button
 					class=" flex gap-2 w-full overflow-x-hidden justify-start items-center hover:bg-osvauld-fieldActive pl-3"
+					on:click="{successAnimation}"
 				>
 					<FolderIcon color="{'#F2F2F0'}" />
 					<span
 						class="py-2 text-sm max-w-[80%] overflow-hidden whitespace-nowrap text-ellipsis"
-						>looooongggggggggggggggggggggggggggggggggggggg {button}</span
+						>looooon{button}</span
 					>
 				</button>
 			{/each}
 		</div>
 	{:else}
 		<ul
-			class="flex flex-col max-h-[160px] pb-4 overflow-y-scroll scrollbar-thin"
+			class="grid grid-cols-1 max-h-[160px] pb-4 overflow-y-scroll scrollbar-thin"
 		>
 			{#each generateButtons(buttonCount) as button}
 				<button
-					class="flex gap-2 w-full overflow-x-hidden justify-start items-center hover:bg-osvauld-fieldActive pl-3"
+					class="flex gap-2 w-full justify-start overflow-x-hidden items-center hover:bg-osvauld-fieldActive pl-3"
+					on:click="{successAnimation}"
 				>
 					<FolderIcon color="{'#F2F2F0'}" />
 					<span
 						class="py-2 text-sm max-w-[90%] overflow-hidden whitespace-nowrap text-ellipsis"
-						>looooongggggggggggggggggggggggggggggggggggggg {button}</span
+						>loo{button}</span
 					>
 				</button>
 			{/each}

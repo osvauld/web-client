@@ -2,6 +2,7 @@
 	import { onMount } from "svelte";
 
 	let eventGlobal;
+	export let globalEvent;
 	let usernameContent = "empty";
 	export let value = false;
 
@@ -13,6 +14,10 @@
 			const { username } = event.data;
 			usernameContent = username;
 			eventGlobal = event;
+			console.log(
+				"event global as received in  child permsiison view",
+				eventGlobal,
+			);
 		});
 	});
 
