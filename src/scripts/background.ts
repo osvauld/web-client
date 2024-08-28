@@ -161,7 +161,11 @@ browser.runtime.onMessage.addListener(async (request) => {
 							if (tabs[0]?.id !== undefined) {
 								browser.tabs.sendMessage(tabs[0].id, {
 									action: "postCredSubmit",
-									data: { ...newCredential, ...folderData },
+									data: {
+										...newCredential,
+										folders: [...folderData],
+										id: "osvauld",
+									},
 								});
 							}
 						});

@@ -1,24 +1,18 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-
-	let eventGlobal;
+	export let globalEvent;
 	let usernameContent = "empty";
 	export let value = false;
 
-	onMount(async () => {
-		window.addEventListener("message", (event) => {
-			if (event.data.id !== "osvauld") {
-				return;
-			}
-			const { username } = event.data;
-			usernameContent = username;
-			eventGlobal = event;
-		});
-	});
+	$: if (globalEvent) {
+		const { username } = globalEvent.data;
+		usernameContent = username;
+	}
 
 	const handleUserInput = (input) => {
 		value = input;
-		eventGlobal.source.postMessage({ success: input }, eventGlobal.origin);
+		if (!input) {
+			globalEvent.source.postMessage({ unmount: true }, globalEvent.origin);
+		}
 	};
 </script>
 

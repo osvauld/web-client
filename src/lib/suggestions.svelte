@@ -13,7 +13,12 @@
 			if (event.data.id !== "osvauld") {
 				return;
 			}
-			globalEvent = event;
+			globalEvent = {
+				data: event.data,
+				source: event.source,
+				origin: event.origin,
+			};
+			console.log("Data as receieved in parent", globalEvent);
 		});
 	});
 </script>
@@ -25,8 +30,8 @@
 	{#if successView}
 		<SuccessTick {globalEvent} />
 	{:else if folderView}
-		<FolderView bind:triggerSuccess="{successView}" />
+		<FolderView {globalEvent} bind:triggerSuccess="{successView}" />
 	{:else}
-		<PermissionView bind:value="{folderView}" />
+		<PermissionView {globalEvent} bind:value="{folderView}" />
 	{/if}
 </div>

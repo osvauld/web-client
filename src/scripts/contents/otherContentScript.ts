@@ -42,11 +42,8 @@ export const postLoginContent = (data) => {
 	document.body.appendChild(iframe);
 
 	iframe.onload = () => {
-		// Receive the data here
-		console.log("Relevant data other contentscript", data);
-		const message = { username: "tonyantony300", id: "osvauld" };
 		iframe.contentWindow?.postMessage(
-			message,
+			data,
 			`${browser.runtime.getURL("suggestions.html")}`,
 		);
 	};
@@ -58,14 +55,8 @@ export const postLoginContent = (data) => {
 
 		// Process the response from the iframe
 		const response = event.data;
-		if (response.success) {
-			// Now go ahead and display the next screen where folders will be listed;
-			console.log("Folders will be shown now.");
-			// Send pass on the data along with the folderId to backend
-			// Send data to DB and if sucessfull
-			// Communicate the same down to iframe for final window
-			// Do remove the iframe
-		} else {
+
+		if (response.unmount) {
 			iframe.remove();
 		}
 	});
