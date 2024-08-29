@@ -55,6 +55,7 @@ export const postLoginContent = (data) => {
 
 		// Process the response from the iframe
 		const response = event.data;
+		console.log("Response from the iframe", response);
 
 		if (response.unmount) {
 			iframe.remove();

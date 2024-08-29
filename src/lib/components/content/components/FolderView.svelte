@@ -1,22 +1,11 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import ListToggle from "../../basic/ListToggle.svelte";
 	import FolderIcon from "../../basic/icons/folderIcon.svelte";
 
 	let gridDisplay;
-	//	let buttonCount = 40; // default number of buttons
 	export let triggerSuccess = false;
 	export let globalEvent;
 	let folders;
-
-	onMount(() => {
-		console.log("Mounted Folder view");
-	});
-
-	// Helper function to generate an array of a given size
-	// function generateButtons(count: number): number[] {
-	// 	return Array.from({ length: count }, (_, i) => i + 1);
-	// }
 
 	$: if (globalEvent) {
 		folders = globalEvent.data.folders;

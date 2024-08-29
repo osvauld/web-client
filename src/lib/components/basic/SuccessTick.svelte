@@ -5,9 +5,8 @@
 
 	onMount(() => {
 		setTimeout(() => {
-			// Setting success to false in content script to close the iFrame, even though the we saved it sucessfully
 			globalEvent.source.postMessage({ unmount: true }, globalEvent.origin);
-		}, 1000);
+		}, 2000);
 	});
 </script>
 
