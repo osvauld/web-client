@@ -38,6 +38,7 @@ let newCredential: CapturedCredentialData = {
 	domain: "",
 	url: "",
 };
+let submitFlag = false;
 
 function throttler(delay = 3000) {
 	let timer: null | ReturnType<typeof setTimeout> = null;
@@ -156,6 +157,11 @@ browser.runtime.onMessage.addListener(async (request) => {
 		case "createShareCredPayload":
 			return createShareCredsPayload(request.data.creds, request.data.users);
 		case "credentialSubmit": {
+			if (submitFlag) return null;
+			submitFlag = true;
+			setTimeout(() => {
+				submitFlag = false;
+			}, 500);
 			newCredential.username = request.data.username;
 			newCredential.password = request.data.password;
 			const urlData = await getCurrentDomain();
@@ -203,6 +209,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 		}
 
 		case "saveCapturedCredentialToFolder": {
+			submitFlag = false;
 			const shouldProceedCheck = throttler();
 			if (shouldProceedCheck()) {
 				// addCredential();

@@ -19,6 +19,7 @@ async function contentScriptManager() {
 }
 
 window.onload = () => {
+	console.log("calling window onload");
 	contentScriptManager();
 };
 
