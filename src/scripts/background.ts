@@ -17,7 +17,10 @@ import {
 	getDecryptedUrls,
 } from "./backgroundService";
 
+import { debounce } from "./helper";
+
 import { Folder } from "../lib/dtos/folder.dto";
+import { addCredential } from "../lib/apis/credentials.api";
 
 import { fetchAllFolders } from "../lib/apis/folder.api";
 import init, { is_global_context_set } from "./crypto_primitives";
@@ -35,6 +38,25 @@ let newCredential: CapturedCredentialData = {
 	domain: "",
 	url: "",
 };
+
+function throttler(delay = 3000) {
+	let timer: null | ReturnType<typeof setTimeout> = null;
+
+	return function () {
+		if (timer) {
+			// If timer is active, return false, indicating not to proceed
+			return false;
+		}
+
+		// Set the timer and reset it after `delay` milliseconds
+		timer = setTimeout(() => {
+			timer = null;
+		}, delay);
+
+		// Timer was not active, so we can proceed
+		return true;
+	};
+}
 
 let urlObj = new Map<string, Set<string>>();
 
@@ -180,7 +202,23 @@ browser.runtime.onMessage.addListener(async (request) => {
 			return getDecryptedUrls(request.data);
 		}
 
+		case "saveCapturedCredentialToFolder": {
+			const shouldProceedCheck = throttler();
+			if (shouldProceedCheck()) {
+				// addCredential();
+				console.log("Final api call ==>", request.data);
+			}
+			return "got it in bg";
+		}
+
 		default:
+			// addCredential call function with
+			// name: string;
+			// description: string;
+			// folderId: string;
+			// credentialType: string;
+			// userFields: UserEncryptedFields[];
+			// domain: string;
 			console.log(request.action);
 			break;
 	}

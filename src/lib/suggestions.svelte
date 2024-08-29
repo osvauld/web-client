@@ -18,7 +18,7 @@
 				source: event.source,
 				origin: event.origin,
 			};
-			console.log("Data as receieved in parent", globalEvent);
+			// console.log("Data as receieved in parent", globalEvent);
 		});
 	});
 </script>

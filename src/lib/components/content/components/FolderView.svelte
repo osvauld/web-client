@@ -12,7 +12,18 @@
 	}
 
 	const successAnimation = (id) => {
-		console.log("Folder selected", globalEvent, id);
+		// console.log("Folder selected", globalEvent, id);
+		// send this data to content script with save : true;
+		globalEvent.source.postMessage(
+			{
+				save: true,
+				folderId: id,
+				username: globalEvent.data.username,
+				password: globalEvent.data.password,
+				domain: globalEvent.data.domain,
+			},
+			globalEvent.origin,
+		);
 		triggerSuccess = true;
 	};
 </script>

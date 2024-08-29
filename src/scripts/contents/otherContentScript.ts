@@ -1,4 +1,20 @@
 import browser from "webextension-polyfill";
+import { debounce, throttle } from "../helper";
+
+let messageData;
+
+function debouncedMsgToBg(messageData) {
+	browser.runtime
+		.sendMessage(messageData)
+		.then((response) => {
+			console.log("Response from background script:", response);
+			// Success message to iframe
+		})
+		.catch((error) => {
+			// Failure message to iframe
+			console.error("Error sending message to background script:", error);
+		});
+}
 
 function getExtensionOrigin() {
 	const extensionId = browser.runtime.id;
@@ -24,6 +40,28 @@ function getExtensionOrigin() {
 	const extensionOrigin = `${protocol}://${extensionId}`;
 
 	return extensionOrigin;
+}
+
+function extractPageInfo() {
+	let pageTitle = document.title;
+
+	if (!pageTitle) {
+		const url = new URL(window.location.href);
+		pageTitle = url.hostname.split(".")[1]; // Take the domain name as the title
+	}
+
+	// Get the meta description of the webpage, fallback to a generic message if no description
+	const metaDescriptionElement = document.querySelector(
+		'meta[name="description"]',
+	);
+	let pageDescription = metaDescriptionElement
+		? metaDescriptionElement.getAttribute("content")
+		: `Login for ${pageTitle}`;
+
+	return {
+		title: pageTitle,
+		description: pageDescription,
+	};
 }
 
 export const postLoginContent = (data) => {
@@ -53,9 +91,22 @@ export const postLoginContent = (data) => {
 			return;
 		}
 
-		// Process the response from the iframe
-		const response = event.data;
-		console.log("Response from the iframe", response);
+		const { save, ...response } = event.data;
+		const pageInfo = extractPageInfo();
+
+		messageData = {
+			action: "saveCapturedCredentialToFolder",
+			data: {
+				title: pageInfo.title,
+				description: pageInfo.description,
+				...response,
+			},
+		};
+
+		if (save) {
+			console.log("About to save this data", messageData);
+			throttle(debouncedMsgToBg(messageData), 2000);
+		}
 
 		if (response.unmount) {
 			iframe.remove();
