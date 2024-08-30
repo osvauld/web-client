@@ -19,5 +19,3 @@ async function contentScriptManager() {
 window.onload = () => {
 	contentScriptManager();
 };
-
-// postLoginContent();

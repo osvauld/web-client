@@ -237,16 +237,6 @@ export const credentialSubmitHandler = async (
 	}
 
 	return true;
-	// const windowDetails = await browser.windows.create({
-	// 	url: browser.runtime.getURL("popup.html"),
-	// 	type: "popup",
-	// 	width: 290,
-	// 	height: 500,
-	// });
-	// return windowDetails.id;
-
-	// Here need to create a small window on the right saying we have the data
-	// assign window needed varibale to true
 };
 export const getCurrentDomain = async () => {
 	const queryOptions = { active: true, currentWindow: true };

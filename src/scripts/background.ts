@@ -153,6 +153,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 				newCredential,
 				credIds,
 			);
+
 			if (isNewCredential) {
 				setTimeout(async () => {
 					const responseJson = await fetchAllFolders();
@@ -174,6 +175,8 @@ browser.runtime.onMessage.addListener(async (request) => {
 							}
 						});
 				}, 3000);
+			} else {
+				console.log("This is not a new credential on this platform");
 			}
 			return null;
 		}
@@ -189,7 +192,6 @@ browser.runtime.onMessage.addListener(async (request) => {
 			const credHandlerResponse = await postLoginCredentialHandler(
 				request.data,
 			);
-			console.log("Final api call ==>", credHandlerResponse);
 			return credHandlerResponse;
 		}
 

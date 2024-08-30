@@ -6,6 +6,7 @@
 
 	let folderView = false;
 	let successView = false;
+	let isSuccess = false;
 	let globalEvent;
 
 	onMount(async () => {
@@ -18,7 +19,6 @@
 				source: event.source,
 				origin: event.origin,
 			};
-			// console.log("Data as receieved in parent", globalEvent);
 		});
 	});
 </script>
@@ -28,9 +28,13 @@
 >
 	<span class="font-extrabold text-2xl text-white pb-4">osvauld</span>
 	{#if successView}
-		<SuccessTick {globalEvent} />
+		<SuccessTick {isSuccess} {globalEvent} />
 	{:else if folderView}
-		<FolderView {globalEvent} bind:triggerSuccess="{successView}" />
+		<FolderView
+			{globalEvent}
+			bind:isSuccess
+			bind:triggerSuccess="{successView}"
+		/>
 	{:else}
 		<PermissionView {globalEvent} bind:value="{folderView}" />
 	{/if}

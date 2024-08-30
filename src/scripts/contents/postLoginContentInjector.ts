@@ -94,18 +94,12 @@ export const postLoginContent = (data) => {
 			browser.runtime
 				.sendMessage(messageData)
 				.then((response) => {
-					console.log("Response from background script:", response);
-					// Success message to iframe
-					const data = { success: true };
-					if (response.success) {
-						iframe.contentWindow?.postMessage(
-							data,
-							`${browser.runtime.getURL("suggestions.html")}`,
-						);
-					}
+					iframe.contentWindow?.postMessage(
+						{ confirmation: true, id: "osvauld", ...response },
+						`${browser.runtime.getURL("suggestions.html")}`,
+					);
 				})
 				.catch((error) => {
-					// Failure message to iframe
 					console.error("Error sending message to background script:", error);
 				});
 		}

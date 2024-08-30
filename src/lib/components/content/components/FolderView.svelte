@@ -5,15 +5,15 @@
 	let gridDisplay;
 	export let triggerSuccess = false;
 	export let globalEvent;
+	export let isSuccess;
 	let folders;
+	let loading = false;
 
 	$: if (globalEvent) {
 		folders = globalEvent.data.folders;
 	}
 
 	const successAnimation = (id) => {
-		// console.log("Folder selected", globalEvent, id);
-		// send this data to content script with save : true;
 		globalEvent.source.postMessage(
 			{
 				save: true,
@@ -24,7 +24,18 @@
 			},
 			globalEvent.origin,
 		);
-		triggerSuccess = true;
+
+		loading = true;
+
+		window.addEventListener("message", (event) => {
+			if (event.data.id !== "osvauld") {
+				return;
+			}
+			if (event.data.confirmation) {
+				isSuccess = event.data.success;
+				triggerSuccess = true;
+			}
+		});
 	};
 </script>
 
@@ -32,7 +43,14 @@
 	<span class="absolute -top-9 right-2">
 		<ListToggle bind:value="{gridDisplay}" />
 	</span>
-	{#if gridDisplay == "Grid"}
+
+	{#if loading}
+		<div
+			class="w-full h-full text-white text-xl flex justify-center items-center"
+		>
+			Saving....
+		</div>
+	{:else if gridDisplay == "Grid"}
 		<div
 			class="grid grid-cols-2 max-h-[160px] pb-4 overflow-y-scroll scrollbar-thin"
 		>
@@ -49,7 +67,7 @@
 				</button>
 			{/each}
 		</div>
-	{:else}
+	{:else if gridDisplay == "List"}
 		<ul
 			class="grid grid-cols-1 max-h-[160px] pb-4 overflow-y-scroll scrollbar-thin"
 		>
