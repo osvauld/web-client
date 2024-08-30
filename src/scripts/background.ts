@@ -17,10 +17,8 @@ import {
 	getDecryptedUrls,
 } from "./backgroundService";
 
-import { debounce } from "./helper";
-
 import { Folder } from "../lib/dtos/folder.dto";
-import { addCredential } from "../lib/apis/credentials.api";
+import { postLoginCredentialHandler } from "./helper";
 
 import { fetchAllFolders } from "../lib/apis/folder.api";
 import init, { is_global_context_set } from "./crypto_primitives";
@@ -39,25 +37,6 @@ let newCredential: CapturedCredentialData = {
 	url: "",
 };
 let submitFlag = false;
-
-function throttler(delay = 3000) {
-	let timer: null | ReturnType<typeof setTimeout> = null;
-
-	return function () {
-		if (timer) {
-			// If timer is active, return false, indicating not to proceed
-			return false;
-		}
-
-		// Set the timer and reset it after `delay` milliseconds
-		timer = setTimeout(() => {
-			timer = null;
-		}, delay);
-
-		// Timer was not active, so we can proceed
-		return true;
-	};
-}
 
 let urlObj = new Map<string, Set<string>>();
 
@@ -176,9 +155,6 @@ browser.runtime.onMessage.addListener(async (request) => {
 			);
 			if (isNewCredential) {
 				setTimeout(async () => {
-					// Now we have confirmed this is indeed new credential and the npw we will be inside account
-					// now communicate with content script manager and show otherscripts with captured username and password
-					// we will also embed folder data in the begininng iteslf
 					const responseJson = await fetchAllFolders();
 					const folderData = responseJson.data.sort((a: Folder, b: Folder) =>
 						a.name.localeCompare(b.name),
@@ -210,22 +186,14 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 		case "saveCapturedCredentialToFolder": {
 			submitFlag = false;
-			const shouldProceedCheck = throttler();
-			if (shouldProceedCheck()) {
-				// addCredential();
-				console.log("Final api call ==>", request.data);
-			}
-			return "got it in bg";
+			const credHandlerResponse = await postLoginCredentialHandler(
+				request.data,
+			);
+			console.log("Final api call ==>", credHandlerResponse);
+			return credHandlerResponse;
 		}
 
 		default:
-			// addCredential call function with
-			// name: string;
-			// description: string;
-			// folderId: string;
-			// credentialType: string;
-			// userFields: UserEncryptedFields[];
-			// domain: string;
 			console.log(request.action);
 			break;
 	}

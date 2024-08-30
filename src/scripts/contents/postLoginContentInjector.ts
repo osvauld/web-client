@@ -1,20 +1,6 @@
 import browser from "webextension-polyfill";
-import { debounce, throttle } from "../helper";
 
 let messageData;
-
-function debouncedMsgToBg(messageData) {
-	browser.runtime
-		.sendMessage(messageData)
-		.then((response) => {
-			console.log("Response from background script:", response);
-			// Success message to iframe
-		})
-		.catch((error) => {
-			// Failure message to iframe
-			console.error("Error sending message to background script:", error);
-		});
-}
 
 function getExtensionOrigin() {
 	const extensionId = browser.runtime.id;
@@ -47,10 +33,9 @@ function extractPageInfo() {
 
 	if (!pageTitle) {
 		const url = new URL(window.location.href);
-		pageTitle = url.hostname.split(".")[1]; // Take the domain name as the title
+		pageTitle = url.hostname.split(".")[1];
 	}
 
-	// Get the meta description of the webpage, fallback to a generic message if no description
 	const metaDescriptionElement = document.querySelector(
 		'meta[name="description"]',
 	);
@@ -75,8 +60,10 @@ export const postLoginContent = (data) => {
 	iframe.style.zIndex = "1000";
 	iframe.style.border = "none";
 	iframe.style.padding = "20px";
+	iframe.style.boxSizing = "border-box";
 	iframe.style.backgroundColor = "#0D0E13";
 	iframe.src = `${browser.runtime.getURL("suggestions.html")}`;
+	iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
 	document.body.appendChild(iframe);
 
 	iframe.onload = () => {
@@ -104,8 +91,23 @@ export const postLoginContent = (data) => {
 		};
 
 		if (save) {
-			console.log("About to save this data", messageData);
-			throttle(debouncedMsgToBg(messageData), 2000);
+			browser.runtime
+				.sendMessage(messageData)
+				.then((response) => {
+					console.log("Response from background script:", response);
+					// Success message to iframe
+					const data = { success: true };
+					if (response.success) {
+						iframe.contentWindow?.postMessage(
+							data,
+							`${browser.runtime.getURL("suggestions.html")}`,
+						);
+					}
+				})
+				.catch((error) => {
+					// Failure message to iframe
+					console.error("Error sending message to background script:", error);
+				});
 		}
 
 		if (response.unmount) {
