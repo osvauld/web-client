@@ -40,6 +40,13 @@ export const postLoginCredentialHandler = async ({
 	password,
 	title,
 	username,
+}: {
+	description: string;
+	domain: string;
+	folderId: string;
+	password: string;
+	title: string;
+	username: string;
 }) => {
 	let addCredentialPayload: AddCredentialPayload = {
 		name: title,

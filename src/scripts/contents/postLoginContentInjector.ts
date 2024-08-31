@@ -1,11 +1,25 @@
 import browser from "webextension-polyfill";
+import { DelegatedEvent } from "../../lib/dtos/credential.dto";
 
-let messageData;
+interface MessageData {
+	action: string;
+	data: {
+		title: string;
+		description: string;
+		save: boolean;
+		folderId: string;
+		username: string;
+		password: string;
+		domain: string;
+	};
+}
+
+let messageData: MessageData;
 
 function getExtensionOrigin() {
 	const extensionId = browser.runtime.id;
 
-	let protocol;
+	let protocol: string;
 
 	if (
 		typeof browser !== "undefined" &&
@@ -49,7 +63,7 @@ function extractPageInfo() {
 	};
 }
 
-export const postLoginContent = (data) => {
+export const postLoginContent = (data: DelegatedEvent) => {
 	const iframe = document.createElement("iframe");
 
 	iframe.style.position = "fixed";

@@ -11,7 +11,7 @@
 				{ unmount: true },
 				globalEvent.origin as string,
 			);
-		}, 3000);
+		}, 1000);
 	});
 </script>
 

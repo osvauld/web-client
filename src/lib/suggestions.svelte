@@ -17,7 +17,7 @@
 			}
 			globalEvent = {
 				data: event.data,
-				source: event.source,
+				source: event.source as MessageEventSource,
 				origin: event.origin,
 			};
 		});
