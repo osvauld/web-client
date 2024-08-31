@@ -16,8 +16,8 @@
 	export let username = "";
 	export let password = "";
 	export let domain = "";
-	export let windowId;
-	export let currentUrl;
+	export let windowId: string | number;
+	export let currentUrl: string;
 	let visibility = false;
 	let name = "";
 	let description = "";
@@ -50,7 +50,7 @@
 
 	const closeEventDispatcher = async () => {
 		dispatch("close", true);
-		if (windowId !== "manual") await browser.windows.remove(windowId);
+		if (windowId !== "manual") await browser.windows.remove(windowId as number);
 	};
 
 	const handleSave = async () => {

@@ -5,8 +5,8 @@
 	import { sendMessage } from "../dashboard/helper";
 	import { createEventDispatcher } from "svelte";
 
-	export let challenge;
-	export let username;
+	export let challenge: string;
+	export let username: string;
 
 	const dispatch = createEventDispatcher();
 	let passphrase = "";

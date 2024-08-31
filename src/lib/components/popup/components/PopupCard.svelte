@@ -1,7 +1,7 @@
 <script lang="ts">
 	import EncryptedField from "./EncryptedField.svelte";
 	import { ActiveCopy } from "../icons";
-	export let fields;
+	export let fields: any;
 	const copyToClipboard = (username: string) => {
 		navigator.clipboard.writeText(username);
 	};

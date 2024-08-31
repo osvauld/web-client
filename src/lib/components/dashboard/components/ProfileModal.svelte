@@ -8,9 +8,9 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let top;
-	export let left;
-	export let username;
+	export let top: number;
+	export let left: number;
+	export let username: string;
 	let isUsernameHovered = false;
 	let isRecoveryHovered = false;
 	let copied = false;
