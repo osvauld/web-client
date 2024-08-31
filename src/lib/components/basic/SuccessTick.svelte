@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { DelegatedEvent } from "../../dtos/credential.dto";
 
-	export let globalEvent;
-	export let isSuccess = true;
+	export let globalEvent: DelegatedEvent;
+	export let isSuccess: boolean = true;
 
 	onMount(() => {
 		setTimeout(() => {
-			globalEvent.source.postMessage({ unmount: true }, globalEvent.origin);
+			(globalEvent.source as Window).postMessage(
+				{ unmount: true },
+				globalEvent.origin as string,
+			);
 		}, 3000);
 	});
 </script>

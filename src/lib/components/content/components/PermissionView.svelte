@@ -1,17 +1,22 @@
 <script lang="ts">
-	export let globalEvent;
-	let usernameContent = "empty";
-	export let value = false;
+	import { DelegatedEvent } from "../../../dtos/credential.dto";
+
+	export let globalEvent: DelegatedEvent;
+	let usernameContent: string = "empty";
+	export let value: boolean = false;
 
 	$: if (globalEvent) {
 		const { username } = globalEvent.data;
 		usernameContent = username;
 	}
 
-	const handleUserInput = (input) => {
+	const handleUserInput = (input: boolean) => {
 		value = input;
 		if (!input) {
-			globalEvent.source.postMessage({ unmount: true }, globalEvent.origin);
+			(globalEvent.source as Window).postMessage(
+				{ unmount: true },
+				globalEvent.origin as string,
+			);
 		}
 	};
 </script>

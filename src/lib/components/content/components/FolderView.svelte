@@ -1,20 +1,22 @@
 <script lang="ts">
 	import ListToggle from "../../basic/ListToggle.svelte";
 	import FolderIcon from "../../basic/icons/folderIcon.svelte";
+	import { DelegatedEvent } from "../../../dtos/credential.dto";
+	import { Folder } from "../../../dtos/folder.dto";
 
-	let gridDisplay;
-	export let triggerSuccess = false;
-	export let globalEvent;
-	export let isSuccess;
-	let folders;
-	let loading = false;
+	let gridDisplay: string;
+	export let triggerSuccess: boolean = false;
+	export let globalEvent: DelegatedEvent;
+	export let isSuccess: boolean;
+	let folders: Folder[];
+	let loading: boolean = false;
 
 	$: if (globalEvent) {
 		folders = globalEvent.data.folders;
 	}
 
-	const successAnimation = (id) => {
-		globalEvent.source.postMessage(
+	const successAnimation = (id: string) => {
+		(globalEvent.source as Window).postMessage(
 			{
 				save: true,
 				folderId: id,
@@ -22,7 +24,7 @@
 				password: globalEvent.data.password,
 				domain: globalEvent.data.domain,
 			},
-			globalEvent.origin,
+			globalEvent.origin as string,
 		);
 
 		loading = true;

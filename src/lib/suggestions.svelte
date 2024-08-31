@@ -3,11 +3,12 @@
 	import SuccessTick from "./components/basic/SuccessTick.svelte";
 	import FolderView from "./components/content/components/FolderView.svelte";
 	import PermissionView from "./components/content/components/PermissionView.svelte";
+	import { DelegatedEvent } from "../lib/dtos/credential.dto";
 
 	let folderView = false;
 	let successView = false;
 	let isSuccess = false;
-	let globalEvent;
+	let globalEvent: DelegatedEvent;
 
 	onMount(async () => {
 		window.addEventListener("message", (event) => {
