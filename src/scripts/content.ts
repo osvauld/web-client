@@ -1,4 +1,4 @@
-import { loginScript } from "./contents/loginContentScript";
+import { improvedLoginDetection } from "./contents/loginContentScript";
 import { postLoginContent } from "./contents/postLoginContentInjector";
 
 import browser from "webextension-polyfill";
@@ -9,13 +9,6 @@ browser.runtime.onMessage.addListener((message) => {
 	}
 });
 
-async function contentScriptManager() {
-	let currentUrl = window.location.href;
-	if (currentUrl.includes("login")) {
-		loginScript();
-	}
-}
-
 window.onload = () => {
-	contentScriptManager();
+	improvedLoginDetection();
 };
