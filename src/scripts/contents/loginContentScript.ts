@@ -1,3 +1,5 @@
+import browser from "webextension-polyfill";
+
 export const improvedLoginDetection = (): void => {
 	const loginKeywords = [
 		"log in",
@@ -102,12 +104,13 @@ export const improvedLoginDetection = (): void => {
 		username: string,
 		password: string,
 	): Promise<void> {
+		console.log("credentialCaptureHandler triggered");
 		if (username && password) {
 			try {
-				// await browser.runtime.sendMessage({
-				//   action: "credentialSubmit",
-				//   data: { username, password, url: window.location.href },
-				// });
+				await browser.runtime.sendMessage({
+					action: "credentialSubmit",
+					data: { username, password, url: window.location.href },
+				});
 				console.log("Credentials captured successfully", username, password);
 			} catch (error) {
 				console.error("Error capturing credentials:", error);
@@ -131,25 +134,24 @@ export const improvedLoginDetection = (): void => {
 					},
 					{ once: true },
 				);
-			} else {
-				const loginButtons = Array.from(
-					container.querySelectorAll(
-						'button, input[type="submit"], input[type="button"]',
-					),
-				).filter((button) => {
-					const buttonText =
-						(button instanceof HTMLInputElement
-							? button.value
-							: button.textContent) || "";
-					return loginKeywords.some((keyword) =>
-						buttonText.toLowerCase().includes(keyword),
-					);
-				});
-
-				loginButtons.forEach((button) => {
-					button.addEventListener("click", handler, { once: true });
-				});
 			}
+			const loginButtons = Array.from(
+				container.querySelectorAll(
+					'button, input[type="submit"], input[type="button"]',
+				),
+			).filter((button) => {
+				const buttonText =
+					(button instanceof HTMLInputElement
+						? button.value
+						: button.textContent) || "";
+				return loginKeywords.some((keyword) =>
+					buttonText.toLowerCase().includes(keyword),
+				);
+			});
+
+			loginButtons.forEach((button) => {
+				button.addEventListener("click", handler, { once: true });
+			});
 		}
 	}
 
