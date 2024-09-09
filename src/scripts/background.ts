@@ -16,15 +16,21 @@ import {
 	encryptEditFields,
 	getDecryptedUrls,
 } from "./backgroundService";
+
+import { Folder } from "../lib/dtos/folder.dto";
+import { CapturedCredentialData } from "../lib/dtos/credential.dto";
+import { postLoginCredentialHandler } from "./helper";
+
+import { fetchAllFolders } from "../lib/apis/folder.api";
 import init, { is_global_context_set } from "./crypto_primitives";
 
-let newCredential: any = {
+let newCredential: CapturedCredentialData = {
 	username: "",
 	password: "",
 	domain: "",
-	windowId: "",
 	url: "",
 };
+let submitFlag = false;
 
 let urlObj = new Map<string, Set<string>>();
 
@@ -124,22 +130,49 @@ browser.runtime.onMessage.addListener(async (request) => {
 		case "createShareCredPayload":
 			return createShareCredsPayload(request.data.creds, request.data.users);
 		case "credentialSubmit": {
+			if (submitFlag) return null;
+			submitFlag = true;
+			setTimeout(() => {
+				submitFlag = false;
+			}, 500);
 			newCredential.username = request.data.username;
 			newCredential.password = request.data.password;
 			const urlData = await getCurrentDomain();
-			newCredential.domain = urlData?.hostname;
-			newCredential.url = urlData?.href;
+			newCredential.domain = urlData.hostname;
+			newCredential.url = urlData.href;
 			const credIds = Array.from(
 				urlObj.get(newCredential.domain.replace(/^www\./, "")) || [],
 			);
-			newCredential.windowId = await credentialSubmitHandler(
+			const isNewCredential = await credentialSubmitHandler(
 				newCredential,
 				credIds,
 			);
-			if (newCredential.windowId) {
-				return false;
+
+			if (isNewCredential) {
+				setTimeout(async () => {
+					const responseJson = await fetchAllFolders();
+					const folderData = responseJson.data.sort((a: Folder, b: Folder) =>
+						a.name.localeCompare(b.name),
+					);
+					browser.tabs
+						.query({ active: true, currentWindow: true })
+						.then((tabs) => {
+							if (tabs[0]?.id !== undefined) {
+								browser.tabs.sendMessage(tabs[0].id, {
+									action: "postCredSubmit",
+									data: {
+										...newCredential,
+										folders: [...folderData],
+										id: "osvauld",
+									},
+								});
+							}
+						});
+				}, 3000);
+			} else {
+				console.log("This is not a new credential on this platform");
 			}
-			return true;
+			return null;
 		}
 		case "encryptEditFields": {
 			return encryptEditFields(request.data);
@@ -148,32 +181,40 @@ browser.runtime.onMessage.addListener(async (request) => {
 			return getDecryptedUrls(request.data);
 		}
 
+		case "saveCapturedCredentialToFolder": {
+			submitFlag = false;
+			const credHandlerResponse = await postLoginCredentialHandler(
+				request.data,
+			);
+			return credHandlerResponse;
+		}
+
 		default:
 			console.log(request.action);
 			break;
 	}
 });
 
-browser.runtime.onConnect.addListener(async (port) => {
-	if (port.name === "popup") {
-		// When you have data to send:
-		if (
-			newCredential &&
-			newCredential.username &&
-			newCredential.password &&
-			newCredential.windowId
-		) {
-			port.postMessage({
-				username: newCredential.username,
-				password: newCredential.password,
-				domain: newCredential.domain,
-				windowId: newCredential.windowId,
-				url: newCredential.url,
-			});
-			newCredential = {};
-		}
-	}
-});
+// browser.runtime.onConnect.addListener(async (port) => {
+// 	if (port.name === "popup") {
+// 		// When you have data to send:
+// 		if (
+// 			newCredential &&
+// 			newCredential.username &&
+// 			newCredential.password &&
+// 			newCredential.windowId
+// 		) {
+// 			port.postMessage({
+// 				username: newCredential.username,
+// 				password: newCredential.password,
+// 				domain: newCredential.domain,
+// 				windowId: newCredential.windowId,
+// 				url: newCredential.url,
+// 			});
+// 			newCredential = {};
+// 		}
+// 	}
+// });
 
 function saveTimestamp() {
 	const timestamp = new Date().toISOString();

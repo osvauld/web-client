@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Locked, Eye, Unlocked, ActiveCopy, ClosedEye } from "../icons";
 	import { sendMessage } from "../../dashboard/helper";
-	export let fieldName;
-	export let fieldValue;
+	export let fieldName: string;
+	export let fieldValue: string;
 	let visibility = false;
 	let decrypted = false;
 	let decryptedValue = "";

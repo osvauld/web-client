@@ -5,7 +5,7 @@
 	import { Group } from "../../../dtos/group.dto";
 
 	export let existingItemsData: User[] | Group[];
-	export let editPermissionTrigger;
+	export let editPermissionTrigger: boolean;
 	export let isUser: boolean;
 
 	const dispatch = createEventDispatcher();

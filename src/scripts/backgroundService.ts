@@ -12,6 +12,7 @@ import {
 	Field,
 	UserEncryptedFields,
 	UsersForDataSync,
+	CapturedCredentialData,
 } from "../lib/dtos/credential.dto";
 import init, {
 	generate_and_encrypt_keys,
@@ -36,6 +37,7 @@ type CredentialsForUsersPayload = {
 	userId: string;
 	credentials: CredentialFields[];
 };
+
 type UserListForEncryption = {
 	id: string;
 	publicKey: string;
@@ -213,7 +215,7 @@ export const handlePvtKeyImport = async (
 };
 
 export const credentialSubmitHandler = async (
-	newCredential: any,
+	newCredential: CapturedCredentialData,
 	credIds: string[],
 ) => {
 	if (credIds.length > 0) {
@@ -233,27 +235,14 @@ export const credentialSubmitHandler = async (
 			}
 		}
 	}
-	const windowDetails = await browser.windows.create({
-		url: browser.runtime.getURL("popup.html"),
-		type: "popup",
-		width: 290,
-		height: 500,
-	});
-	return windowDetails.id;
+
+	return true;
 };
 export const getCurrentDomain = async () => {
-	try {
-		const queryOptions = { active: true, currentWindow: true };
-		const tabs = await browser.tabs.query(queryOptions);
-		if (tabs[0] && tabs[0].url) {
-			const url = new URL(tabs[0].url);
-			return url; // Returns the domain of the current active tab
-		}
-		return null;
-	} catch (error) {
-		console.error("Error getting current domain:", error);
-		return null;
-	}
+	const queryOptions = { active: true, currentWindow: true };
+	const tabs = await browser.tabs.query(queryOptions);
+	const url = new URL(tabs[0].url!);
+	return url; // Returns the domain of the current active tab
 };
 
 export const sign_hashed_message = async (message: string): Promise<string> => {

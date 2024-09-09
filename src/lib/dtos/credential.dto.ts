@@ -1,5 +1,3 @@
-// new cred definitons
-
 type UUID = string;
 type FieldType = "meta" | "sensitive" | "additional" | "totp";
 export type Field = {
@@ -92,4 +90,11 @@ export type UrlCredMap = {
 export type EncryptedEditField = {
 	fieldValue: string;
 	userId: string;
+};
+
+export type CapturedCredentialData = {
+	username: string;
+	password: string;
+	domain: string;
+	url: string;
 };
