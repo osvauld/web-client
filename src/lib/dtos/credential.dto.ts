@@ -1,6 +1,3 @@
-// new cred definitons
-import { Folder } from "./folder.dto";
-
 type UUID = string;
 type FieldType = "meta" | "sensitive" | "additional" | "totp";
 export type Field = {
@@ -101,18 +98,3 @@ export type CapturedCredentialData = {
 	domain: string;
 	url: string;
 };
-
-export interface DelegatedEvent {
-	data: {
-		title: string;
-		description: string;
-		id: string;
-		username: string;
-		password: string;
-		domain: string;
-		url: string;
-		folders: Folder[];
-	};
-	source: MessageEventSource;
-	origin: string;
-}

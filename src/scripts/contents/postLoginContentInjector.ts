@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import { DelegatedEvent } from "../../lib/dtos/credential.dto";
+import { ModifiedEvent } from "../../lib/dtos/credential.dto";
 
 interface MessageData {
 	action: string;
@@ -63,7 +63,7 @@ function extractPageInfo() {
 	};
 }
 
-export const postLoginContent = (data: DelegatedEvent) => {
+export const postLoginContent = (data: ModifiedEvent) => {
 	const iframe = document.createElement("iframe");
 
 	iframe.style.position = "fixed";

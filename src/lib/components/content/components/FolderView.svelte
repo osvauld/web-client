@@ -1,30 +1,31 @@
 <script lang="ts">
 	import ListToggle from "../../basic/ListToggle.svelte";
 	import FolderIcon from "../../basic/icons/folderIcon.svelte";
-	import { DelegatedEvent } from "../../../dtos/credential.dto";
+	import { ModifiedEvent } from "../../../dtos/event.dto";
 	import { Folder } from "../../../dtos/folder.dto";
 
-	let gridDisplay: string;
 	export let triggerSuccess: boolean = false;
-	export let globalEvent: DelegatedEvent;
+	export let iframeCustomEvent: ModifiedEvent;
 	export let isSuccess: boolean;
+
+	let gridDisplay: string;
 	let folders: Folder[];
 	let loading: boolean = false;
 
-	$: if (globalEvent) {
-		folders = globalEvent.data.folders;
+	$: if (iframeCustomEvent) {
+		folders = iframeCustomEvent.data.folders;
 	}
 
 	const successAnimation = (id: string) => {
-		(globalEvent.source as Window).postMessage(
+		(iframeCustomEvent.source as Window).postMessage(
 			{
 				save: true,
 				folderId: id,
-				username: globalEvent.data.username,
-				password: globalEvent.data.password,
-				domain: globalEvent.data.domain,
+				username: iframeCustomEvent.data.username,
+				password: iframeCustomEvent.data.password,
+				domain: iframeCustomEvent.data.domain,
 			},
-			globalEvent.origin as string,
+			iframeCustomEvent.origin as string,
 		);
 
 		loading = true;

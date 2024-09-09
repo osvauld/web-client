@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { DelegatedEvent } from "../../dtos/credential.dto";
+	import { ModifiedEvent } from "../../../dtos/event.dto";
 
-	export let globalEvent: DelegatedEvent;
+	export let iframeCustomEvent: ModifiedEvent;
 	export let isSuccess: boolean = true;
 
 	onMount(() => {
 		setTimeout(() => {
-			(globalEvent.source as Window).postMessage(
+			(iframeCustomEvent.source as Window).postMessage(
 				{ unmount: true },
-				globalEvent.origin as string,
+				iframeCustomEvent.origin as string,
 			);
 		}, 1000);
 	});

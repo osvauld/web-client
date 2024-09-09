@@ -1,19 +1,23 @@
 <script lang="ts">
+	import { onMount } from "svelte";
+
 	export let value = "Grid";
 	let checked = true;
+	let uniqueID: number;
 
-	function handleClick(event) {
+	function handleClick(event: any) {
 		const target = event.target;
 		const state = target.getAttribute("aria-checked");
 		checked = state === "true" ? false : true;
 		value = checked === true ? "Grid" : "List";
 	}
 
-	const uniqueID = Math.floor(Math.random() * 100);
+	onMount(() => {
+		uniqueID = Math.floor(Math.random() * 100);
+	});
 </script>
 
 <style>
-	/* Inner Design Option */
 	.s--inner button {
 		padding: 2px;
 		background-color: #0d0e13;
@@ -36,7 +40,6 @@
 		outline: #161b22 solid 1px;
 	}
 
-	/* Inner Design Option */
 	[role="switch"][aria-checked="true"] :first-child,
 	[role="switch"][aria-checked="false"] :last-child {
 		background: #161b22;

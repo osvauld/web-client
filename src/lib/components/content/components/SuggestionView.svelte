@@ -1,21 +1,22 @@
 <script lang="ts">
-	import { DelegatedEvent } from "../../../dtos/credential.dto";
+	import { ModifiedEvent } from "../../../dtos/event.dto";
 
-	export let globalEvent: DelegatedEvent;
-	let usernameContent: string = "empty";
+	export let iframeCustomEvent: ModifiedEvent;
 	export let value: boolean = false;
 
-	$: if (globalEvent) {
-		const { username } = globalEvent.data;
+	let usernameContent: string = "empty";
+
+	$: if (iframeCustomEvent) {
+		const { username } = iframeCustomEvent.data;
 		usernameContent = username;
 	}
 
 	const handleUserInput = (input: boolean) => {
 		value = input;
 		if (!input) {
-			(globalEvent.source as Window).postMessage(
+			(iframeCustomEvent.source as Window).postMessage(
 				{ unmount: true },
-				globalEvent.origin as string,
+				iframeCustomEvent.origin as string,
 			);
 		}
 	};

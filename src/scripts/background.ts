@@ -18,17 +18,11 @@ import {
 } from "./backgroundService";
 
 import { Folder } from "../lib/dtos/folder.dto";
+import { CapturedCredentialData } from "../lib/dtos/credential.dto";
 import { postLoginCredentialHandler } from "./helper";
 
 import { fetchAllFolders } from "../lib/apis/folder.api";
 import init, { is_global_context_set } from "./crypto_primitives";
-
-type CapturedCredentialData = {
-	username: string;
-	password: string;
-	domain: string;
-	url: string;
-};
 
 let newCredential: CapturedCredentialData = {
 	username: "",

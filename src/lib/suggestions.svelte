@@ -1,21 +1,21 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import SuccessTick from "./components/basic/SuccessTick.svelte";
+	import SuccessView from "./components/content/components/SuccessView.svelte";
 	import FolderView from "./components/content/components/FolderView.svelte";
-	import PermissionView from "./components/content/components/PermissionView.svelte";
-	import { DelegatedEvent } from "../lib/dtos/credential.dto";
+	import SuggestionView from "./components/content/components/SuggestionView.svelte";
+	import { ModifiedEvent } from "../lib/dtos/event.dto";
 
 	let folderView = false;
 	let successView = false;
 	let isSuccess = false;
-	let globalEvent: DelegatedEvent;
+	let iframeCustomEvent: ModifiedEvent;
 
 	onMount(async () => {
 		window.addEventListener("message", (event) => {
 			if (event.data.id !== "osvauld") {
 				return;
 			}
-			globalEvent = {
+			iframeCustomEvent = {
 				data: event.data,
 				source: event.source as MessageEventSource,
 				origin: event.origin,
@@ -29,14 +29,14 @@
 >
 	<span class="font-extrabold text-2xl text-white pb-4">osvauld</span>
 	{#if successView}
-		<SuccessTick {isSuccess} {globalEvent} />
+		<SuccessView {isSuccess} {iframeCustomEvent} />
 	{:else if folderView}
 		<FolderView
-			{globalEvent}
+			{iframeCustomEvent}
 			bind:isSuccess
 			bind:triggerSuccess="{successView}"
 		/>
 	{:else}
-		<PermissionView {globalEvent} bind:value="{folderView}" />
+		<SuggestionView {iframeCustomEvent} bind:value="{folderView}" />
 	{/if}
 </div>
