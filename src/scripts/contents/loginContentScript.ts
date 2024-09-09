@@ -1,51 +1,238 @@
 import browser from "webextension-polyfill";
 
-export const loginScript = () => {
-	// earlier script do here
-	// const currentURL = window.location.href;
-	// let usernameElem= document.evaluate(
-	//     "(//form//input[   @type='email' or contains(@name, 'username')   or contains(@id, 'email')   or contains(@id, 'username')   or contains(@placeholder, 'Email')   or contains(@placeholder, 'Username')   or contains(ancestor::label, 'Email')   or contains(ancestor::label, 'Username')   or contains(@class, 'email')   or contains(@class, 'username')   or @aria-label='Email'   or @aria-label='Username'   or @aria-labelledby='Email'   or @aria-labelledby='Username' ] | //input[@type='text'])[1]",
-	//     document,
-	//     null,
-	//     XPathResult.FIRST_ORDERED_NODE_TYPE,
-	//     null
-	//   ).singleNodeValue;
+export const improvedLoginDetection = (): void => {
+	const loginKeywords = [
+		"log in",
+		"sign in",
+		"login",
+		"signin",
+		"next",
+		"continue",
+		"submit",
+	];
 
-	// let passwordElem = document.evaluate(
-	//     "(//form//input[ @type='password'or contains(@name, 'password')or contains(@id, 'password')or contains(@placeholder, 'Password')or contains(ancestor::label, 'Password')or contains(@class, 'password')or @aria-label='Password'or @aria-labelledby='Password'] | //input[@type='password'])[1]",
-	//     document,
-	//     null,
-	//     XPathResult.FIRST_ORDERED_NODE_TYPE,
-	//     null
-	//   ).singleNodeValue;
+	function isPasswordField(input: HTMLInputElement): boolean {
+		return (
+			input.type === "password" ||
+			input.name.toLowerCase().includes("password") ||
+			input.id.toLowerCase().includes("password") ||
+			input.getAttribute("autocomplete") === "current-password" ||
+			input.placeholder.toLowerCase().includes("password")
+		);
+	}
 
-	const forms = document.querySelectorAll<HTMLFormElement>("form");
+	function isUsernameField(input: HTMLInputElement): boolean {
+		const inputProps = [
+			input.type,
+			input.name,
+			input.id,
+			input.getAttribute("autocomplete") ?? "",
+			input.placeholder,
+		].map((prop) => prop.toLowerCase());
+		const usernameKeywords = [
+			"text",
+			"email",
+			"tel",
+			"user",
+			"login",
+			"signin",
+			"username",
+			"email",
+			"account",
+		];
+		return inputProps.some((prop) =>
+			usernameKeywords.some((keyword) => prop.includes(keyword)),
+		);
+	}
 
-	if (forms.length > 0) {
-		forms.forEach((form) => {
-			form.addEventListener("submit", function () {
-				const username = form.querySelector<HTMLInputElement>(
-					'input[type="text"], input[type="email"]',
-				)?.value;
+	function hasLoginIndicators(container: HTMLElement): boolean {
+		const buttonText = Array.from(
+			container.querySelectorAll(
+				'button, input[type="submit"], input[type="button"]',
+			),
+		)
+			.map(
+				(el) =>
+					(el instanceof HTMLInputElement ? el.value : el.textContent) || "",
+			)
+			.join(" ")
+			.toLowerCase();
 
-				const password = form.querySelector<HTMLInputElement>(
-					'input[type="password"]',
-				)?.value;
+		const hasLoginButton = loginKeywords.some((keyword) =>
+			buttonText.includes(keyword),
+		);
 
-				if (username && password) {
-					// Send message to the background script
+		const containerAttrs = [
+			container.className,
+			container.id,
+			container.getAttribute("role") ?? "",
+		].map((attr) => attr.toLowerCase());
+		const loginAttrKeywords = ["login", "signin", "auth", "session", "token"];
+		const hasLoginAttr = containerAttrs.some((attr) =>
+			loginAttrKeywords.some((keyword) => attr.includes(keyword)),
+		);
 
-					browser.runtime.sendMessage({
-						action: "credentialSubmit",
-						data: { username, password },
+		return hasLoginButton || hasLoginAttr;
+	}
+
+	function getCredentialFields(container: HTMLElement): {
+		usernameInput: HTMLInputElement | null;
+		passwordInput: HTMLInputElement | null;
+	} {
+		const inputs = Array.from(container.querySelectorAll("input"));
+		const passwordInput = inputs.find(
+			isPasswordField,
+		) as HTMLInputElement | null;
+		let usernameInput: HTMLInputElement | null = null;
+
+		if (passwordInput) {
+			const passwordIndex = inputs.indexOf(passwordInput);
+			usernameInput = inputs
+				.slice(0, passwordIndex)
+				.reverse()
+				.find(isUsernameField) as HTMLInputElement | null;
+		}
+
+		if (!usernameInput) {
+			usernameInput = inputs.find(isUsernameField) as HTMLInputElement | null;
+		}
+
+		return { usernameInput, passwordInput };
+	}
+
+	async function credentialCaptureHandler(
+		username: string,
+		password: string,
+	): Promise<void> {
+		console.log("credentialCaptureHandler triggered");
+		if (username && password) {
+			try {
+				await browser.runtime.sendMessage({
+					action: "credentialSubmit",
+					data: { username, password, url: window.location.href },
+				});
+				console.log("Credentials captured successfully", username, password);
+			} catch (error) {
+				console.error("Error capturing credentials:", error);
+			}
+		}
+	}
+
+	function attachLoginListener(container: HTMLElement): void {
+		const { usernameInput, passwordInput } = getCredentialFields(container);
+		if (usernameInput && passwordInput) {
+			const handler = () =>
+				credentialCaptureHandler(usernameInput.value, passwordInput.value);
+
+			if (container instanceof HTMLFormElement) {
+				container.addEventListener(
+					"submit",
+					async (event) => {
+						event.preventDefault();
+						await handler();
+						container.submit();
+					},
+					{ once: true },
+				);
+			}
+			const loginButtons = Array.from(
+				container.querySelectorAll(
+					'button, input[type="submit"], input[type="button"]',
+				),
+			).filter((button) => {
+				const buttonText =
+					(button instanceof HTMLInputElement
+						? button.value
+						: button.textContent) || "";
+				return loginKeywords.some((keyword) =>
+					buttonText.toLowerCase().includes(keyword),
+				);
+			});
+
+			loginButtons.forEach((button) => {
+				button.addEventListener("click", handler, { once: true });
+			});
+		}
+	}
+
+	function detectLoginForms(): void {
+		const potentialContainers = [
+			...document.querySelectorAll("form"),
+			...document.querySelectorAll(
+				"div[class*='login'], div[class*='signin'], div[id*='form']",
+			),
+		];
+
+		potentialContainers.forEach((container) => {
+			if (
+				container instanceof HTMLElement &&
+				(container instanceof HTMLFormElement || hasLoginIndicators(container))
+			) {
+				console.log("Login container detected:", container);
+				attachLoginListener(container);
+			}
+		});
+	}
+
+	function initializeMutationObserver(): void {
+		const observer = new MutationObserver((mutations) => {
+			mutations.forEach((mutation) => {
+				if (mutation.type === "childList") {
+					mutation.addedNodes.forEach((node) => {
+						if (node instanceof HTMLElement) {
+							if (node instanceof HTMLFormElement || hasLoginIndicators(node)) {
+								console.log(
+									"Dynamically added login container detected:",
+									node,
+								);
+								attachLoginListener(node);
+							} else {
+								const containers = node.querySelectorAll(
+									"form, div[class*='login'], div[class*='signin'], div[id*='form']",
+								);
+								containers.forEach((container) => {
+									if (
+										container instanceof HTMLElement &&
+										(container instanceof HTMLFormElement ||
+											hasLoginIndicators(container))
+									) {
+										console.log(
+											"Dynamically added login container detected:",
+											container,
+										);
+										attachLoginListener(container);
+									}
+								});
+							}
+						}
 					});
 				}
 			});
 		});
+
+		if (document.body) {
+			observer.observe(document.body, { childList: true, subtree: true });
+		} else {
+			console.warn(
+				"Document body not available, MutationObserver not initialized",
+			);
+		}
 	}
 
-	// Send username and password to backend
+	function onDOMReady(callback: () => void): void {
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", callback);
+		} else {
+			callback();
+		}
+	}
 
-	// At backend wait for 3 seconds
-	// if the url doesn't have login anymore, active the second script
+	function main(): void {
+		detectLoginForms();
+		initializeMutationObserver();
+	}
+
+	onDOMReady(main);
 };
+
+improvedLoginDetection();
