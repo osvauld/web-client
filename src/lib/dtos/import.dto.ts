@@ -27,6 +27,8 @@ export type ChromeCredential = {
 	note: string;
 };
 
+export type Platform = "Safari" | "Firefox" | "Chrome";
+
 export type Credential =
 	| SafariCredential
 	| FirefoxCredential

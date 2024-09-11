@@ -224,7 +224,6 @@ export const parseCsvLogins = (
 							username: credential.Username,
 							password: credential.Password,
 						}));
-					console.log(intermediateData);
 					return true;
 				}
 				case "Firefox": {
@@ -237,7 +236,6 @@ export const parseCsvLogins = (
 							username: credential.username,
 							password: credential.password,
 						}));
-					console.log(intermediateData);
 					return true;
 				}
 				case "Chrome": {
@@ -250,7 +248,6 @@ export const parseCsvLogins = (
 							username: credential.username,
 							password: credential.password,
 						}));
-					console.log(intermediateData);
 					return true;
 				}
 
@@ -280,4 +277,8 @@ export const parseCsvLogins = (
 			},
 		});
 	});
+};
+
+export const approvedCredentialSubmit = (data) => {
+	console.log(data);
 };

@@ -1,13 +1,38 @@
 <script lang="ts">
 	import { fly } from "svelte/transition";
 	import { onMount, createEventDispatcher } from "svelte";
-	import { parseCsvLogins } from "../helper";
+	import Close from "../../basic/icons/closePanel.svelte";
+	import { parseCsvLogins, approvedCredentialSubmit } from "../helper";
+	import { IntermediateCredential, Platform } from "../../../dtos/import.dto";
 	import Import from "../../basic/icons/import.svelte";
-	const dispatch = createEventDispatcher();
-	type Platform = "Safari" | "Firefox" | "Chrome";
+	import ImportTable from "./ImportTable.svelte";
 	let selectedPlatform: Platform;
 	let isOptionSelected: boolean = false;
 	let loadingScreen: boolean = false;
+	let loadingSuccess: boolean = false;
+	let loadingFail: boolean = false;
+	let processingScreen: boolean = false;
+
+	let dataFromParser: IntermediateCredential[];
+
+	const dispatch = createEventDispatcher();
+
+	const options = [
+		"chrome",
+		"firefox",
+		"safari",
+		"edge",
+		"opera",
+		"bitwarden",
+		"dashlane",
+		"1password",
+		"nordpass",
+		"passbolt",
+		"keepass",
+		"lastpass",
+		"kaspersky",
+		"roboform",
+	];
 
 	const dispatchCancel = () => {
 		dispatch("close");
@@ -26,9 +51,22 @@
 			parseCsvLogins(file, selectedPlatform)
 				.then((intermediateData) => {
 					console.log("Parsed credentials:", intermediateData);
+					if (intermediateData.length === 0) {
+						loadingFail = true;
+						setTimeout(() => {
+							dispatch("close");
+						}, 1500);
+					} else {
+						dataFromParser = intermediateData;
+						loadingSuccess = true;
+					}
 				})
 				.catch((error) => {
 					console.error("Error parsing credentials:", error);
+					loadingFail = true;
+					setTimeout(() => {
+						dispatch("close");
+					}, 1500);
 				});
 		}
 	}
@@ -44,6 +82,11 @@
 		isOptionSelected = true;
 	};
 
+	const handleSelectedCredentials = async (e) => {
+		processingScreen = true;
+		await approvedCredentialSubmit(e.detail);
+	};
+
 	onMount(async () => {
 		window.addEventListener("keydown", handleKeyboardEvent);
 	});
@@ -55,13 +98,29 @@
 	out:fly
 >
 	{#if loadingScreen}
-		<div class="text-3xl my-4 flex justify-center">
-			<span class="">Import from {selectedPlatform}</span>
+		<div class="text-3xl my-4 flex justify-center px-4">
+			<span class="ml-auto">Import from {selectedPlatform}</span>
+			<button class=" px-1.5 py-1.5 ml-auto" on:click="{dispatchCancel}"
+				><Close size="{32}" /></button
+			>
 		</div>
 		<div
-			class="w-full h-[80%] flex justify-center items-center text-osvauld-chalkwhite text-xl"
+			class="w-full h-[85%] flex flex-col justify-center items-center text-osvauld-chalkwhite text-xl"
 		>
-			<span>Loading...</span>
+			{#if processingScreen}
+				Cryptographic operations in progress....
+			{:else if loadingSuccess}
+				<ImportTable
+					{dataFromParser}
+					on:approved="{handleSelectedCredentials}"
+				/>
+			{:else if loadingFail}
+				<span class="text-red-400 font-semibold text-2xl"
+					>Error parsing credentials</span
+				>
+			{:else}
+				<span>Loading...</span>
+			{/if}
 		</div>
 	{:else if isOptionSelected}
 		<div class="text-3xl my-4 flex justify-center">
@@ -80,8 +139,17 @@
 			on:click="{triggerFileInput}"
 		>
 			<span class="cursor-pointer mb-10"><Import size="{128}" /></span>
-			<p>Select your exported file from {selectedPlatform}</p>
+			<p>Select your file here</p>
+			<p class="text-osvauld-sheffieldgrey text-lg mt-3">
+				File Types supported: CSV
+			</p>
 		</button>
+		<div class="flex justify-end items-center pr-10">
+			<button
+				class="border border-osvauld-iconblack rounded-lg px-3 py-1.5 hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
+				on:click="{dispatchCancel}">Cancel</button
+			>
+		</div>
 	{:else}
 		<div class="text-3xl my-4 flex justify-center">
 			<span class="">Select Import Target</span>
@@ -89,96 +157,23 @@
 		<div
 			class="w-full h-[80%] gap-2 grid grid-cols-4 grid-rows-4 text-osvauld-chalkwhite text-xl"
 		>
+			{#each options as option}
+				<button
+					class="border border-osvauld-iconblack rounded-lg
+						hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack
+							transition-all duration-300 ease-in-out
+							capitalize"
+					on:click="{() => handleSelectedOption(option)}"
+				>
+					{option}
+				</button>
+			{/each}
+		</div>
+		<div class="flex justify-end items-center pr-10">
 			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('chrome');
-				}}">Chrome</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('firefox');
-				}}">Firefox</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('safari');
-				}}">Safari</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('edge');
-				}}">Edge</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('opera');
-				}}">Opera</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('bitwarden');
-				}}">Bitwarden</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('dashlane');
-				}}">Dashlane</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('1password');
-				}}">1Password</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('nordpass');
-				}}">NordPass</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('passbolt');
-				}}">Passbolt</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('keepass');
-				}}">KeePass</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('lastpass');
-				}}">LastPass</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('kaspersky');
-				}}">Kaspersky</button
-			>
-			<button
-				class="hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-				on:click="{() => {
-					handleSelectedOption('roboform');
-				}}">Roboform</button
+				class="border border-osvauld-iconblack rounded-lg px-3 py-1.5 hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
+				on:click="{dispatchCancel}">Cancel</button
 			>
 		</div>
 	{/if}
-	<div class="flex justify-end items-center pr-10">
-		<button
-			class="border border-osvauld-iconblack rounded-lg px-3 py-1.5 hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack"
-			on:click="{dispatchCancel}">Cancel</button
-		>
-	</div>
 </div>
