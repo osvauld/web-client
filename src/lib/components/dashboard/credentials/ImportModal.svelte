@@ -6,12 +6,17 @@
 	import { IntermediateCredential, Platform } from "../../../dtos/import.dto";
 	import Import from "../../basic/icons/import.svelte";
 	import ImportTable from "./ImportTable.svelte";
+	import ImportLoader from "../../basic/ImportLoader.svelte";
+	import ImportMessage from "../../basic/ImportMessage.svelte";
+	import SuccessTick from "../../basic/SuccessTick.svelte";
+	import ClosePanel from "../../basic/icons/closePanel.svelte";
 	let selectedPlatform: Platform;
 	let isOptionSelected: boolean = false;
 	let loadingScreen: boolean = false;
 	let loadingSuccess: boolean = false;
 	let loadingFail: boolean = false;
 	let processingScreen: boolean = false;
+	let processingSuccess: boolean = false;
 
 	let dataFromParser: IntermediateCredential[];
 
@@ -84,6 +89,9 @@
 
 	const handleSelectedCredentials = async (e) => {
 		processingScreen = true;
+		setTimeout(() => {
+			processingSuccess = true;
+		}, 4000);
 		await approvedCredentialSubmit(e.detail);
 	};
 
@@ -107,8 +115,11 @@
 		<div
 			class="w-full h-[85%] flex flex-col justify-center items-center text-osvauld-chalkwhite text-xl"
 		>
-			{#if processingScreen}
-				Cryptographic operations in progress....
+			{#if processingSuccess}
+				<SuccessTick />
+			{:else if processingScreen}
+				<ImportLoader />
+				<ImportMessage />
 			{:else if loadingSuccess}
 				<ImportTable
 					{dataFromParser}
