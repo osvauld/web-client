@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { fly } from "svelte/transition";
 	import { onMount, createEventDispatcher } from "svelte";
+	import { parseCsvLogins } from "../helper";
 	import Import from "../../basic/icons/import.svelte";
 	const dispatch = createEventDispatcher();
-
-	let selectedPlatform: string = "";
+	type Platform = "Safari" | "Firefox" | "Chrome";
+	let selectedPlatform: Platform;
 	let isOptionSelected: boolean = false;
+	let loadingScreen: boolean = false;
 
 	const dispatchCancel = () => {
 		dispatch("close");
 	};
 
-	let fileInput;
+	let fileInput: HTMLInputElement | null = null;
 
 	function triggerFileInput() {
 		fileInput.click();
@@ -20,22 +22,15 @@
 	function handleFileSelect(event) {
 		const file = event.target.files[0];
 		if (file) {
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				const contents = e.target.result;
-				// dispatch("fileimported", { contents, filename: file.name });
-
-				console.log({ contents, filename: file.name });
-				// Need to show loading scrren while data being processed
-			};
-			reader.readAsText(file);
+			loadingScreen = true;
+			parseCsvLogins(file, selectedPlatform)
+				.then((intermediateData) => {
+					console.log("Parsed credentials:", intermediateData);
+				})
+				.catch((error) => {
+					console.error("Error parsing credentials:", error);
+				});
 		}
-
-		// else {
-		// 	alert("Please select a CSV file.");
-		// }
-		// // Reset the file input so the same file can be selected again if needed
-		// event.target.value = "";
 	}
 
 	const handleKeyboardEvent = (event: KeyboardEvent) => {
@@ -59,7 +54,16 @@
 	in:fly
 	out:fly
 >
-	{#if isOptionSelected}
+	{#if loadingScreen}
+		<div class="text-3xl my-4 flex justify-center">
+			<span class="">Import from {selectedPlatform}</span>
+		</div>
+		<div
+			class="w-full h-[80%] flex justify-center items-center text-osvauld-chalkwhite text-xl"
+		>
+			<span>Loading...</span>
+		</div>
+	{:else if isOptionSelected}
 		<div class="text-3xl my-4 flex justify-center">
 			<span class="">Import from {selectedPlatform}</span>
 		</div>

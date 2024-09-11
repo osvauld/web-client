@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@lavamoat/preinstall-always-fail": "^2.0.0",
+    "papaparse": "^5.4.1",
     "totp-generator": "^1.0.0"
   },
   "lavamoat": {
