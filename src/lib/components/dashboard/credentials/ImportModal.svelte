@@ -2,8 +2,10 @@
 	import { fly } from "svelte/transition";
 	import { onMount, createEventDispatcher } from "svelte";
 	import Close from "../../basic/icons/closePanel.svelte";
-	import { parseCsvLogins } from "../helper";
-	import { approvedCredentialSubmit } from "../credentialParser";
+	import {
+		parseCsvLogins,
+		approvedCredentialSubmit,
+	} from "../credentialParser";
 	import { IntermediateCredential, Platform } from "../../../dtos/import.dto";
 	import Import from "../../basic/icons/import.svelte";
 	import ImportTable from "./ImportTable.svelte";
@@ -91,7 +93,10 @@
 	const handleSelectedCredentials = async (e) => {
 		processingScreen = true;
 		setTimeout(() => {
-			processingSuccess = true;
+			processingSuccess = isImportSuccessful;
+			setTimeout(() => {
+				dispatch("close");
+			}, 1500);
 		}, 4000);
 		isImportSuccessful = await approvedCredentialSubmit(e.detail);
 	};

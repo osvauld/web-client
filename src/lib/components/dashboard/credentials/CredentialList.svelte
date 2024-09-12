@@ -126,8 +126,9 @@
 		accessListSelected.set(true);
 	};
 
-	const closeImportModal = () => {
+	const closeImportModal = async () => {
 		importSelected = false;
+		await setCredentialStore();
 	};
 
 	onDestroy(() => {

@@ -8,6 +8,7 @@
 	const dispatch = createEventDispatcher();
 
 	let selectedCredentials: Record<string, boolean> = {};
+	let selectionLength: number | undefined;
 
 	$: {
 		dataFromParser.forEach((_, index) => {
@@ -15,17 +16,15 @@
 				selectedCredentials[index] = true;
 			}
 		});
+		selectionLength = Object.values(selectedCredentials).filter(
+			(checked) => checked === true,
+		).length;
 	}
 
 	function handleProceed() {
 		const filteredData = dataFromParser.filter(
 			(_, index) => selectedCredentials[index],
 		);
-
-		// const dataWithfolderId = filteredData.map((credential) => ({
-		// 	...credential,
-		// 	folderId: $selectedFolder.id,
-		// }));
 
 		dispatch("approved", { ...filteredData, folderId: $selectedFolder.id });
 	}
@@ -35,11 +34,11 @@
 	};
 </script>
 
-<div class="w-full max-h-full overflow-y-auto overflow-x-hidden scrollbar-thin">
+<div class="w-full h-full overflow-y-auto overflow-x-hidden scrollbar-thin">
 	<table class="w-full text-sm text-left text-osvauld-chalkwhite">
 		<thead class="text-xs uppercase sticky top-0 bg-osvauld-frameblack">
 			<tr>
-				<th class="px-6 py-3">Select</th>
+				<th class="px-6 py-3 text-center">Select ({selectionLength})</th>
 				<th class="px-6 py-3">Name</th>
 				<th class="px-6 py-3">Username</th>
 				<th class="px-6 py-3">Domain</th>
