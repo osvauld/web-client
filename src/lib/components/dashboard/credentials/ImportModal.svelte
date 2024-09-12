@@ -12,6 +12,7 @@
 	import ImportLoader from "../../basic/ImportLoader.svelte";
 	import ImportMessage from "../../basic/ImportMessage.svelte";
 	import SuccessView from "../../basic/SuccessView.svelte";
+	import chrome from "../../../../../public/icons/import";
 
 	let selectedPlatform: Platform;
 	let isOptionSelected: boolean = false;
@@ -42,6 +43,8 @@
 		"kaspersky",
 		"roboform",
 	];
+
+	const getImagePath = (option: string) => `/icons/import/${option}.png`;
 
 	const dispatchCancel = () => {
 		dispatch("close");
@@ -182,10 +185,14 @@
 					class="border border-osvauld-iconblack rounded-lg
 						hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack
 							transition-all duration-300 ease-in-out
-							capitalize"
+							capitalize object-contain object-center overflow-hidden flex justify-center items-center p-2"
 					on:click="{() => handleSelectedOption(option)}"
 				>
-					{option}
+					<img
+						src="{getImagePath(option)}"
+						class="max-w-full max-h-full"
+						alt="{option}"
+					/>
 				</button>
 			{/each}
 		</div>
