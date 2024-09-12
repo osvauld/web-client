@@ -2,7 +2,8 @@
 	import { fly } from "svelte/transition";
 	import { onMount, createEventDispatcher } from "svelte";
 	import Close from "../../basic/icons/closePanel.svelte";
-	import { parseCsvLogins, approvedCredentialSubmit } from "../helper";
+	import { parseCsvLogins } from "../helper";
+	import { approvedCredentialSubmit } from "../credentialParser";
 	import { IntermediateCredential, Platform } from "../../../dtos/import.dto";
 	import Import from "../../basic/icons/import.svelte";
 	import ImportTable from "./ImportTable.svelte";
