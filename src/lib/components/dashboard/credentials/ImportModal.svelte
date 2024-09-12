@@ -8,8 +8,8 @@
 	import ImportTable from "./ImportTable.svelte";
 	import ImportLoader from "../../basic/ImportLoader.svelte";
 	import ImportMessage from "../../basic/ImportMessage.svelte";
-	import SuccessTick from "../../basic/SuccessTick.svelte";
-	import ClosePanel from "../../basic/icons/closePanel.svelte";
+	import SuccessView from "../../basic/SuccessView.svelte";
+
 	let selectedPlatform: Platform;
 	let isOptionSelected: boolean = false;
 	let loadingScreen: boolean = false;
@@ -17,6 +17,7 @@
 	let loadingFail: boolean = false;
 	let processingScreen: boolean = false;
 	let processingSuccess: boolean = false;
+	let isImportSuccessful: boolean = false;
 
 	let dataFromParser: IntermediateCredential[];
 
@@ -55,7 +56,6 @@
 			loadingScreen = true;
 			parseCsvLogins(file, selectedPlatform)
 				.then((intermediateData) => {
-					console.log("Parsed credentials:", intermediateData);
 					if (intermediateData.length === 0) {
 						loadingFail = true;
 						setTimeout(() => {
@@ -92,7 +92,7 @@
 		setTimeout(() => {
 			processingSuccess = true;
 		}, 4000);
-		await approvedCredentialSubmit(e.detail);
+		isImportSuccessful = await approvedCredentialSubmit(e.detail);
 	};
 
 	onMount(async () => {
@@ -116,7 +116,7 @@
 			class="w-full h-[85%] flex flex-col justify-center items-center text-osvauld-chalkwhite text-xl"
 		>
 			{#if processingSuccess}
-				<SuccessTick />
+				<SuccessView status="{isImportSuccessful}" />
 			{:else if processingScreen}
 				<ImportLoader />
 				<ImportMessage />

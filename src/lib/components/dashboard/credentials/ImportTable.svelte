@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from "svelte";
 	import type { IntermediateCredential } from "../../../dtos/import.dto";
+	import { selectedFolder } from "../store";
 
 	export let dataFromParser: IntermediateCredential[];
 
@@ -20,7 +21,13 @@
 		const filteredData = dataFromParser.filter(
 			(_, index) => selectedCredentials[index],
 		);
-		dispatch("approved", filteredData);
+
+		// const dataWithfolderId = filteredData.map((credential) => ({
+		// 	...credential,
+		// 	folderId: $selectedFolder.id,
+		// }));
+
+		dispatch("approved", { ...filteredData, folderId: $selectedFolder.id });
 	}
 
 	const changeSelection = (index: number) => {
@@ -63,8 +70,9 @@
 <div class="flex justify-center mt-4">
 	<button
 		on:click="{handleProceed}"
-		class="px-6 py-2 bg-osvauld-carolinablue text-osvauld-ninjablack rounded-lg
-           hover:bg-osvauld-ninjablack hover:text-osvauld-carolinablue
+		class="px-6 py-2 bg-osvauld-carolinablue text-osvauld-frameblack rounded-lg
+           hover:bg-osvauld-frameblack
+					hover:text-osvauld-carolinablue
            border border-osvauld-carolinablue transition-all duration-300 ease-in-out"
 	>
 		Proceed
