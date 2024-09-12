@@ -339,7 +339,7 @@
 				/>
 			{/each}
 		</div>
-		{#if $selectedFolder.accessType === "manager"}
+		{#if $selectedFolder && $selectedFolder.accessType === "manager"}
 			<button
 				class="text-2xl absolute bottom-10 right-14 bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack rounded-lg py-2 px-3.5 flex justify-center items-center"
 				type="button"

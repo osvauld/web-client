@@ -50,11 +50,14 @@
 	let fileInput: HTMLInputElement | null = null;
 
 	function triggerFileInput() {
-		fileInput.click();
+		if (fileInput) {
+			fileInput.click();
+		}
 	}
 
-	function handleFileSelect(event) {
-		const file = event.target.files[0];
+	function handleFileSelect(event: Event): void {
+		const input = event.target as HTMLInputElement;
+		const file = input?.files?.[0];
 		if (file) {
 			loadingScreen = true;
 			parseCsvLogins(file, selectedPlatform)
@@ -90,7 +93,7 @@
 		isOptionSelected = true;
 	};
 
-	const handleSelectedCredentials = async (e) => {
+	const handleSelectedCredentials = async (e: CustomEvent) => {
 		processingScreen = true;
 		setTimeout(() => {
 			processingSuccess = isImportSuccessful;

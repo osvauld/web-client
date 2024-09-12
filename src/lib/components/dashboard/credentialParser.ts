@@ -105,10 +105,24 @@ export const parseCsvLogins = (
 	});
 };
 
+type CredentialData = {
+	username: string;
+	password: string;
+	domain: string;
+	description: string;
+	name: string;
+};
+
+type ApprovedCredentialSubmitParams = {
+	folderId: string;
+} & {
+	[key: string]: CredentialData;
+};
+
 export const approvedCredentialSubmit = async ({
 	folderId,
 	...otherData
-}): Promise<boolean> => {
+}: ApprovedCredentialSubmitParams): Promise<boolean> => {
 	let addCredentialPayload = {
 		name: "",
 		folderId: "",

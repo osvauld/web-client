@@ -25,8 +25,9 @@
 		const filteredData = dataFromParser.filter(
 			(_, index) => selectedCredentials[index],
 		);
-
-		dispatch("approved", { ...filteredData, folderId: $selectedFolder.id });
+		if ($selectedFolder) {
+			dispatch("approved", { ...filteredData, folderId: $selectedFolder.id });
+		}
 	}
 
 	const changeSelection = (index: number) => {
