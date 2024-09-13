@@ -46,6 +46,17 @@ export type BitwardenCredential = {
 	notes: string;
 };
 
+export type ProtonCredential = {
+	type: string;
+	name: string;
+	url: string;
+	email: string;
+	username: string;
+	password: string;
+	note: string;
+	totp: string;
+};
+
 export type Platform =
 	| "Safari"
 	| "Firefox"
@@ -75,4 +86,6 @@ export type IntermediateCredential = {
 	domain: string;
 	username: string;
 	password: string;
+	totp?: string;
+	email?: string;
 };

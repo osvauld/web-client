@@ -6,6 +6,7 @@ import {
 	ChromeCredential,
 	LastpassCredential,
 	BitwardenCredential,
+	ProtonCredential,
 	IntermediateCredential,
 	Credential,
 } from "../../dtos/import.dto";
@@ -46,6 +47,21 @@ function isBitwardenCredential(
 	return "login_username" in credential && "login_uri" in credential;
 }
 
+function isProtonCredential(
+	credential: Credential,
+): credential is ProtonCredential {
+	return "username" in credential && "email" in credential;
+}
+
+function extractUsername(username: string, email: string): string {
+	return username || email;
+}
+
+function extractTOTPSecret(uri: string): string | null {
+	const match = uri.match(/[?&]secret=([^&]+)/);
+	return match ? match[1] : null;
+}
+
 export const parseCsvLogins = (
 	file: File,
 	platform:
@@ -54,6 +70,7 @@ export const parseCsvLogins = (
 		| "Chrome"
 		| "Opera"
 		| "Bitwarden"
+		| "Protonpass"
 		| "Edge"
 		| "Dashlane"
 		| "1password"
@@ -137,6 +154,43 @@ export const parseCsvLogins = (
 					return true;
 				}
 
+				case "Protonpass": {
+					intermediateData = parsedData
+						.filter(isProtonCredential)
+						.filter((credential) => credential.type === "login")
+						.map((credential) => {
+							const extractedUsername = extractUsername(
+								credential.username,
+								credential.email,
+							);
+
+							const result: IntermediateCredential = {
+								name: credential.name,
+								description: credential.note,
+								domain: credential.url,
+								username: extractedUsername,
+								password: credential.password,
+							};
+
+							if (
+								extractedUsername === credential.username &&
+								credential.email
+							) {
+								result.email = credential.email;
+							}
+
+							if (credential.totp) {
+								const parsedTotp = extractTOTPSecret(credential.totp);
+								if (parsedTotp) {
+									result.totp = parsedTotp;
+								}
+							}
+
+							return result;
+						});
+					return true;
+				}
+
 				default: {
 					console.warn(`Unsupported platform: ${platform}`);
 					return intermediateData.length > 0;
@@ -171,7 +225,8 @@ type CredentialData = {
 	domain: string;
 	description: string;
 	name: string;
-	totp: string;
+	totp?: string;
+	email?: string;
 };
 
 type ApprovedCredentialSubmitParams = {
@@ -198,7 +253,15 @@ export const approvedCredentialSubmit = async ({
 	try {
 		const operationCompletionStatus = await Promise.all(
 			Object.values(otherData).map(
-				async ({ username, password, domain, description, name, totp }) => {
+				async ({
+					username,
+					password,
+					domain,
+					description,
+					name,
+					totp,
+					email,
+				}) => {
 					try {
 						const fieldPayload = [
 							{
@@ -224,6 +287,13 @@ export const approvedCredentialSubmit = async ({
 								fieldName: "TOTP",
 								fieldValue: totp,
 								fieldType: "totp",
+							});
+						}
+						if (email) {
+							fieldPayload.push({
+								fieldName: "Email",
+								fieldValue: email,
+								fieldType: "sensitive",
 							});
 						}
 						addCredentialPayload.folderId = folderId;

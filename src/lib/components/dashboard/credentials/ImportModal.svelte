@@ -32,6 +32,7 @@
 		"edge",
 		"opera",
 		"bitwarden",
+		"protonpass",
 		"dashlane",
 		"1password",
 		"nordpass",
