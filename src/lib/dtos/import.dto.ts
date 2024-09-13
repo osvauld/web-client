@@ -27,12 +27,47 @@ export type ChromeCredential = {
 	note: string;
 };
 
-export type Platform = "Safari" | "Firefox" | "Chrome";
+export type LastpassCredential = {
+	name: string;
+	url: string;
+	username: string;
+	password: string;
+	totp: string;
+	extra: string;
+};
+
+export type BitwardenCredential = {
+	type: string;
+	name: string;
+	login_uri: string;
+	login_username: string;
+	login_password: string;
+	login_totp: string;
+	notes: string;
+};
+
+export type Platform =
+	| "Safari"
+	| "Firefox"
+	| "Chrome"
+	| "Opera"
+	| "Bitwarden"
+	| "Edge"
+	| "Dashlane"
+	| "1password"
+	| "Nordpass"
+	| "Passbolt"
+	| "Keepass"
+	| "Lastpass"
+	| "Kaspersky"
+	| "Roboform";
 
 export type Credential =
 	| SafariCredential
 	| FirefoxCredential
-	| ChromeCredential;
+	| ChromeCredential
+	| LastpassCredential
+	| BitwardenCredential;
 
 export type IntermediateCredential = {
 	name: string;

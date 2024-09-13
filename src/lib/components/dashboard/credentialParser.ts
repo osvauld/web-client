@@ -4,6 +4,8 @@ import {
 	SafariCredential,
 	FirefoxCredential,
 	ChromeCredential,
+	LastpassCredential,
+	BitwardenCredential,
 	IntermediateCredential,
 	Credential,
 } from "../../dtos/import.dto";
@@ -24,15 +26,43 @@ function isFirefoxCredential(
 	return "url" in credential && "guid" in credential;
 }
 
+// Chrome CSVs and Opera CSVs follow similar format
+
 function isChromeCredential(
 	credential: Credential,
 ): credential is ChromeCredential {
 	return "name" in credential && "url" in credential && "note" in credential;
 }
 
+function isLastpassCredential(
+	credential: Credential,
+): credential is LastpassCredential {
+	return "name" in credential && "url" in credential;
+}
+
+function isBitwardenCredential(
+	credential: Credential,
+): credential is BitwardenCredential {
+	return "login_username" in credential && "login_uri" in credential;
+}
+
 export const parseCsvLogins = (
 	file: File,
-	platform: "Safari" | "Firefox" | "Chrome",
+	platform:
+		| "Safari"
+		| "Firefox"
+		| "Chrome"
+		| "Opera"
+		| "Bitwarden"
+		| "Edge"
+		| "Dashlane"
+		| "1password"
+		| "Nordpass"
+		| "Passbolt"
+		| "Keepass"
+		| "Lastpass"
+		| "Kaspersky"
+		| "Roboform",
 ): Promise<IntermediateCredential[]> => {
 	return new Promise<IntermediateCredential[]>((resolve, reject) => {
 		let parsedData: Credential[] = [];
@@ -64,7 +94,7 @@ export const parseCsvLogins = (
 						}));
 					return true;
 				}
-				case "Chrome": {
+				case "Chrome" || "Opera": {
 					intermediateData = parsedData
 						.filter(isChromeCredential)
 						.map((credential) => ({
@@ -73,6 +103,36 @@ export const parseCsvLogins = (
 							domain: credential.url,
 							username: credential.username,
 							password: credential.password,
+						}));
+					return true;
+				}
+				case "Lastpass": {
+					//only logins are handled for now
+					intermediateData = parsedData
+						.filter(isLastpassCredential)
+						.filter((credential) => credential.username && credential.password)
+						.map((credential) => ({
+							name: credential.name,
+							description: credential.extra,
+							domain: credential.url,
+							username: credential.username,
+							password: credential.password,
+							totp: credential.totp,
+						}));
+					return true;
+				}
+				case "Bitwarden": {
+					//only logins are handled for now
+					intermediateData = parsedData
+						.filter(isBitwardenCredential)
+						.filter((credential) => credential.type === "login")
+						.map((credential) => ({
+							name: credential.name,
+							description: credential.notes,
+							domain: credential.login_uri,
+							username: credential.login_username,
+							password: credential.login_password,
+							totp: credential.login_totp,
 						}));
 					return true;
 				}
@@ -111,6 +171,7 @@ type CredentialData = {
 	domain: string;
 	description: string;
 	name: string;
+	totp: string;
 };
 
 type ApprovedCredentialSubmitParams = {
@@ -137,7 +198,7 @@ export const approvedCredentialSubmit = async ({
 	try {
 		const operationCompletionStatus = await Promise.all(
 			Object.values(otherData).map(
-				async ({ username, password, domain, description, name }) => {
+				async ({ username, password, domain, description, name, totp }) => {
 					try {
 						const fieldPayload = [
 							{
@@ -157,6 +218,14 @@ export const approvedCredentialSubmit = async ({
 							},
 							{ fieldName: "URL", fieldValue: domain, fieldType: "meta" },
 						];
+
+						if (totp) {
+							fieldPayload.push({
+								fieldName: "TOTP",
+								fieldValue: totp,
+								fieldType: "totp",
+							});
+						}
 						addCredentialPayload.folderId = folderId;
 						const userFields = await sendMessage("addCredential", {
 							users: usersToShare,

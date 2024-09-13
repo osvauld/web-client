@@ -12,8 +12,6 @@
 	import ImportLoader from "../../basic/ImportLoader.svelte";
 	import ImportMessage from "../../basic/ImportMessage.svelte";
 	import SuccessView from "../../basic/SuccessView.svelte";
-	import chrome from "../../../../../public/icons/import";
-
 	let selectedPlatform: Platform;
 	let isOptionSelected: boolean = false;
 	let loadingScreen: boolean = false;

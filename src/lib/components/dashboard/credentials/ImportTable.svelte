@@ -39,7 +39,9 @@
 	<table class="w-full text-sm text-left text-osvauld-chalkwhite">
 		<thead class="text-xs uppercase sticky top-0 bg-osvauld-frameblack">
 			<tr>
-				<th class="px-6 py-3 text-center">Select ({selectionLength})</th>
+				<th class="px-6 py-3 flex flex-col justify-center items-center"
+					>Select <span>({selectionLength})</span></th
+				>
 				<th class="px-6 py-3">Name</th>
 				<th class="px-6 py-3">Username</th>
 				<th class="px-6 py-3">Domain</th>
