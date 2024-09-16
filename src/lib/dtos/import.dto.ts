@@ -57,6 +57,24 @@ export type ProtonCredential = {
 	totp: string;
 };
 
+export type DashlaneCredential = {
+	username: string;
+	title: string;
+	password: string;
+	note: string;
+	url: string;
+	otpSecret: string;
+};
+
+export type NordpassCredential = {
+	name: string;
+	url: string;
+	username: string;
+	password: string;
+	note: string;
+	type: string;
+};
+
 export type Platform =
 	| "Safari"
 	| "Firefox"
@@ -78,7 +96,8 @@ export type Credential =
 	| FirefoxCredential
 	| ChromeCredential
 	| LastpassCredential
-	| BitwardenCredential;
+	| BitwardenCredential
+	| DashlaneCredential;
 
 export type IntermediateCredential = {
 	name: string;
@@ -88,4 +107,20 @@ export type IntermediateCredential = {
 	password: string;
 	totp?: string;
 	email?: string;
+};
+
+type CredentialData = {
+	username: string;
+	password: string;
+	domain: string;
+	description: string;
+	name: string;
+	totp?: string;
+	email?: string;
+};
+
+export type ApprovedCredentialSubmitParams = {
+	folderId: string;
+} & {
+	[key: string]: CredentialData;
 };

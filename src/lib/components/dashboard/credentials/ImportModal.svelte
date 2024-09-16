@@ -34,13 +34,13 @@
 		"bitwarden",
 		"protonpass",
 		"dashlane",
-		"1password",
 		"nordpass",
-		"passbolt",
 		"keepass",
 		"lastpass",
-		"kaspersky",
 		"roboform",
+		"1password",
+		"passbolt",
+		"kaspersky",
 	];
 
 	const getImagePath = (option: string) => `/icons/import/${option}.png`;

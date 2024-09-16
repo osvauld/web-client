@@ -7,8 +7,11 @@ import {
 	LastpassCredential,
 	BitwardenCredential,
 	ProtonCredential,
+	DashlaneCredential,
+	NordpassCredential,
 	IntermediateCredential,
 	Credential,
+	ApprovedCredentialSubmitParams,
 } from "../../dtos/import.dto";
 
 import Papa from "papaparse";
@@ -28,6 +31,20 @@ function isFirefoxCredential(
 }
 
 // Chrome CSVs and Opera CSVs follow similar format
+
+function isDashlaneCredential(
+	credential: Credential,
+): credential is DashlaneCredential {
+	return (
+		"username" in credential && "url" in credential && "note" in credential
+	);
+}
+
+function isNordpassCredential(
+	credential: Credential,
+): credential is NordpassCredential {
+	return "name" in credential && "url" in credential && "note" in credential;
+}
 
 function isChromeCredential(
 	credential: Credential,
@@ -191,6 +208,34 @@ export const parseCsvLogins = (
 					return true;
 				}
 
+				case "Dashlane": {
+					intermediateData = parsedData
+						.filter(isDashlaneCredential)
+						.map((credential) => ({
+							name: credential.title,
+							description: credential.note,
+							domain: credential.url,
+							username: credential.username,
+							password: credential.password,
+							totp: credential.otpSecret,
+						}));
+					return true;
+				}
+
+				case "Nordpass": {
+					intermediateData = parsedData
+						.filter(isNordpassCredential)
+						.filter((credential) => credential.type === "password")
+						.map((credential) => ({
+							name: credential.name,
+							description: credential.note,
+							domain: credential.url,
+							username: credential.username,
+							password: credential.password,
+						}));
+					return true;
+				}
+
 				default: {
 					console.warn(`Unsupported platform: ${platform}`);
 					return intermediateData.length > 0;
@@ -217,22 +262,6 @@ export const parseCsvLogins = (
 			},
 		});
 	});
-};
-
-type CredentialData = {
-	username: string;
-	password: string;
-	domain: string;
-	description: string;
-	name: string;
-	totp?: string;
-	email?: string;
-};
-
-type ApprovedCredentialSubmitParams = {
-	folderId: string;
-} & {
-	[key: string]: CredentialData;
 };
 
 export const approvedCredentialSubmit = async ({
