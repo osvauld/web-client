@@ -10,6 +10,8 @@ import {
 	DashlaneCredential,
 	NordpassCredential,
 	IntermediateCredential,
+	KeepassCredential,
+	RoboformCredential,
 	Credential,
 	ApprovedCredentialSubmitParams,
 } from "../../dtos/import.dto";
@@ -37,6 +39,24 @@ function isDashlaneCredential(
 ): credential is DashlaneCredential {
 	return (
 		"username" in credential && "url" in credential && "note" in credential
+	);
+}
+
+function isKeepassCredential(
+	credential: Credential,
+): credential is KeepassCredential {
+	return (
+		"Web Site" in credential &&
+		"Login Name" in credential &&
+		"Comments" in credential
+	);
+}
+
+function isRoboformCredential(
+	credential: Credential,
+): credential is RoboformCredential {
+	return (
+		"MatchUrl" in credential && "Pwd" in credential && "Login" in credential
 	);
 }
 
@@ -232,6 +252,32 @@ export const parseCsvLogins = (
 							domain: credential.url,
 							username: credential.username,
 							password: credential.password,
+						}));
+					return true;
+				}
+
+				case "Keepass": {
+					intermediateData = parsedData
+						.filter(isKeepassCredential)
+						.map((credential) => ({
+							name: `Login - ${new URL(credential["Web Site"]).hostname}`,
+							description: credential.Comments,
+							domain: credential["Web Site"],
+							username: credential["Login Name"],
+							password: credential.Password,
+						}));
+					return true;
+				}
+
+				case "Roboform": {
+					intermediateData = parsedData
+						.filter(isRoboformCredential)
+						.map((credential) => ({
+							name: credential.Name,
+							description: credential.Note,
+							domain: credential.Url,
+							username: credential.Login,
+							password: credential.Pwd,
 						}));
 					return true;
 				}

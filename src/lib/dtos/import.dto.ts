@@ -75,6 +75,21 @@ export type NordpassCredential = {
 	type: string;
 };
 
+export type RoboformCredential = {
+	Name: string;
+	Url: string;
+	Login: string;
+	Pwd: string;
+	Note: string;
+};
+
+export type KeepassCredential = {
+	"Login Name": string;
+	Password: string;
+	"Web Site": string;
+	Comments: string;
+};
+
 export type Platform =
 	| "Safari"
 	| "Firefox"
@@ -97,7 +112,10 @@ export type Credential =
 	| ChromeCredential
 	| LastpassCredential
 	| BitwardenCredential
-	| DashlaneCredential;
+	| DashlaneCredential
+	| NordpassCredential
+	| KeepassCredential
+	| RoboformCredential;
 
 export type IntermediateCredential = {
 	name: string;
