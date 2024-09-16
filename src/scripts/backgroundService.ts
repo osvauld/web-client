@@ -16,14 +16,13 @@ import {
 } from "../lib/dtos/credential.dto";
 import init, {
 	generate_and_encrypt_keys,
-	sign_message,
 	decrypt_and_store_keys,
 	sign_message_with_stored_key,
 	encrypt_new_credential,
 	decrypt_credentials,
 	decrypt_text,
 	encrypt_fields,
-	get_pub_key,
+	// get_pub_key,
 	sign_hash_message,
 	generate_keys_without_password,
 	encrypt_field_value,
@@ -50,10 +49,12 @@ export const initiateAuthHandler = async (
 	const encryptionPvtKeyObj =
 		await browser.storage.local.get("encryptionPvtKey");
 	const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+	const saltObj = await browser.storage.local.get("salt");
+	const salt = saltObj.salt;
 	const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
 	const signKey = signPvtKeyObj.signPvtKey;
 	const startTime = performance.now();
-	const cacheObj = decrypt_and_store_keys(encryptionKey, signKey, passphrase);
+	const cacheObj = decrypt_and_store_keys(encryptionKey, salt, passphrase);
 	const pubKeyObj = await browser.storage.local.get("signPublicKey");
 	console.log(
 		"Time taken to decrypt and store keys:",
@@ -88,12 +89,16 @@ export const savePassphraseHandler = async (
 		signPvtKey: keyPair.get("sign_private_key"),
 		encPublicKey: keyPair.get("enc_public_key"),
 		signPublicKey: keyPair.get("sign_public_key"),
+		salt: keyPair.get("salt"),
 	});
-	const signature = await sign_message(
-		keyPair.get("sign_private_key"),
+	await decrypt_and_store_keys(
+		keyPair.get("enc_private_key"),
+		keyPair.get("salt"),
 		passphrase,
-		challenge,
 	);
+
+	const signature = await sign_message_with_stored_key(challenge);
+	console.log(signature);
 	await finalRegistration(
 		username,
 		signature,
@@ -114,6 +119,7 @@ export const addCredentialHandler = async (payload: {
 	users: UsersForDataSync[];
 	addCredentialFields: Field[];
 }): Promise<UserEncryptedFields[]> => {
+	console.log("users,add", payload.users, payload.addCredentialFields);
 	return await encrypt_new_credential(
 		payload.users,
 		payload.addCredentialFields,
@@ -188,30 +194,30 @@ export const handlePvtKeyImport = async (
 	passphrase: string,
 ) => {
 	await init();
-	const { encryptionKey, signKey, baseUrl } = JSON.parse(pvtKeys);
-	await browser.storage.local.set({ baseUrl });
-	const signPubKey = await get_pub_key(signKey);
-	const encPublicKey = await get_pub_key(encryptionKey);
+	// const { encryptionKey, signKey, baseUrl } = JSON.parse(pvtKeys);
+	// await browser.storage.local.set({ baseUrl });
+	// const signPubKey = await get_pub_key(signKey);
+	// const encPublicKey = await get_pub_key(encryptionKey);
 
-	const challegeResult = await createChallenge(signPubKey);
-	await decrypt_and_store_keys(encryptionKey, signKey, passphrase);
-	const signedMessage = await sign_message_with_stored_key(
-		challegeResult.data.challenge,
-	);
-	const verificationResponse = await initiateAuth(signedMessage, signPubKey);
-	const token = verificationResponse.data.token;
-	if (token) {
-		await browser.storage.local.set({ token: token });
-		await browser.storage.local.set({ isLoggedIn: true });
-	}
-	await browser.storage.local.set({
-		encryptionPvtKey: encryptionKey,
-		signPvtKey: signKey,
-		encPublicKey: encPublicKey,
-		signPublicKey: signPubKey,
-	});
+	// const challegeResult = await createChallenge(signPubKey);
+	// await decrypt_and_store_keys(encryptionKey, signKey, passphrase);
+	// const signedMessage = await sign_message_with_stored_key(
+	// 	challegeResult.data.challenge,
+	// );
+	// const verificationResponse = await initiateAuth(signedMessage, signPubKey);
+	// const token = verificationResponse.data.token;
+	// if (token) {
+	// 	await browser.storage.local.set({ token: token });
+	// 	await browser.storage.local.set({ isLoggedIn: true });
+	// }
+	// await browser.storage.local.set({
+	// 	encryptionPvtKey: encryptionKey,
+	// 	signPvtKey: signKey,
+	// 	encPublicKey: encPublicKey,
+	// 	signPublicKey: signPubKey,
+	// });
 
-	return token;
+	// return token;
 };
 
 export const credentialSubmitHandler = async (

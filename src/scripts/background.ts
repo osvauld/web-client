@@ -61,6 +61,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 				await initiateAuthHandler(passphrase);
 				return { isAuthenticated: true };
 			} catch (error: any) {
+				console.log(error);
 				return { isAuthenticated: false, error: error.message };
 			}
 		}
