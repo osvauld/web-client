@@ -110,6 +110,7 @@ export type Platform =
 	| "1password"
 	| "Nordpass"
 	| "Keepass"
+	| "Protonpass"
 	| "Lastpass"
 	| "Roboform";
 
