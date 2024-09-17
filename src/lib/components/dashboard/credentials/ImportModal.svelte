@@ -39,8 +39,6 @@
 		"lastpass",
 		"roboform",
 		"1password",
-		"passbolt",
-		"kaspersky",
 	];
 
 	const getImagePath = (option: string) => `/icons/import/${option}.png`;
@@ -68,7 +66,7 @@
 						loadingFail = true;
 						setTimeout(() => {
 							dispatch("close");
-						}, 1500);
+						}, 2000);
 					} else {
 						dataFromParser = intermediateData;
 						loadingSuccess = true;
@@ -79,7 +77,7 @@
 					loadingFail = true;
 					setTimeout(() => {
 						dispatch("close");
-					}, 1500);
+					}, 2000);
 				});
 		}
 	}

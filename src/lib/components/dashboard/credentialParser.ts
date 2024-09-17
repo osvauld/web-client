@@ -12,6 +12,7 @@ import {
 	IntermediateCredential,
 	KeepassCredential,
 	RoboformCredential,
+	OnepasswordCredential,
 	Credential,
 	ApprovedCredentialSubmitParams,
 } from "../../dtos/import.dto";
@@ -32,7 +33,7 @@ function isFirefoxCredential(
 	return "url" in credential && "guid" in credential;
 }
 
-// Chrome CSVs and Opera CSVs follow similar format
+// Chrome, edge CSVs and Opera CSVs follow similar format
 
 function isDashlaneCredential(
 	credential: Credential,
@@ -64,6 +65,14 @@ function isNordpassCredential(
 	credential: Credential,
 ): credential is NordpassCredential {
 	return "name" in credential && "url" in credential && "note" in credential;
+}
+
+function is1passwordCredential(
+	credential: Credential,
+): credential is OnepasswordCredential {
+	return (
+		"Title" in credential && "Url" in credential && "OTPAuth" in credential
+	);
 }
 
 function isChromeCredential(
@@ -112,10 +121,8 @@ export const parseCsvLogins = (
 		| "Dashlane"
 		| "1password"
 		| "Nordpass"
-		| "Passbolt"
 		| "Keepass"
 		| "Lastpass"
-		| "Kaspersky"
 		| "Roboform",
 ): Promise<IntermediateCredential[]> => {
 	return new Promise<IntermediateCredential[]>((resolve, reject) => {
@@ -148,7 +155,9 @@ export const parseCsvLogins = (
 						}));
 					return true;
 				}
-				case "Chrome" || "Opera": {
+				case "Chrome":
+				case "Opera":
+				case "Edge": {
 					intermediateData = parsedData
 						.filter(isChromeCredential)
 						.map((credential) => ({
@@ -282,6 +291,20 @@ export const parseCsvLogins = (
 					return true;
 				}
 
+				case "1password": {
+					intermediateData = parsedData
+						.filter(is1passwordCredential)
+						.map((credential) => ({
+							name: credential.Title,
+							description: credential.Notes,
+							domain: credential.Url,
+							username: credential.Username,
+							password: credential.Password,
+							totp: credential.OTPAuth,
+						}));
+					return true;
+				}
+
 				default: {
 					console.warn(`Unsupported platform: ${platform}`);
 					return intermediateData.length > 0;
@@ -338,24 +361,38 @@ export const approvedCredentialSubmit = async ({
 					email,
 				}) => {
 					try {
-						const fieldPayload = [
-							{
+						const fieldPayload: {
+							fieldName: string;
+							fieldValue: string;
+							fieldType: string;
+						}[] = [];
+
+						if (username) {
+							fieldPayload.push({
 								fieldName: "Username",
 								fieldValue: username,
 								fieldType: "meta",
-							},
-							{
+							});
+						}
+
+						if (password) {
+							fieldPayload.push({
 								fieldName: "Password",
 								fieldValue: password,
 								fieldType: "sensitive",
-							},
-							{
-								fieldName: "Domain",
-								fieldValue: domain,
-								fieldType: "additional",
-							},
-							{ fieldName: "URL", fieldValue: domain, fieldType: "meta" },
-						];
+							});
+						}
+
+						if (domain) {
+							fieldPayload.push(
+								{
+									fieldName: "Domain",
+									fieldValue: domain,
+									fieldType: "additional",
+								},
+								{ fieldName: "URL", fieldValue: domain, fieldType: "meta" },
+							);
+						}
 
 						if (totp) {
 							fieldPayload.push({

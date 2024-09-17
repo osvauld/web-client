@@ -75,6 +75,15 @@ export type NordpassCredential = {
 	type: string;
 };
 
+export type OnepasswordCredential = {
+	Title: string;
+	Url: string;
+	Username: string;
+	Password: string;
+	OTPAuth: string;
+	Notes: string;
+};
+
 export type RoboformCredential = {
 	Name: string;
 	Url: string;
@@ -100,10 +109,8 @@ export type Platform =
 	| "Dashlane"
 	| "1password"
 	| "Nordpass"
-	| "Passbolt"
 	| "Keepass"
 	| "Lastpass"
-	| "Kaspersky"
 	| "Roboform";
 
 export type Credential =
@@ -115,7 +122,8 @@ export type Credential =
 	| DashlaneCredential
 	| NordpassCredential
 	| KeepassCredential
-	| RoboformCredential;
+	| RoboformCredential
+	| OnepasswordCredential;
 
 export type IntermediateCredential = {
 	name: string;
