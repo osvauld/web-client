@@ -47,6 +47,8 @@
 		dispatch("close");
 	};
 
+	let hoveredIndex: number | undefined;
+
 	let fileInput: HTMLInputElement | null = null;
 
 	function triggerFileInput() {
@@ -177,19 +179,27 @@
 		<div
 			class="w-full h-[80%] gap-2 grid grid-cols-4 grid-rows-4 text-osvauld-chalkwhite text-xl"
 		>
-			{#each options as option}
+			{#each options as option, index}
 				<button
 					class="border border-osvauld-iconblack rounded-lg
 						hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack
 							transition-all duration-300 ease-in-out
 							capitalize object-contain object-center overflow-hidden flex justify-center items-center p-2"
 					on:click="{() => handleSelectedOption(option)}"
+					on:mouseenter="{() => (hoveredIndex = index)}"
+					on:mouseleave="{() => (hoveredIndex = undefined)}"
 				>
-					<img
-						src="{getImagePath(option)}"
-						class="max-w-full max-h-full"
-						alt="{option}"
-					/>
+					{#if hoveredIndex === index}
+						<img
+							src="{getImagePath(option)}"
+							class="max-w-full max-h-full"
+							alt="{option}"
+						/>
+					{:else}
+						<span class="text-osvauld-highlightwhite font-semibold"
+							>{option}</span
+						>
+					{/if}
 				</button>
 			{/each}
 		</div>
