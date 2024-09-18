@@ -232,7 +232,7 @@
 				></div>
 			{/if}
 			<div
-				class="h-[25rem] overflow-y-scroll scrollbar-thin pt-3"
+				class="h-[32rem] overflow-y-scroll scrollbar-thin pt-3"
 				on:scroll="{handleScroll}"
 				bind:this="{scrollableElement}"
 			>
@@ -267,13 +267,13 @@
 
 	{#if !addNewCredential}
 		<button
-			class="p-1 border border-osvauld-defaultBorder rounded-md right-2 bottom-2 fixed active:scale-[.98]"
+			class="p-2 border border-osvauld-defaultBorder rounded-md right-4 bottom-4 fixed active:scale-[.98]"
 			on:click="{handleOptionsClick}"><Add color="{'#A3A4B5'}" /></button
 		>
 		{#if showAddOptions}
 			<div
 				class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack w-[160px] rounded-lg"
-				style="bottom: 25px; right: 30px;"
+				style="bottom: 35px; right: 40px;"
 			>
 				<div class="flex flex-col items-start p-2 gap-1 w-full h-full">
 					<button
