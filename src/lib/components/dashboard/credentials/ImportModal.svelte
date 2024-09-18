@@ -57,7 +57,7 @@
 		}
 	}
 
-	async function handleFileSelect(event: Event): Promise<void> {
+	const handleFileSelect = async (event: Event): Promise<void> => {
 		const input = event.target as HTMLInputElement;
 		const file = input?.files?.[0];
 		if (file) {
@@ -74,7 +74,7 @@
 				loadingSuccess = true;
 			}
 		}
-	}
+	};
 
 	const handleKeyboardEvent = (event: KeyboardEvent) => {
 		if (event.key === "Escape") {

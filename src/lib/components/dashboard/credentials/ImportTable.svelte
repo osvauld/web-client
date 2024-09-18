@@ -21,14 +21,14 @@
 		).length;
 	}
 
-	function handleProceed() {
+	const handleProceed = () => {
 		const filteredData = dataFromParser.filter(
 			(_, index) => selectedCredentials[index],
 		);
 		if ($selectedFolder) {
 			dispatch("approved", { ...filteredData, folderId: $selectedFolder.id });
 		}
-	}
+	};
 
 	const changeSelection = (index: number) => {
 		selectedCredentials[index] = !selectedCredentials[index];

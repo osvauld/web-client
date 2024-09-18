@@ -20,94 +20,94 @@ import { UsersForDataSync } from "./dtos";
 
 import { sendMessage } from "./helper";
 
-function extractUsername(username: string, email: string): string {
+const extractUsername = (username: string, email: string): string => {
 	return username || email;
-}
+};
 
-function extractTOTPSecret(uri: string): string | null {
+const extractTOTPSecret = (uri: string): string | null => {
 	const match = uri.match(/[?&]secret=([^&]+)/);
 	return match ? match[1] : null;
-}
+};
 
-export function isSafariCredential(
+export const isSafariCredential = (
 	credential: Credential,
-): credential is SafariCredential {
+): credential is SafariCredential => {
 	return "Title" in credential && "URL" in credential;
-}
+};
 
-export function isFirefoxCredential(
+export const isFirefoxCredential = (
 	credential: Credential,
-): credential is FirefoxCredential {
+): credential is FirefoxCredential => {
 	return "url" in credential && "guid" in credential;
-}
+};
 
 // Chrome, edge CSVs and Opera CSVs follow similar format
 
-export function isDashlaneCredential(
+export const isDashlaneCredential = (
 	credential: Credential,
-): credential is DashlaneCredential {
+): credential is DashlaneCredential => {
 	return (
 		"username" in credential && "url" in credential && "note" in credential
 	);
-}
+};
 
-export function isKeepassCredential(
+export const isKeepassCredential = (
 	credential: Credential,
-): credential is KeepassCredential {
+): credential is KeepassCredential => {
 	return (
 		"Web Site" in credential &&
 		"Login Name" in credential &&
 		"Comments" in credential
 	);
-}
+};
 
-export function isRoboformCredential(
+export const isRoboformCredential = (
 	credential: Credential,
-): credential is RoboformCredential {
+): credential is RoboformCredential => {
 	return (
 		"MatchUrl" in credential && "Pwd" in credential && "Login" in credential
 	);
-}
+};
 
-export function isNordpassCredential(
+export const isNordpassCredential = (
 	credential: Credential,
-): credential is NordpassCredential {
+): credential is NordpassCredential => {
 	return "name" in credential && "url" in credential && "note" in credential;
-}
+};
 
-export function is1passwordCredential(
+export const is1passwordCredential = (
 	credential: Credential,
-): credential is OnepasswordCredential {
+): credential is OnepasswordCredential => {
 	return (
 		"Title" in credential && "Url" in credential && "OTPAuth" in credential
 	);
-}
+};
 
-export function isChromeCredential(
+export const isChromeCredential = (
 	credential: Credential,
-): credential is ChromeCredential {
+): credential is ChromeCredential => {
 	return "name" in credential && "url" in credential && "note" in credential;
-}
+};
 
-export function isLastpassCredential(
+export const isLastpassCredential = (
 	credential: Credential,
-): credential is LastpassCredential {
+): credential is LastpassCredential => {
 	return "name" in credential && "url" in credential;
-}
+};
 
-export function isBitwardenCredential(
+export const isBitwardenCredential = (
 	credential: Credential,
-): credential is BitwardenCredential {
+): credential is BitwardenCredential => {
 	return "login_username" in credential && "login_uri" in credential;
-}
+};
 
-export function isProtonCredential(
+export const isProtonCredential = (
 	credential: Credential,
-): credential is ProtonCredential {
+): credential is ProtonCredential => {
 	return "username" in credential && "email" in credential;
-}
+};
 
-export function transformSafariCredentials(parsedData: Credential[]) {
+export const transformSafariCredentials = (parsedData: Credential[]) => {
 	return parsedData.filter(isSafariCredential).map((credential) => ({
 		name: credential.Title,
 		description: credential.Notes,
@@ -115,9 +115,9 @@ export function transformSafariCredentials(parsedData: Credential[]) {
 		username: credential.Username,
 		password: credential.Password,
 	}));
-}
+};
 
-export function transformFirefoxCredentials(parsedData: Credential[]) {
+export const transformFirefoxCredentials = (parsedData: Credential[]) => {
 	return parsedData.filter(isFirefoxCredential).map((credential) => ({
 		name: `Login - ${new URL(credential.url).hostname}`,
 		description: `Created on ${new Date(+credential.timeCreated)}`,
@@ -125,9 +125,9 @@ export function transformFirefoxCredentials(parsedData: Credential[]) {
 		username: credential.username,
 		password: credential.password,
 	}));
-}
+};
 
-export function transformChromeCredentials(parsedData: Credential[]) {
+export const transformChromeCredentials = (parsedData: Credential[]) => {
 	return parsedData.filter(isChromeCredential).map((credential) => ({
 		name: credential.name,
 		description: credential.note,
@@ -135,9 +135,9 @@ export function transformChromeCredentials(parsedData: Credential[]) {
 		username: credential.username,
 		password: credential.password,
 	}));
-}
+};
 
-export function transformLastpassCredentials(parsedData: Credential[]) {
+export const transformLastpassCredentials = (parsedData: Credential[]) => {
 	return parsedData
 		.filter(isLastpassCredential)
 		.filter((credential) => credential.username && credential.password)
@@ -149,9 +149,9 @@ export function transformLastpassCredentials(parsedData: Credential[]) {
 			password: credential.password,
 			totp: credential.totp,
 		}));
-}
+};
 
-export function transformBitwardenCredentials(parsedData: Credential[]) {
+export const transformBitwardenCredentials = (parsedData: Credential[]) => {
 	return parsedData
 		.filter(isBitwardenCredential)
 		.filter((credential) => credential.type === "login")
@@ -163,9 +163,9 @@ export function transformBitwardenCredentials(parsedData: Credential[]) {
 			password: credential.login_password,
 			totp: credential.login_totp,
 		}));
-}
+};
 
-export function transformProtonpassCredentials(parsedData: Credential[]) {
+export const transformProtonpassCredentials = (parsedData: Credential[]) => {
 	return parsedData
 		.filter(isProtonCredential)
 		.filter((credential) => credential.type === "login")
@@ -196,9 +196,9 @@ export function transformProtonpassCredentials(parsedData: Credential[]) {
 
 			return result;
 		});
-}
+};
 
-export function transformDashlaneCredentials(parsedData: Credential[]) {
+export const transformDashlaneCredentials = (parsedData: Credential[]) => {
 	return parsedData.filter(isDashlaneCredential).map((credential) => ({
 		name: credential.title,
 		description: credential.note,
@@ -207,9 +207,9 @@ export function transformDashlaneCredentials(parsedData: Credential[]) {
 		password: credential.password,
 		totp: credential.otpSecret,
 	}));
-}
+};
 
-export function transformNordpassCredentials(parsedData: Credential[]) {
+export const transformNordpassCredentials = (parsedData: Credential[]) => {
 	return parsedData
 		.filter(isNordpassCredential)
 		.filter((credential) => credential.type === "password")
@@ -220,9 +220,9 @@ export function transformNordpassCredentials(parsedData: Credential[]) {
 			username: credential.username,
 			password: credential.password,
 		}));
-}
+};
 
-export function transformKeepassCredentials(parsedData: Credential[]) {
+export const transformKeepassCredentials = (parsedData: Credential[]) => {
 	return parsedData.filter(isKeepassCredential).map((credential) => ({
 		name: `Login - ${new URL(credential["Web Site"]).hostname}`,
 		description: credential.Comments,
@@ -230,9 +230,9 @@ export function transformKeepassCredentials(parsedData: Credential[]) {
 		username: credential["Login Name"],
 		password: credential.Password,
 	}));
-}
+};
 
-export function transformRoboformCredentials(parsedData: Credential[]) {
+export const transformRoboformCredentials = (parsedData: Credential[]) => {
 	return parsedData.filter(isRoboformCredential).map((credential) => ({
 		name: credential.Name,
 		description: credential.Note,
@@ -240,9 +240,9 @@ export function transformRoboformCredentials(parsedData: Credential[]) {
 		username: credential.Login,
 		password: credential.Pwd,
 	}));
-}
+};
 
-export function transformOnepasswordCredentials(parsedData: Credential[]) {
+export const transformOnepasswordCredentials = (parsedData: Credential[]) => {
 	return parsedData.filter(is1passwordCredential).map((credential) => ({
 		name: credential.Title,
 		description: credential.Notes,
@@ -251,13 +251,13 @@ export function transformOnepasswordCredentials(parsedData: Credential[]) {
 		password: credential.Password,
 		totp: credential.OTPAuth,
 	}));
-}
+};
 
-export async function finalProcessing(
+export const finalProcessing = async (
 	folderId: string,
 	usersToShare: UsersForDataSync[],
 	credentialData: CredentialData,
-) {
+) => {
 	try {
 		const fieldPayload: {
 			fieldName: string;
@@ -340,4 +340,4 @@ export async function finalProcessing(
 		console.error("Error posting credential:", error);
 		return { success: false, error };
 	}
-}
+};

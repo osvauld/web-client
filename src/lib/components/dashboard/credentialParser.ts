@@ -24,7 +24,7 @@ import {
 
 import Papa from "papaparse";
 
-function manageParsedData(platform: string, parsedData: Credential[]) {
+const manageParsedData = (platform: string, parsedData: Credential[]) => {
 	//only logins are handled for now
 	switch (platform) {
 		case "Safari": {
@@ -74,9 +74,9 @@ function manageParsedData(platform: string, parsedData: Credential[]) {
 			return [];
 		}
 	}
-}
+};
 
-function papaparseWrapper(file: File): Promise<Credential[]> {
+const papaparseWrapper = (file: File): Promise<Credential[]> => {
 	return new Promise((resolve, reject) => {
 		Papa.parse(file, {
 			complete: (results) => {
@@ -91,7 +91,7 @@ function papaparseWrapper(file: File): Promise<Credential[]> {
 			},
 		});
 	});
-}
+};
 
 export const parseCsvLogins = async (file: File, platform: Platform) => {
 	let parsedData: Credential[] = [];
