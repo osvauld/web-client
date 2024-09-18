@@ -150,7 +150,7 @@
 	class="w-full h-full flex justify-center items-start text-osvauld-quarzowhite box-border"
 >
 	<div
-		class="w-full h-[80%] rounded-xl bg-osvauld-cardshade text-osvauld-fieldText"
+		class="w-full h-full rounded-xl bg-osvauld-cardshade text-osvauld-fieldText"
 	>
 		<div class="px-3 py-2">
 			<span class="text-osvauld-fieldText font-light text-xs"
@@ -322,7 +322,7 @@
 			></div>
 		</div>
 
-		<div class="flex justify-start items-center w-full pl-3 my-2">
+		<div class="mt-[6rem] flex justify-start items-center w-full pl-3 my-2">
 			<button
 				class=" rounded-md border border-osvauld-iconblack py-1 px-2"
 				on:click|preventDefault="{handleCancel}">Cancel</button
