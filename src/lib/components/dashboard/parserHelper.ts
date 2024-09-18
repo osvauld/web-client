@@ -12,6 +12,7 @@ import {
 	OnepasswordCredential,
 	Credential,
 	IntermediateCredential,
+	CredentialData,
 } from "../../dtos/import.dto";
 
 import { addCredential } from "../dashboard/apis";
@@ -255,23 +256,7 @@ export function transformOnepasswordCredentials(parsedData: Credential[]) {
 export async function finalProcessing(
 	folderId: string,
 	usersToShare: UsersForDataSync[],
-	{
-		username,
-		password,
-		domain,
-		description,
-		name,
-		totp,
-		email,
-	}: {
-		username?: string;
-		password?: string;
-		domain?: string;
-		description?: string;
-		name?: string;
-		totp?: string;
-		email?: string;
-	},
+	credentialData: CredentialData,
 ) {
 	try {
 		const fieldPayload: {
@@ -289,44 +274,48 @@ export async function finalProcessing(
 			domain: "",
 		};
 
-		if (username) {
+		if (credentialData.username) {
 			fieldPayload.push({
 				fieldName: "Username",
-				fieldValue: username,
+				fieldValue: credentialData.username,
 				fieldType: "meta",
 			});
 		}
 
-		if (password) {
+		if (credentialData.password) {
 			fieldPayload.push({
 				fieldName: "Password",
-				fieldValue: password,
+				fieldValue: credentialData.password,
 				fieldType: "sensitive",
 			});
 		}
 
-		if (domain) {
+		if (credentialData.domain) {
 			fieldPayload.push(
 				{
 					fieldName: "Domain",
-					fieldValue: domain,
+					fieldValue: credentialData.domain,
 					fieldType: "additional",
 				},
-				{ fieldName: "URL", fieldValue: domain, fieldType: "meta" },
+				{
+					fieldName: "URL",
+					fieldValue: credentialData.domain,
+					fieldType: "meta",
+				},
 			);
 		}
 
-		if (totp) {
+		if (credentialData.totp) {
 			fieldPayload.push({
 				fieldName: "TOTP",
-				fieldValue: totp,
+				fieldValue: credentialData.totp,
 				fieldType: "totp",
 			});
 		}
-		if (email) {
+		if (credentialData.email) {
 			fieldPayload.push({
 				fieldName: "Email",
-				fieldValue: email,
+				fieldValue: credentialData.email,
 				fieldType: "sensitive",
 			});
 		}
@@ -336,12 +325,12 @@ export async function finalProcessing(
 			addCredentialFields: fieldPayload,
 		});
 
-		if (name) {
-			addCredentialPayload.name = name;
+		if (credentialData.name) {
+			addCredentialPayload.name = credentialData.name;
 		}
 
-		if (description) {
-			addCredentialPayload.description = description;
+		if (credentialData.description) {
+			addCredentialPayload.description = credentialData.description;
 		}
 
 		addCredentialPayload.userFields = userFields;

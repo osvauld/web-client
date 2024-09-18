@@ -136,12 +136,12 @@ export type IntermediateCredential = {
 	email?: string;
 };
 
-type CredentialData = {
-	username: string;
-	password: string;
-	domain: string;
-	description: string;
-	name: string;
+export type CredentialData = {
+	username?: string;
+	password?: string;
+	domain?: string;
+	description?: string;
+	name?: string;
 	totp?: string;
 	email?: string;
 };

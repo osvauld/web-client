@@ -57,30 +57,22 @@
 		}
 	}
 
-	function handleFileSelect(event: Event): void {
+	async function handleFileSelect(event: Event): Promise<void> {
 		const input = event.target as HTMLInputElement;
 		const file = input?.files?.[0];
 		if (file) {
 			loadingScreen = true;
-			parseCsvLogins(file, selectedPlatform)
-				.then((intermediateData) => {
-					if (intermediateData.length === 0) {
-						loadingFail = true;
-						setTimeout(() => {
-							dispatch("close");
-						}, 2000);
-					} else {
-						dataFromParser = intermediateData;
-						loadingSuccess = true;
-					}
-				})
-				.catch((error) => {
-					console.error("Error parsing credentials:", error);
-					loadingFail = true;
-					setTimeout(() => {
-						dispatch("close");
-					}, 2000);
-				});
+
+			let parserResponse = await parseCsvLogins(file, selectedPlatform);
+			if (parserResponse.length === 0) {
+				loadingFail = true;
+				setTimeout(() => {
+					dispatch("close");
+				}, 2000);
+			} else {
+				dataFromParser = parserResponse;
+				loadingSuccess = true;
+			}
 		}
 	}
 
