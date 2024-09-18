@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill";
 import { SearchedCredential } from "../../dtos/credential.dto";
 import { AddCredentialPayload, User } from "./dtos";
+
 type TypeToClassKey = "reader" | "manager";
 
 export const setbackground = (type: TypeToClassKey): string => {

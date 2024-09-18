@@ -6,7 +6,7 @@
 	import CredentialCard from "./CredentialCard.svelte";
 	import CredentialDetails from "./CredentialDetails.svelte";
 
-	import { Share, Add, EyeScan, FolderShare } from "../icons";
+	import { Share, Add, EyeScan, FolderShare, Import } from "../icons";
 	import { fetchSignedUpUsers, fetchAllUserGroups, addCliUser } from "../apis";
 	import { User, Group, Credential, Field, SelectedGroup } from "../dtos";
 
@@ -23,6 +23,7 @@
 	import Placeholder from "../components/Placeholder.svelte";
 	import { accessListSelected, buttonRef } from "../../../store/ui.store";
 	import { setCredentialStore } from "../../../store/storeHelper";
+	import ImportModal from "./ImportModal.svelte";
 
 	let checkedCards: Credential[] = [];
 	let users: User[] = [];
@@ -36,6 +37,9 @@
 	let accesslistHovered = false;
 	let addCredentialHovered = false;
 	let privateFolder = false;
+	let importHovered = false;
+	let importSelected = false;
+
 	$: isShareCredActive = checkedCards.length !== 0;
 
 	$: sortedCredentials = $credentialStore.sort(
@@ -120,6 +124,11 @@
 	const handleAccessListSelection = (e: any) => {
 		buttonRef.set(e.currentTarget);
 		accessListSelected.set(true);
+	};
+
+	const closeImportModal = async () => {
+		importSelected = false;
+		await setCredentialStore();
 	};
 
 	onDestroy(() => {
@@ -306,6 +315,13 @@
 			</button>
 		</button>
 	{/if}
+	{#if importSelected}
+		<div
+			class="fixed inset-0 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50"
+		>
+			<ImportModal on:close="{closeImportModal}" />
+		</div>
+	{/if}
 	{#if sortedCredentials.length !== 0}
 		<div
 			class="flex flex-wrap pt-3 pb-7 px-7 gap-3.5 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
@@ -323,5 +339,17 @@
 				/>
 			{/each}
 		</div>
+		{#if $selectedFolder && $selectedFolder.accessType === "manager"}
+			<button
+				class="text-2xl absolute bottom-10 right-14 bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack rounded-lg py-2 px-3.5 flex justify-center items-center"
+				type="button"
+				on:mouseenter="{() => (importHovered = true)}"
+				on:mouseleave="{() => (importHovered = false)}"
+				on:click="{() => (importSelected = true)}"
+			>
+				<Import color="{importHovered ? '#0D0E13' : '#6E7681'}" />
+				<span class="ml-2">Import</span>
+			</button>
+		{/if}
 	{/if}
 </div>
