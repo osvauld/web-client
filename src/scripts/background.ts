@@ -15,6 +15,7 @@ import {
 	generateCliKeys,
 	encryptEditFields,
 	getDecryptedUrls,
+	getCertificate,
 } from "./backgroundService";
 
 import { Folder } from "../lib/dtos/folder.dto";
@@ -188,6 +189,11 @@ browser.runtime.onMessage.addListener(async (request) => {
 				request.data,
 			);
 			return credHandlerResponse;
+		}
+
+		case "exportCertificate": {
+			console.log(request.data, "reached here");
+			return getCertificate(request.data.passphrase);
 		}
 
 		default:

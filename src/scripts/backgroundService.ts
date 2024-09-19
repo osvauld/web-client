@@ -26,8 +26,10 @@ import init, {
 	sign_hash_message,
 	generate_keys_without_password,
 	encrypt_field_value,
+	export_certificate,
 	decrypt_urls,
 	decrypt_fields,
+	import_certificate,
 } from "./crypto_primitives.js";
 import { User } from "../lib/dtos/user.dto.js";
 
@@ -48,20 +50,17 @@ export const initiateAuthHandler = async (
 ): Promise<string> => {
 	const encryptionPvtKeyObj =
 		await browser.storage.local.get("encryptionPvtKey");
-	const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
 	const saltObj = await browser.storage.local.get("salt");
 	const salt = saltObj.salt;
 	const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
-	const signKey = signPvtKeyObj.signPvtKey;
 	const startTime = performance.now();
-	const cacheObj = decrypt_and_store_keys(encryptionKey, salt, passphrase);
+	await decrypt_and_store_keys(encryptionKey, salt, passphrase);
 	const pubKeyObj = await browser.storage.local.get("signPublicKey");
 	console.log(
 		"Time taken to decrypt and store keys:",
 		performance.now() - startTime,
 	);
 	const challengeResponse = await createChallenge(pubKeyObj.signPublicKey);
-	await cacheObj;
 	const signedMessage = await sign_message_with_stored_key(
 		challengeResponse.data.challenge,
 	);
@@ -98,7 +97,6 @@ export const savePassphraseHandler = async (
 	);
 
 	const signature = await sign_message_with_stored_key(challenge);
-	console.log(signature);
 	await finalRegistration(
 		username,
 		signature,
@@ -119,7 +117,6 @@ export const addCredentialHandler = async (payload: {
 	users: UsersForDataSync[];
 	addCredentialFields: Field[];
 }): Promise<UserEncryptedFields[]> => {
-	console.log("users,add", payload.users, payload.addCredentialFields);
 	return await encrypt_new_credential(
 		payload.users,
 		payload.addCredentialFields,
@@ -187,6 +184,22 @@ export const createShareCredsPayload = async (
 		}
 	}
 	return userData;
+};
+
+export const getCertificate = async (passphrase: string) => {
+	const pvtKeyObj = await browser.storage.local.get("encryptionPvtKey");
+	const saltObj = await browser.storage.local.get("salt");
+	try {
+		const response = await export_certificate(
+			passphrase,
+			pvtKeyObj.encryptionPvtKey,
+			saltObj.salt,
+		);
+		const new_response = await import_certificate(response, "test");
+		console.log(new_response);
+	} catch (e) {
+		console.log(e, "ERR");
+	}
 };
 
 export const handlePvtKeyImport = async (
