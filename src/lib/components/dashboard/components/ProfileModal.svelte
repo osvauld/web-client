@@ -1,6 +1,6 @@
 <script lang="ts">
 	import browser from "webextension-polyfill";
-	import { clickOutside, getTokenAndBaseUrl } from "../helper";
+	import { clickOutside, getTokenAndBaseUrl, sendMessage } from "../helper";
 	import { onMount, onDestroy } from "svelte";
 	import { CopyIcon, Tick } from "../icons";
 	import { createEventDispatcher } from "svelte";
@@ -45,6 +45,9 @@
 
 	const initiateRecovery = async () => {
 		const { baseUrl } = await getTokenAndBaseUrl();
+		const certificate = await sendMessage("exportCertificate", {
+			passphrase: "test",
+		});
 		const encryptionPvtKeyObj =
 			await browser.storage.local.get("encryptionPvtKey");
 		const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
@@ -68,15 +71,13 @@
 	class="absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack w-[14rem] rounded-2xl"
 	style="top: {top + 10}px; left: {left - 100}px;"
 	use:clickOutside
-	on:clickOutside="{handleClickOutside}"
->
+	on:clickOutside="{handleClickOutside}">
 	<div class="flex flex-col items-start p-2 gap-2 w-full h-full">
 		<button
 			class="flex items-center p-2 gap-2 w-full h-12 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg"
 			on:mouseenter="{() => (isUsernameHovered = true)}"
 			on:mouseleave="{() => (isUsernameHovered = false)}"
-			on:click|preventDefault="{copyUsername}"
-		>
+			on:click|preventDefault="{copyUsername}">
 			<div class="w-6 h-6 flex items-center justify-center">
 				{#if copied && isUsernameHovered}
 					<span in:scale>
@@ -93,8 +94,7 @@
 			class="flex items-center p-2 gap-2 w-full h-12 text-osvauld-fieldText hover:text-osvauld-dangerRed hover:bg-osvauld-modalFieldActive rounded-lg"
 			on:mouseenter="{() => (isRecoveryHovered = true)}"
 			on:mouseleave="{() => (isRecoveryHovered = false)}"
-			on:click|preventDefault="{initiateRecovery}"
-		>
+			on:click|preventDefault="{initiateRecovery}">
 			<div class="w-6 h-6 flex items-center justify-center">
 				{#if copied && isRecoveryHovered}
 					<span in:scale>

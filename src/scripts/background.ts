@@ -15,6 +15,7 @@ import {
 	generateCliKeys,
 	encryptEditFields,
 	getDecryptedUrls,
+	getCertificate,
 } from "./backgroundService";
 
 import { Folder } from "../lib/dtos/folder.dto";
@@ -61,6 +62,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 				await initiateAuthHandler(passphrase);
 				return { isAuthenticated: true };
 			} catch (error: any) {
+				console.log(error);
 				return { isAuthenticated: false, error: error.message };
 			}
 		}
@@ -187,6 +189,11 @@ browser.runtime.onMessage.addListener(async (request) => {
 				request.data,
 			);
 			return credHandlerResponse;
+		}
+
+		case "exportCertificate": {
+			console.log(request.data, "reached here");
+			return getCertificate(request.data.passphrase);
 		}
 
 		default:
