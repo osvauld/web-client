@@ -128,7 +128,7 @@ export const getCertificate = async (passphrase: string) => {
 		// const new_response = await import_certificate(response, "test");
 		// return new_response
 	}
-};
+}
 
 export const handlePvtKeyImport = async (
 	pvtKeys: string,
