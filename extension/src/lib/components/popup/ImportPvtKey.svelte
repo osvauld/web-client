@@ -2,6 +2,7 @@
 	import Eye from "../basic/icons/eye.svelte";
 	import PasswordStrengthValidator from "../basic/PasswordStrengthValidator.svelte";
 	import Loader from "../dashboard/components/Loader.svelte";
+	import { Tick } from "../dashboard/icons";
 	import { ClosedEye } from "./icons";
 	import { createEventDispatcher } from "svelte";
 	const dispatch = createEventDispatcher();
@@ -12,6 +13,11 @@
 	let showPassword = false;
 	let showReenteredPassword = false;
 	let isLoaderActive = false;
+	let isPassphraseAcceptable = false;
+
+	$: if (isPassphraseAcceptable) {
+		console.log("From parent password acceptable", isPassphraseAcceptable);
+	}
 
 	$: submitDisabled =
 		passphrase.length === 0 || passphrase !== reenteredPassPhrase;
@@ -78,6 +84,9 @@
 			class="flex justify-center items-center"
 			on:click="{() => togglePasswordVisibility(true)}"
 		>
+			{#if isPassphraseAcceptable}
+				<span class="pr-2"><Tick /></span>
+			{/if}
 			{#if showPassword}
 				<ClosedEye />
 			{:else}
@@ -85,8 +94,8 @@
 			{/if}
 		</button>
 	</div>
-	<PasswordStrengthValidator password="{passphrase}" />
-	<label for="passphrase" class="font-normal mt-6 mb-2"
+	<PasswordStrengthValidator {passphrase} bind:isPassphraseAcceptable />
+	<label for="passphrase" class="font-normal mt-2 mb-2"
 		>Confirm New Passphrase</label
 	>
 	<div
