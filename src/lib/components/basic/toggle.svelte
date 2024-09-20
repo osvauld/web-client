@@ -2,12 +2,13 @@
 	import { selectedPage } from "../../store/ui.store";
 	import { selectedGroup } from "../../store/group.store";
 	import { selectedFolder } from "../../store/folder.store";
+
 	import MultipleFolders from "./icons/multipleFolders.svelte";
 	import GroupIcon from "./icons/groupIcon.svelte";
 	const select = async (choice: string) => {
 		selectedPage.set(choice);
 		selectedGroup.set(null);
-		selectedFolder.set(undefined);
+		selectedFolder.set(null);
 	};
 </script>
 

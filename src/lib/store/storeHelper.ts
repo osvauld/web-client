@@ -6,11 +6,9 @@ import { fetchAllUserGroups } from "../apis/group.api";
 import { fetchCredentialsByFolder } from "../apis/credentials.api";
 import { sendMessage } from "../components/dashboard/helper";
 import { get } from "svelte/store";
-import browser from "webextension-polyfill";
 import { selectedSection } from "./ui.store";
-import { Group, SelectedGroup } from "../dtos/group.dto";
+import { SelectedGroup } from "../dtos/group.dto";
 import { Folder } from "../dtos/folder.dto";
-import { Credential } from "../dtos/credential.dto";
 import { getUser } from "../apis/user.api";
 import { User } from "../dtos/user.dto";
 export const setFolderStore = async () => {
@@ -20,20 +18,20 @@ export const setFolderStore = async () => {
 	);
 	const selectedFolderValue = get(selectedFolder);
 	if (!selectedFolderValue) {
-		const storedFolder = browser.storage.local.get("selectedFolder");
-		storedFolder.then((value) => {
-			if (value.selectedFolder) {
-				for (const folder of sortedData) {
-					if (folder.id === value.selectedFolder.id) {
-						selectedFolder.set(folder);
-						if (folder.type === "private") {
-							selectedSection.set("PrivateFolders");
-						}
-						return;
+		const storedFolder = localStorage.getItem("selectedFolder");
+		console.log(storedFolder);
+		if (storedFolder && storedFolder != "undefined") {
+			const stored = JSON.parse(storedFolder);
+			for (const folder of sortedData) {
+				if (folder.id === stored.id) {
+					selectedFolder.set(folder);
+					if (folder.type === "private") {
+						selectedSection.set("PrivateFolders");
 					}
+					return;
 				}
 			}
-		});
+		}
 	}
 	folderStore.set(sortedData);
 };

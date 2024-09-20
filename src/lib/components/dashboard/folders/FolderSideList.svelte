@@ -65,14 +65,14 @@
 
 	const selectEnv = (env: Environments) => {
 		selectedEnv.set(env);
-		selectedFolder.set(undefined);
+		selectedFolder.set(null);
 		selectedSection.set("Environments");
 		credentialStore.set([]);
 	};
 
 	const selectSection = (section: SelectedSection) => {
 		selectedSection.set(section);
-		selectedFolder.set(undefined);
+		selectedFolder.set(null);
 		selectedEnv.set(null);
 		credentialStore.set([]);
 	};
@@ -303,7 +303,7 @@
 					<li
 						class="{$selectedEnv?.id == env.id
 							? 'bg-osvauld-fieldActive rounded-lg text-osvauld-sideListTextActive'
-							: 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'} 
+							: 'hover:bg-osvauld-fieldActive text-osvauld-fieldText'}
           rounded-md my-1 pl-3 pr-3 mr-1 flex items-center transition-colors duration-0 ease-in"
 						on:mouseenter="{() => (hoveringEnvId = env.id)}"
 						on:mouseleave="{() => (hoveringEnvId = null)}"

@@ -24,7 +24,7 @@
 
 	async function DeleteConfirmation() {
 		if ($selectedFolder && $selectedFolder.id === $modalManager.id) {
-			selectedFolder.set(undefined);
+			selectedFolder.set(null);
 			credentialStore.set([]);
 		}
 		let removalResponse = await removeFolder($modalManager.id);

@@ -24,11 +24,6 @@
 		// isSignedUp.set(false);
 	});
 
-	const openFullscreenTab = async () => {
-		// Send a message to the background
-		await sendMessage("openFullscreenTab");
-	};
-
 	const checkAuth = (event: CustomEvent) => {
 		loggedIn = event.detail;
 	};
@@ -39,7 +34,8 @@
 		class="w-[22.5rem] h-[36.78rem] p-2 pt-3 flex flex-col !font-sans {isSignedUp &&
 		!loggedIn
 			? 'justify-center'
-			: 'justify-start'} items-center bg-osvauld-frameblack">
+			: 'justify-start'} items-center bg-osvauld-frameblack"
+	>
 		{#if isLoaderActive}
 			<Loader />
 		{:else if !isSignedUp}

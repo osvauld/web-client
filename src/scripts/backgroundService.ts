@@ -22,7 +22,7 @@ import init, {
 	decrypt_credentials,
 	decrypt_text,
 	encrypt_fields,
-	// get_pub_key,
+	get_public_key,
 	sign_and_hash_message,
 	generate_keys_without_password,
 	encrypt_field_value,
@@ -31,6 +31,7 @@ import init, {
 	decrypt_fields,
 	import_certificate,
 } from "./wasm";
+import { StorageService } from "./storageHelper";
 import { User } from "../lib/dtos/user.dto.js";
 
 type CredentialsForUsersPayload = {
@@ -48,28 +49,26 @@ type UserListForEncryption = {
 export const initiateAuthHandler = async (
 	passphrase: string,
 ): Promise<string> => {
-	const encryptionPvtKeyObj =
-		await browser.storage.local.get("encryptionPvtKey");
-	const saltObj = await browser.storage.local.get("salt");
-	const salt = saltObj.salt;
-	const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
+	const certificate = await StorageService.getCertificate();
+	const salt = await StorageService.getSalt();
 	const startTime = performance.now();
-	await decrypt_and_store_keys(encryptionKey, salt, passphrase);
-	const pubKeyObj = await browser.storage.local.get("signPublicKey");
+	if (certificate && salt) {
+		await decrypt_and_store_keys(certificate, salt, passphrase);
+	} else {
+		throw Error("failed to fetch certificate and salt from storage");
+	}
+	const pubKey = await get_public_key();
 	console.log(
 		"Time taken to decrypt and store keys:",
 		performance.now() - startTime,
 	);
-	const challengeResponse = await createChallenge(pubKeyObj.signPublicKey);
+	const challengeResponse = await createChallenge(pubKey);
 	const signedMessage = await sign_message(challengeResponse.data.challenge);
-	const verificationResponse = await initiateAuth(
-		signedMessage,
-		pubKeyObj.signPublicKey,
-	);
+	const verificationResponse = await initiateAuth(signedMessage, pubKey);
 	const token = verificationResponse.data.token;
 	if (token) {
-		await browser.storage.local.set({ token: token });
-		await browser.storage.local.set({ isLoggedIn: true });
+		await StorageService.setToken(token);
+		await StorageService.setIsLoggedIn("true");
 	}
 	return token;
 };
@@ -81,15 +80,11 @@ export const savePassphraseHandler = async (
 ) => {
 	await init();
 	const keyPair = await generate_and_encrypt_keys(passphrase, username);
-	await browser.storage.local.set({
-		encryptionPvtKey: keyPair.get("enc_private_key"),
-		signPvtKey: keyPair.get("sign_private_key"),
-		encPublicKey: keyPair.get("enc_public_key"),
-		signPublicKey: keyPair.get("sign_public_key"),
-		salt: keyPair.get("salt"),
-	});
-	await decrypt_and_store_keys(
-		keyPair.get("enc_private_key"),
+	console.log(keyPair);
+	StorageService.setCertificate(keyPair.get("certificate"));
+	StorageService.setSalt(keyPair.get("salt"));
+	decrypt_and_store_keys(
+		keyPair.get("certificate"),
 		keyPair.get("salt"),
 		passphrase,
 	);
@@ -98,8 +93,8 @@ export const savePassphraseHandler = async (
 	await finalRegistration(
 		username,
 		signature,
-		keyPair.get("sign_public_key"),
-		keyPair.get("enc_public_key"),
+		keyPair.get("public_key"),
+		keyPair.get("public_key"),
 	);
 	return { isSaved: true };
 };
@@ -174,18 +169,12 @@ export const createShareCredsPayload = async (
 };
 
 export const getCertificate = async (passphrase: string) => {
-	const pvtKeyObj = await browser.storage.local.get("encryptionPvtKey");
-	const saltObj = await browser.storage.local.get("salt");
-	try {
-		const response = await export_certificate(
-			passphrase,
-			pvtKeyObj.encryptionPvtKey,
-			saltObj.salt,
-		);
+	const pvtKey = await StorageService.getCertificate();
+	const salt = await StorageService.getSalt();
+	if (pvtKey && salt) {
+		const response = await export_certificate(passphrase, pvtKey, salt);
 		const new_response = await import_certificate(response, "test");
 		console.log(new_response);
-	} catch (e) {
-		console.log(e, "ERR");
 	}
 };
 

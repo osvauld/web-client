@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import { StorageService } from "./storageHelper";
 
 import {
 	initiateAuthHandler,
@@ -68,12 +69,12 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 		case "isSignedUp": {
 			try {
-				const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+				const certificate = await StorageService.getCertificate();
 				await init({});
 				const SAVE_TIMESTAMP_INTERVAL_MS = 2 * 1000;
 				saveTimestamp();
 				setInterval(saveTimestamp, SAVE_TIMESTAMP_INTERVAL_MS);
-				if (signPvtKeyObj.signPvtKey) return { isSignedUp: true };
+				if (certificate) return { isSignedUp: true };
 				else return { isSignedUp: false };
 			} catch (e) {
 				console.error(e, "init");
@@ -195,7 +196,6 @@ browser.runtime.onMessage.addListener(async (request) => {
 		}
 
 		case "exportCertificate": {
-			console.log(request.data, "reached here");
 			return getCertificate(request.data.passphrase);
 		}
 
@@ -204,27 +204,6 @@ browser.runtime.onMessage.addListener(async (request) => {
 			break;
 	}
 });
-
-// browser.runtime.onConnect.addListener(async (port) => {
-// 	if (port.name === "popup") {
-// 		// When you have data to send:
-// 		if (
-// 			newCredential &&
-// 			newCredential.username &&
-// 			newCredential.password &&
-// 			newCredential.windowId
-// 		) {
-// 			port.postMessage({
-// 				username: newCredential.username,
-// 				password: newCredential.password,
-// 				domain: newCredential.domain,
-// 				windowId: newCredential.windowId,
-// 				url: newCredential.url,
-// 			});
-// 			newCredential = {};
-// 		}
-// 	}
-// });
 
 function saveTimestamp() {
 	const timestamp = new Date().toISOString();
