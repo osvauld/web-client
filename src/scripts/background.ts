@@ -4,7 +4,6 @@ import {
 	initiateAuthHandler,
 	savePassphraseHandler,
 	decryptCredentialFieldsHandler,
-	loadWasmModule,
 	addCredentialHandler,
 	decryptFieldHandler,
 	createShareCredsPayload,
@@ -23,7 +22,7 @@ import { CapturedCredentialData } from "../lib/dtos/credential.dto";
 import { postLoginCredentialHandler } from "./helper";
 
 import { fetchAllFolders } from "../lib/apis/folder.api";
-import init, { is_global_context_set } from "./crypto_primitives";
+import init, { is_cert_loaded } from "./wasm";
 
 let newCredential: CapturedCredentialData = {
 	username: "",
@@ -58,7 +57,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 		case "initiateAuth": {
 			try {
 				const passphrase = request.data.passphrase;
-				await loadWasmModule();
+				await init();
 				await initiateAuthHandler(passphrase);
 				return { isAuthenticated: true };
 			} catch (error: any) {
@@ -68,13 +67,17 @@ browser.runtime.onMessage.addListener(async (request) => {
 		}
 
 		case "isSignedUp": {
-			const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
-			await init();
-			const SAVE_TIMESTAMP_INTERVAL_MS = 2 * 1000;
-			saveTimestamp();
-			setInterval(saveTimestamp, SAVE_TIMESTAMP_INTERVAL_MS);
-			if (signPvtKeyObj.signPvtKey) return { isSignedUp: true };
-			else return { isSignedUp: false };
+			try {
+				const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+				await init({});
+				const SAVE_TIMESTAMP_INTERVAL_MS = 2 * 1000;
+				saveTimestamp();
+				setInterval(saveTimestamp, SAVE_TIMESTAMP_INTERVAL_MS);
+				if (signPvtKeyObj.signPvtKey) return { isSignedUp: true };
+				else return { isSignedUp: false };
+			} catch (e) {
+				console.error(e, "init");
+			}
 		}
 
 		case "importPvtKey": {
@@ -124,7 +127,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 			});
 
 		case "checkPvtLoaded":
-			return is_global_context_set();
+			return is_cert_loaded();
 		case "decryptMeta":
 			return decryptCredentialFieldsHandler(request.data);
 		case "addCredential":

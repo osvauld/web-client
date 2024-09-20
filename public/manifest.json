@@ -20,7 +20,7 @@
 	},
 	"web_accessible_resources": [
 		{
-			"resources": ["crypto_primitives_bg.wasm", "suggestions.html"],
+			"resources": ["wasm_bg.wasm", "suggestions.html"],
 			"matches": ["<all_urls>"]
 		}
 	],

@@ -17,20 +17,20 @@ import {
 import init, {
 	generate_and_encrypt_keys,
 	decrypt_and_store_keys,
-	sign_message_with_stored_key,
+	sign_message,
 	encrypt_new_credential,
 	decrypt_credentials,
 	decrypt_text,
 	encrypt_fields,
 	// get_pub_key,
-	sign_hash_message,
+	sign_and_hash_message,
 	generate_keys_without_password,
 	encrypt_field_value,
 	export_certificate,
 	decrypt_urls,
 	decrypt_fields,
 	import_certificate,
-} from "./crypto_primitives.js";
+} from "./wasm";
 import { User } from "../lib/dtos/user.dto.js";
 
 type CredentialsForUsersPayload = {
@@ -61,9 +61,7 @@ export const initiateAuthHandler = async (
 		performance.now() - startTime,
 	);
 	const challengeResponse = await createChallenge(pubKeyObj.signPublicKey);
-	const signedMessage = await sign_message_with_stored_key(
-		challengeResponse.data.challenge,
-	);
+	const signedMessage = await sign_message(challengeResponse.data.challenge);
 	const verificationResponse = await initiateAuth(
 		signedMessage,
 		pubKeyObj.signPublicKey,
@@ -96,7 +94,7 @@ export const savePassphraseHandler = async (
 		passphrase,
 	);
 
-	const signature = await sign_message_with_stored_key(challenge);
+	const signature = await sign_message(challenge);
 	await finalRegistration(
 		username,
 		signature,
@@ -126,17 +124,6 @@ export const addCredentialHandler = async (payload: {
 export const decryptFieldHandler = async (text: string): Promise<string> => {
 	const decrypted = await decrypt_text(text);
 	return decrypted;
-};
-
-export const loadWasmModule = async () => {
-	try {
-		await init();
-	} catch (error) {
-		console.error(
-			"Error loading WASM module or processing encryption/decryption:",
-			error,
-		);
-	}
 };
 
 export const encryptCredentialsForUser = async (
@@ -265,7 +252,7 @@ export const getCurrentDomain = async () => {
 };
 
 export const sign_hashed_message = async (message: string): Promise<string> => {
-	const response = await sign_hash_message(message);
+	const response = await sign_and_hash_message(message);
 	return response;
 };
 

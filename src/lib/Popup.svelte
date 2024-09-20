@@ -7,13 +7,11 @@
 	import Loader from "./components/dashboard/components/Loader.svelte";
 	import { sendMessage } from "./components/dashboard/helper";
 
-	let devType = "popup";
 	let loggedIn = true;
 	let isLoaderActive = false;
 	let isSignedUp = false;
 	onMount(async () => {
 		isLoaderActive = true;
-		if (devType != "popup") openFullscreenTab();
 		const response = await sendMessage("isSignedUp");
 		isSignedUp = response.isSignedUp;
 		const checkPvtLoad = await sendMessage("checkPvtLoaded");
@@ -41,8 +39,7 @@
 		class="w-[22.5rem] h-[36.78rem] p-2 pt-3 flex flex-col !font-sans {isSignedUp &&
 		!loggedIn
 			? 'justify-center'
-			: 'justify-start'} items-center bg-osvauld-frameblack"
-	>
+			: 'justify-start'} items-center bg-osvauld-frameblack">
 		{#if isLoaderActive}
 			<Loader />
 		{:else if !isSignedUp}
