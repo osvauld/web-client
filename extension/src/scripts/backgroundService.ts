@@ -125,7 +125,8 @@ export const getCertificate = async (passphrase: string) => {
 	const salt = await StorageService.getSalt();
 	if (pvtKey && salt) {
 		const response = await export_certificate(passphrase, pvtKey, salt);
-		return response;
+		console.log(response);
+		return response
 		// const new_response = await import_certificate(response, "test");
 		// return new_response
 	}
