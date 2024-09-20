@@ -53,7 +53,7 @@
     bg-osvauld-frameblack
    w-screen h-screen text-macchiato-text text-lg overflow-hidden !font-sans"
 >
-	{#if !signedUp}
+	{#if signedUp}
 		<Signup on:signedUp="{handleSignedUp}" />
 	{:else if showWelcome}
 		<div class="overflow-hidden flex justify-center items-center w-full h-full">
