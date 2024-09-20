@@ -19,7 +19,6 @@ export const setFolderStore = async () => {
 	const selectedFolderValue = get(selectedFolder);
 	if (!selectedFolderValue) {
 		const storedFolder = localStorage.getItem("selectedFolder");
-		console.log(storedFolder);
 		if (storedFolder && storedFolder != "undefined") {
 			const stored = JSON.parse(storedFolder);
 			for (const folder of sortedData) {
