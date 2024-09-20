@@ -80,7 +80,6 @@ export const savePassphraseHandler = async (
 ) => {
 	await init();
 	const keyPair = await generate_and_encrypt_keys(passphrase, username);
-	console.log(keyPair);
 	StorageService.setCertificate(keyPair.get("certificate"));
 	StorageService.setSalt(keyPair.get("salt"));
 	decrypt_and_store_keys(
