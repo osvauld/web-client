@@ -27,6 +27,7 @@
 	import { LocalStorageService } from "../scripts/storageHelper";
 	import PasswordPromptModal from "./components/dashboard/components/PasswordPromptModal.svelte";
 	import { LocalStorageService } from "../scripts/storageHelper";
+	import PasswordPromptModal from "./components/dashboard/components/PasswordPromptModal.svelte";
 	let showWelcome = false;
 	let signedUp = true;
 	onMount(async () => {
