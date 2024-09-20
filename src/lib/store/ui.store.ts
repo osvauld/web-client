@@ -24,7 +24,7 @@ export let selectedSection = writable<SelectedSection>("SharedFolders");
 export let showAddCliDrawer = writable(false);
 export let showAddEnvDrawer = writable(false);
 
-const storedPage = browser.storage.local.get("selectedPage");
+const storedPage = localStorage.getItem("selectedPage");
 type MoreActionsTypes = "Folder" | "Group" | "Credential";
 type MoreActions = {
 	id: string;
@@ -32,13 +32,11 @@ type MoreActions = {
 	type: MoreActionsTypes;
 	private?: boolean;
 };
-storedPage.then((value) => {
-	if (value.selectedPage) {
-		selectedPage.set(value.selectedPage);
-	} else {
-		selectedPage.set("Folders");
-	}
-});
+if (storedPage) {
+	selectedPage.set(storedPage);
+} else {
+	selectedPage.set("Folders");
+}
 selectedPage.subscribe((value) => {
-	browser.storage.local.set({ selectedPage: value });
+	localStorage.setItem("selectedPage", value);
 });

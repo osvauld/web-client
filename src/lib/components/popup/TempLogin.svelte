@@ -6,6 +6,7 @@
 	import ClosedEye from "../basic/icons/closedEye.svelte";
 
 	import browser from "webextension-polyfill";
+	import { StorageService } from "../../../scripts/storageHelper";
 	const dispatch = createEventDispatcher();
 
 	let username = localStorage.getItem("username") || "";
@@ -21,7 +22,7 @@
 	async function handleSubmit() {
 		isLoaderActive = true;
 		if (baseurl.length === 0) return;
-		await browser.storage.local.set({ baseUrl: baseurl });
+		await StorageService.setBaseUrl(baseurl);
 		if (username && password) {
 			const challengeResponse = await getRegsitrationChallenge(
 				username,

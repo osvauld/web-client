@@ -12,7 +12,7 @@
 	import { BinIcon, DownArrow } from "../icons";
 	import AccessSelector from "./AccessSelector.svelte";
 
-	import { createEventDispatcher, onMount } from "svelte";
+	import { createEventDispatcher } from "svelte";
 
 	const dispatch = createEventDispatcher();
 

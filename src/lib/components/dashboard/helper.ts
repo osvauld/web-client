@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill";
 import { SearchedCredential } from "../../dtos/credential.dto";
-import { AddCredentialPayload, User } from "./dtos";
+import { AddCredentialPayload } from "./dtos";
+import { StorageService } from "../../../scripts/storageHelper";
 
 type TypeToClassKey = "reader" | "manager";
 
@@ -15,10 +16,10 @@ export const setbackground = (type: TypeToClassKey): string => {
 
 export const getTokenAndBaseUrl = async () => {
 	const [token, baseUrl] = await Promise.all([
-		browser.storage.local.get("token"),
-		browser.storage.local.get("baseUrl"),
+		StorageService.getToken(),
+		StorageService.getBaseUrl(),
 	]);
-	return { token: token.token, baseUrl: baseUrl.baseUrl };
+	return { token, baseUrl };
 };
 
 export const sendMessage = async (action: string, data: any = {}) => {
