@@ -43,19 +43,27 @@
 		delayFunction();
 	};
 
+	const passwordprompter = async () => {
+		promptPassword.set(true);
+	};
+
 	const initiateRecovery = async () => {
-		// const { baseUrl } = await getTokenAndBaseUrl();
-		// const certificate = await sendMessage("exportCertificate", {
-		// 	passphrase: "test",
-		// });
-		// const encryptionPvtKeyObj =
-		// 	await browser.storage.local.get("encryptionPvtKey");
-		// const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
-		// const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
-		// const signKey = signPvtKeyObj.signPvtKey;
-		// const exporter = JSON.stringify({ encryptionKey, signKey, baseUrl });
-		// await navigator.clipboard.writeText(exporter);
-		// delayFunction();
+		const { baseUrl } = await getTokenAndBaseUrl();
+		// Here a modal needs to be initiated to confirm master password
+		// Once submit, we can call this function then instead of directly calling it
+		const certificate = await sendMessage("exportCertificate", {
+			passphrase: "test",
+		});
+
+		// Now the certificate string is here
+		const encryptionPvtKeyObj =
+			await browser.storage.local.get("encryptionPvtKey");
+		const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
+		const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
+		const signKey = signPvtKeyObj.signPvtKey;
+		const exporter = JSON.stringify({ encryptionKey, signKey, baseUrl });
+		await navigator.clipboard.writeText(exporter);
+		delayFunction();
 	};
 
 	onMount(() => {
@@ -94,7 +102,7 @@
 			class="flex items-center p-2 gap-2 w-full h-12 text-osvauld-fieldText hover:text-osvauld-dangerRed hover:bg-osvauld-modalFieldActive rounded-lg"
 			on:mouseenter="{() => (isRecoveryHovered = true)}"
 			on:mouseleave="{() => (isRecoveryHovered = false)}"
-			on:click|preventDefault="{initiateRecovery}">
+			on:click|preventDefault="{passwordprompter}">
 			<div class="w-6 h-6 flex items-center justify-center">
 				{#if copied && isRecoveryHovered}
 					<span in:scale>
