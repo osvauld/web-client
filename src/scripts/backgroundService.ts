@@ -21,14 +21,13 @@ import init, {
 	encrypt_new_credential,
 	decrypt_credentials,
 	decrypt_text,
-	encrypt_fields,
 	get_public_key,
 	sign_and_hash_message,
 	generate_keys_without_password,
 	encrypt_field_value,
 	export_certificate,
 	decrypt_urls,
-	decrypt_fields,
+	create_share_creds_payload,
 	import_certificate,
 } from "./wasm";
 import { StorageService } from "./storageHelper";
@@ -113,51 +112,23 @@ export const decryptFieldHandler = async (text: string): Promise<string> => {
 	return decrypted;
 };
 
-export const encryptCredentialsForUser = async (
-	credentials: CredentialFields[],
-	publicKeyStr: string,
-): Promise<CredentialFields[]> => {
-	const encryptedCredsForUser: CredentialFields[] = [];
-	for (const credential of credentials) {
-		const encryptedCred: CredentialFields = {
-			credentialId: credential.credentialId,
-			fields: [],
-		};
-		encryptedCred.credentialId = credential.credentialId;
-		encryptedCred.fields = await encrypt_fields(
-			credential.fields,
-			publicKeyStr,
-		);
-		encryptedCredsForUser.push(encryptedCred);
-	}
-	return encryptedCredsForUser;
-};
-
 export const createShareCredsPayload = async (
 	creds: any,
 	selectedUsers: any,
 ): Promise<CredentialsForUsersPayload[]> => {
-	const decryptedFields = await decrypt_fields(creds);
-	const userData: CredentialsForUsersPayload[] = [];
-	for (const user of selectedUsers) {
-		const userEncryptedFields = await encryptCredentialsForUser(
-			decryptedFields,
-			user.publicKey,
-		);
-		if (user.accessType) {
-			userData.push({
-				userId: user.id,
-				credentials: userEncryptedFields,
-				accessType: user.accessType,
-			});
-		} else {
-			userData.push({
-				userId: user.id,
-				credentials: userEncryptedFields,
-			});
-		}
-	}
-	return userData;
+	const users = selectedUsers.map((user) => {
+		return {
+			id: user.id,
+			publicKey: user.publicKey,
+			accessType: user.accessType,
+		};
+	});
+	const input = {
+		credentials: creds,
+		selectedUsers: users,
+	};
+
+	return await create_share_creds_payload(input);
 };
 
 export const getCertificate = async (passphrase: string) => {
