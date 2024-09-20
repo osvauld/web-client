@@ -1,10 +1,14 @@
 <script lang="ts">
-	import { fade } from "svelte/transition";
-
-	export let password: string = "";
+	export let passphrase: string = "";
+	export let isPassphraseAcceptable = false;
 
 	let strengthScore = 0;
-	let strengthLevel = "";
+	let specialCharPresent = false;
+	let numberPresent = false;
+	let upperCasePresent = false;
+	let lowerCasePresent = false;
+	let eightCharsPresent = false;
+
 	let conditions = [
 		{ key: "lowercase", label: "Lowercase letter", regex: /[a-z]/, met: false },
 		{ key: "uppercase", label: "Uppercase letter", regex: /[A-Z]/, met: false },
@@ -19,26 +23,41 @@
 	];
 
 	$: {
-		checkStrength(password);
+		checkStrength(passphrase);
+		eightCharsPresent = conditions.find((item) => item["key"] === "length").met;
+
+		specialCharPresent = conditions.find(
+			(item) => item["key"] === "specialChar",
+		).met;
+
+		numberPresent = conditions.find((item) => item["key"] === "number").met;
+
+		upperCasePresent = conditions.find(
+			(item) => item["key"] === "uppercase",
+		).met;
+
+		lowerCasePresent = conditions.find(
+			(item) => item["key"] === "lowercase",
+		).met;
 	}
 
-	function checkStrength(password: string) {
+	function checkStrength(passphrase: string) {
 		conditions.forEach((condition) => {
 			if (condition.key === "length") {
-				condition.met = password.length >= 8;
+				condition.met = passphrase.length >= 8;
 			} else {
-				condition.met = condition.regex.test(password);
+				condition.met = condition.regex.test(passphrase);
 			}
 		});
 
 		strengthScore = conditions.filter((condition) => condition.met).length;
 
 		if (strengthScore <= 2) {
-			strengthLevel = "Weak";
+			isPassphraseAcceptable = false;
 		} else if (strengthScore <= 4) {
-			strengthLevel = "Medium";
+			isPassphraseAcceptable = false;
 		} else {
-			strengthLevel = "Strong";
+			isPassphraseAcceptable = true;
 		}
 	}
 
@@ -53,9 +72,7 @@
 	}
 </script>
 
-<div
-	class="w-full max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-6"
->
+<div class="w-[300px] rounded-xl shadow-md overflow-hidden p-2">
 	<div class="mb-4">
 		<div class="h-2 w-full bg-gray-300 rounded-full">
 			<div
@@ -65,28 +82,27 @@
 				style="width: {getStrengthWidth(strengthScore)}"
 			></div>
 		</div>
-		<p class="text-sm mt-1 text-gray-600">Password Strength: {strengthLevel}</p>
+		<p
+			class="text-xs mt-1 font-light text-osvauld-sheffieldgrey text-center tracking-wide"
+		>
+			Passphrase should include at least <span
+				class=" {eightCharsPresent ? 'text-green-500' : 'text-yellow-300'}"
+				>8 characters</span
+			>
+			with one or more
+			<span class="{specialCharPresent ? 'text-green-500' : 'text-yellow-300'}"
+				>Special character</span
+			>,
+			<span class="{numberPresent ? 'text-green-500' : 'text-yellow-300'}"
+				>Number</span
+			>,
+			<span class="{upperCasePresent ? 'text-green-500' : 'text-yellow-300'}"
+				>Uppercase</span
+			>
+			and
+			<span class="{lowerCasePresent ? 'text-green-500' : 'text-yellow-300'}"
+				>Lowercase</span
+			> letters.
+		</p>
 	</div>
-
-	<ul class="list-none p-0">
-		{#each conditions.filter((condition) => !condition.met) as condition (condition.key)}
-			<li transition:fade="{{ duration: 200 }}" class="flex items-center mb-2">
-				<svg
-					class="w-4 h-4 mr-2 text-gray-500"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-					></path>
-				</svg>
-				<span class="text-sm text-gray-700">{condition.label}</span>
-			</li>
-		{/each}
-	</ul>
 </div>
