@@ -729,6 +729,26 @@ export function get_public_key() {
 	}
 }
 
+/**
+ * @param {any} input
+ * @returns {any}
+ */
+export function create_share_creds_payload(input) {
+	try {
+		const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+		wasm.create_share_creds_payload(retptr, addHeapObject(input));
+		var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
+		var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
+		var r2 = getDataViewMemory0().getInt32(retptr + 4 * 2, true);
+		if (r2) {
+			throw takeObject(r1);
+		}
+		return takeObject(r0);
+	} finally {
+		wasm.__wbindgen_add_to_stack_pointer(16);
+	}
+}
+
 function handleError(f, args) {
 	try {
 		return f.apply(this, args);
