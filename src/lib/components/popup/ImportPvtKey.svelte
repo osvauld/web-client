@@ -7,26 +7,36 @@
 
 	let privateKeys = "";
 	let passphrase = "";
+	let reenteredPassPhrase = "";
 	let showPassword = false;
+	let showReenteredPassword = false;
 	let isLoaderActive = false;
 
-	function togglePasswordVisibility() {
-		showPassword = !showPassword;
-	}
+	const togglePasswordVisibility = (isInitialResponse: boolean) => {
+		if (isInitialResponse) {
+			showPassword = !showPassword;
+		} else {
+			showReenteredPassword = !showReenteredPassword;
+		}
+	};
 
 	type inputField = "privateKey" | "passphrase";
-	function handleInputChange(event: any, field: inputField) {
+	const handleInputChange = (event: any, field: inputField) => {
 		if (field === "privateKey") {
 			privateKeys = event.target.value;
 		} else if (field === "passphrase") {
 			passphrase = event.target.value;
 		}
-	}
+	};
 
-	function handleSubmit() {
+	const handleConfirmationInputChange = (event: any) => {
+		reenteredPassPhrase = event.target.value;
+	};
+
+	const handleSubmit = () => {
 		isLoaderActive = true;
 		dispatch("submit", { privateKeys, passphrase });
-	}
+	};
 </script>
 
 <div
@@ -46,7 +56,9 @@
 		on:input="{(e) => handleInputChange(e, 'privateKey')}"
 	></textarea>
 
-	<label for="passphrase" class="font-normal mt-6 mb-2">Enter Passphrase</label>
+	<label for="passphrase" class="font-normal mt-6 mb-2"
+		>Enter New Passphrase</label
+	>
 	<div
 		class="flex justify-between items-center bg-osvauld-frameblack px-3 border rounded-lg border-osvauld-iconblack w-[300px]"
 	>
@@ -60,9 +72,34 @@
 		<button
 			type="button"
 			class="flex justify-center items-center"
-			on:click="{togglePasswordVisibility}"
+			on:click="{() => togglePasswordVisibility(true)}"
 		>
 			{#if showPassword}
+				<ClosedEye />
+			{:else}
+				<Eye />
+			{/if}
+		</button>
+	</div>
+	<label for="passphrase" class="font-normal mt-6 mb-2"
+		>Confirm New Passphrase</label
+	>
+	<div
+		class="flex justify-between items-center bg-osvauld-frameblack px-3 border rounded-lg border-osvauld-iconblack w-[300px]"
+	>
+		<input
+			class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-osvauld-iconblack focus:ring-0 active:outline-none focus:ring-offset-0"
+			type="{showReenteredPassword ? 'text' : 'password'}"
+			id="passphrase"
+			on:input="{(e) => handleConfirmationInputChange(e)}"
+		/>
+
+		<button
+			type="button"
+			class="flex justify-center items-center"
+			on:click="{() => togglePasswordVisibility(false)}"
+		>
+			{#if showReenteredPassword}
 				<ClosedEye />
 			{:else}
 				<Eye />

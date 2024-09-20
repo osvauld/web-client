@@ -8,7 +8,7 @@
 	let isTempLoginVerified = false;
 	let challenge = "";
 	let username = "";
-	let importPvtKeyFlag = false;
+	let importPvtKeyFlag = true;
 	const dispatch = createEventDispatcher();
 
 	const handleTempLogin = (e: any) => {
