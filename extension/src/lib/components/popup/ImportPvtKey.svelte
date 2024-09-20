@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Eye from "../basic/icons/eye.svelte";
+	import PasswordStrengthValidator from "../basic/PasswordStrengthValidator.svelte";
 	import Loader from "../dashboard/components/Loader.svelte";
 	import { ClosedEye } from "./icons";
 	import { createEventDispatcher } from "svelte";
@@ -11,6 +12,9 @@
 	let showPassword = false;
 	let showReenteredPassword = false;
 	let isLoaderActive = false;
+
+	$: submitDisabled =
+		passphrase.length === 0 || passphrase !== reenteredPassPhrase;
 
 	const togglePasswordVisibility = (isInitialResponse: boolean) => {
 		if (isInitialResponse) {
@@ -81,6 +85,7 @@
 			{/if}
 		</button>
 	</div>
+	<PasswordStrengthValidator password="{passphrase}" />
 	<label for="passphrase" class="font-normal mt-6 mb-2"
 		>Confirm New Passphrase</label
 	>
@@ -106,9 +111,13 @@
 			{/if}
 		</button>
 	</div>
+
 	<button
-		class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
+		class="{submitDisabled
+			? 'border border-osvauld-iconblack text-osvauld-sheffieldgrey'
+			: 'bg-osvauld-carolinablue text-osvauld-ninjablack'} py-2 px-10 mt-8 rounded-lg font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
 		type="button"
+		disabled="{submitDisabled}"
 		on:click="{handleSubmit}"
 	>
 		{#if isLoaderActive}
