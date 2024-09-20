@@ -46,3 +46,40 @@ export const StorageService = {
 		}
 	},
 };
+export const LocalStorageService = {
+	get: <T>(key: string, parse: boolean = false): T | string | null => {
+		try {
+			const item = localStorage.getItem(key);
+			if (item === null) return null;
+			return parse ? JSON.parse(item) : item;
+		} catch (error) {
+			console.error(`Error getting item ${key} from localStorage:`, error);
+			return null;
+		}
+	},
+
+	set: <T>(key: string, value: T, stringify: boolean = false): void => {
+		try {
+			const item = stringify ? JSON.stringify(value) : String(value);
+			localStorage.setItem(key, item);
+		} catch (error) {
+			console.error(`Error setting item ${key} in localStorage:`, error);
+		}
+	},
+
+	remove: (key: string): void => {
+		try {
+			localStorage.removeItem(key);
+		} catch (error) {
+			console.error(`Error removing item ${key} from localStorage:`, error);
+		}
+	},
+
+	clear: (): void => {
+		try {
+			localStorage.clear();
+		} catch (error) {
+			console.error("Error clearing localStorage:", error);
+		}
+	},
+};

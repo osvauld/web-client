@@ -6,19 +6,22 @@
 	import ClosedEye from "../basic/icons/closedEye.svelte";
 
 	import browser from "webextension-polyfill";
-	import { StorageService } from "../../../scripts/storageHelper";
+	import {
+		LocalStorageService,
+		StorageService,
+	} from "../../../scripts/storageHelper";
 	const dispatch = createEventDispatcher();
 
-	let username = localStorage.getItem("username") || "";
+	let username: string = LocalStorageService.get("username") || "";
 	let password = "";
-	let baseurl = localStorage.getItem("baseUrl") || "";
+	let baseurl: string = LocalStorageService.get("baseUrl") || "";
 	let showPassword = false;
 	let showVerificationError = false;
 	let isLoaderActive = false;
 
 	$: type = showPassword ? "text" : "password";
-	$: localStorage.setItem("username", username);
-	$: localStorage.setItem("baseUrl", baseurl);
+	$: LocalStorageService.set("username", username);
+	$: LocalStorageService.set("baseUrl", baseurl);
 	async function handleSubmit() {
 		isLoaderActive = true;
 		if (baseurl.length === 0) return;

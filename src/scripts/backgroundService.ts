@@ -32,18 +32,11 @@ import init, {
 	import_certificate,
 } from "./wasm";
 import { StorageService } from "./storageHelper";
-import { User } from "../lib/dtos/user.dto.js";
 
 type CredentialsForUsersPayload = {
 	accessType?: string;
 	userId: string;
 	credentials: CredentialFields[];
-};
-
-type UserListForEncryption = {
-	id: string;
-	publicKey: string;
-	accessType?: string;
 };
 
 export const initiateAuthHandler = async (
@@ -80,7 +73,6 @@ export const savePassphraseHandler = async (
 ) => {
 	await init();
 	const keyPair = await generate_and_encrypt_keys(passphrase, username);
-	console.log(keyPair);
 	StorageService.setCertificate(keyPair.get("certificate"));
 	StorageService.setSalt(keyPair.get("salt"));
 	decrypt_and_store_keys(

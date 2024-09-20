@@ -23,6 +23,7 @@
 	import ShareToast from "./components/dashboard/components/ShareToast.svelte";
 	import { setFolderStore } from "./store/storeHelper";
 	import { selectedFolder } from "./store/folder.store";
+	import { LocalStorageService } from "../scripts/storageHelper";
 	let showWelcome = false;
 	let signedUp = true;
 	onMount(async () => {
@@ -41,7 +42,7 @@
 	};
 	const handleAuthenticated = async () => {
 		const user = await getUser();
-		localStorage.setItem("user", JSON.stringify(user.data));
+		LocalStorageService.set("user", user.data, true);
 		await setFolderStore();
 		showWelcome = false;
 	};
