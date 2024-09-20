@@ -182,8 +182,12 @@ export const getCertificate = async (passphrase: string) => {
 			pvtKeyObj.encryptionPvtKey,
 			saltObj.salt,
 		);
-		const new_response = await import_certificate(response, "test");
-		console.log(new_response);
+		console.log("Export response =>", response);
+		return response;
+		// const new_response = await import_certificate(response, "test");
+		// console.log(new_response);
+		// this will respond with an object with fourkeys, like encryption,sign key salt etc key and all, which can be refered from some function above.
+		// Place those in the local storage to complete the prcess
 	} catch (e) {
 		console.log(e, "ERR");
 	}
