@@ -18,6 +18,7 @@
 	import AddCredential from "./AddCredential.svelte";
 	import { Add } from "./icons";
 	import PasswordGenerator from "./PasswordGenerator.svelte";
+	import { LocalStorageService } from "../../../scripts/storageHelper";
 	type ListedCredential = {
 		description: string;
 		domain: string;
@@ -88,7 +89,7 @@
 		}
 	};
 	onMount(async () => {
-		query = localStorage.getItem("query");
+		query = LocalStorageService.get("query");
 		if (query && query.length >= 1) {
 			await prepareSearchData();
 			listedCredentials = searchObjects(query, searchData);
@@ -96,9 +97,9 @@
 			await fetchCredentialsOfCurrentDomin();
 		}
 		const user = await getUser();
-		localStorage.setItem("user", JSON.stringify(user.data));
-		storedCredentialId = localStorage.getItem("selectedCredentialId");
-		const storedScrollPosition = localStorage.getItem("scrollPosition");
+		LocalStorageService.set("user", user.data, true);
+		storedCredentialId = LocalStorageService.get("selectedCredentialId");
+		const storedScrollPosition: any = LocalStorageService.get("scrollPosition");
 		if (storedScrollPosition !== null) {
 			scrollPosition = parseInt(storedScrollPosition);
 			scrollableElement.scrollTop = scrollPosition;
@@ -150,7 +151,7 @@
 			listedCredentials = [];
 			await fetchCredentialsOfCurrentDomin();
 		}
-		await localStorage.setItem("query", query);
+		LocalStorageService.set("query", query);
 	};
 
 	const selectCredential = async (e: any) => {
@@ -158,7 +159,7 @@
 	};
 	const handleScroll = async (e: any) => {
 		scrollPosition = e.target.scrollTop;
-		localStorage.setItem("scrollPosition", scrollPosition.toString());
+		LocalStorageService.set("scrollPosition", scrollPosition.toString());
 	};
 
 	const addCredentialManual = async () => {

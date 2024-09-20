@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 import browser from "webextension-polyfill";
 import { SelectedSection } from "../dtos/ui.dto";
+import { LocalStorageService } from "../../scripts/storageHelper";
 export let selectedPage = writable("");
 export let showAddFolderDrawer = writable(false);
 export let showAddGroupDrawer = writable(false);
@@ -24,7 +25,7 @@ export let selectedSection = writable<SelectedSection>("SharedFolders");
 export let showAddCliDrawer = writable(false);
 export let showAddEnvDrawer = writable(false);
 
-const storedPage = localStorage.getItem("selectedPage");
+const storedPage: any = LocalStorageService.get("selectedPage");
 type MoreActionsTypes = "Folder" | "Group" | "Credential";
 type MoreActions = {
 	id: string;
@@ -38,5 +39,5 @@ if (storedPage) {
 	selectedPage.set("Folders");
 }
 selectedPage.subscribe((value) => {
-	localStorage.setItem("selectedPage", value);
+	LocalStorageService.set("selectedPage", value);
 });

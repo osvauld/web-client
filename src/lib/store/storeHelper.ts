@@ -11,6 +11,7 @@ import { SelectedGroup } from "../dtos/group.dto";
 import { Folder } from "../dtos/folder.dto";
 import { getUser } from "../apis/user.api";
 import { User } from "../dtos/user.dto";
+import { LocalStorageService } from "../../scripts/storageHelper";
 export const setFolderStore = async () => {
 	const responseJson = await fetchAllFolders();
 	const sortedData = responseJson.data.sort((a: Folder, b: Folder) =>
@@ -18,11 +19,10 @@ export const setFolderStore = async () => {
 	);
 	const selectedFolderValue = get(selectedFolder);
 	if (!selectedFolderValue) {
-		const storedFolder = localStorage.getItem("selectedFolder");
+		const storedFolder: any = LocalStorageService.get("selectedFolder", true);
 		if (storedFolder && storedFolder != "undefined") {
-			const stored = JSON.parse(storedFolder);
 			for (const folder of sortedData) {
-				if (folder.id === stored.id) {
+				if (folder.id === storedFolder.id) {
 					selectedFolder.set(folder);
 					if (folder.type === "private") {
 						selectedSection.set("PrivateFolders");
@@ -63,14 +63,14 @@ export const setEnvStore = async () => {
 	envStore.set(envs);
 };
 export const getUserDetails = async (): Promise<User> => {
-	const accountDetails = localStorage.getItem("user");
+	const accountDetails = LocalStorageService.get("user", true);
 	let user;
 	if (accountDetails == null) {
 		const userJson = await getUser();
 		user = userJson.data;
-		localStorage.setItem("user", JSON.stringify(user));
+		LocalStorageService.set("user", user, true);
 	} else {
-		user = JSON.parse(accountDetails);
+		user = accountDetails;
 	}
 	return user;
 };
