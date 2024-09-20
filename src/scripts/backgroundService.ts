@@ -169,6 +169,7 @@ export const createShareCredsPayload = async (
 };
 
 export const getCertificate = async (passphrase: string) => {
+
 	const pvtKey = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	if (pvtKey && salt) {
