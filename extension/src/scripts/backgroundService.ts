@@ -33,7 +33,9 @@ type CredentialsForUsersPayload = {
 	credentials: CredentialFields[];
 };
 
-export const getPubKeyHandler = async (passphrase: string) => {
+export const initiateAuthHandler = async (
+	passphrase: string,
+): Promise<string> => {
 	const certificate = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	const startTime = performance.now();
