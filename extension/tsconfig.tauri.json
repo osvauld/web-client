@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "esnext",
+		"moduleResolution": "node",
+		"strict": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": ".",
+		"paths": {
+			"*": ["src/*"]
+		},
+		"allowJs": true,
+		"isolatedModules": true,
+		"types": ["svelte", "@tauri-apps/api"]
+	},
+	"include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
+	"exclude": [
+		"node_modules",
+		"public",
+		"dist",
+		"src/scripts/background.ts",
+		"src/scripts/backgroundService.ts"
+	]
+}
