@@ -161,17 +161,15 @@ export const createShareCredsPayload = async (
 };
 
 export const getCertificate = async (passphrase: string) => {
-
 	const pvtKey = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	if (pvtKey && salt) {
 		const response = await export_certificate(passphrase, pvtKey, salt);
-		console.log(response);
-		return response
+		return response;
 		// const new_response = await import_certificate(response, "test");
 		// return new_response
 	}
-}
+};
 
 export const handlePvtKeyImport = async (
 	recoveryData: string,
