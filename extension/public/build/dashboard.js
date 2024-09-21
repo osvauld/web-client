@@ -3513,7 +3513,11 @@ var app = (function () {
 		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 	}
 
+<<<<<<< HEAD
 	var browserPolyfill = {exports: {}};
+=======
+	var browserPolyfill$1 = {exports: {}};
+>>>>>>> 93e33b3 (first version commit)
 
 	(function (module, exports) {
 		(function (global, factory) {
@@ -4767,6 +4771,7 @@ var app = (function () {
 		  }
 		});
 		
+<<<<<<< HEAD
 	} (browserPolyfill));
 
 	var browserPolyfillExports = browserPolyfill.exports;
@@ -4775,6 +4780,16 @@ var app = (function () {
 	const getFromStorage = async (key) => {
 	    try {
 	        const result = await browser.storage.local.get(key);
+=======
+	} (browserPolyfill$1));
+
+	var browserPolyfillExports = browserPolyfill$1.exports;
+	var browserPolyfill = /*@__PURE__*/getDefaultExportFromCjs(browserPolyfillExports);
+
+	const getFromStorage = async (key) => {
+	    try {
+	        const result = await browserPolyfill.storage.local.get(key);
+>>>>>>> 93e33b3 (first version commit)
 	        return result[key];
 	    }
 	    catch (error) {
@@ -4784,7 +4799,11 @@ var app = (function () {
 	};
 	const setToStorage = async (key, value) => {
 	    try {
+<<<<<<< HEAD
 	        await browser.storage.local.set({ [key]: value });
+=======
+	        await browserPolyfill.storage.local.set({ [key]: value });
+>>>>>>> 93e33b3 (first version commit)
 	    }
 	    catch (error) {
 	        console.error(`Error setting ${key} in storage:`, error);
@@ -4805,7 +4824,11 @@ var app = (function () {
 	    setSalt: (salt) => setToStorage("salt", salt),
 	    clearStorage: async () => {
 	        try {
+<<<<<<< HEAD
 	            await browser.storage.local.clear();
+=======
+	            await browserPolyfill.storage.local.clear();
+>>>>>>> 93e33b3 (first version commit)
 	        }
 	        catch (error) {
 	            console.error("Error clearing storage:", error);
@@ -7322,6 +7345,40 @@ var app = (function () {
 		};
 	}
 
+<<<<<<< HEAD
+=======
+	const isTauri = process.env.IS_TAURI;
+	const browser = isTauri
+	    ? {
+	        storage: {
+	            local: {
+	                get: async (key) => {
+	                    // Use Tauri's storage API or alternatives
+	                    console.log("Tauri: Getting", key);
+	                    return {};
+	                },
+	                set: async (data) => {
+	                    // Use Tauri's storage API or alternatives
+	                    console.log("Tauri: Setting", data);
+	                },
+	            },
+	        },
+	        tabs: {
+	            query: async (queryInfo) => {
+	                console.log("test", queryInfo);
+	            },
+	        },
+	        runtime: {
+	            sendMessage: async (message) => {
+	                // Implement Tauri IPC here
+	                console.log("Tauri: Sending message", message);
+	            },
+	        },
+	        // Add other browser APIs as needed
+	    }
+	    : browserPolyfill;
+
+>>>>>>> 93e33b3 (first version commit)
 	const setbackground = (type) => {
 	    const typeToClassMap = {
 	        reader: "bg-osvauld-readerOrange text-osvauld-readerText",

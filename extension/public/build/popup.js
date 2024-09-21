@@ -2696,7 +2696,11 @@ var app = (function () {
 		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 	}
 
+<<<<<<< HEAD
 	var browserPolyfill = {exports: {}};
+=======
+	var browserPolyfill$1 = {exports: {}};
+>>>>>>> 93e33b3 (first version commit)
 
 	(function (module, exports) {
 		(function (global, factory) {
@@ -3950,6 +3954,7 @@ var app = (function () {
 		  }
 		});
 		
+<<<<<<< HEAD
 	} (browserPolyfill));
 
 	var browserPolyfillExports = browserPolyfill.exports;
@@ -3958,6 +3963,16 @@ var app = (function () {
 	const getFromStorage = async (key) => {
 	    try {
 	        const result = await browser.storage.local.get(key);
+=======
+	} (browserPolyfill$1));
+
+	var browserPolyfillExports = browserPolyfill$1.exports;
+	var browserPolyfill = /*@__PURE__*/getDefaultExportFromCjs(browserPolyfillExports);
+
+	const getFromStorage = async (key) => {
+	    try {
+	        const result = await browserPolyfill.storage.local.get(key);
+>>>>>>> 93e33b3 (first version commit)
 	        return result[key];
 	    }
 	    catch (error) {
@@ -3967,7 +3982,11 @@ var app = (function () {
 	};
 	const setToStorage = async (key, value) => {
 	    try {
+<<<<<<< HEAD
 	        await browser.storage.local.set({ [key]: value });
+=======
+	        await browserPolyfill.storage.local.set({ [key]: value });
+>>>>>>> 93e33b3 (first version commit)
 	    }
 	    catch (error) {
 	        console.error(`Error setting ${key} in storage:`, error);
@@ -3988,7 +4007,11 @@ var app = (function () {
 	    setSalt: (salt) => setToStorage("salt", salt),
 	    clearStorage: async () => {
 	        try {
+<<<<<<< HEAD
 	            await browser.storage.local.clear();
+=======
+	            await browserPolyfill.storage.local.clear();
+>>>>>>> 93e33b3 (first version commit)
 	        }
 	        catch (error) {
 	            console.error("Error clearing storage:", error);
@@ -4251,6 +4274,40 @@ var app = (function () {
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	const isTauri = process.env.IS_TAURI;
+	const browser = isTauri
+	    ? {
+	        storage: {
+	            local: {
+	                get: async (key) => {
+	                    // Use Tauri's storage API or alternatives
+	                    console.log("Tauri: Getting", key);
+	                    return {};
+	                },
+	                set: async (data) => {
+	                    // Use Tauri's storage API or alternatives
+	                    console.log("Tauri: Setting", data);
+	                },
+	            },
+	        },
+	        tabs: {
+	            query: async (queryInfo) => {
+	                console.log("test", queryInfo);
+	            },
+	        },
+	        runtime: {
+	            sendMessage: async (message) => {
+	                // Implement Tauri IPC here
+	                console.log("Tauri: Sending message", message);
+	            },
+	        },
+	        // Add other browser APIs as needed
+	    }
+	    : browserPolyfill;
+
+>>>>>>> 93e33b3 (first version commit)
 	const getTokenAndBaseUrl = async () => {
 	    const [token, baseUrl] = await Promise.all([
 	        StorageService.getToken(),
@@ -11210,6 +11267,7 @@ var app = (function () {
 				t3 = space();
 				input = element("input");
 				attr_dev(span0, "class", "text-base text-osvauld-carolinablue");
+<<<<<<< HEAD
 				add_location(span0, file$5, 180, 4, 5231);
 				attr_dev(span1, "class", span1_class_value = "text-osvauld-sheffieldgrey " + (/*passwordFound*/ ctx[0] ? 'visible' : 'invisible'));
 				add_location(span1, file$5, 185, 4, 5342);
@@ -11221,6 +11279,19 @@ var app = (function () {
 				add_location(input, file$5, 196, 4, 5707);
 				attr_dev(div1, "class", "h-9 w-full mx-auto flex justify-start items-center border focus-within:!border-osvauld-activeBorder border-osvauld-iconblack rounded-lg cursor-pointer mb-4 pl-2");
 				add_location(div1, file$5, 193, 3, 5511);
+=======
+				add_location(span0, file$5, 180, 4, 5239);
+				attr_dev(span1, "class", span1_class_value = "text-osvauld-sheffieldgrey " + (/*passwordFound*/ ctx[0] ? 'visible' : 'invisible'));
+				add_location(span1, file$5, 185, 4, 5350);
+				attr_dev(div0, "class", "text-osvauld-highlightwhite mb-3 flex justify-between items-center text-sm");
+				add_location(div0, file$5, 178, 3, 5142);
+				attr_dev(input, "type", "text");
+				attr_dev(input, "class", "h-6 w-[70%] bg-osvauld-frameblack border-0 text-osvauld-quarzowhite placeholder-osvauld-placeholderblack border-transparent text-sm font-light focus:border-transparent focus:ring-0 cursor-pointer");
+				attr_dev(input, "placeholder", "Find what you need faster..");
+				add_location(input, file$5, 196, 4, 5715);
+				attr_dev(div1, "class", "h-9 w-full mx-auto flex justify-start items-center border focus-within:!border-osvauld-activeBorder border-osvauld-iconblack rounded-lg cursor-pointer mb-4 pl-2");
+				add_location(div1, file$5, 193, 3, 5519);
+>>>>>>> 93e33b3 (first version commit)
 			},
 			m: function mount(target, anchor) {
 				insert_dev(target, div0, anchor);
@@ -11343,7 +11414,11 @@ var app = (function () {
 				div = element("div");
 				div.innerHTML = ``;
 				attr_dev(div, "class", "border-b border-osvauld-darkLineSeperator mb-1 w-[calc(100%+1.5rem)] -translate-x-3");
+<<<<<<< HEAD
 				add_location(div, file$5, 206, 4, 6143);
+=======
+				add_location(div, file$5, 206, 4, 6151);
+>>>>>>> 93e33b3 (first version commit)
 			},
 			m: function mount(target, anchor) {
 				insert_dev(target, div, anchor);
@@ -11682,7 +11757,11 @@ var app = (function () {
 				if (if_block) if_block.c();
 				if_block_anchor = empty();
 				attr_dev(button, "class", "p-2 border border-osvauld-defaultBorder rounded-md right-4 bottom-4 fixed active:scale-[.98]");
+<<<<<<< HEAD
 				add_location(button, file$5, 241, 2, 7207);
+=======
+				add_location(button, file$5, 241, 2, 7215);
+>>>>>>> 93e33b3 (first version commit)
 			},
 			m: function mount(target, anchor) {
 				insert_dev(target, button, anchor);
@@ -11769,6 +11848,7 @@ var app = (function () {
 				span1 = element("span");
 				span1.textContent = "Add Credential";
 				attr_dev(span0, "class", "font-inter font-normal text-sm whitespace-nowrap");
+<<<<<<< HEAD
 				add_location(span0, file$5, 252, 6, 7879);
 				attr_dev(button0, "class", "flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-md cursor-pointer");
 				add_location(button0, file$5, 249, 5, 7636);
@@ -11782,6 +11862,21 @@ var app = (function () {
 				set_style(div1, "bottom", "35px");
 				set_style(div1, "right", "40px");
 				add_location(div1, file$5, 245, 3, 7417);
+=======
+				add_location(span0, file$5, 252, 6, 7887);
+				attr_dev(button0, "class", "flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-md cursor-pointer");
+				add_location(button0, file$5, 249, 5, 7644);
+				attr_dev(span1, "class", "font-inter font-normal text-sm whitespace-nowrap");
+				add_location(span1, file$5, 258, 6, 8241);
+				attr_dev(button1, "class", "flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-md cursor-pointer");
+				add_location(button1, file$5, 255, 5, 8003);
+				attr_dev(div0, "class", "flex flex-col items-start p-2 gap-1 w-full h-full");
+				add_location(div0, file$5, 248, 4, 7575);
+				attr_dev(div1, "class", "absolute z-50 bg-osvauld-frameblack border border-osvauld-iconblack w-[160px] rounded-lg");
+				set_style(div1, "bottom", "35px");
+				set_style(div1, "right", "40px");
+				add_location(div1, file$5, 245, 3, 7425);
+>>>>>>> 93e33b3 (first version commit)
 			},
 			m: function mount(target, anchor) {
 				insert_dev(target, div1, anchor);
@@ -11882,6 +11977,7 @@ var app = (function () {
 				t5 = space();
 				if (if_block3) if_block3.c();
 				attr_dev(h6, "class", "text-2xl font-medium text-osvauld-fieldText tracking-wide");
+<<<<<<< HEAD
 				add_location(h6, file$5, 166, 2, 4839);
 				attr_dev(button, "class", "");
 				add_location(button, file$5, 170, 3, 4940);
@@ -11896,6 +11992,22 @@ var app = (function () {
 				add_location(div4, file$5, 176, 1, 5038);
 				attr_dev(div5, "class", "w-full h-full px-2 relative");
 				add_location(div5, file$5, 164, 0, 4736);
+=======
+				add_location(h6, file$5, 166, 2, 4847);
+				attr_dev(button, "class", "");
+				add_location(button, file$5, 170, 3, 4948);
+				add_location(div0, file$5, 169, 2, 4939);
+				attr_dev(div1, "class", "flex justify-between items-center mb-3 py-0");
+				add_location(div1, file$5, 165, 1, 4787);
+				attr_dev(div2, "class", "h-[32rem] overflow-y-scroll scrollbar-thin pt-3");
+				add_location(div2, file$5, 210, 3, 6277);
+				attr_dev(div3, "class", "h-full p-0 scrollbar-thin");
+				add_location(div3, file$5, 204, 2, 6080);
+				attr_dev(div4, "class", "w-full h-[90%] overflow-hidden");
+				add_location(div4, file$5, 176, 1, 5046);
+				attr_dev(div5, "class", "w-full h-full px-2 relative");
+				add_location(div5, file$5, 164, 0, 4744);
+>>>>>>> 93e33b3 (first version commit)
 			},
 			l: function claim(nodes) {
 				throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");

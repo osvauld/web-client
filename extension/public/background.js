@@ -1304,6 +1304,11 @@ const StorageService = {
     },
 };
 
+<<<<<<< HEAD
+=======
+process.env.IS_TAURI;
+
+>>>>>>> 93e33b3 (first version commit)
 const getTokenAndBaseUrl = async () => {
     const [token, baseUrl] = await Promise.all([
         StorageService.getToken(),

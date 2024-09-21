@@ -10,13 +10,22 @@
 		"forceConsistentCasingInFileNames": true,
 		"baseUrl": ".",
 		"paths": {
-			"*": ["src/*"]
+			"*": [
+				"src/*"
+			]
 		},
 		"allowJs": true,
 		"isolatedModules": true,
-		"types": ["svelte", "@tauri-apps/api"]
+		"types": [
+			"svelte",
+			"@tauri-apps/api"
+		]
 	},
-	"include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.js",
+		"src/**/*.svelte"
+	],
 	"exclude": [
 		"node_modules",
 		"public",

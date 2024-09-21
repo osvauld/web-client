@@ -31,14 +31,14 @@ export default {
 			preventAssignment: true,
 		}),
 		isTauri &&
-			alias({
-				entries: [
-					{
-						find: "webextension-polyfill",
-						replacement: path.resolve(__dirname, "src/utils/browserMock.ts"),
-					},
-				],
-			}),
+		alias({
+			entries: [
+				{
+					find: "webextension-polyfill",
+					replacement: path.resolve(__dirname, "src/utils/browserMock.ts"),
+				},
+			],
+		}),
 		svelte({
 			preprocess: preprocess({
 				sourceMap: !production,
