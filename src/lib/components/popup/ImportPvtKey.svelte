@@ -7,7 +7,7 @@
 	import { createEventDispatcher } from "svelte";
 	const dispatch = createEventDispatcher();
 
-	let privateKeys = "";
+	let recoveryData = "";
 	let passphrase = "";
 	let reenteredPassPhrase = "";
 	let showPassword = false;
@@ -34,10 +34,10 @@
 		}
 	};
 
-	type inputField = "privateKey" | "passphrase";
+	type inputField = "recovery" | "passphrase";
 	const handleInputChange = (event: any, field: inputField) => {
-		if (field === "privateKey") {
-			privateKeys = event.target.value;
+		if (field === "recovery") {
+			recoveryData = event.target.value;
 		} else if (field === "passphrase") {
 			passphrase = event.target.value;
 		}
@@ -49,7 +49,7 @@
 
 	const handleSubmit = () => {
 		isLoaderActive = true;
-		dispatch("submit", { privateKeys, passphrase });
+		dispatch("submit", { recoveryData, passphrase });
 	};
 </script>
 
@@ -65,7 +65,7 @@
 	<textarea
 		class="text-osvauld-quarzowhite bg-osvauld-frameblack border border-osvauld-iconblack tracking-wider font-light text-sm font-mono focus:border-osvauld-iconblack focus:ring-0 resize-none w-[300px] min-h-[6rem] max-h-[10rem] rounded-lg scrollbar-thin overflow-y-scroll"
 		id="privateKey"
-		on:input="{(e) => handleInputChange(e, 'privateKey')}"></textarea>
+		on:input="{(e) => handleInputChange(e, 'recovery')}"></textarea>
 
 	<label for="passphrase" class="font-normal mt-6 mb-2"
 		>Enter New Passphrase</label>
@@ -77,13 +77,13 @@
 			id="passphrase"
 			on:input="{(e) => handleInputChange(e, 'passphrase')}" />
 
+		{#if isPassphraseAcceptable}
+			<span class="pr-2"><Tick /></span>
+		{/if}
 		<button
 			type="button"
 			class="flex justify-center items-center"
 			on:click="{() => togglePasswordVisibility(true)}">
-			{#if isPassphraseAcceptable}
-				<span class="pr-2"><Tick /></span>
-			{/if}
 			{#if showPassword}
 				<ClosedEye />
 			{:else}
@@ -99,6 +99,7 @@
 		<input
 			class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-osvauld-iconblack focus:ring-0 active:outline-none focus:ring-offset-0"
 			type="{showReenteredPassword ? 'text' : 'password'}"
+			disabled="{!isPassphraseAcceptable}"
 			id="passphrase"
 			on:input="{(e) => handleConfirmationInputChange(e)}" />
 
