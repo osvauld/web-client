@@ -2,7 +2,6 @@ import browser from "webextension-polyfill";
 import { StorageService } from "./storageHelper";
 
 import {
-	initiateAuthHandler,
 	savePassphraseHandler,
 	decryptCredentialFieldsHandler,
 	addCredentialHandler,
@@ -16,6 +15,8 @@ import {
 	encryptEditFields,
 	getDecryptedUrls,
 	getCertificate,
+	getPubKeyHandler,
+	signChallengeHandler,
 } from "./backgroundService";
 
 import { Folder } from "../lib/dtos/folder.dto";
@@ -55,16 +56,14 @@ browser.runtime.onMessage.addListener(async (request) => {
 			const sign = await sign_hashed_message(request.data.message);
 			return { signature: sign };
 		}
-		case "initiateAuth": {
-			try {
-				const passphrase = request.data.passphrase;
-				await init();
-				await initiateAuthHandler(passphrase);
-				return { isAuthenticated: true };
-			} catch (error: any) {
-				console.log(error);
-				return { isAuthenticated: false, error: error.message };
-			}
+
+		case "getPubKey": {
+			await init();
+			return getPubKeyHandler(request.data.passphrase);
+		}
+
+		case "signChallenge": {
+			return signChallengeHandler(request.data.challenge);
 		}
 
 		case "isSignedUp": {

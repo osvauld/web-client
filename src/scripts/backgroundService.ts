@@ -38,9 +38,7 @@ type CredentialsForUsersPayload = {
 	credentials: CredentialFields[];
 };
 
-export const initiateAuthHandler = async (
-	passphrase: string,
-): Promise<string> => {
+export const getPubKeyHandler = async (passphrase: string) => {
 	const certificate = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	const startTime = performance.now();
@@ -49,20 +47,15 @@ export const initiateAuthHandler = async (
 	} else {
 		throw Error("failed to fetch certificate and salt from storage");
 	}
-	const pubKey = await get_public_key();
 	console.log(
 		"Time taken to decrypt and store keys:",
 		performance.now() - startTime,
 	);
-	const challengeResponse = await createChallenge(pubKey);
-	const signedMessage = await sign_message(challengeResponse.data.challenge);
-	const verificationResponse = await initiateAuth(signedMessage, pubKey);
-	const token = verificationResponse.data.token;
-	if (token) {
-		await StorageService.setToken(token);
-		await StorageService.setIsLoggedIn("true");
-	}
-	return token;
+	return get_public_key();
+};
+
+export const signChallengeHandler = async (challenge: string) => {
+	return sign_message(challenge);
 };
 
 export const savePassphraseHandler = async (
@@ -80,14 +73,13 @@ export const savePassphraseHandler = async (
 		passphrase,
 	);
 
-	const signature = await sign_message(challenge);
-	await finalRegistration(
+	const signature = sign_message(challenge);
+	return {
 		username,
 		signature,
-		keyPair.get("public_key"),
-		keyPair.get("public_key"),
-	);
-	return { isSaved: true };
+		deviceKey: keyPair.get("public_key"),
+		encryptionKey: keyPair.get("public_key"),
+	};
 };
 
 export const decryptCredentialFieldsHandler = async (
