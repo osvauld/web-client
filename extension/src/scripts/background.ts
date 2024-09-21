@@ -78,11 +78,12 @@ browser.runtime.onMessage.addListener(async (request) => {
 			} catch (e) {
 				console.error(e, "init");
 			}
+			break;
 		}
 
 		case "importPvtKey": {
 			await handlePvtKeyImport(
-				request.data.privateKeys,
+				request.data.recoveryData,
 				request.data.passphrase,
 			);
 			return;

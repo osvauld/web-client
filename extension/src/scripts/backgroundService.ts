@@ -132,11 +132,12 @@ export const getCertificate = async (passphrase: string) => {
 }
 
 export const handlePvtKeyImport = async (
-	pvtKeys: string,
+	recoveryData: string,
 	passphrase: string,
 ) => {
 	await init();
-	// const { encryptionKey, signKey, baseUrl } = JSON.parse(pvtKeys);
+	const response = JSON.parse(recoveryData);
+	console.log("Response =>", response, passphrase);
 	// await browser.storage.local.set({ baseUrl });
 	// const signPubKey = await get_pub_key(signKey);
 	// const encPublicKey = await get_pub_key(encryptionKey);

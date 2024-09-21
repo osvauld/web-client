@@ -8,7 +8,7 @@
 	let isTempLoginVerified = false;
 	let challenge = "";
 	let username = "";
-	let importPvtKeyFlag = true;
+	let importPvtKeyFlag = false;
 	const dispatch = createEventDispatcher();
 
 	const handleTempLogin = (e: any) => {
@@ -22,10 +22,10 @@
 	};
 
 	const importPvtKey = async (e: any) => {
-		const { privateKeys, passphrase } = e.detail;
+		const { recoveryData, passphrase } = e.detail;
 		await sendMessage("importPvtKey", {
 			passphrase,
-			privateKeys,
+			recoveryData,
 		});
 		handleSignedUp();
 	};
