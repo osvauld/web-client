@@ -4,6 +4,8 @@
 	import { createEventDispatcher } from "svelte";
 	import { ClosedEye } from "../dashboard/icons";
 	import { sendMessage } from "../dashboard/helper";
+	import { createChallenge, initiateAuth } from "../dashboard/apis";
+	import { StorageService } from "../../../scripts/storageHelper";
 	const dispatch = createEventDispatcher();
 
 	let passphrase = "";
@@ -18,8 +20,16 @@
 	$: type = showPassword ? "text" : "password";
 	async function handleSubmit() {
 		isLoaderActive = true;
-		const response = await sendMessage("initiateAuth", { passphrase });
-		if (response.isAuthenticated) {
+		const pubkey = await sendMessage("getPubKey", { passphrase });
+		const challengeResponse = await createChallenge(pubkey);
+		const signature = await sendMessage("signChallenge", {
+			challenge: challengeResponse.data.challenge,
+		});
+		const verificationResponse = await initiateAuth(signature, pubkey);
+		const token = verificationResponse.data.token;
+		if (token) {
+			await StorageService.setToken(token);
+			await StorageService.setIsLoggedIn("true");
 			dispatch("authenticated", true);
 		} else {
 			errorMessage = true;

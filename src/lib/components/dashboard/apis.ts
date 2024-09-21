@@ -66,3 +66,9 @@ export {
 	fetchCliUsers,
 	getUser,
 } from "../../apis/user.api";
+
+export {
+	createChallenge,
+	initiateAuth,
+	finalRegistration,
+} from "../../apis/auth.api";

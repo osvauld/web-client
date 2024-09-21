@@ -4,6 +4,7 @@
 	import Loader from "../dashboard/components/Loader.svelte";
 	import { sendMessage } from "../dashboard/helper";
 	import { createEventDispatcher } from "svelte";
+	import { finalRegistration } from "../dashboard/apis";
 
 	export let challenge: string;
 	export let username: string;
@@ -36,7 +37,13 @@
 				challenge,
 				username,
 			});
-			if (response.isSaved) {
+			const registrationResponse = await finalRegistration(
+				response.username,
+				response.signature,
+				response.deviceKey,
+				response.encryptionKey,
+			);
+			if (registrationResponse.success) {
 				isLoaderActive = false;
 				dispatch("signedUp");
 			}
