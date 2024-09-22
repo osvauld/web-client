@@ -1304,8 +1304,6 @@ const StorageService = {
     },
 };
 
-process.env.IS_TAURI;
-
 const getTokenAndBaseUrl = async () => {
     const [token, baseUrl] = await Promise.all([
         StorageService.getToken(),

@@ -9,8 +9,13 @@ import tailwindcss from "tailwindcss";
 import serve from "rollup-plugin-serve";
 import livereload from "rollup-plugin-livereload";
 import replace from "@rollup/plugin-replace";
-
+import alias from "@rollup/plugin-alias";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const production = !process.env.ROLLUP_WATCH;
+const isTauri = process.env.IS_TAURI === "true";
 
 export default {
 	input: "src/dashboard.ts",
@@ -22,48 +27,38 @@ export default {
 	},
 	plugins: [
 		replace({
-			"process.env.IS_TAURI": JSON.stringify(true),
+			"process.env.IS_TAURI": JSON.stringify(isTauri),
 			preventAssignment: true,
 		}),
-		svelte({
-			compilerOptions: {
-				dev: !production,
-			},
-			preprocess: preprocess({
-				typescript: {
-					tsconfigFile: "./tsconfig.tauri.json",
-				},
-				postcss: {
-					plugins: [tailwindcss, autoprefixer],
-				},
+		isTauri &&
+			alias({
+				entries: [
+					{
+						find: "webextension-polyfill",
+						replacement: path.resolve(__dirname, "src/utils/browserMock.ts"),
+					},
+				],
 			}),
-		}),
-		postcss({
-			extract: "index.css",
-			minimize: production,
-			sourceMap: !production,
-			config: {
-				path: "./postcss.config.cjs",
-			},
+		svelte({
+			preprocess: preprocess({
+				sourceMap: !production,
+				typescript: true,
+			}),
 		}),
 		typescript({
 			sourceMap: !production,
-			tsconfig: "./tsconfig.tauri.json",
+			include: ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
 		}),
 		resolve({
 			browser: true,
-			preferBuiltins: false,
 			dedupe: ["svelte"],
 		}),
 		commonjs(),
-		!production &&
-			serve({
-				contentBase: "dist",
-				port: 5173,
-			}),
+		postcss({
+			plugins: [tailwindcss(), autoprefixer()],
+			extract: "index.css",
+		}),
+		!production && serve({ contentBase: "dist", port: 5173 }),
 		!production && livereload("dist"),
 	],
-	watch: {
-		clearScreen: false,
-	},
 };

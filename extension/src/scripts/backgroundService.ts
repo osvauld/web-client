@@ -1,5 +1,4 @@
-import { browser } from "../utils/browserApi";
-
+import browser from "webextension-polyfill";
 import { fetchCredsByIds } from "../lib/apis/credentials.api";
 import {
 	Credential,

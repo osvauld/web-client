@@ -3513,7 +3513,7 @@ var app = (function () {
 		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 	}
 
-	var browserPolyfill$1 = {exports: {}};
+	var browserPolyfill = {exports: {}};
 
 	(function (module, exports) {
 		(function (global, factory) {
@@ -4767,14 +4767,14 @@ var app = (function () {
 		  }
 		});
 		
-	} (browserPolyfill$1));
+	} (browserPolyfill));
 
-	var browserPolyfillExports = browserPolyfill$1.exports;
-	var browserPolyfill = /*@__PURE__*/getDefaultExportFromCjs(browserPolyfillExports);
+	var browserPolyfillExports = browserPolyfill.exports;
+	var browser = /*@__PURE__*/getDefaultExportFromCjs(browserPolyfillExports);
 
 	const getFromStorage = async (key) => {
 	    try {
-	        const result = await browserPolyfill.storage.local.get(key);
+	        const result = await browser.storage.local.get(key);
 	        return result[key];
 	    }
 	    catch (error) {
@@ -4784,7 +4784,7 @@ var app = (function () {
 	};
 	const setToStorage = async (key, value) => {
 	    try {
-	        await browserPolyfill.storage.local.set({ [key]: value });
+	        await browser.storage.local.set({ [key]: value });
 	    }
 	    catch (error) {
 	        console.error(`Error setting ${key} in storage:`, error);
@@ -4805,7 +4805,7 @@ var app = (function () {
 	    setSalt: (salt) => setToStorage("salt", salt),
 	    clearStorage: async () => {
 	        try {
-	            await browserPolyfill.storage.local.clear();
+	            await browser.storage.local.clear();
 	        }
 	        catch (error) {
 	            console.error("Error clearing storage:", error);
@@ -7321,37 +7321,6 @@ var app = (function () {
 		`
 		};
 	}
-
-	const isTauri = process.env.IS_TAURI;
-	const browser = isTauri
-	    ? {
-	        storage: {
-	            local: {
-	                get: async (key) => {
-	                    // Use Tauri's storage API or alternatives
-	                    console.log("Tauri: Getting", key);
-	                    return {};
-	                },
-	                set: async (data) => {
-	                    // Use Tauri's storage API or alternatives
-	                    console.log("Tauri: Setting", data);
-	                },
-	            },
-	        },
-	        tabs: {
-	            query: async (queryInfo) => {
-	                console.log("test", queryInfo);
-	            },
-	        },
-	        runtime: {
-	            sendMessage: async (message) => {
-	                // Implement Tauri IPC here
-	                console.log("Tauri: Sending message", message);
-	            },
-	        },
-	        // Add other browser APIs as needed
-	    }
-	    : browserPolyfill;
 
 	const setbackground = (type) => {
 	    const typeToClassMap = {

@@ -17,14 +17,15 @@
 		"lint": "eslint \"src/**/*.{js,ts,svelte}\" --fix",
 		"prepare": "husky install",
 		"format": "prettier --write \"src/**/*.{js,ts,svelte}\"",
-		"dev:tauri": "rollup -c rollup.config.tauri.js -w",
-		"build:tauri": "rollup -c rollup.config.tauri.js"
+		"dev:tauri": "cross-env IS_TAURI=true rollup -c rollup.config.tauri.js -w",
+		"build:tauri": "cross-env IS_TAURI=true rollup -c rollup.config.tauri.js"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
 		"@lavamoat/allow-scripts": "^3.0.0",
+		"@rollup/plugin-alias": "^5.1.0",
 		"@rollup/plugin-commonjs": "^25.0.7",
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-replace": "^5.0.7",
@@ -36,6 +37,7 @@
 		"@typescript-eslint/eslint-plugin": "^6.13.2",
 		"autoprefixer": "^10.4.16",
 		"browserify": "^17.0.0",
+		"cross-env": "^7.0.3",
 		"eslint-plugin-svelte": "^2.35.1",
 		"espree": "^9.6.1",
 		"husky": "^8.0.3",

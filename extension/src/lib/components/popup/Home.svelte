@@ -3,7 +3,7 @@
 		fetchAllUserUrls,
 		fetchCredsByIds,
 	} from "../../apis/credentials.api";
-	import { browser } from "../../../utils/browserApi";
+	import browser from "webextension-polyfill";
 	import { onMount } from "svelte";
 	import { Maximize, Lens } from "./icons";
 	import { sendMessage } from "../dashboard/helper";

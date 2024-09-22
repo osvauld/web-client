@@ -22,6 +22,7 @@
 		"public",
 		"dist",
 		"src/scripts/background.ts",
-		"src/scripts/backgroundService.ts"
+		"src/scripts/backgroundService.ts",
+		"src/scripts/content/**/*"
 	]
 }

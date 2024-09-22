@@ -1,5 +1,4 @@
-import { browser } from "../../utils/browserApi";
-
+import browser from "webextension-polyfill";
 export const improvedLoginDetection = (): void => {
 	const loginKeywords = [
 		"log in",

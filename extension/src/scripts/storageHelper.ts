@@ -1,5 +1,4 @@
-import { browser } from "../utils/browserApi";
-
+import browser from "webextension-polyfill";
 const getFromStorage = async (key: string): Promise<string | undefined> => {
 	try {
 		const result = await browser.storage.local.get(key);
