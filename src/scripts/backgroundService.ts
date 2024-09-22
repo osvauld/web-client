@@ -21,14 +21,13 @@ import init, {
 	encrypt_new_credential,
 	decrypt_credentials,
 	decrypt_text,
-	encrypt_fields,
 	get_public_key,
 	sign_and_hash_message,
 	generate_keys_without_password,
 	encrypt_field_value,
 	export_certificate,
 	decrypt_urls,
-	decrypt_fields,
+	create_share_creds_payload,
 	import_certificate,
 } from "./wasm";
 import { StorageService } from "./storageHelper";
@@ -39,9 +38,7 @@ type CredentialsForUsersPayload = {
 	credentials: CredentialFields[];
 };
 
-export const initiateAuthHandler = async (
-	passphrase: string,
-): Promise<string> => {
+export const getPubKeyHandler = async (passphrase: string) => {
 	const certificate = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	const startTime = performance.now();
@@ -50,20 +47,15 @@ export const initiateAuthHandler = async (
 	} else {
 		throw Error("failed to fetch certificate and salt from storage");
 	}
-	const pubKey = await get_public_key();
 	console.log(
 		"Time taken to decrypt and store keys:",
 		performance.now() - startTime,
 	);
-	const challengeResponse = await createChallenge(pubKey);
-	const signedMessage = await sign_message(challengeResponse.data.challenge);
-	const verificationResponse = await initiateAuth(signedMessage, pubKey);
-	const token = verificationResponse.data.token;
-	if (token) {
-		await StorageService.setToken(token);
-		await StorageService.setIsLoggedIn("true");
-	}
-	return token;
+	return get_public_key();
+};
+
+export const signChallengeHandler = async (challenge: string) => {
+	return sign_message(challenge);
 };
 
 export const savePassphraseHandler = async (
@@ -81,14 +73,13 @@ export const savePassphraseHandler = async (
 		passphrase,
 	);
 
-	const signature = await sign_message(challenge);
-	await finalRegistration(
+	const signature = sign_message(challenge);
+	return {
 		username,
 		signature,
-		keyPair.get("public_key"),
-		keyPair.get("public_key"),
-	);
-	return { isSaved: true };
+		deviceKey: keyPair.get("public_key"),
+		encryptionKey: keyPair.get("public_key"),
+	};
 };
 
 export const decryptCredentialFieldsHandler = async (
@@ -113,51 +104,23 @@ export const decryptFieldHandler = async (text: string): Promise<string> => {
 	return decrypted;
 };
 
-export const encryptCredentialsForUser = async (
-	credentials: CredentialFields[],
-	publicKeyStr: string,
-): Promise<CredentialFields[]> => {
-	const encryptedCredsForUser: CredentialFields[] = [];
-	for (const credential of credentials) {
-		const encryptedCred: CredentialFields = {
-			credentialId: credential.credentialId,
-			fields: [],
-		};
-		encryptedCred.credentialId = credential.credentialId;
-		encryptedCred.fields = await encrypt_fields(
-			credential.fields,
-			publicKeyStr,
-		);
-		encryptedCredsForUser.push(encryptedCred);
-	}
-	return encryptedCredsForUser;
-};
-
 export const createShareCredsPayload = async (
 	creds: any,
 	selectedUsers: any,
 ): Promise<CredentialsForUsersPayload[]> => {
-	const decryptedFields = await decrypt_fields(creds);
-	const userData: CredentialsForUsersPayload[] = [];
-	for (const user of selectedUsers) {
-		const userEncryptedFields = await encryptCredentialsForUser(
-			decryptedFields,
-			user.publicKey,
-		);
-		if (user.accessType) {
-			userData.push({
-				userId: user.id,
-				credentials: userEncryptedFields,
-				accessType: user.accessType,
-			});
-		} else {
-			userData.push({
-				userId: user.id,
-				credentials: userEncryptedFields,
-			});
-		}
-	}
-	return userData;
+	const users = selectedUsers.map((user) => {
+		return {
+			id: user.id,
+			publicKey: user.publicKey,
+			accessType: user.accessType,
+		};
+	});
+	const input = {
+		credentials: creds,
+		selectedUsers: users,
+	};
+
+	return await create_share_creds_payload(input);
 };
 
 export const getCertificate = async (passphrase: string) => {
