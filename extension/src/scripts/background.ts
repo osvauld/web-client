@@ -15,7 +15,7 @@ import {
 	encryptEditFields,
 	getDecryptedUrls,
 	getCertificate,
-	getPubKeyHandler,
+	initiateAuthHandler,
 	signChallengeHandler,
 } from "./backgroundService";
 
@@ -59,7 +59,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 		case "getPubKey": {
 			await init();
-			return getPubKeyHandler(request.data.passphrase);
+			return initiateAuthHandler(request.data.passphrase);
 		}
 
 		case "signChallenge": {

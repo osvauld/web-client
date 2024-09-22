@@ -136,17 +136,32 @@ export const handlePvtKeyImport = async (
 	passphrase: string,
 ) => {
 	await init();
-	const response = JSON.parse(recoveryData);
-	console.log("Response =>", response, passphrase);
-	// await browser.storage.local.set({ baseUrl });
+	const { certificate, baseUrl } = JSON.parse(recoveryData);
+
+	await StorageService.setBaseUrl(baseUrl);
+	const new_response = await import_certificate(certificate, passphrase);
+	// its a map with certificate, public_key and salt
+	// return new_response
+
+	await StorageService.setEncryptedCertificate(new_response.get("certificate"));
+
 	// const signPubKey = await get_pub_key(signKey);
 	// const encPublicKey = await get_pub_key(encryptionKey);
 
-	// const challegeResult = await createChallenge(signPubKey);
+	const challegeResult = await createChallenge(new_response.get("public_key"));
+
+	console.log(
+		"new_response =>",
+		new_response,
+		"setEncr =>",
+		setEncr,
+		"challegeResult =>",
+		challegeResult,
+	);
 	// await decrypt_and_store_keys(encryptionKey, signKey, passphrase);
-	// const signedMessage = await sign_message_with_stored_key(
-	// 	challegeResult.data.challenge,
-	// );
+	const signedMessage = await sign_message_with_stored_key(
+		challegeResult.data.challenge,
+	);
 	// const verificationResponse = await initiateAuth(signedMessage, signPubKey);
 	// const token = verificationResponse.data.token;
 	// if (token) {
