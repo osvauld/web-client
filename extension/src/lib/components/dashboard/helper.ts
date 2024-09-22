@@ -1,4 +1,4 @@
-import { browser } from "../../../utils/browserApi";
+import browser from "webextension-polyfill";
 import { SearchedCredential } from "../../dtos/credential.dto";
 import { AddCredentialPayload } from "./dtos";
 import { StorageService } from "../../../scripts/storageHelper";

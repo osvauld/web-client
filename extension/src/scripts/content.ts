@@ -1,7 +1,7 @@
 import { improvedLoginDetection } from "./contents/loginContentScript";
 import { postLoginContent } from "./contents/postLoginContentInjector";
 
-import { browser } from "../utils/browserApi";
+import browser from "webextension-polyfill";
 
 browser.runtime.onMessage.addListener((message) => {
 	if (message.action === "postCredSubmit") {

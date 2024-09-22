@@ -3514,10 +3514,14 @@ var app = (function () {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	var browserPolyfill = {exports: {}};
 =======
 	var browserPolyfill$1 = {exports: {}};
 >>>>>>> 93e33b3 (first version commit)
+=======
+	var browserPolyfill = {exports: {}};
+>>>>>>> e4ce1b7 (working dashboard in webui)
 
 	(function (module, exports) {
 		(function (global, factory) {
@@ -4772,6 +4776,7 @@ var app = (function () {
 		});
 		
 <<<<<<< HEAD
+<<<<<<< HEAD
 	} (browserPolyfill));
 
 	var browserPolyfillExports = browserPolyfill.exports;
@@ -4782,14 +4787,21 @@ var app = (function () {
 	        const result = await browser.storage.local.get(key);
 =======
 	} (browserPolyfill$1));
+=======
+	} (browserPolyfill));
+>>>>>>> e4ce1b7 (working dashboard in webui)
 
-	var browserPolyfillExports = browserPolyfill$1.exports;
-	var browserPolyfill = /*@__PURE__*/getDefaultExportFromCjs(browserPolyfillExports);
+	var browserPolyfillExports = browserPolyfill.exports;
+	var browser = /*@__PURE__*/getDefaultExportFromCjs(browserPolyfillExports);
 
 	const getFromStorage = async (key) => {
 	    try {
+<<<<<<< HEAD
 	        const result = await browserPolyfill.storage.local.get(key);
 >>>>>>> 93e33b3 (first version commit)
+=======
+	        const result = await browser.storage.local.get(key);
+>>>>>>> e4ce1b7 (working dashboard in webui)
 	        return result[key];
 	    }
 	    catch (error) {
@@ -4800,10 +4812,14 @@ var app = (function () {
 	const setToStorage = async (key, value) => {
 	    try {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	        await browser.storage.local.set({ [key]: value });
 =======
 	        await browserPolyfill.storage.local.set({ [key]: value });
 >>>>>>> 93e33b3 (first version commit)
+=======
+	        await browser.storage.local.set({ [key]: value });
+>>>>>>> e4ce1b7 (working dashboard in webui)
 	    }
 	    catch (error) {
 	        console.error(`Error setting ${key} in storage:`, error);
@@ -4825,10 +4841,14 @@ var app = (function () {
 	    clearStorage: async () => {
 	        try {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	            await browser.storage.local.clear();
 =======
 	            await browserPolyfill.storage.local.clear();
 >>>>>>> 93e33b3 (first version commit)
+=======
+	            await browser.storage.local.clear();
+>>>>>>> e4ce1b7 (working dashboard in webui)
 	        }
 	        catch (error) {
 	            console.error("Error clearing storage:", error);
@@ -7346,6 +7366,7 @@ var app = (function () {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	const isTauri = process.env.IS_TAURI;
 	const browser = isTauri
@@ -7379,6 +7400,8 @@ var app = (function () {
 	    : browserPolyfill;
 
 >>>>>>> 93e33b3 (first version commit)
+=======
+>>>>>>> e4ce1b7 (working dashboard in webui)
 	const setbackground = (type) => {
 	    const typeToClassMap = {
 	        reader: "bg-osvauld-readerOrange text-osvauld-readerText",

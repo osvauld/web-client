@@ -1305,10 +1305,13 @@ const StorageService = {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 process.env.IS_TAURI;
 
 >>>>>>> 93e33b3 (first version commit)
+=======
+>>>>>>> e4ce1b7 (working dashboard in webui)
 const getTokenAndBaseUrl = async () => {
     const [token, baseUrl] = await Promise.all([
         StorageService.getToken(),
