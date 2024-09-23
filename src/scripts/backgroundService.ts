@@ -130,8 +130,7 @@ export const getCertificate = async (passphrase: string) => {
 	const salt = await StorageService.getSalt();
 	if (pvtKey && salt) {
 		const response = await export_certificate(passphrase, pvtKey, salt);
-		console.log(response);
-		return response
+		return response;
 		// const new_response = await import_certificate(response, "test");
 		// return new_response
 	}
@@ -149,19 +148,21 @@ export const handlePvtKeyImport = async (
 	// its a map with certificate, public_key and salt
 	// return new_response
 
-	await StorageService.setEncryptedCertificate(new_response.get("certificate"));
+	await StorageService.setCertificate(new_response.get("certificate"));
 	await StorageService.setSalt(new_response.get("salt"));
+
+	return;
 
 	// const signPubKey = await get_pub_key(signKey);
 	// const encPublicKey = await get_pub_key(encryptionKey);
 	// await decrypt_and_store_keys(encryptionKey, signKey, passphrase);
-	const verificationResponse = await initiateAuth(
-		new_response.get("certificate"),
-		new_response.get("public_key"),
-	);
-	const token = verificationResponse.data.token;
+	// const verificationResponse = await initiateAuth(
+	// 	new_response.get("certificate"),
+	// 	new_response.get("public_key"),
+	// );
+	// const token = verificationResponse.data.token;
 
-	console.log("Token", token);
+	// console.log("Token", token);
 	// if (token) {
 	// 	await browser.storage.local.set({ token: token });
 	// 	await browser.storage.local.set({ isLoggedIn: true });

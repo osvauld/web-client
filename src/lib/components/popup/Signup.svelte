@@ -21,15 +21,6 @@
 		importPvtKeyFlag = e.detail;
 	};
 
-	const importPvtKey = async (e: any) => {
-		const { recoveryData, passphrase } = e.detail;
-		await sendMessage("importPvtKey", {
-			passphrase,
-			recoveryData,
-		});
-		handleSignedUp();
-	};
-
 	const handleSignedUp = () => {
 		dispatch("signedUp");
 	};
@@ -39,7 +30,7 @@
 	class="h-full w-[90%] flex justify-center items-center text-base font-bold text-white"
 >
 	{#if importPvtKeyFlag}
-		<ImportPvtKey on:submit="{(e) => importPvtKey(e)}" />
+		<ImportPvtKey on:login="{handleSignedUp}" />
 	{:else if isTempLoginVerified}
 		<SetPassPhrase {challenge} {username} on:signedUp="{handleSignedUp}" />
 	{:else}
