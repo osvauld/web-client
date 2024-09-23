@@ -144,26 +144,18 @@ export const handlePvtKeyImport = async (
 	// return new_response
 
 	await StorageService.setEncryptedCertificate(new_response.get("certificate"));
+	await StorageService.setSalt(new_response.get("salt"));
 
 	// const signPubKey = await get_pub_key(signKey);
 	// const encPublicKey = await get_pub_key(encryptionKey);
-
-	const challegeResult = await createChallenge(new_response.get("public_key"));
-
-	console.log(
-		"new_response =>",
-		new_response,
-		"setEncr =>",
-		setEncr,
-		"challegeResult =>",
-		challegeResult,
-	);
 	// await decrypt_and_store_keys(encryptionKey, signKey, passphrase);
-	const signedMessage = await sign_message_with_stored_key(
-		challegeResult.data.challenge,
+	const verificationResponse = await initiateAuth(
+		new_response.get("certificate"),
+		new_response.get("public_key"),
 	);
-	// const verificationResponse = await initiateAuth(signedMessage, signPubKey);
-	// const token = verificationResponse.data.token;
+	const token = verificationResponse.data.token;
+
+	console.log("Token", token);
 	// if (token) {
 	// 	await browser.storage.local.set({ token: token });
 	// 	await browser.storage.local.set({ isLoggedIn: true });
