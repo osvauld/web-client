@@ -51,6 +51,7 @@ export default {
 		}),
 		resolve({
 			browser: true,
+			preferBuiltins: false,
 			dedupe: ["svelte"],
 		}),
 		commonjs(),

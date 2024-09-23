@@ -2,5 +2,5 @@
 members = [
     "crypto_utils",
     "wasm",
-    "src-tauri"
+    "osvauld-desktop/src-tauri"
 ]
