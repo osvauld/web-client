@@ -6,6 +6,9 @@
 	import { ClosedEye } from "./icons";
 	import { createEventDispatcher } from "svelte";
 	const dispatch = createEventDispatcher();
+	import { sendMessage } from "../dashboard/helper";
+	import { StorageService } from "../../../scripts/storageHelper";
+	import { createChallenge, initiateAuth } from "../dashboard/apis";
 
 	let recoveryData = "";
 	let passphrase = "";
@@ -39,9 +42,27 @@
 		reenteredPassPhrase = event.target.value;
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		isLoaderActive = true;
-		dispatch("submit", { recoveryData, passphrase });
+		await sendMessage("importPvtKey", {
+			passphrase,
+			recoveryData,
+		});
+		const pubkey = await sendMessage("getPubKey", { passphrase });
+		const challengeResponse = await createChallenge(pubkey);
+		const signature = await sendMessage("signChallenge", {
+			challenge: challengeResponse.data.challenge,
+		});
+		const verificationResponse = await initiateAuth(signature, pubkey);
+		const token = verificationResponse.data.token;
+		if (token) {
+			await StorageService.setToken(token);
+			await StorageService.setIsLoggedIn("true");
+			dispatch("login", true);
+		} else {
+			// errorMessage = true;
+		}
+		// dispatch("submit", { recoveryData, passphrase });
 	};
 </script>
 
