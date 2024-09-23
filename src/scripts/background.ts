@@ -17,6 +17,7 @@ import {
 	getCertificate,
 	initiateAuthHandler,
 	signChallengeHandler,
+	changePassphrase,
 } from "./backgroundService";
 
 import { Folder } from "../lib/dtos/folder.dto";
@@ -197,6 +198,10 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 		case "exportCertificate": {
 			return getCertificate(request.data.passphrase);
+		}
+
+		case "changePassphrase": {
+			return changePassphrase(request.data);
 		}
 
 		default:

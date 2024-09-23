@@ -29,6 +29,7 @@ import init, {
 	decrypt_urls,
 	create_share_creds_payload,
 	import_certificate,
+	change_password,
 } from "./wasm";
 import { StorageService } from "./storageHelper";
 
@@ -130,6 +131,22 @@ export const getCertificate = async (passphrase: string) => {
 	const salt = await StorageService.getSalt();
 	if (pvtKey && salt) {
 		const response = await export_certificate(passphrase, pvtKey, salt);
+		return response;
+		// const new_response = await import_certificate(response, "test");
+		// return new_response
+	}
+};
+
+export const changePassphrase = async ({ password, passphrase }) => {
+	const pvtKey = await StorageService.getCertificate();
+	const salt = await StorageService.getSalt();
+	if (pvtKey && salt) {
+		const response = await change_password({
+			enc_pvt_key: pvtKey,
+			old_password: password,
+			new_password: passphrase,
+			salt,
+		});
 		return response;
 		// const new_response = await import_certificate(response, "test");
 		// return new_response

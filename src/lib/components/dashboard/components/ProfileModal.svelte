@@ -1,11 +1,10 @@
 <script lang="ts">
-	import browser from "webextension-polyfill";
-	import { clickOutside, getTokenAndBaseUrl, sendMessage } from "../helper";
+	import { clickOutside } from "../helper";
 	import { onMount, onDestroy } from "svelte";
-	import { CopyIcon, Tick } from "../icons";
+	import { CopyIcon, Key, Tick } from "../icons";
 	import { createEventDispatcher } from "svelte";
 	import { scale } from "svelte/transition";
-	import { promptPassword } from "../store";
+	import { promptPassword, changePassword } from "../store";
 
 	const dispatch = createEventDispatcher();
 
@@ -14,6 +13,7 @@
 	export let username: string;
 	let isUsernameHovered = false;
 	let isRecoveryHovered = false;
+	let isChangePasswordHovered = false;
 	let copied = false;
 
 	function closeModal() {
@@ -46,25 +46,13 @@
 
 	const passwordprompter = async () => {
 		promptPassword.set(true);
+		closeModal();
 	};
 
-	const initiateRecovery = async () => {
-		const { baseUrl } = await getTokenAndBaseUrl();
-		// Here a modal needs to be initiated to confirm master password
-		// Once submit, we can call this function then instead of directly calling it
-		const certificate = await sendMessage("exportCertificate", {
-			passphrase: "test",
-		});
-
-		// Now the certificate string is here
-		const encryptionPvtKeyObj =
-			await browser.storage.local.get("encryptionPvtKey");
-		const signPvtKeyObj = await browser.storage.local.get("signPvtKey");
-		const encryptionKey = encryptionPvtKeyObj.encryptionPvtKey;
-		const signKey = signPvtKeyObj.signPvtKey;
-		const exporter = JSON.stringify({ encryptionKey, signKey, baseUrl });
-		await navigator.clipboard.writeText(exporter);
-		delayFunction();
+	const initatePasswordChange = () => {
+		promptPassword.set(true);
+		changePassword.set(true);
+		closeModal();
 	};
 
 	onMount(() => {
@@ -108,16 +96,27 @@
 			on:click|preventDefault="{passwordprompter}"
 		>
 			<div class="w-6 h-6 flex items-center justify-center">
-				{#if copied && isRecoveryHovered}
-					<span in:scale>
-						<Tick />
-					</span>
-				{:else}
-					<CopyIcon color="{isRecoveryHovered ? '#FF6A6A' : '#85889C'}" />
-				{/if}
+				<CopyIcon color="{isRecoveryHovered ? '#FF6A6A' : '#85889C'}" />
 			</div>
 			<div class="font-inter text-base whitespace-nowrap">
 				Copy recovery data
+			</div>
+		</button>
+
+		<button
+			class="flex items-center p-2 gap-2 w-full h-12 text-osvauld-fieldText hover:text-osvauld-dangerRed hover:bg-osvauld-modalFieldActive rounded-lg"
+			on:mouseenter="{() => (isChangePasswordHovered = true)}"
+			on:mouseleave="{() => (isChangePasswordHovered = false)}"
+			on:click|preventDefault="{initatePasswordChange}"
+		>
+			<div class="w-6 h-6 flex items-center justify-center">
+				<Key
+					color="{isChangePasswordHovered ? '#FF6A6A' : '#85889C'}"
+					size="{24}"
+				/>
+			</div>
+			<div class="font-inter text-base whitespace-nowrap">
+				Change passphrase
 			</div>
 		</button>
 	</div>
