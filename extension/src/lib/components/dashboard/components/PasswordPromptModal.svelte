@@ -4,13 +4,16 @@
 	import { getTokenAndBaseUrl } from "../helper";
 
 	import { fly } from "svelte/transition";
-	import { promptPassword } from "../store";
+	import { promptPassword, changePassword } from "../store";
 	import { ClosePanel } from "../icons";
 	import SuccessView from "../../basic/SuccessView.svelte";
+	import NewPassword from "../../basic/NewPassword.svelte";
 
 	let password: string = "";
 	let success: boolean = false;
 	let errorView: boolean = false;
+	let newPasswordView: boolean = false;
+
 	const closeModal = () => {
 		promptPassword.set(false);
 	};
@@ -19,7 +22,20 @@
 		node.focus();
 	};
 
-	const handleSubmit = async () => {
+	const newPasswordViewHandler = async () => {
+		newPasswordView = true;
+	};
+
+	const handlePasswordChangeSubmit = async (e) => {
+		const response = await sendMessage("changePassphrase", {
+			password,
+			passphrase: e.detail.passphrase,
+		});
+		console.log("change password response =>", response);
+		// Here if wrong password comes, handle
+	};
+
+	const handleRecoveryDataSubmit = async () => {
 		const { baseUrl } = await getTokenAndBaseUrl();
 		const certificate = await sendMessage("exportCertificate", {
 			passphrase: password,
@@ -68,17 +84,21 @@
 			<SuccessView status="{false}" recovery="{true}" />
 		{:else if success}
 			<SuccessView status="{true}" recovery="{true}" />
+		{:else if newPasswordView}
+			<NewPassword on:submit|preventDefault="{handlePasswordChangeSubmit}" />
 		{:else}
 			<form
 				class="flex flex-col h-full"
-				on:submit|preventDefault="{handleSubmit}"
+				on:submit|preventDefault="{$changePassword
+					? newPasswordViewHandler
+					: handleRecoveryDataSubmit}"
 			>
 				<div class="flex justify-between items-center w-full">
 					<span
 						id="export-recovery-data"
 						class="text-[21px] font-medium text-osvauld-quarzowhite"
 					>
-						Confirm Master Password
+						Confirm Passphrase
 					</span>
 					<button
 						class="cursor-pointer p-2"

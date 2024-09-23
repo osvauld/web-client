@@ -24,6 +24,7 @@ export let selectedSection = writable<SelectedSection>("SharedFolders");
 export let showAddCliDrawer = writable(false);
 export let showAddEnvDrawer = writable(false);
 export let promptPassword = writable(false);
+export let changePassword = writable(false);
 
 const storedPage: any = LocalStorageService.get("selectedPage");
 type MoreActionsTypes = "Folder" | "Group" | "Credential";
