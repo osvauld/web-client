@@ -5,7 +5,6 @@ use std::path::PathBuf;
 use tauri::State;
 use tauri::{AppHandle, Wry};
 use tauri_plugin_store::StoreCollection;
-
 pub fn is_signed_up(
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
