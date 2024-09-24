@@ -1,9 +1,4 @@
 import browser from "webextension-polyfill";
-import {
-	createChallenge,
-	finalRegistration,
-	initiateAuth,
-} from "../lib/apis/auth.api";
 import { fetchCredsByIds } from "../lib/apis/credentials.api";
 import {
 	Credential,
@@ -130,10 +125,8 @@ export const getCertificate = async (passphrase: string) => {
 	const pvtKey = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	if (pvtKey && salt) {
-		const response = await export_certificate(passphrase, pvtKey, salt);
+		const response = export_certificate(passphrase, pvtKey, salt);
 		return response;
-		// const new_response = await import_certificate(response, "test");
-		// return new_response
 	}
 };
 
@@ -167,36 +160,11 @@ export const handlePvtKeyImport = async (
 
 	await StorageService.setBaseUrl(baseUrl);
 	const new_response = await import_certificate(certificate, passphrase);
-	// its a map with certificate, public_key and salt
-	// return new_response
 
 	await StorageService.setCertificate(new_response.get("certificate"));
 	await StorageService.setSalt(new_response.get("salt"));
 
 	return;
-
-	// const signPubKey = await get_pub_key(signKey);
-	// const encPublicKey = await get_pub_key(encryptionKey);
-	// await decrypt_and_store_keys(encryptionKey, signKey, passphrase);
-	// const verificationResponse = await initiateAuth(
-	// 	new_response.get("certificate"),
-	// 	new_response.get("public_key"),
-	// );
-	// const token = verificationResponse.data.token;
-
-	// console.log("Token", token);
-	// if (token) {
-	// 	await browser.storage.local.set({ token: token });
-	// 	await browser.storage.local.set({ isLoggedIn: true });
-	// }
-	// await browser.storage.local.set({
-	// 	encryptionPvtKey: encryptionKey,
-	// 	signPvtKey: signKey,
-	// 	encPublicKey: encPublicKey,
-	// 	signPublicKey: signPubKey,
-	// });
-
-	// return token;
 };
 
 export const credentialSubmitHandler = async (
