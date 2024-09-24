@@ -51,13 +51,13 @@ const tauriBrowser = {
 	},
 	runtime: {
 		sendMessage: async ({ action, data }) => {
-			console.log("Tauri: Sending message", action);
-			// Implement Tauri IPC here
+			// console.log("Tauri: Sending message", action);
 			try {
 				const response = await invoke("handle_crypto_action", {
 					action,
 					data
 				});
+				console.log(response, action)
 				return response;
 			} catch (error) {
 				console.error("Error invoking Tauri command:", error);

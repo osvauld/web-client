@@ -56,7 +56,7 @@ export const addCredential = async (payload: AddCredentialPayload) => {
 	headers.append("Authorization", `Bearer ${token}`);
 	headers.append("Content-Type", "application/json");
 
-	const response = await fetch(`${baseUrl}/credential/`, {
+	const response = await fetch(`${baseUrl}/credential`, {
 		method: "POST",
 		headers,
 		body: JSON.stringify(transformedPayload),

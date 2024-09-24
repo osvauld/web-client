@@ -1,9 +1,11 @@
 use crate::types::CryptoResponse;
+use crypto_utils::types::Credential;
 use crypto_utils::CryptoUtils;
 use std::path::PathBuf;
 use tauri::State;
 use tauri::{AppHandle, Wry};
 use tauri_plugin_store::StoreCollection;
+
 pub fn is_signed_up(
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
@@ -88,4 +90,19 @@ pub fn get_public_key(
         .map_err(|e| format!("Failed to get public key: {}", e))?;
 
     Ok((public_key, crypto_utils))
+}
+
+pub fn sign_hashed_message(crypto: &mut CryptoUtils, message: &str) -> Result<String, String> {
+    crypto
+        .sign_and_hash_message(message)
+        .map_err(|e| format!("Failed to hash and sign message: {}", e))
+}
+
+pub fn decrypt_credentials(
+    crypto: &mut CryptoUtils,
+    credentials: Vec<Credential>,
+) -> Result<Vec<Credential>, String> {
+    crypto
+        .decrypt_credentials(credentials)
+        .map_err(|e| format!("Failed to decrypt credentials: {}", e))
 }

@@ -1,5 +1,11 @@
-use crate::service::{get_public_key, is_signed_up, save_passphrase};
-use crate::types::{CryptoResponse, LoadPvtKeyInput, SavePassphraseInput, SignChallengeInput};
+use crate::service::{
+    decrypt_credentials, get_public_key, is_signed_up, save_passphrase, sign_hashed_message,
+};
+use crate::types::{
+    AddCredentialInput, CryptoResponse, DecryptMetaInput, HashAndSignInput, LoadPvtKeyInput,
+    SavePassphraseInput, SignChallengeInput,
+};
+use crypto_utils::types::Credential;
 use crypto_utils::CryptoUtils;
 use log::{error, info};
 use once_cell::sync::Lazy;
@@ -68,7 +74,32 @@ pub async fn handle_crypto_action(
 
             Ok(CryptoResponse::Signature(signature))
         }
-        "decryptMeta" => Ok(CryptoResponse::CheckPvtKeyLoaded(true)),
+        "addCredential" => {
+            let input: AddCredentialInput = serde_json::from_value(data)
+                .map_err(|e| format!("Invalid addCredential input: {}", e))?;
+            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+            let encrypted_fields = crypto
+                .encrypt_fields_for_multiple_keys(input.users, input.add_credential_fields)
+                .unwrap();
+            Ok(CryptoResponse::EncryptedCredential(encrypted_fields))
+        }
+
+        "hashAndSign" => {
+            let input: HashAndSignInput = serde_json::from_value(data)
+                .map_err(|e| format!("Invalid hashAndSign input: {}", e))?;
+            let mut crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+            let signature = sign_hashed_message(&mut crypto, &input.message)
+                .map_err(|e| format!("Hash and sign error: {}", e))?;
+            Ok(CryptoResponse::SignatureResponse { signature })
+        }
+        "decryptMeta" => {
+            let credentials: Vec<Credential> = serde_json::from_value(data)
+                .map_err(|e| format!("Invalid decryptMeta input: {}", e))?;
+            let mut crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+            let decrypted_credentials = decrypt_credentials(&mut crypto, credentials)
+                .map_err(|e| format!("Decryption error: {}", e))?;
+            Ok(CryptoResponse::DecryptedCredentials(decrypted_credentials))
+        }
         // Add other action handlers here as needed
         _ => Err(format!("Unknown action: {}", action)),
     }
