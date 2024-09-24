@@ -10,11 +10,12 @@
 		initiateAuth,
 	} from "../dashboard/apis";
 	import { StorageService } from "../../../scripts/storageHelper";
+	import PasswordStrengthValidator from "../basic/PasswordStrengthValidator.svelte";
+	const dispatch = createEventDispatcher();
 
 	export let challenge: string;
 	export let username: string;
 
-	const dispatch = createEventDispatcher();
 	let passphrase = "";
 	let confirmPassphrase = "";
 	let showFirstPassword = false;
@@ -22,9 +23,12 @@
 	let showPassphraseMismatchError = false;
 	let passphraseEmpty = false;
 	let isLoaderActive = false;
+	let isPassphraseAcceptable = false;
 
-	$: type1 = showFirstPassword ? "text" : "password";
-	$: type2 = showSecondPassword ? "text" : "password";
+	$: firstInputType = showFirstPassword ? "text" : "password";
+	$: secondInputType = showSecondPassword ? "text" : "password";
+	$: submitDisabled =
+		passphrase.length === 0 || passphrase !== confirmPassphrase;
 
 	const handlePassPhraseSubmit = async () => {
 		if (passphrase.length === 0) {
@@ -90,11 +94,11 @@
 	<label for="passphrase" class="font-normal mt-6">Enter Passphrase</label>
 
 	<div
-		class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack"
+		class="w-[300px] flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack"
 	>
 		<input
 			class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 w-full"
-			type="{type1}"
+			type="{firstInputType}"
 			autocomplete="off"
 			id="password"
 			on:input="{(e) => onInput(e, 'passphrase')}"
@@ -112,14 +116,15 @@
 			{/if}
 		</button>
 	</div>
+	<PasswordStrengthValidator {passphrase} bind:isPassphraseAcceptable />
 	<label for="passphrase" class="font-normal mt-6">Confirm Passphrase</label>
 
 	<div
-		class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack"
+		class="w-[300px] flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack"
 	>
 		<input
 			class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 w-full"
-			type="{type2}"
+			type="{secondInputType}"
 			autocomplete="off"
 			id="password"
 			on:input="{(e) => onInput(e, 'confirmPassphrase')}"
@@ -153,8 +158,11 @@
 	{/if}
 
 	<button
-		class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
+		class="{submitDisabled
+			? 'border border-osvauld-iconblack text-osvauld-sheffieldgrey'
+			: 'bg-osvauld-carolinablue text-osvauld-ninjablack'} py-2 px-10 mt-8 rounded-lg font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
 		type="submit"
+		disabled="{submitDisabled}"
 	>
 		{#if isLoaderActive}
 			<Loader size="{24}" color="#1F242A" duration="{1}" />

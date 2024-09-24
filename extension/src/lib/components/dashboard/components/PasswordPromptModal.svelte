@@ -28,12 +28,12 @@
 	};
 
 	const handlePasswordChangeSubmit = async (e: CustomEvent) => {
-		newPasswordView = false;
 		const passphrase = e.detail.passphrase;
 		const certificate = await sendMessage("changePassphrase", {
 			password,
 			passphrase,
 		});
+		newPasswordView = false;
 		if (certificate) {
 			success = true;
 		} else {
@@ -153,7 +153,7 @@
 					</div>
 				</div>
 				<button
-					class="border border-osvauld-iconblack w-[10rem] py-3 px-6 my-4 mx-auto text-base font-medium text-osvauld-textActive rounded-md hover:bg-osvauld-carolinablue hover:border-osvauld-carolinablue hover:text-osvauld-frameblack cursor-pointer"
+					class="border w-[10rem] py-3 px-6 my-4 mx-auto text-base font-medium rounded-md bg-osvauld-carolinablue border-osvauld-carolinablue text-osvauld-frameblack cursor-pointer"
 					type="submit"
 					disabled="{!password}"
 				>
