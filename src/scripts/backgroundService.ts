@@ -111,7 +111,7 @@ export const createShareCredsPayload = async (
 	creds: any,
 	selectedUsers: any,
 ): Promise<CredentialsForUsersPayload[]> => {
-	const users = selectedUsers.map((user) => {
+	const users = selectedUsers.map((user: any) => {
 		return {
 			id: user.id,
 			publicKey: user.publicKey,
@@ -137,25 +137,24 @@ export const getCertificate = async (passphrase: string) => {
 	}
 };
 
-export const changePassphrase = async ({ password, passphrase }) => {
-	console.log("Inside change passphrase service", password, passphrase);
+export const changePassphrase = async ({
+	password,
+	passphrase,
+}: {
+	password: string;
+	passphrase: string;
+}) => {
 	const pvtKey = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	if (pvtKey && salt) {
-		const certificate = await change_password({
+		const certificate = change_password({
 			enc_pvt_key: pvtKey,
 			old_password: password,
 			new_password: passphrase,
 			salt,
 		});
-		// const new_response = await import_certificate(certificate, passphrase);
 		await StorageService.setCertificate(certificate);
-		// await StorageService.setSalt(new_response.get("salt"));
-		console.log("crtificate after change pass =>", certificate);
-
 		return certificate;
-		// const new_response = await import_certificate(response, "test");
-		// return new_response
 	}
 };
 

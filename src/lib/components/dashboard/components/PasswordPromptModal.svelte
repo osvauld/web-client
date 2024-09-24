@@ -27,7 +27,7 @@
 		newPasswordView = true;
 	};
 
-	const handlePasswordChangeSubmit = async (e) => {
+	const handlePasswordChangeSubmit = async (e: CustomEvent) => {
 		newPasswordView = false;
 		const passphrase = e.detail.passphrase;
 		const certificate = await sendMessage("changePassphrase", {
@@ -42,7 +42,6 @@
 		setTimeout(() => {
 			closeModal();
 		}, 1500);
-		// Here if wrong password comes, handle
 	};
 
 	const handleRecoveryDataSubmit = async () => {
@@ -88,7 +87,7 @@
 	role="presentation"
 >
 	<div
-		class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[28rem] h-[24rem] flex justify-center items-center"
+		class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[28rem] h-[24rem] flex flex-col justify-center items-center"
 		on:click|stopPropagation
 		role="presentation"
 		aria-labelledby="export-recovery-data"

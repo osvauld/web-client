@@ -2,7 +2,6 @@
 	import TempLogin from "./TempLogin.svelte";
 	import SetPassPhrase from "./SetPassPhrase.svelte";
 	import ImportPvtKey from "./ImportPvtKey.svelte";
-	import { sendMessage } from "../dashboard/helper";
 	import { createEventDispatcher } from "svelte";
 
 	let isTempLoginVerified = false;

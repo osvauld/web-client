@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import { ModifiedEvent } from "../../lib/dtos/credential.dto";
+import { ModifiedEvent } from "../../lib/dtos/event.dto";
 
 interface MessageData {
 	action: string;
