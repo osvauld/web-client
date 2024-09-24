@@ -20,10 +20,12 @@ export const setFolderStore = async () => {
 	const selectedFolderValue = get(selectedFolder);
 	if (!selectedFolderValue) {
 		const storedFolder: any = LocalStorageService.get("selectedFolder", true);
+		console.log("storedFolder", storedFolder);
 		if (storedFolder && storedFolder != "undefined") {
 			for (const folder of sortedData) {
 				if (folder.id === storedFolder.id) {
 					selectedFolder.set(folder);
+					console.log(selectedFolder)
 					if (folder.type === "private") {
 						selectedSection.set("PrivateFolders");
 					}
@@ -32,6 +34,7 @@ export const setFolderStore = async () => {
 			}
 		}
 	}
+	console.log(sortedData);
 	folderStore.set(sortedData);
 };
 

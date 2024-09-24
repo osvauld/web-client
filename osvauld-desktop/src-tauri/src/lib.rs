@@ -1,13 +1,15 @@
+use std::path::PathBuf;
 use tauri::Manager;
 use tauri::Wry;
 use tauri_plugin_store::StoreCollection;
-use std::path::PathBuf;
-
 pub mod handler;
-
+mod service;
+mod types;
+use tauri_plugin_log::{Target, TargetKind};
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let handle = app.handle();
@@ -21,7 +23,12 @@ pub fn run() {
                 store.save()
             })
             .expect("failed to initialize store");
-
+            #[cfg(debug_assertions)] // only include this code on debug builds
+            {
+                let window = app.get_webview_window("main").unwrap();
+                window.open_devtools();
+                window.close_devtools();
+            }
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![handler::handle_crypto_action])

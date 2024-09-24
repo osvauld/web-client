@@ -1,11 +1,11 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { invoke } from "@tauri-apps/api/core";
-const store = new Store(".my_app_storage.dat");
+const store = new Store(".my_app_store.bin");
 const tauriBrowser = {
 	storage: {
 		local: {
 			get: async (key) => {
-				console.log("Tauri: Getting", key);
+				// console.log("Tauri: Getting", key);
 				try {
 					const value = await store.get(key);
 					if (
@@ -24,7 +24,7 @@ const tauriBrowser = {
 				}
 			},
 			set: async (data) => {
-				console.log("Tauri: Setting", data);
+				// console.log("Tauri: Setting", data);
 				try {
 					const key = Object.keys(data)[0];
 					const value = data[key];
@@ -56,9 +56,8 @@ const tauriBrowser = {
 			try {
 				const response = await invoke("handle_crypto_action", {
 					action,
-					data: data||null,
+					data
 				});
-				console.log(response);
 				return response;
 			} catch (error) {
 				console.error("Error invoking Tauri command:", error);

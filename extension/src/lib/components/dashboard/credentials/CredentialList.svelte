@@ -40,11 +40,20 @@
 	let importHovered = false;
 	let importSelected = false;
 
-	$: isShareCredActive = checkedCards.length !== 0;
+	let sortedCredentials: any[] = [];
 
-	$: sortedCredentials = $credentialStore.sort(
-		(a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-	);
+	$: {
+		if (Array.isArray($credentialStore)) {
+			sortedCredentials = [...$credentialStore].sort(
+				(a, b) =>
+					new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+			);
+		} else {
+			console.warn("credentialStore is not an array:", $credentialStore);
+			sortedCredentials = [];
+		}
+	}
+	$: isShareCredActive = checkedCards.length !== 0;
 
 	$: minOneCredentialManager = sortedCredentials.some(
 		(credential) => credential.accessType === "manager",
@@ -155,14 +164,12 @@
 {#if $showCredentialDetailsDrawer}
 	<button
 		class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-		on:click="{withdrawDetailDrawer}"
-	>
+		on:click="{withdrawDetailDrawer}">
 		<button class="p-6 rounded bg-transparent" on:click|stopPropagation>
 			<CredentialDetails
 				credential="{selectedCard}"
 				{sensitiveFields}
-				on:close="{withdrawDetailDrawer}"
-			/>
+				on:close="{withdrawDetailDrawer}" />
 		</button>
 	</button>
 {/if}
@@ -172,8 +179,7 @@
 		<div class="flex justify-between items-center px-4 py-2">
 			<div class="max-w-[50%] min-w-[30%] flex items-center">
 				<h1
-					class="text-3xl p-4 font-normal whitespace-nowrap text-osvauld-sideListTextActive"
-				>
+					class="text-3xl p-4 font-normal whitespace-nowrap text-osvauld-sideListTextActive">
 					{$selectedFolder.name}
 				</h1>
 				<!-- TODO: update to share credentials in the same api -->
@@ -182,12 +188,10 @@
 						class="py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2 relative"
 						on:click="{folderShareManager}"
 						on:mouseenter="{() => (isShareHovered = true)}"
-						on:mouseleave="{() => (isShareHovered = false)}"
-					>
+						on:mouseleave="{() => (isShareHovered = false)}">
 						<FolderShare
 							color="{isShareHovered ? '#F2F2F0' : '#85889C'}"
-							size="{28}"
-						/>
+							size="{28}" />
 						{#if isShareHovered}
 							<div class="tooltip">Share Folder</div>
 						{/if}
@@ -198,27 +202,23 @@
 						class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg flex justify-between items-center whitespace-nowrap {isShareCredActive
 							? 'text-osvauld-frameblack bg-osvauld-carolinablue'
 							: 'text-osvauld-textActive bg-osvauld-frameblack'}"
-						on:click="{credentialShareManager}"
-					>
+						on:click="{credentialShareManager}">
 						<span class="mr-1 text-sm">Share Credentials</span>
 						<Share
 							color="{isShareCredActive ? '#0D0E13' : '#A3A4B5'}"
-							size="{16}"
-						/>
+							size="{16}" />
 					</button>
 				{/if}
 				{#if areCardsSelected}
 					<span
 						class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"
 						in:fly
-						out:fly>Credentials are selected</span
-					>
+						out:fly>Credentials are selected</span>
 				{:else if noCardsSelected}
 					<span
 						class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"
 						in:fly
-						out:fly>No cards are selected</span
-					>
+						out:fly>No cards are selected</span>
 				{/if}
 			</div>
 			<div class="w-[40%] flex justify-end items-center">
@@ -232,27 +232,23 @@
 							: 'visible'}"
 						on:click="{handleAccessListSelection}"
 						on:mouseenter="{() => (accesslistHovered = true)}"
-						on:mouseleave="{() => (accesslistHovered = false)}"
-					>
+						on:mouseleave="{() => (accesslistHovered = false)}">
 						<EyeScan
 							color="{$accessListSelected
 								? '#89B4FA'
 								: accesslistHovered
 									? '#F2F2F0'
-									: '#85889C'}"
-						/>
+									: '#85889C'}" />
 						<span
 							class="ml-2 whitespace-nowrap {$accessListSelected
 								? 'text-osvauld-carolinablue'
 								: accesslistHovered
 									? 'text-osvauld-sideListTextActive'
-									: 'text-osvauld-fieldText'} ">Access List</span
-						>
+									: 'text-osvauld-fieldText'} ">Access List</span>
 					</button>
 				{/if}
 				<button
-					class="border border-osvauld-iconblack text-osvauld-textPassive hidden justify-center items-center py-1.5 px-4 text-sm rounded-md ml-4"
-				>
+					class="border border-osvauld-iconblack text-osvauld-textPassive hidden justify-center items-center py-1.5 px-4 text-sm rounded-md ml-4">
 					<span class="mr-2 pl-2">Latest</span>
 					<DownArrow type="{'common'}" />
 				</button>
@@ -263,8 +259,7 @@
 						: 'hidden'}"
 					on:mouseenter="{() => (addCredentialHovered = true)}"
 					on:mouseleave="{() => (addCredentialHovered = false)}"
-					on:click="{addCredentialManager}"
-				>
+					on:click="{addCredentialManager}">
 					<span class="mr-2">Add New Credential</span>
 					<Add color="{addCredentialHovered ? '#0D0E13' : '#A3A4B5'}" />
 				</button>
@@ -278,54 +273,46 @@
 	{#if showCreateCredentialModal}
 		<button
 			class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-			on:click="{() => !showCreateCredentialModal}"
-		>
+			on:click="{() => !showCreateCredentialModal}">
 			<button class="p-6 rounded bg-transparent" on:click|stopPropagation>
 				<CredentialEditor
-					on:close="{() => (showCreateCredentialModal = false)}"
-				/>
+					on:close="{() => (showCreateCredentialModal = false)}" />
 			</button>
 		</button>
 	{/if}
 	{#if $showFolderShareDrawer}
 		<button
 			class="fixed inset-0 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50"
-			on:click="{() => showFolderShareDrawer.set(false)}"
-		>
+			on:click="{() => showFolderShareDrawer.set(false)}">
 			<button class="p-6 rounded shadow-lg" on:click|stopPropagation>
 				<ShareFolderModal
 					{users}
-					on:close="{() => showFolderShareDrawer.set(false)}"
-				/>
+					on:close="{() => showFolderShareDrawer.set(false)}" />
 			</button>
 		</button>
 	{/if}
 	{#if $showCredentialShareDrawer}
 		<button
 			class="fixed inset-0 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50"
-			on:click="{() => showCredentialShareDrawer.set(false)}"
-		>
+			on:click="{() => showCredentialShareDrawer.set(false)}">
 			<button class="p-6 rounded shadow-lg" on:click|stopPropagation>
 				<ShareCredentialModal
 					{users}
 					credentials="{checkedCards}"
 					groups="{allGroups}"
-					on:close="{() => showCredentialShareDrawer.set(false)}"
-				/>
+					on:close="{() => showCredentialShareDrawer.set(false)}" />
 			</button>
 		</button>
 	{/if}
 	{#if importSelected}
 		<div
-			class="fixed inset-0 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50"
-		>
+			class="fixed inset-0 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50">
 			<ImportModal on:close="{closeImportModal}" />
 		</div>
 	{/if}
 	{#if sortedCredentials.length !== 0}
 		<div
-			class="flex flex-wrap pt-3 pb-7 px-7 gap-3.5 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border"
-		>
+			class="flex flex-wrap pt-3 pb-7 px-7 gap-3.5 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border">
 			{#each sortedCredentials as credential}
 				<CredentialCard
 					{privateFolder}
@@ -335,8 +322,7 @@
 					)}"
 					on:check="{(e) => handleCheck(e.detail, credential)}"
 					on:select="{(e) => onSelectingCard(e.detail, credential)}"
-					on:action="{(e) => handleActionModalCall(e.detail, credential)}"
-				/>
+					on:action="{(e) => handleActionModalCall(e.detail, credential)}" />
 			{/each}
 		</div>
 		{#if $selectedFolder && $selectedFolder.accessType === "manager"}
@@ -345,8 +331,7 @@
 				type="button"
 				on:mouseenter="{() => (importHovered = true)}"
 				on:mouseleave="{() => (importHovered = false)}"
-				on:click="{() => (importSelected = true)}"
-			>
+				on:click="{() => (importSelected = true)}">
 				<Import color="{importHovered ? '#0D0E13' : '#6E7681'}" />
 				<span class="ml-2">Import</span>
 			</button>
