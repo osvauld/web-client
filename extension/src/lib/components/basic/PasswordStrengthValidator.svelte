@@ -25,7 +25,7 @@
 			met:
 				condition.key === "length"
 					? $passphrase.length >= 8
-					: condition.regex.test($passphrase),
+					: condition.regex?.test($passphrase) ?? false,
 		})),
 	);
 
