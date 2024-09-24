@@ -138,16 +138,22 @@ export const getCertificate = async (passphrase: string) => {
 };
 
 export const changePassphrase = async ({ password, passphrase }) => {
+	console.log("Inside change passphrase service", password, passphrase);
 	const pvtKey = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	if (pvtKey && salt) {
-		const response = await change_password({
+		const certificate = await change_password({
 			enc_pvt_key: pvtKey,
 			old_password: password,
 			new_password: passphrase,
 			salt,
 		});
-		return response;
+		// const new_response = await import_certificate(certificate, passphrase);
+		await StorageService.setCertificate(certificate);
+		// await StorageService.setSalt(new_response.get("salt"));
+		console.log("crtificate after change pass =>", certificate);
+
+		return certificate;
 		// const new_response = await import_certificate(response, "test");
 		// return new_response
 	}
