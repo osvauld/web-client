@@ -40,7 +40,10 @@
 	};
 </script>
 
-<form on:submit|preventDefault="{handleSubmit}">
+<form
+	on:submit|preventDefault="{handleSubmit}"
+	class="flex flex-col items-center justify-center"
+>
 	<label for="passphrase" class="font-normal mt-6 mb-2"
 		>Enter New Passphrase</label
 	>
@@ -81,7 +84,7 @@
 			type="{showReenteredPassword ? 'text' : 'password'}"
 			disabled="{!isPassphraseAcceptable}"
 			id="passphrase"
-			on:input="{(e) => handleConfirmationInputChange(e)}"
+			on:input="{handleConfirmationInputChange}"
 		/>
 
 		<button

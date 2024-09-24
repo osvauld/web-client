@@ -5,16 +5,15 @@
 
 	import { fly } from "svelte/transition";
 	import { promptPassword, changePassword } from "../store";
-	import { ClosePanel } from "../icons";
+	import { ClosedEye, ClosePanel, Eye } from "../icons";
 	import SuccessView from "../../basic/SuccessView.svelte";
 	import NewPassword from "../../basic/NewPassword.svelte";
-	import { createChallenge, initiateAuth } from "../apis";
-	import { StorageService } from "../../../../scripts/storageHelper";
 
 	let password: string = "";
 	let success: boolean = false;
 	let errorView: boolean = false;
 	let newPasswordView: boolean = false;
+	let showPassword: boolean = false;
 
 	const closeModal = () => {
 		promptPassword.set(false);
@@ -40,10 +39,9 @@
 		} else {
 			errorView = true;
 		}
-
 		setTimeout(() => {
 			closeModal();
-		}, 2500);
+		}, 1500);
 		// Here if wrong password comes, handle
 	};
 
@@ -60,8 +58,13 @@
 			errorView = true;
 		}
 		setTimeout(() => {
+			changePassword.set(false);
 			closeModal();
 		}, 1500);
+	};
+
+	const handleInputChange = (e: any) => {
+		password = e.target.value;
 	};
 
 	onMount(() => {
@@ -85,7 +88,7 @@
 	role="presentation"
 >
 	<div
-		class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[24rem] h-[18rem]"
+		class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[28rem] h-[24rem] flex justify-center items-center"
 		on:click|stopPropagation
 		role="presentation"
 		aria-labelledby="export-recovery-data"
@@ -100,7 +103,7 @@
 			<NewPassword on:submit="{handlePasswordChangeSubmit}" />
 		{:else}
 			<form
-				class="flex flex-col h-full"
+				class="flex flex-col h-full w-full"
 				on:submit|preventDefault="{$changePassword
 					? newPasswordViewHandler
 					: handleRecoveryDataSubmit}"
@@ -125,16 +128,30 @@
 					class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
 				></div>
 				<div class="grow flex justify-center items-center">
-					<input
-						id="password"
-						type="password"
-						use:autofocus
-						required
-						bind:value="{password}"
-						class="py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0 form-input"
-						autocomplete="current-password"
-						aria-label="Master Password"
-					/>
+					<div
+						class="flex justify-between items-center bg-osvauld-frameblack px-3 border rounded-lg border-osvauld-iconblack w-[300px]"
+					>
+						<input
+							class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-osvauld-iconblack focus:ring-0 active:outline-none focus:ring-offset-0"
+							type="{showPassword ? 'text' : 'password'}"
+							id="passphrase"
+							aria-label="passphrase"
+							use:autofocus
+							on:input="{handleInputChange}"
+						/>
+
+						<button
+							type="button"
+							class="flex justify-center items-center"
+							on:click="{() => (showPassword = !showPassword)}"
+						>
+							{#if showPassword}
+								<ClosedEye />
+							{:else}
+								<Eye />
+							{/if}
+						</button>
+					</div>
 				</div>
 				<button
 					class="border border-osvauld-iconblack w-[10rem] py-3 px-6 my-4 mx-auto text-base font-medium text-osvauld-textActive rounded-md hover:bg-osvauld-carolinablue hover:border-osvauld-carolinablue hover:text-osvauld-frameblack cursor-pointer"

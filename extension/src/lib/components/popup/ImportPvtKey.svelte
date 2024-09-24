@@ -29,10 +29,7 @@
 			await StorageService.setToken(token);
 			await StorageService.setIsLoggedIn("true");
 			dispatch("login", true);
-		} else {
-			// errorMessage = true;
 		}
-		// dispatch("submit", { recoveryData, passphrase });
 	};
 </script>
 
