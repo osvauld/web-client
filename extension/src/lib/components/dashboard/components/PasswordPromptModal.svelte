@@ -8,6 +8,8 @@
 	import { ClosePanel } from "../icons";
 	import SuccessView from "../../basic/SuccessView.svelte";
 	import NewPassword from "../../basic/NewPassword.svelte";
+	import { createChallenge, initiateAuth } from "../apis";
+	import { StorageService } from "../../../../scripts/storageHelper";
 
 	let password: string = "";
 	let success: boolean = false;
@@ -27,11 +29,21 @@
 	};
 
 	const handlePasswordChangeSubmit = async (e) => {
-		const response = await sendMessage("changePassphrase", {
+		newPasswordView = false;
+		const passphrase = e.detail.passphrase;
+		const certificate = await sendMessage("changePassphrase", {
 			password,
-			passphrase: e.detail.passphrase,
+			passphrase,
 		});
-		console.log("change password response =>", response);
+		if (certificate) {
+			success = true;
+		} else {
+			errorView = true;
+		}
+
+		setTimeout(() => {
+			closeModal();
+		}, 2500);
 		// Here if wrong password comes, handle
 	};
 
@@ -85,7 +97,7 @@
 		{:else if success}
 			<SuccessView status="{true}" recovery="{true}" />
 		{:else if newPasswordView}
-			<NewPassword on:submit|preventDefault="{handlePasswordChangeSubmit}" />
+			<NewPassword on:submit="{handlePasswordChangeSubmit}" />
 		{:else}
 			<form
 				class="flex flex-col h-full"

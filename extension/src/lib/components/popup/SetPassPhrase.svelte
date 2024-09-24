@@ -4,7 +4,12 @@
 	import Loader from "../dashboard/components/Loader.svelte";
 	import { sendMessage } from "../dashboard/helper";
 	import { createEventDispatcher } from "svelte";
-	import { finalRegistration } from "../dashboard/apis";
+	import {
+		createChallenge,
+		finalRegistration,
+		initiateAuth,
+	} from "../dashboard/apis";
+	import { StorageService } from "../../../scripts/storageHelper";
 
 	export let challenge: string;
 	export let username: string;
@@ -45,6 +50,17 @@
 			);
 			if (registrationResponse.success) {
 				isLoaderActive = false;
+				const pubkey = await sendMessage("getPubKey", { passphrase });
+				const challengeResponse = await createChallenge(pubkey);
+				const signature = await sendMessage("signChallenge", {
+					challenge: challengeResponse.data.challenge,
+				});
+				const verificationResponse = await initiateAuth(signature, pubkey);
+				const token = verificationResponse.data.token;
+				if (token) {
+					await StorageService.setToken(token);
+					await StorageService.setIsLoggedIn("true");
+				}
 				dispatch("signedUp");
 			}
 		} else {

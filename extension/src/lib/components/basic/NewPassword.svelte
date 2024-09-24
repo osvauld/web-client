@@ -36,11 +36,11 @@
 
 	const handleSubmit = () => {
 		isLoaderActive = true;
-		dispatch("submit", passphrase);
+		dispatch("submit", { passphrase });
 	};
 </script>
 
-<form on:submit="{handleSubmit}">
+<form on:submit|preventDefault="{handleSubmit}">
 	<label for="passphrase" class="font-normal mt-6 mb-2"
 		>Enter New Passphrase</label
 	>
