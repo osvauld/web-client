@@ -1,4 +1,6 @@
 <script>
+	import { changePassword } from "../dashboard/store";
+
 	export let recovery = false;
 	export let status = true;
 </script>
@@ -109,7 +111,13 @@
 			points="100.2,40.2 51.5,88.8 29.8,67.5 "
 		></polyline>
 	</svg>
-	<p class="success">{recovery ? "Copied to Clipboard" : "Import Complete!"}</p>
+	<p class="success">
+		{$changePassword
+			? "Passphrase Changed"
+			: recovery
+				? "Copied to Clipboard"
+				: "Import Complete!"}
+	</p>
 {:else}
 	<svg
 		version="1.1"
@@ -151,5 +159,11 @@
 			y2="92.2"
 		></line>
 	</svg>
-	<p class="error">{recovery ? "Wrong password!" : "Import InComplete!"}</p>
+	<p class="error">
+		{$changePassword
+			? "Wrong Passphrase"
+			: recovery
+				? "Wrong Passphrase!"
+				: "Import InComplete!"}
+	</p>
 {/if}
