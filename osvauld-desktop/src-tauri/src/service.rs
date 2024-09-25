@@ -9,7 +9,7 @@ pub fn is_signed_up(
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
 ) -> Result<bool, String> {
-    let path = PathBuf::from("my_app_store.bin");
+    let path = PathBuf::from("my_app_store2.bin");
     tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
         let is_signed = store.get("certificate").is_some();
         println!("Is signed up: {}", is_signed); // Debug print
@@ -30,7 +30,7 @@ pub fn save_passphrase(
         .generate_keys(passphrase, username)
         .map_err(|e| e.to_string())?;
 
-    let path = PathBuf::from("my_app_store.bin");
+    let path = PathBuf::from("my_app_store2.bin");
     tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
         store.insert(
             "certificate".to_string(),
@@ -59,7 +59,7 @@ pub fn get_public_key(
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
 ) -> Result<(String, CryptoUtils), String> {
-    let path = PathBuf::from("my_app_store.bin");
+    let path = PathBuf::from("my_app_store2.bin");
 
     // Retrieve certificate and salt from storage
     let (certificate, salt) =

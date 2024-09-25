@@ -26,7 +26,7 @@ export const fetchAllFolders = async (): Promise<FetchAllFoldersResponse> => {
 			"Content-Type": "application/json",
 		},
 	};
-	return fetch(`${baseUrl}/folders/`, options).then((response) =>
+	return fetch(`${baseUrl}/folders`, options).then((response) =>
 		response.json(),
 	);
 };
@@ -78,7 +78,7 @@ export const createFolder = async (
 	headers.append("Authorization", `Bearer ${token}`);
 	headers.append("Content-Type", "application/json");
 
-	const response = await fetch(`${baseUrl}/folder/`, {
+	const response = await fetch(`${baseUrl}/folder`, {
 		method: "POST",
 		headers,
 		body: JSON.stringify(payload),

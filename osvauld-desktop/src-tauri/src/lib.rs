@@ -15,7 +15,7 @@ pub fn run() {
         .setup(|app| {
             let handle = app.handle();
             let stores = handle.state::<StoreCollection<Wry>>();
-            let path = PathBuf::from("my_app_store.bin");
+            let path = PathBuf::from("my_app_store2.bin");
 
             // Initialize the store
             tauri_plugin_store::with_store(handle.clone(), stores, path, |store| {
