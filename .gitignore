@@ -1,6 +1,9 @@
-public/build/*
-public/background.js
-node_modules
-public/content.js
+extension/public/build/
+extension/public/background.js
+extension/node_modules
+extension/public/content.js
+extension/dist
 .DS_Store
 *.map
+/target
+wasm/pkg
