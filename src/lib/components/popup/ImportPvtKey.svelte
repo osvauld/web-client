@@ -1,32 +1,36 @@
 <script lang="ts">
-	import Eye from "../basic/icons/eye.svelte";
-	import Loader from "../dashboard/components/Loader.svelte";
-	import { ClosedEye } from "./icons";
 	import { createEventDispatcher } from "svelte";
 	const dispatch = createEventDispatcher();
+	import { sendMessage } from "../dashboard/helper";
+	import { StorageService } from "../../../scripts/storageHelper";
+	import { createChallenge, initiateAuth } from "../dashboard/apis";
+	import NewPassword from "../basic/NewPassword.svelte";
 
-	let privateKeys = "";
-	let passphrase = "";
-	let showPassword = false;
-	let isLoaderActive = false;
+	let recoveryData = "";
 
-	function togglePasswordVisibility() {
-		showPassword = !showPassword;
-	}
+	const handleInputChange = (event: any) => {
+		recoveryData = event.target.value;
+	};
 
-	type inputField = "privateKey" | "passphrase";
-	function handleInputChange(event: any, field: inputField) {
-		if (field === "privateKey") {
-			privateKeys = event.target.value;
-		} else if (field === "passphrase") {
-			passphrase = event.target.value;
+	const handleSubmit = async (e: any) => {
+		const passphrase = e.detail.passphrase;
+		await sendMessage("importPvtKey", {
+			passphrase,
+			recoveryData,
+		});
+		const pubkey = await sendMessage("getPubKey", { passphrase });
+		const challengeResponse = await createChallenge(pubkey);
+		const signature = await sendMessage("signChallenge", {
+			challenge: challengeResponse.data.challenge,
+		});
+		const verificationResponse = await initiateAuth(signature, pubkey);
+		const token = verificationResponse.data.token;
+		if (token) {
+			await StorageService.setToken(token);
+			await StorageService.setIsLoggedIn("true");
+			dispatch("login", true);
 		}
-	}
-
-	function handleSubmit() {
-		isLoaderActive = true;
-		dispatch("submit", { privateKeys, passphrase });
-	}
+	};
 </script>
 
 <div
@@ -43,41 +47,7 @@
 	<textarea
 		class="text-osvauld-quarzowhite bg-osvauld-frameblack border border-osvauld-iconblack tracking-wider font-light text-sm font-mono focus:border-osvauld-iconblack focus:ring-0 resize-none w-[300px] min-h-[6rem] max-h-[10rem] rounded-lg scrollbar-thin overflow-y-scroll"
 		id="privateKey"
-		on:input="{(e) => handleInputChange(e, 'privateKey')}"
+		on:input="{handleInputChange}"
 	></textarea>
-
-	<label for="passphrase" class="font-normal mt-6 mb-2">Enter Passphrase</label>
-	<div
-		class="flex justify-between items-center bg-osvauld-frameblack px-3 border rounded-lg border-osvauld-iconblack w-[300px]"
-	>
-		<input
-			class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-osvauld-iconblack focus:ring-0 active:outline-none focus:ring-offset-0"
-			type="{showPassword ? 'text' : 'password'}"
-			id="passphrase"
-			on:input="{(e) => handleInputChange(e, 'passphrase')}"
-		/>
-
-		<button
-			type="button"
-			class="flex justify-center items-center"
-			on:click="{togglePasswordVisibility}"
-		>
-			{#if showPassword}
-				<ClosedEye />
-			{:else}
-				<Eye />
-			{/if}
-		</button>
-	</div>
-	<button
-		class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
-		type="button"
-		on:click="{handleSubmit}"
-	>
-		{#if isLoaderActive}
-			<Loader />
-		{:else}
-			<span>Submit</span>
-		{/if}
-	</button>
+	<NewPassword on:submit="{handleSubmit}" />
 </div>

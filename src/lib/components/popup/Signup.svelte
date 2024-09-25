@@ -2,7 +2,6 @@
 	import TempLogin from "./TempLogin.svelte";
 	import SetPassPhrase from "./SetPassPhrase.svelte";
 	import ImportPvtKey from "./ImportPvtKey.svelte";
-	import { sendMessage } from "../dashboard/helper";
 	import { createEventDispatcher } from "svelte";
 
 	let isTempLoginVerified = false;
@@ -21,25 +20,16 @@
 		importPvtKeyFlag = e.detail;
 	};
 
-	const importPvtKey = async (e: any) => {
-		const { privateKeys, passphrase } = e.detail;
-		await sendMessage("importPvtKey", {
-			passphrase,
-			privateKeys,
-		});
-		handleSignedUp();
-	};
-
 	const handleSignedUp = () => {
 		dispatch("signedUp");
 	};
 </script>
 
 <div
-	class="h-full w-[90%] flex justify-center items-center text-base font-bold text-white"
+	class="h-full w-full flex justify-center items-center text-base font-bold text-white"
 >
 	{#if importPvtKeyFlag}
-		<ImportPvtKey on:submit="{(e) => importPvtKey(e)}" />
+		<ImportPvtKey on:login="{handleSignedUp}" />
 	{:else if isTempLoginVerified}
 		<SetPassPhrase {challenge} {username} on:signedUp="{handleSignedUp}" />
 	{:else}

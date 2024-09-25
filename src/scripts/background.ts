@@ -15,8 +15,9 @@ import {
 	encryptEditFields,
 	getDecryptedUrls,
 	getCertificate,
-	getPubKeyHandler,
+	initiateAuthHandler,
 	signChallengeHandler,
+	changePassphrase,
 } from "./backgroundService";
 
 import { Folder } from "../lib/dtos/folder.dto";
@@ -59,7 +60,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 		case "getPubKey": {
 			await init();
-			return getPubKeyHandler(request.data.passphrase);
+			return initiateAuthHandler(request.data.passphrase);
 		}
 
 		case "signChallenge": {
@@ -78,11 +79,12 @@ browser.runtime.onMessage.addListener(async (request) => {
 			} catch (e) {
 				console.error(e, "init");
 			}
+			break;
 		}
 
 		case "importPvtKey": {
 			await handlePvtKeyImport(
-				request.data.privateKeys,
+				request.data.recoveryData,
 				request.data.passphrase,
 			);
 			return;
@@ -196,6 +198,10 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 		case "exportCertificate": {
 			return getCertificate(request.data.passphrase);
+		}
+
+		case "changePassphrase": {
+			return changePassphrase(request.data);
 		}
 
 		default:

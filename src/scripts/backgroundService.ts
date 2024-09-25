@@ -1,9 +1,4 @@
 import browser from "webextension-polyfill";
-import {
-	createChallenge,
-	finalRegistration,
-	initiateAuth,
-} from "../lib/apis/auth.api";
 import { fetchCredsByIds } from "../lib/apis/credentials.api";
 import {
 	Credential,
@@ -29,6 +24,7 @@ import init, {
 	decrypt_urls,
 	create_share_creds_payload,
 	import_certificate,
+	change_password,
 } from "./wasm";
 import { StorageService } from "./storageHelper";
 
@@ -38,7 +34,9 @@ type CredentialsForUsersPayload = {
 	credentials: CredentialFields[];
 };
 
-export const getPubKeyHandler = async (passphrase: string) => {
+export const initiateAuthHandler = async (
+	passphrase: string,
+): Promise<string> => {
 	const certificate = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	const startTime = performance.now();
@@ -108,7 +106,7 @@ export const createShareCredsPayload = async (
 	creds: any,
 	selectedUsers: any,
 ): Promise<CredentialsForUsersPayload[]> => {
-	const users = selectedUsers.map((user) => {
+	const users = selectedUsers.map((user: any) => {
 		return {
 			id: user.id,
 			publicKey: user.publicKey,
@@ -127,41 +125,46 @@ export const getCertificate = async (passphrase: string) => {
 	const pvtKey = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	if (pvtKey && salt) {
-		const response = await export_certificate(passphrase, pvtKey, salt);
-		const new_response = await import_certificate(response, "test");
-		console.log(new_response);
+		const response = export_certificate(passphrase, pvtKey, salt);
+		return response;
+	}
+};
+
+export const changePassphrase = async ({
+	password,
+	passphrase,
+}: {
+	password: string;
+	passphrase: string;
+}) => {
+	const pvtKey = await StorageService.getCertificate();
+	const salt = await StorageService.getSalt();
+	if (pvtKey && salt) {
+		const certificate = change_password({
+			enc_pvt_key: pvtKey,
+			old_password: password,
+			new_password: passphrase,
+			salt,
+		});
+		await StorageService.setCertificate(certificate);
+		return certificate;
 	}
 };
 
 export const handlePvtKeyImport = async (
-	pvtKeys: string,
+	recoveryData: string,
 	passphrase: string,
 ) => {
 	await init();
-	// const { encryptionKey, signKey, baseUrl } = JSON.parse(pvtKeys);
-	// await browser.storage.local.set({ baseUrl });
-	// const signPubKey = await get_pub_key(signKey);
-	// const encPublicKey = await get_pub_key(encryptionKey);
+	const { certificate, baseUrl } = JSON.parse(recoveryData);
 
-	// const challegeResult = await createChallenge(signPubKey);
-	// await decrypt_and_store_keys(encryptionKey, signKey, passphrase);
-	// const signedMessage = await sign_message_with_stored_key(
-	// 	challegeResult.data.challenge,
-	// );
-	// const verificationResponse = await initiateAuth(signedMessage, signPubKey);
-	// const token = verificationResponse.data.token;
-	// if (token) {
-	// 	await browser.storage.local.set({ token: token });
-	// 	await browser.storage.local.set({ isLoggedIn: true });
-	// }
-	// await browser.storage.local.set({
-	// 	encryptionPvtKey: encryptionKey,
-	// 	signPvtKey: signKey,
-	// 	encPublicKey: encPublicKey,
-	// 	signPublicKey: signPubKey,
-	// });
+	await StorageService.setBaseUrl(baseUrl);
+	const new_response = await import_certificate(certificate, passphrase);
 
-	// return token;
+	await StorageService.setCertificate(new_response.get("certificate"));
+	await StorageService.setSalt(new_response.get("salt"));
+
+	return;
 };
 
 export const credentialSubmitHandler = async (
