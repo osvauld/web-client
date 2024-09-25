@@ -1,18 +1,11 @@
 <script lang="ts">
-<<<<<<< HEAD:extension/src/lib/components/dashboard/components/ProfileModal.svelte
 	import { clickOutside, getTokenAndBaseUrl, sendMessage } from "../helper";
-=======
-	import { clickOutside } from "../helper";
->>>>>>> 151bf79 (new password componentized, change password feature):src/lib/components/dashboard/components/ProfileModal.svelte
 	import { onMount, onDestroy } from "svelte";
 	import { CopyIcon, Key, Tick } from "../icons";
 	import { createEventDispatcher } from "svelte";
 	import { scale } from "svelte/transition";
-<<<<<<< HEAD:extension/src/lib/components/dashboard/components/ProfileModal.svelte
 	import { writeToClipboard } from "../helper";
-=======
 	import { promptPassword, changePassword } from "../store";
->>>>>>> 151bf79 (new password componentized, change password feature):src/lib/components/dashboard/components/ProfileModal.svelte
 
 	const dispatch = createEventDispatcher();
 

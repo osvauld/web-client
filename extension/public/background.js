@@ -1304,14 +1304,28 @@ const StorageService = {
     },
 };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-process.env.IS_TAURI;
+/******************************************************************************
+Copyright (c) Microsoft Corporation.
 
->>>>>>> 93e33b3 (first version commit)
-=======
->>>>>>> e4ce1b7 (working dashboard in webui)
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+/* global Reflect, Promise, SuppressedError, Symbol */
+
+
+typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+};
+
 const getTokenAndBaseUrl = async () => {
     const [token, baseUrl] = await Promise.all([
         StorageService.getToken(),
@@ -1960,6 +1974,36 @@ function export_certificate(passphrase, enc_pvt_key, salt) {
 }
 
 /**
+ * @param {any} input
+ * @returns {string}
+ */
+function change_password(input) {
+	let deferred2_0;
+	let deferred2_1;
+	try {
+		const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+		wasm.change_password(retptr, addHeapObject(input));
+		var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
+		var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
+		var r2 = getDataViewMemory0().getInt32(retptr + 4 * 2, true);
+		var r3 = getDataViewMemory0().getInt32(retptr + 4 * 3, true);
+		var ptr1 = r0;
+		var len1 = r1;
+		if (r3) {
+			ptr1 = 0;
+			len1 = 0;
+			throw takeObject(r2);
+		}
+		deferred2_0 = ptr1;
+		deferred2_1 = len1;
+		return getStringFromWasm0(ptr1, len1);
+	} finally {
+		wasm.__wbindgen_add_to_stack_pointer(16);
+		wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+	}
+}
+
+/**
  * @returns {boolean}
  */
 function is_cert_loaded() {
@@ -2408,7 +2452,7 @@ async function __wbg_init(module_or_path) {
 	return __wbg_finalize_init(instance, module);
 }
 
-const getPubKeyHandler = async (passphrase) => {
+const initiateAuthHandler = async (passphrase) => {
     const certificate = await StorageService.getCertificate();
     const salt = await StorageService.getSalt();
     const startTime = performance.now();
@@ -2467,35 +2511,32 @@ const getCertificate = async (passphrase) => {
     const pvtKey = await StorageService.getCertificate();
     const salt = await StorageService.getSalt();
     if (pvtKey && salt) {
-        const response = await export_certificate(passphrase, pvtKey, salt);
-        const new_response = await import_certificate(response, "test");
-        console.log(new_response);
+        const response = export_certificate(passphrase, pvtKey, salt);
+        return response;
     }
 };
-const handlePvtKeyImport = async (pvtKeys, passphrase) => {
+const changePassphrase = async ({ password, passphrase, }) => {
+    const pvtKey = await StorageService.getCertificate();
+    const salt = await StorageService.getSalt();
+    if (pvtKey && salt) {
+        const certificate = change_password({
+            enc_pvt_key: pvtKey,
+            old_password: password,
+            new_password: passphrase,
+            salt,
+        });
+        await StorageService.setCertificate(certificate);
+        return certificate;
+    }
+};
+const handlePvtKeyImport = async (recoveryData, passphrase) => {
     await __wbg_init();
-    // const { encryptionKey, signKey, baseUrl } = JSON.parse(pvtKeys);
-    // await browser.storage.local.set({ baseUrl });
-    // const signPubKey = await get_pub_key(signKey);
-    // const encPublicKey = await get_pub_key(encryptionKey);
-    // const challegeResult = await createChallenge(signPubKey);
-    // await decrypt_and_store_keys(encryptionKey, signKey, passphrase);
-    // const signedMessage = await sign_message_with_stored_key(
-    // 	challegeResult.data.challenge,
-    // );
-    // const verificationResponse = await initiateAuth(signedMessage, signPubKey);
-    // const token = verificationResponse.data.token;
-    // if (token) {
-    // 	await browser.storage.local.set({ token: token });
-    // 	await browser.storage.local.set({ isLoggedIn: true });
-    // }
-    // await browser.storage.local.set({
-    // 	encryptionPvtKey: encryptionKey,
-    // 	signPvtKey: signKey,
-    // 	encPublicKey: encPublicKey,
-    // 	signPublicKey: signPubKey,
-    // });
-    // return token;
+    const { certificate, baseUrl } = JSON.parse(recoveryData);
+    await StorageService.setBaseUrl(baseUrl);
+    const new_response = await import_certificate(certificate, passphrase);
+    await StorageService.setCertificate(new_response.get("certificate"));
+    await StorageService.setSalt(new_response.get("salt"));
+    return;
 };
 const credentialSubmitHandler = async (newCredential, credIds) => {
     if (credIds.length > 0) {
@@ -2550,7 +2591,7 @@ const fetchAllFolders = async () => {
             "Content-Type": "application/json",
         },
     };
-    return fetch(`${baseUrl}/folders/`, options).then((response) => response.json());
+    return fetch(`${baseUrl}/folders`, options).then((response) => response.json());
 };
 const fetchFolderUsersForDataSync = async (folderId) => {
     const headers = new Headers();
@@ -2638,7 +2679,7 @@ browser.runtime.onMessage.addListener(async (request) => {
         }
         case "getPubKey": {
             await __wbg_init();
-            return getPubKeyHandler(request.data.passphrase);
+            return initiateAuthHandler(request.data.passphrase);
         }
         case "signChallenge": {
             return signChallengeHandler(request.data.challenge);
@@ -2658,9 +2699,10 @@ browser.runtime.onMessage.addListener(async (request) => {
             catch (e) {
                 console.error(e, "init");
             }
+            break;
         }
         case "importPvtKey": {
-            await handlePvtKeyImport(request.data.privateKeys, request.data.passphrase);
+            await handlePvtKeyImport(request.data.recoveryData, request.data.passphrase);
             return;
         }
         case "savePassphrase":
@@ -2752,6 +2794,9 @@ browser.runtime.onMessage.addListener(async (request) => {
         }
         case "exportCertificate": {
             return getCertificate(request.data.passphrase);
+        }
+        case "changePassphrase": {
+            return changePassphrase(request.data);
         }
         default:
             console.log(request.action);
