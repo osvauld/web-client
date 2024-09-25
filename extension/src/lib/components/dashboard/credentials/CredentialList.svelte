@@ -325,16 +325,16 @@
 					on:action="{(e) => handleActionModalCall(e.detail, credential)}" />
 			{/each}
 		</div>
-		{#if $selectedFolder && $selectedFolder.accessType === "manager"}
-			<button
-				class="text-2xl absolute bottom-10 right-14 bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack rounded-lg py-2 px-3.5 flex justify-center items-center"
-				type="button"
-				on:mouseenter="{() => (importHovered = true)}"
-				on:mouseleave="{() => (importHovered = false)}"
-				on:click="{() => (importSelected = true)}">
-				<Import color="{importHovered ? '#0D0E13' : '#6E7681'}" />
-				<span class="ml-2">Import</span>
-			</button>
-		{/if}
+	{/if}
+	{#if $selectedFolder && $selectedFolder.accessType === "manager"}
+		<button
+			class="text-2xl absolute bottom-10 right-14 bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack rounded-lg py-2 px-3.5 flex justify-center items-center"
+			type="button"
+			on:mouseenter="{() => (importHovered = true)}"
+			on:mouseleave="{() => (importHovered = false)}"
+			on:click="{() => (importSelected = true)}">
+			<Import color="{importHovered ? '#0D0E13' : '#6E7681'}" />
+			<span class="ml-2">Import</span>
+		</button>
 	{/if}
 </div>
