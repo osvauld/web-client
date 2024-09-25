@@ -131,19 +131,19 @@ export const getCertificate = async (passphrase: string) => {
 };
 
 export const changePassphrase = async ({
-	password,
-	passphrase,
+	oldPassword,
+	newPassword,
 }: {
-	password: string;
-	passphrase: string;
+	oldPassword: string;
+	newPassword: string;
 }) => {
 	const pvtKey = await StorageService.getCertificate();
 	const salt = await StorageService.getSalt();
 	if (pvtKey && salt) {
 		const certificate = change_password({
 			enc_pvt_key: pvtKey,
-			old_password: password,
-			new_password: passphrase,
+			oldPassword,
+			newPassword,
 			salt,
 		});
 		await StorageService.setCertificate(certificate);
@@ -152,17 +152,14 @@ export const changePassphrase = async ({
 };
 
 export const handlePvtKeyImport = async (
-	recoveryData: string,
+	certificate: string,
 	passphrase: string,
 ) => {
 	await init();
-	const { certificate, baseUrl } = JSON.parse(recoveryData);
 
-	await StorageService.setBaseUrl(baseUrl);
-	const new_response = await import_certificate(certificate, passphrase);
-
-	await StorageService.setCertificate(new_response.get("certificate"));
-	await StorageService.setSalt(new_response.get("salt"));
+	const response = await import_certificate(certificate, passphrase);
+	await StorageService.setCertificate(response.get("certificate"));
+	await StorageService.setSalt(response.get("salt"));
 
 	return;
 };
@@ -211,7 +208,7 @@ export const generateCliKeys = async (username: string) => {
 
 export const encryptEditFields = async (data: {
 	fieldValue: string;
-	usersToShare: { userId: string; publicKey: string }[];
+	usersToShare: { id: string; publicKey: string }[];
 }): Promise<EncryptedEditField[]> => {
 	const encryptedFields = await encrypt_field_value(
 		data.fieldValue,

@@ -1,12 +1,14 @@
 use crate::service::{
-    decrypt_credentials, get_public_key, is_signed_up, save_passphrase, sign_hashed_message,
+    decrypt_credentials, get_certificate_and_salt, get_public_key, is_signed_up, save_passphrase,
+    sign_hashed_message, store_certificate_and_salt,
 };
 use crate::types::{
-    AddCredentialInput, CryptoResponse, DecryptMetaInput, HashAndSignInput, LoadPvtKeyInput,
-    SavePassphraseInput, SignChallengeInput,
+    AddCredentialInput, CryptoResponse, EncryptEditFieldsInput, HashAndSignInput,
+    ImportCertificateInput, LoadPvtKeyInput, PasswordChangeInput, SavePassphraseInput,
+    SignChallengeInput,
 };
-use crypto_utils::types::Credential;
-use crypto_utils::CryptoUtils;
+use crypto_utils::types::{Credential, CredentialFields, PublicKey};
+use crypto_utils::{CryptoUtils, ShareCredsInput};
 use log::{error, info};
 use once_cell::sync::Lazy;
 use serde_json::Value;
@@ -23,8 +25,8 @@ pub async fn handle_crypto_action(
     stores: State<'_, StoreCollection<Wry>>,
     app_handle: tauri::AppHandle,
 ) -> Result<CryptoResponse, String> {
-    info!("Received action: {:?}", action);
-    info!("Received data: {:?}", data);
+    // info!("Received action: {:?}", action);
+    // info!("Received data: {:?}", data);
 
     match action.as_str() {
         "isSignedUp" => {
@@ -100,7 +102,105 @@ pub async fn handle_crypto_action(
                 .map_err(|e| format!("Decryption error: {}", e))?;
             Ok(CryptoResponse::DecryptedCredentials(decrypted_credentials))
         }
-        // Add other action handlers here as needed
+        "createShareCredPayload" => {
+            let creds: Vec<CredentialFields> = serde_json::from_value(data["creds"].clone())
+                .map_err(|e| format!("Invalid creds input: {}", e))?;
+
+            let selected_users: Vec<serde_json::Value> =
+                serde_json::from_value(data["users"].clone())
+                    .map_err(|e| format!("Invalid users input: {}", e))?;
+
+            let users: Vec<PublicKey> = selected_users
+                .into_iter()
+                .map(|user| PublicKey {
+                    id: user["id"].as_str().unwrap_or_default().to_string(),
+                    public_key: user["publicKey"].as_str().unwrap_or_default().to_string(),
+                    access_type: Some(user["accessType"].as_str().unwrap_or_default().to_string()),
+                })
+                .collect();
+
+            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+            let result = crypto
+                .create_share_creds_payload(ShareCredsInput {
+                    selected_users: users,
+                    credentials: creds,
+                })
+                .map_err(|e| format!("Error creating share creds payload: {}", e))?;
+
+            Ok(CryptoResponse::ShareCredsPayload(result))
+        }
+        "decryptField" => {
+            let encrypted_text = data
+                .as_str()
+                .ok_or_else(|| "Invalid input: expected a string".to_string())?;
+
+            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+            let decrypted = crypto
+                .decrypt_text(encrypted_text.to_string())
+                .map_err(|e| format!("Error decrypting text: {}", e))?;
+
+            Ok(CryptoResponse::DecryptedText(decrypted))
+        }
+        "importPvtKey" => {
+            let input: ImportCertificateInput = serde_json::from_value(data)
+                .map_err(|e| format!("Invalid importPvtKey input: {}", e))?;
+            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+            let result = crypto
+                .import_certificate(input.certificate, input.passphrase)
+                .map_err(|e| format!("Error importing certificate: {}", e))?;
+            store_certificate_and_salt(&app_handle, stores, &result.private_key, &result.salt)?;
+            Ok(CryptoResponse::ImportedCertificate {
+                certificate: result.private_key,
+                publicKey: result.public_key,
+                salt: result.salt,
+            })
+        }
+        "exportCertificate" => {
+            let passphrase = data["passphrase"]
+                .as_str()
+                .ok_or_else(|| "Invalid input: expected a passphrase".to_string())?;
+
+            let (pvt_key, salt) = get_certificate_and_salt(&app_handle, stores)?;
+
+            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+            let exported_cert = crypto
+                .export_certificate(passphrase, &pvt_key, &salt)
+                .map_err(|e| format!("Error exporting certificate: {}", e))?;
+
+            Ok(CryptoResponse::ExportedCertificate(exported_cert))
+        }
+
+        "changePassphrase" => {
+            let input: PasswordChangeInput = serde_json::from_value(data)
+                .map_err(|e| format!("Invalid changePassphrase input: {}", e))?;
+
+            let (pvt_key, salt) = get_certificate_and_salt(&app_handle, stores.clone())?;
+
+            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+            let new_certificate = crypto
+                .change_certificate_password(
+                    &pvt_key,
+                    &salt,
+                    &input.old_password,
+                    &input.new_password,
+                )
+                .map_err(|e| format!("Error changing certificate password: {}", e))?;
+
+            // Store the new certificate
+            store_certificate_and_salt(&app_handle, stores, &new_certificate, &salt)?;
+
+            Ok(CryptoResponse::ChangedPassphrase(new_certificate))
+        }
+        "encryptEditFields" => {
+            let input: EncryptEditFieldsInput = serde_json::from_value(data)
+                .map_err(|e| format!("Invalid encryptEditFields input: {}", e))?;
+            info!("Encrypting edit fields: {:?}", input);
+            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+            let encrypted = crypto
+                .encrypt_field_value(&input.field_value, input.users_to_share)
+                .unwrap();
+            Ok(CryptoResponse::EncryptedEditFields(encrypted))
+        }
         _ => Err(format!("Unknown action: {}", action)),
     }
 }
