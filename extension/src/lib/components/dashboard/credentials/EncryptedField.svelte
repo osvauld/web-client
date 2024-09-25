@@ -90,24 +90,28 @@
 
 <div class="mb-2 mr-1 max-w-full" in:fly out:fly>
 	<div
-		class="label block mb-2 text-left text-osvauld-dusklabel text-xs font-normal cursor-pointer whitespace-nowrap text-ellipsis">
+		class="label block mb-2 text-left text-osvauld-dusklabel text-xs font-normal cursor-pointer whitespace-nowrap text-ellipsis"
+	>
 		{fieldName}
 	</div>
 
 	<div
 		class="py-1 px-3 w-full flex justify-between items-center text-base {hoverEffect
 			? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md '
-			: 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}">
+			: 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}"
+	>
 		<span
 			class=" {fieldType === 'totp'
 				? 'min-w-[80%] max-w-[80%] mr-6'
-				: 'w-3/5'} flex justify-between items-center font-normal text-sm">
+				: 'w-3/5'} flex justify-between items-center font-normal text-sm"
+		>
 			{#if fieldType === "totp" && decrypted}
 				<span class="mr-4">{totpToken} </span>
 				<CircularProgressBar counter="{timeRemaining}" />
 			{:else}
 				<span class="overflow-hidden whitespace-nowrap text-ellipsis"
-					>{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span>
+					>{decrypted && visibility ? decryptedValue : "*".repeat(8)}</span
+				>
 			{/if}
 		</span>
 		{#if !decrypted}

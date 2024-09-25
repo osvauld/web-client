@@ -55,9 +55,9 @@ const tauriBrowser = {
 			try {
 				const response = await invoke("handle_crypto_action", {
 					action,
-					data
+					data,
 				});
-				console.log(response, action)
+				console.log(response, action);
 				return response;
 			} catch (error) {
 				console.error("Error invoking Tauri command:", error);

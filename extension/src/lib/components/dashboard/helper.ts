@@ -2,7 +2,7 @@ import browser from "webextension-polyfill";
 import { SearchedCredential } from "../../dtos/credential.dto";
 import { AddCredentialPayload } from "./dtos";
 import { StorageService } from "../../../scripts/storageHelper";
-import { writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 type TypeToClassKey = "reader" | "manager";
 
 export const setbackground = (type: TypeToClassKey): string => {
@@ -170,7 +170,6 @@ export const getDomain = (urlString: string) => {
 	return domain;
 };
 
-
 export const writeToClipboard = async (text: string) => {
 	const tauriEnv = isTauri();
 	if (tauriEnv) {
@@ -182,11 +181,9 @@ export const writeToClipboard = async (text: string) => {
 	} else {
 		navigator.clipboard.writeText(text);
 	}
-
-}
-
+};
 
 function isTauri() {
 	// @ts-ignore
-	return typeof window.__TAURI__ !== 'undefined';
+	return typeof window.__TAURI__ !== "undefined";
 }
