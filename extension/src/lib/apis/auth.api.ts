@@ -13,6 +13,7 @@ export const initiateAuth = async (
 };
 
 export const createChallenge = async (publicKey: string) => {
+	console.log(publicKey)
 	const { baseUrl } = await getTokenAndBaseUrl();
 	return await fetch(`${baseUrl}/user/challenge`, {
 		method: "POST",

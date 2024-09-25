@@ -84,7 +84,7 @@ browser.runtime.onMessage.addListener(async (request) => {
 
 		case "importPvtKey": {
 			await handlePvtKeyImport(
-				request.data.recoveryData,
+				request.data.certificate,
 				request.data.passphrase,
 			);
 			return;

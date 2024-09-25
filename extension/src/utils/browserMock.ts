@@ -1,6 +1,6 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { invoke } from "@tauri-apps/api/core";
-const store = new Store(".my_app_store2.bin");
+const store = new Store(".my_app_store4.bin");
 const tauriBrowser = {
 	storage: {
 		local: {

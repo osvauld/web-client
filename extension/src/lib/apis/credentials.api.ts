@@ -90,9 +90,8 @@ export const fetchCredentialsFieldsByFolderId = async (
 	const headers = new Headers();
 	const { token, baseUrl } = await getTokenAndBaseUrl();
 	headers.append("Authorization", `Bearer ${token}`);
-	headers.append("User-Agent", "Insomnia/2023.5.7");
 
-	const response = await fetch(`${baseUrl}/credentials/fields/${folderId}`, {
+	const response = await fetch(`${baseUrl}/credentials/fields/${folderId}/`, {
 		method: "GET",
 		headers,
 	});
