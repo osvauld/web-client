@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { sendMessage } from "../helper";
+	import { sendMessage, writeToClipboard } from "../helper";
 	import { getTokenAndBaseUrl } from "../helper";
 
 	import { fly } from "svelte/transition";
@@ -51,7 +51,7 @@
 		});
 		if (certificate) {
 			const exporter = JSON.stringify({ certificate, baseUrl });
-			await navigator.clipboard.writeText(exporter);
+			await writeToClipboard(exporter);
 			success = true;
 		} else {
 			errorView = true;
@@ -84,16 +84,14 @@
 <div
 	class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
 	on:click|preventDefault="{closeModal}"
-	role="presentation"
->
+	role="presentation">
 	<div
 		class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[28rem] h-[24rem] flex flex-col justify-center items-center"
 		on:click|stopPropagation
 		role="presentation"
 		aria-labelledby="export-recovery-data"
 		in:fly
-		out:fly
-	>
+		out:fly>
 		{#if errorView}
 			<SuccessView status="{false}" recovery="{true}" />
 		{:else if success}
@@ -105,45 +103,39 @@
 				class="flex flex-col h-full w-full"
 				on:submit|preventDefault="{$changePassword
 					? newPasswordViewHandler
-					: handleRecoveryDataSubmit}"
-			>
+					: handleRecoveryDataSubmit}">
 				<div class="flex justify-between items-center w-full">
 					<span
 						id="export-recovery-data"
-						class="text-[21px] font-medium text-osvauld-quarzowhite"
-					>
+						class="text-[21px] font-medium text-osvauld-quarzowhite">
 						Confirm Passphrase
 					</span>
 					<button
 						class="cursor-pointer p-2"
 						type="button"
 						on:click|preventDefault="{closeModal}"
-						aria-label="Close"
-					>
+						aria-label="Close">
 						<ClosePanel />
 					</button>
 				</div>
 				<div
-					class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
-				></div>
+					class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4">
+				</div>
 				<div class="grow flex justify-center items-center">
 					<div
-						class="flex justify-between items-center bg-osvauld-frameblack px-3 border rounded-lg border-osvauld-iconblack w-[300px]"
-					>
+						class="flex justify-between items-center bg-osvauld-frameblack px-3 border rounded-lg border-osvauld-iconblack w-[300px]">
 						<input
 							class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-osvauld-iconblack focus:ring-0 active:outline-none focus:ring-offset-0"
 							type="{showPassword ? 'text' : 'password'}"
 							id="passphrase"
 							aria-label="passphrase"
 							use:autofocus
-							on:input="{handleInputChange}"
-						/>
+							on:input="{handleInputChange}" />
 
 						<button
 							type="button"
 							class="flex justify-center items-center"
-							on:click="{() => (showPassword = !showPassword)}"
-						>
+							on:click="{() => (showPassword = !showPassword)}">
 							{#if showPassword}
 								<ClosedEye />
 							{:else}
@@ -155,8 +147,7 @@
 				<button
 					class="border w-[10rem] py-3 px-6 my-4 mx-auto text-base font-medium rounded-md bg-osvauld-carolinablue border-osvauld-carolinablue text-osvauld-frameblack cursor-pointer"
 					type="submit"
-					disabled="{!password}"
-				>
+					disabled="{!password}">
 					Proceed
 				</button>
 			</form>
