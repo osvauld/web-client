@@ -1,0 +1,27 @@
+[package]
+name = "osvauld-desktop"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "osvauld_desktop_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0.0-rc", features = [] }
+
+[dependencies]
+tauri = { version = "2.0.0-rc", features = [] }
+tauri-plugin-shell = "2.0.0-rc"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri-plugin-store = "2.0.0-rc.3"
+crypto_utils = { path = "../../crypto_utils" }
+once_cell = "1.8"
+log = "0.4"
+tauri-plugin-log = "2.0.0-rc"
+tauri-plugin-clipboard-manager = "2.1.0-beta.7"

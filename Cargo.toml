@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "crypto_utils",
+    "wasm",
+    "osvauld-desktop/src-tauri"
+]
