@@ -1,4 +1,4 @@
-extension/public/build/*
+extension/public/build/
 extension/public/background.js
 node_modules
 extension/public/content.js
