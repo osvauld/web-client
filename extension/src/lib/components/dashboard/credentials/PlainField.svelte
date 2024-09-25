@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { scale } from "svelte/transition";
 	import { ActiveCopy, Tick, CopyIcon } from "../icons";
+	import { writeToClipboard } from "../helper";
 	export let fieldName: string;
 	export let fieldValue: string;
 	export let hoverEffect: boolean;
@@ -8,7 +9,7 @@
 
 	const copyToClipboard = async () => {
 		copied = true;
-		await navigator.clipboard.writeText(fieldValue);
+		await writeToClipboard(fieldValue);
 		setTimeout(() => {
 			copied = false;
 		}, 2000);
@@ -18,17 +19,14 @@
 <div class="mb-2.5 mr-1 max-w-full">
 	<label
 		class="label block mb-1 text-left text-osvauld-dusklabel whitespace-nowrap text-ellipsis text-xs font-normal cursor-pointer"
-		for="field">{fieldName}</label
-	>
+		for="field">{fieldName}</label>
 	<div
 		class="py-1 px-3 w-full flex justify-between items-center text-base {hoverEffect
 			? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive rounded-md'
-			: 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}"
-	>
+			: 'text-osvauld-fieldText rounded-none border-b border-osvauld-darkLineSeperator'}">
 		<span
 			class="w-full text-left overflow-x-hidden font-normal whitespace-nowrap text-ellipsis text-sm"
-			>{fieldValue}</span
-		>
+			>{fieldValue}</span>
 		<button on:click|preventDefault|stopPropagation="{copyToClipboard}">
 			{#if copied}
 				<span in:scale>

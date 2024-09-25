@@ -4,6 +4,7 @@
 	import { CopyIcon, Tick } from "../icons";
 	import { createEventDispatcher } from "svelte";
 	import { scale } from "svelte/transition";
+	import { writeToClipboard } from "../helper";
 
 	const dispatch = createEventDispatcher();
 
@@ -38,7 +39,7 @@
 	};
 
 	const copyUsername = async () => {
-		await navigator.clipboard.writeText(username);
+		await writeToClipboard(username);
 		delayFunction();
 	};
 

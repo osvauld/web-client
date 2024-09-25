@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getTokenAndBaseUrl } from "../helper";
+	import { getTokenAndBaseUrl, writeToClipboard } from "../helper";
 	import Loader from "../components/Loader.svelte";
 	import RoleToggle from "../../basic/RoleToggle.svelte";
 	import { showAddUserDrawer, allUsersSelected } from "../store";
@@ -38,7 +38,7 @@
 			tempPassword,
 			baseUrl,
 		});
-		await navigator.clipboard.writeText(shareWithMember);
+		await writeToClipboard(shareWithMember);
 		copiedToClipboard = true;
 		isLoaderActive = false;
 		setTimeout(() => {
@@ -64,24 +64,21 @@
 		</p>
 		<button
 			class="bg-osvauld-frameblack"
-			on:click|stopPropagation="{handleClose}"><ClosePanel /></button
-		>
+			on:click|stopPropagation="{handleClose}"><ClosePanel /></button>
 	</div>
 
 	<div
-		class="border border-osvauld-iconblack w-[calc(100%+3rem)] -translate-x-6 my-10 mt-0"
-	></div>
+		class="border border-osvauld-iconblack w-[calc(100%+3rem)] -translate-x-6 my-10 mt-0">
+	</div>
 
 	<form
 		on:submit="{submit}"
-		class="h-1/2 flex flex-col justify-between items-center"
-	>
+		class="h-1/2 flex flex-col justify-between items-center">
 		<div class="mb-4 w-full">
 			<label
 				for="username"
 				class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
-				>Username:</label
-			>
+				>Username:</label>
 			<input
 				id="username"
 				bind:value="{username}"
@@ -89,16 +86,14 @@
 				placeholder="Enter username"
 				class="py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
 				required
-				autocomplete="off"
-			/>
+				autocomplete="off" />
 		</div>
 
 		<div class="mb-4 w-full">
 			<label
 				for="name"
 				class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
-				>Full Name:</label
-			>
+				>Full Name:</label>
 			<input
 				id="name"
 				bind:value="{name}"
@@ -106,16 +101,14 @@
 				placeholder="Enter full name here"
 				required
 				class="py-1 rounded-sm items-center text-base bg-osvauld-frameblack border-osvauld-iconblack w-[95%] h-10 mx-2 focus:border-osvauld-iconblack focus:ring-0"
-				autocomplete="off"
-			/>
+				autocomplete="off" />
 		</div>
 
 		<div class="mb-4 w-full">
 			<label
 				for="role"
 				class="label block mb-2 text-left text-osvauld-dusklabel text-sm font-normal cursor-pointer"
-				>Select Role:</label
-			>
+				>Select Role:</label>
 			<RoleToggle on:select="{roleManager}" />
 		</div>
 
@@ -124,8 +117,7 @@
 				? 'bg-osvauld-carolinablue text-osvauld-ninjablack'
 				: 'bg-osvauld-iconblack text-osvauld-sheffieldgrey'}"
 			type="submit"
-			on:click|stopPropagation
-		>
+			on:click|stopPropagation>
 			{#if isLoaderActive}
 				<Loader />
 			{:else if copiedToClipboard}

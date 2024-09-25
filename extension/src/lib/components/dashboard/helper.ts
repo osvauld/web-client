@@ -2,7 +2,7 @@ import browser from "webextension-polyfill";
 import { SearchedCredential } from "../../dtos/credential.dto";
 import { AddCredentialPayload } from "./dtos";
 import { StorageService } from "../../../scripts/storageHelper";
-
+import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 type TypeToClassKey = "reader" | "manager";
 
 export const setbackground = (type: TypeToClassKey): string => {
@@ -40,6 +40,26 @@ export const sendMessage = async (action: string, data: any = {}) => {
 		);
 	}
 };
+
+export const writeToClipboard = async (text: string) => {
+	const tauriEnv = isTauri();
+	if (tauriEnv) {
+		try {
+			await writeText(text);
+		} catch (error) {
+			console.error("Error writing to clipboard:", error);
+		}
+	} else {
+		navigator.clipboard.writeText(text);
+	}
+
+}
+
+
+function isTauri() {
+	// @ts-ignore
+	return typeof window.__TAURI__ !== 'undefined';
+}
 export const searchObjects = (
 	query: string,
 	credentials: SearchedCredential[],

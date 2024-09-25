@@ -12,6 +12,7 @@
     "store:allow-set",
     "store:allow-save",
     "store:allow-load",
-    "log:default"
+    "log:default",
+    "clipboard-manager:allow-write-text"
   ]
 }

@@ -61,6 +61,7 @@
 	"dependencies": {
 		"@lavamoat/preinstall-always-fail": "^2.0.0",
 		"@tauri-apps/api": "^2.0.0-rc.5",
+		"@tauri-apps/plugin-clipboard-manager": "^2.0.0-rc.2",
 		"@tauri-apps/plugin-store": "^2.0.0-rc.1",
 		"papaparse": "^5.4.1",
 		"totp-generator": "^1.0.0"
