@@ -713,10 +713,7 @@ var app = (function () {
 		has_stop_immediate_propagation
 	) {
 		const modifiers =
-			options === true ? ['capture'] : options ? Array.from(Object.keys(options)) : [];
-		if (has_prevent_default) modifiers.push('preventDefault');
-		if (has_stop_propagation) modifiers.push('stopPropagation');
-		if (has_stop_immediate_propagation) modifiers.push('stopImmediatePropagation');
+			[];
 		dispatch_dev('SvelteDOMAddEventListener', { node, event, handler, modifiers });
 		const dispose = listen(node, event, handler, options);
 		return () => {
@@ -1017,7 +1014,7 @@ var app = (function () {
 				append_dev(button, span1);
 
 				if (!mounted) {
-					dispose = listen_dev(button, "click", /*handleClick*/ ctx[2], false, false, false, false);
+					dispose = listen_dev(button, "click", /*handleClick*/ ctx[2], false);
 					mounted = true;
 				}
 			},
@@ -1535,7 +1532,7 @@ var app = (function () {
 				current = true;
 
 				if (!mounted) {
-					dispose = listen_dev(button, "click", click_handler_1, false, false, false, false);
+					dispose = listen_dev(button, "click", click_handler_1, false);
 					mounted = true;
 				}
 			},
@@ -1619,7 +1616,7 @@ var app = (function () {
 				current = true;
 
 				if (!mounted) {
-					dispose = listen_dev(button, "click", click_handler, false, false, false, false);
+					dispose = listen_dev(button, "click", click_handler, false);
 					mounted = true;
 				}
 			},
@@ -2038,8 +2035,8 @@ var app = (function () {
 
 				if (!mounted) {
 					dispose = [
-						listen_dev(button0, "click", /*click_handler*/ ctx[4], false, false, false, false),
-						listen_dev(button1, "click", /*click_handler_1*/ ctx[5], false, false, false, false)
+						listen_dev(button0, "click", /*click_handler*/ ctx[4], false),
+						listen_dev(button1, "click", /*click_handler_1*/ ctx[5], false)
 					];
 
 					mounted = true;
