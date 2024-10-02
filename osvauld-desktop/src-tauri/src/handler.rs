@@ -1,12 +1,13 @@
 use crate::service::{
-    decrypt_credentials, get_certificate_and_salt, get_public_key, is_signed_up, save_passphrase,
-    sign_hashed_message, store_certificate_and_salt,
+    decrypt_credentials, get_certificate_and_salt, get_public_key, initialize_database,
+    is_signed_up, save_passphrase, sign_hashed_message, store_certificate_and_salt,
 };
 use crate::types::{
     AddCredentialInput, CryptoResponse, EncryptEditFieldsInput, HashAndSignInput,
     ImportCertificateInput, LoadPvtKeyInput, PasswordChangeInput, SavePassphraseInput,
     SignChallengeInput,
 };
+use crate::DbConnection;
 use crypto_utils::types::{Credential, CredentialFields, PublicKey};
 use crypto_utils::{CryptoUtils, ShareCredsInput};
 use log::{error, info};
@@ -17,13 +18,14 @@ use tauri::State;
 use tauri::Wry;
 use tauri_plugin_store::StoreCollection;
 
-static CRYPTO_UTILS: Lazy<Mutex<CryptoUtils>> = Lazy::new(|| Mutex::new(CryptoUtils::new()));
+pub static CRYPTO_UTILS: Lazy<Mutex<CryptoUtils>> = Lazy::new(|| Mutex::new(CryptoUtils::new()));
 #[tauri::command]
 pub async fn handle_crypto_action(
     action: String,
     data: Value,
     stores: State<'_, StoreCollection<Wry>>,
     app_handle: tauri::AppHandle,
+    db_connection: State<'_, DbConnection>,
 ) -> Result<CryptoResponse, String> {
     // info!("Received action: {:?}", action);
     // info!("Received data: {:?}", data);
@@ -38,15 +40,15 @@ pub async fn handle_crypto_action(
         "savePassphrase" => {
             let input: SavePassphraseInput = serde_json::from_value(data)
                 .map_err(|e| format!("Invalid savePassphrase input: {}", e))?;
-            let mut crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
             save_passphrase(
-                &mut crypto,
                 &input.username,
                 &input.passphrase,
                 &input.challenge,
                 &app_handle,
                 stores,
+                db_connection,
             )
+            .await
         }
 
         "checkPvtLoaded" => {
@@ -56,14 +58,14 @@ pub async fn handle_crypto_action(
         }
         "getPubKey" => {
             let input: LoadPvtKeyInput = serde_json::from_value(data).unwrap();
-
-            let (public_key, new_crypto_utils) =
-                get_public_key(&input.passphrase, &app_handle, stores)?;
-
-            // Update the CRYPTO_UTILS with the new instance
-            *CRYPTO_UTILS.lock().map_err(|e| e.to_string())? = new_crypto_utils;
-
-            Ok(CryptoResponse::PublicKey(public_key))
+            get_public_key(
+                &input.passphrase,
+                "test",
+                &app_handle,
+                stores,
+                db_connection,
+            )
+            .await
         }
         "signChallenge" => {
             let input: SignChallengeInput = serde_json::from_value(data)

@@ -1,16 +1,18 @@
+use crate::handler::CRYPTO_UTILS;
 use crate::types::CryptoResponse;
+use crate::DbConnection;
 use crypto_utils::types::{Credential, CredentialFields, CredentialsForUser};
-use crypto_utils::{CryptoUtils, PublicKey};
+use crypto_utils::CryptoUtils;
 use std::path::PathBuf;
-use tauri::State;
 use tauri::{AppHandle, Wry};
+use tauri::{Manager, State};
 use tauri_plugin_store::StoreCollection;
 
 pub fn is_signed_up(
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
 ) -> Result<bool, String> {
-    let path = PathBuf::from("my_app_store4.bin");
+    let path = PathBuf::from("my_app_store5.bin");
     tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
         let is_signed = store.get("certificate").is_some();
         println!("Is signed up: {}", is_signed); // Debug print
@@ -19,20 +21,23 @@ pub fn is_signed_up(
     .map_err(|e| e.to_string())
 }
 
-pub fn save_passphrase(
-    crypto: &mut CryptoUtils,
+pub async fn save_passphrase(
     username: &str,
     passphrase: &str,
     challenge: &str,
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
+    db_connection: State<'_, DbConnection>,
 ) -> Result<CryptoResponse, String> {
-    let key_pair = crypto
-        .generate_keys(passphrase, username)
-        .map_err(|e| e.to_string())?;
+    let key_pair = {
+        let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+        crypto
+            .generate_keys(passphrase, username)
+            .map_err(|e| e.to_string())?
+    };
 
-    let path = PathBuf::from("my_app_store4.bin");
-    tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
+    let path = PathBuf::from("my_app_store5.bin");
+    tauri_plugin_store::with_store(app_handle.clone(), stores.clone(), path, |store| {
         store.insert(
             "certificate".to_string(),
             key_pair.private_key.clone().into(),
@@ -41,12 +46,20 @@ pub fn save_passphrase(
         store.save()
     })
     .map_err(|e| e.to_string())?;
+    {
+        let mut crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+        crypto
+            .decrypt_and_load_certificate(&key_pair.private_key, &key_pair.salt, passphrase)
+            .map_err(|e| e.to_string())?;
+    }
 
-    crypto
-        .decrypt_and_load_certificate(&key_pair.private_key, &key_pair.salt, passphrase)
-        .map_err(|e| e.to_string())?;
+    // Initialize the database for this user
+    initialize_database(username, db_connection).await?;
+    let signature = {
+        let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+        crypto.sign_message(challenge).map_err(|e| e.to_string())?
+    };
 
-    let signature = crypto.sign_message(challenge).map_err(|e| e.to_string())?;
     Ok(CryptoResponse::SavePassphrase {
         signature: signature,
         username: username.to_string(),
@@ -55,12 +68,14 @@ pub fn save_passphrase(
     })
 }
 
-pub fn get_public_key(
+pub async fn get_public_key(
+    username: &str,
     passphrase: &str,
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
-) -> Result<(String, CryptoUtils), String> {
-    let path = PathBuf::from("my_app_store4.bin");
+    db_connection: State<'_, DbConnection>,
+) -> Result<CryptoResponse, String> {
+    let path = PathBuf::from("my_app_store5.bin");
 
     // Retrieve certificate and salt from storage
     let (certificate, salt) =
@@ -78,18 +93,22 @@ pub fn get_public_key(
         .map_err(|e| e.to_string())?;
 
     // Create a new CryptoUtils instance and decrypt the certificate
-    let mut crypto_utils = CryptoUtils::new();
-    // TODO: change unwrap to proper error handling
-    crypto_utils
-        .decrypt_and_load_certificate(&certificate.unwrap(), &salt.unwrap(), passphrase)
-        .map_err(|e| format!("Failed to decrypt and load certificate: {}", e))?;
-
+    {
+        let mut crypto = CryptoUtils::new();
+        // TODO: change unwrap to proper error handling
+        crypto
+            .decrypt_and_load_certificate(&certificate.unwrap(), &salt.unwrap(), passphrase)
+            .map_err(|e| format!("Failed to decrypt and load certificate: {}", e))?;
+    }
+    initialize_database(username, db_connection).await?;
     // Get the public key
-    let public_key = crypto_utils
-        .get_public_key()
-        .map_err(|e| format!("Failed to get public key: {}", e))?;
-
-    Ok((public_key, crypto_utils))
+    let public_key = {
+        let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+        crypto
+            .get_public_key()
+            .map_err(|e| format!("Failed to get public key: {}", e))?
+    };
+    Ok(CryptoResponse::PublicKey(public_key))
 }
 
 pub fn sign_hashed_message(crypto: &mut CryptoUtils, message: &str) -> Result<String, String> {
@@ -113,7 +132,7 @@ pub fn store_certificate_and_salt(
     certificate: &str,
     salt: &str,
 ) -> Result<(), String> {
-    let path = PathBuf::from("my_app_store4.bin");
+    let path = PathBuf::from("my_app_store5.bin");
     tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
         store.insert("certificate".to_string(), certificate.to_string().into())?;
         store.insert("salt".to_string(), salt.to_string().into())?;
@@ -126,7 +145,7 @@ pub fn get_certificate_and_salt(
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
 ) -> Result<(String, String), String> {
-    let path = PathBuf::from("my_app_store4.bin");
+    let path = PathBuf::from("my_app_store5.bin");
     tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
         let certificate = store
             .get("certificate")
@@ -141,4 +160,17 @@ pub fn get_certificate_and_salt(
         Ok((certificate, salt))
     })
     .map_err(|e| e.to_string())
+}
+
+pub async fn initialize_database(
+    username: &str,
+    db_connection: State<'_, DbConnection>,
+) -> Result<(), String> {
+    db_connection
+        .use_ns(username)
+        .use_db("main")
+        .await
+        .map_err(|e| format!("Failed to select namespace and database: {}", e))?;
+
+    Ok(())
 }
