@@ -6,7 +6,7 @@
 	import NoteCredential from "./NoteCredential.svelte";
 
 	export let edit = false;
-	export let onSubmit: (data: CredentialStoreData) => Promise<void>;
+	export let onSubmit: (credentialData: CredentialStoreData) => Promise<void>;
 	export let onCancel: () => void;
 
 	$: credentialComponent = {

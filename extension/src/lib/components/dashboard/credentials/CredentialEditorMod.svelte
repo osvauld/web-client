@@ -1,22 +1,25 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+	import { onMount, createEventDispatcher } from "svelte";
 	import {
 		updateCredentialStore,
 		resetCredentialStore,
+		CredentialStoreData,
 	} from "./credentialTypes/credentialStore";
+	import { setCredentialStore } from "../../../store/storeHelper";
 	import CredentialForm from "./credentialTypes/CredentialForm.svelte";
 	import {
-		addCredential,
-		updateCredential,
 		fetchCredentialUsersForDataSync,
 		fetchFolderUsersForDataSync,
 	} from "../apis";
+	import { addCredentialHandler } from "./credentialTypes/credentialHelper";
 	import { selectedFolder } from "../store";
 	import { Folder } from "../../../dtos/folder.dto";
-	import { AddCredentialPayload } from "../dtos";
+	import { AddCredentialPayload, UpdateCredentialPayload } from "../dtos";
 
 	export let edit: boolean = false;
 	export let credentialId: string = "";
+	let isLoaderActive: boolean = false;
+	const dispatcher = createEventDispatcher();
 
 	onMount(async () => {
 		if (edit && credentialId) {
@@ -34,17 +37,37 @@
 		}
 	});
 
-	const handleSubmit = async (credentialData: AddCredentialPayload) => {
-		if (edit) {
-			await updateCredential(credentialData, credentialId);
-		} else {
-			await addCredential(credentialData);
+	function isUpdateCredentialPayload(
+		data: any,
+	): data is UpdateCredentialPayload {
+		return "credentialId" in data;
+	}
+
+	function isAddCredentialPayload(data: any): data is AddCredentialPayload {
+		return !("credentialId" in data);
+	}
+
+	const handleSubmit = async (
+		credentialData: CredentialStoreData,
+		edit: boolean,
+		credentialId?: string,
+	) => {
+		isLoaderActive = true;
+		if (edit && isUpdateCredentialPayload(credentialData)) {
+			// need to create addCredentialPaylod.userFields with sendMessage before sending
+			// await updateCredential(credentialData, credentialId!);
+		} else if (!edit && isAddCredentialPayload(credentialData)) {
+			await addCredentialHandler(credentialData, $selectedFolder.id);
+			await setCredentialStore();
 		}
+		isLoaderActive = false;
+		dispatcher("close");
 		// Close dialog or navigate away
 	};
 
 	const handleCancel = () => {
 		resetCredentialStore();
+		dispatcher("close");
 		// Close dialog or navigate away
 	};
 </script>

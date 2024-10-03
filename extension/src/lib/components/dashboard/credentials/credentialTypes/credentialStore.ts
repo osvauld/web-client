@@ -1,4 +1,3 @@
-// Use a Svelte store to manage shared state across components. This can help reduce prop drilling and make it easier to access and update shared data.
 
 import { writable } from 'svelte/store';
 import {

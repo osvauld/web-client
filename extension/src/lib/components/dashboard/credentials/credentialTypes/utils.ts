@@ -1,1 +1,0 @@
-// Extract common utility functions (like totpValidator, getDomain, etc.) into a separate file. This will make these functions reusable across different components and easier to test.
