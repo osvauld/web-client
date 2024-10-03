@@ -1,37 +1,28 @@
+use crate::types::CredentialType;
+use crate::DbConnection;
 use log::info;
-use serde::{Deserialize, Serialize};
-use surrealdb::engine::local::Db;
-use surrealdb::sql::Thing;
-use surrealdb::Surreal;
 
-#[derive(Debug, Serialize, Deserialize)]
-struct TestRecord {
-    id: Option<Thing>,
-    name: String,
-    value: i32,
+pub async fn fetch_credential(
+    db: &DbConnection,
+    credential_id: &str,
+) -> Result<CredentialType, String> {
+    let result: Option<CredentialType> = db
+        .select(("credential", credential_id))
+        .await
+        .map_err(|e| format!("Database error: {}", e))?;
+
+    result.ok_or_else(|| "Credential not found".to_string())
 }
 
-pub async fn run_test_query(db: &Surreal<Db>) -> Result<(), String> {
-    let test_record = TestRecord {
-        id: None,
-        name: "Test Record".to_string(),
-        value: 42,
-    };
-
-    let created: Option<TestRecord> = db
-        .create("test_records")
-        .content(test_record)
+pub async fn insert_credential(
+    db: &DbConnection,
+    credential: CredentialType,
+) -> Result<CredentialType, String> {
+    let created: Option<CredentialType> = db
+        .create(("credential", &credential.credential_id))
+        .content(credential)
         .await
-        .map_err(|e| format!("Failed to insert test record: {}", e))?;
+        .map_err(|e| format!("Failed to insert credential: {}", e))?;
 
-    match created {
-        Some(record) => {
-            info!(
-                "Test record inserted successfully: id={:?}, name={}, value={}",
-                record.id, record.name, record.value
-            );
-            Ok(())
-        }
-        None => Err("Failed to retrieve inserted test record".to_string()),
-    }
+    created.ok_or_else(|| "Failed to retrieve created credential".to_string())
 }

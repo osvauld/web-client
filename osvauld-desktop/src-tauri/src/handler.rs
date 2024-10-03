@@ -13,11 +13,12 @@ use crypto_utils::{CryptoUtils, ShareCredsInput};
 use log::{error, info};
 use once_cell::sync::Lazy;
 use serde_json::Value;
+use std::sync::Arc;
 use std::sync::Mutex;
 use tauri::State;
 use tauri::Wry;
 use tauri_plugin_store::StoreCollection;
-
+use tokio::runtime::Runtime;
 pub static CRYPTO_UTILS: Lazy<Mutex<CryptoUtils>> = Lazy::new(|| Mutex::new(CryptoUtils::new()));
 #[tauri::command]
 pub async fn handle_crypto_action(
@@ -26,13 +27,11 @@ pub async fn handle_crypto_action(
     stores: State<'_, StoreCollection<Wry>>,
     app_handle: tauri::AppHandle,
     db_connection: State<'_, DbConnection>,
+    rt: State<'_, Arc<Runtime>>,
 ) -> Result<CryptoResponse, String> {
-    // info!("Received action: {:?}", action);
-    // info!("Received data: {:?}", data);
-
     match action.as_str() {
         "isSignedUp" => {
-            let is_signed_up_result = is_signed_up(&app_handle, stores)?;
+            let is_signed_up_result = is_signed_up(&app_handle, stores, db_connection).await?;
             Ok(CryptoResponse::IsSignedUp {
                 isSignedUp: is_signed_up_result,
             })
@@ -46,7 +45,6 @@ pub async fn handle_crypto_action(
                 &input.challenge,
                 &app_handle,
                 stores,
-                db_connection,
             )
             .await
         }
@@ -58,14 +56,7 @@ pub async fn handle_crypto_action(
         }
         "getPubKey" => {
             let input: LoadPvtKeyInput = serde_json::from_value(data).unwrap();
-            get_public_key(
-                &input.passphrase,
-                "test",
-                &app_handle,
-                stores,
-                db_connection,
-            )
-            .await
+            get_public_key(&input.passphrase, &app_handle, stores).await
         }
         "signChallenge" => {
             let input: SignChallengeInput = serde_json::from_value(data)

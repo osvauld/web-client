@@ -1,24 +1,61 @@
+use crate::database::queries;
 use crate::handler::CRYPTO_UTILS;
+use crate::types::CredentialType;
 use crate::types::CryptoResponse;
 use crate::DbConnection;
 use crypto_utils::types::{Credential, CredentialFields, CredentialsForUser};
 use crypto_utils::CryptoUtils;
+use log::{error, info};
 use std::path::PathBuf;
 use tauri::{AppHandle, Wry};
 use tauri::{Manager, State};
 use tauri_plugin_store::StoreCollection;
-
-pub fn is_signed_up(
+use uuid::Uuid;
+pub async fn is_signed_up(
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
+    db_connection: State<'_, DbConnection>,
 ) -> Result<bool, String> {
     let path = PathBuf::from("my_app_store5.bin");
-    tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
+    let is_signed = tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
         let is_signed = store.get("certificate").is_some();
         println!("Is signed up: {}", is_signed); // Debug print
         Ok(is_signed)
     })
-    .map_err(|e| e.to_string())
+    .map_err(|e| e.to_string())?;
+
+    let test_credential_id = Uuid::new_v4().to_string();
+    let test_credential = CredentialType {
+        credential_id: test_credential_id.clone(),
+        credential_type: "test".to_string(),
+        data: "test_data".to_string(),
+        folder_id: "test_folder".to_string(),
+        signature: "test_signature".to_string(),
+        permission: "test_permission".to_string(),
+    };
+    // Insert the test credential
+    match queries::insert_credential(&db_connection, test_credential).await {
+        Ok(inserted_credential) => {
+            info!("Test credential inserted: {:?}", inserted_credential);
+        }
+        Err(e) => {
+            error!("Failed to insert test credential: {}", e);
+            return Err(e);
+        }
+    }
+
+    // Fetch the test credential
+    match queries::fetch_credential(&db_connection, &test_credential_id).await {
+        Ok(fetched_credential) => {
+            info!("Fetched test credential: {:?}", fetched_credential);
+        }
+        Err(e) => {
+            error!("Failed to fetch test credential: {}", e);
+            return Err(e);
+        }
+    }
+
+    Ok(is_signed)
 }
 
 pub async fn save_passphrase(
@@ -27,7 +64,6 @@ pub async fn save_passphrase(
     challenge: &str,
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
-    db_connection: State<'_, DbConnection>,
 ) -> Result<CryptoResponse, String> {
     let key_pair = {
         let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
@@ -53,8 +89,6 @@ pub async fn save_passphrase(
             .map_err(|e| e.to_string())?;
     }
 
-    // Initialize the database for this user
-    initialize_database(username, db_connection).await?;
     let signature = {
         let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
         crypto.sign_message(challenge).map_err(|e| e.to_string())?
@@ -69,11 +103,9 @@ pub async fn save_passphrase(
 }
 
 pub async fn get_public_key(
-    username: &str,
     passphrase: &str,
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
-    db_connection: State<'_, DbConnection>,
 ) -> Result<CryptoResponse, String> {
     let path = PathBuf::from("my_app_store5.bin");
 
@@ -100,7 +132,6 @@ pub async fn get_public_key(
             .decrypt_and_load_certificate(&certificate.unwrap(), &salt.unwrap(), passphrase)
             .map_err(|e| format!("Failed to decrypt and load certificate: {}", e))?;
     }
-    initialize_database(username, db_connection).await?;
     // Get the public key
     let public_key = {
         let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;

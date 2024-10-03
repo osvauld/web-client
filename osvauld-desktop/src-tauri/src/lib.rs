@@ -8,14 +8,7 @@ use database::{setup_database, DbConnection};
 pub mod handler;
 mod service;
 mod types;
-use serde::{Deserialize, Serialize};
-use surrealdb::sql::Thing;
-#[derive(Debug, Serialize, Deserialize)]
-struct TestRecord {
-    id: Option<Thing>,
-    name: String,
-    value: i32,
-}
+use std::sync::Arc;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -36,10 +29,10 @@ pub fn run() {
 
             let db_connection: Result<DbConnection, String> =
                 rt.block_on(async { setup_database(db_path.to_str().unwrap()).await });
-
             match db_connection {
                 Ok(connection) => {
                     app.manage(connection);
+                    app.manage(Arc::new(rt));
                 }
                 Err(e) => {
                     error!("Failed to set up database: {}", e);

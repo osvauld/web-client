@@ -24,24 +24,55 @@ pub async fn connect_database(db_path: &str) -> Result<Surreal<Db>, String> {
                 error!("Failed to create database instance: {}", e);
             }
         }
-
         attempts += 1;
         if attempts >= MAX_ATTEMPTS {
             return Err("Database connection failed after multiple attempts".into());
         }
-
         sleep(RETRY_DELAY).await;
     }
 }
 
 pub async fn initialize_database(db: &Surreal<Db>) -> Result<(), String> {
-    // Here you would set up your database schema, create necessary tables, indexes, etc.
-    // For now, we'll just use a default namespace and database
+    // Set up namespace and database
     db.use_ns("myapp")
         .use_db("mydb")
         .await
         .map_err(|e| format!("Failed to select namespace and database: {}", e))?;
 
+    // Create credential table without enforcing schema
+    create_table(db, "credential").await?;
+
+    // Create index for better query performance
+    create_index(db, "credential", "credential_id").await?;
+
     info!("Database initialized successfully");
     Ok(())
+}
+
+async fn create_table(db: &Surreal<Db>, table_name: &str) -> Result<(), String> {
+    db.query(format!("DEFINE TABLE {} SCHEMALESS", table_name))
+        .await
+        .map_err(|e| format!("Failed to create table {}: {}", table_name, e))?;
+    Ok(())
+}
+
+async fn create_index(db: &Surreal<Db>, table_name: &str, field_name: &str) -> Result<(), String> {
+    db.query(format!(
+        "DEFINE INDEX idx_{}_{}  ON TABLE {} FIELDS {}",
+        table_name, field_name, table_name, field_name
+    ))
+    .await
+    .map_err(|e| {
+        format!(
+            "Failed to create index on {}.{}: {}",
+            table_name, field_name, e
+        )
+    })?;
+    Ok(())
+}
+
+pub async fn init(db_path: &str) -> Result<Surreal<Db>, String> {
+    let db = connect_database(db_path).await?;
+    initialize_database(&db).await?;
+    Ok(db)
 }
