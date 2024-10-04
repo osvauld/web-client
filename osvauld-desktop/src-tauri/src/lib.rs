@@ -9,7 +9,7 @@ pub mod handler;
 mod service;
 mod types;
 use std::sync::Arc;
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
+// #[tauri::mobile_entry_point]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_clipboard_manager::init())
