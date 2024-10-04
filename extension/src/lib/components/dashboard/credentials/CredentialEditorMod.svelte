@@ -15,14 +15,28 @@
 	import { updateCredentialHandler } from "./credentialTypes/updateCredentialHelper";
 	import { selectedFolder } from "../store";
 	import { Folder } from "../../../dtos/folder.dto";
-	import { AddCredentialPayload, UpdateCredentialPayload } from "../dtos";
+	import {
+		AddCredentialPayload,
+		UpdateCredentialPayload,
+		CredentialFieldComponentProps,
+	} from "../dtos";
 
 	export let edit: boolean = false;
 	export let credentialId: string = "";
+	export let name: string = "";
+	export let description: string = "";
+	export let credentialType: string = "";
+	export let credentialFields: CredentialFieldComponentProps[] = [
+		{ fieldName: "Username", fieldValue: "", sensitive: false },
+		{ fieldName: "Password", fieldValue: "", sensitive: true },
+		{ fieldName: "URL", fieldValue: "https://", sensitive: false },
+		{ fieldName: "TOTP", fieldValue: "", sensitive: true },
+	];
 	let isLoaderActive: boolean = false;
 	let successView: boolean = false;
 	let operationFailed: boolean = false;
 	let failureMessage: string = "";
+
 	const dispatcher = createEventDispatcher();
 
 	onMount(async () => {

@@ -1,12 +1,18 @@
 <script lang="ts">
 	import { credentialStore } from "./credentialStore";
-	import type { CredentialStoreData } from "./credentialStore";
+	import {
+		CredentialStoreData,
+		updateCredentialStore,
+		CredentialType,
+	} from "./credentialStore";
 	import LoginCredential from "./LoginCredential.svelte";
 	import CustomCredential from "./CustomCredential.svelte";
 	import NoteCredential from "./NoteCredential.svelte";
+	import { fly, blur } from "svelte/transition";
+	import { ClosePanel, Add, BinIcon } from "../../icons";
 
 	export let edit = false;
-	export let onSubmit: (credentialData: CredentialStoreData) => Promise<void>;
+	export let onSubmit;
 	export let onCancel: () => void;
 
 	$: credentialComponent = {
@@ -15,32 +21,85 @@
 		Note: NoteCredential,
 	}[$credentialStore.credentialType];
 
+	const credentialTypeSelection = (type: CredentialType) => {
+		updateCredentialStore({ credentialType: type });
+	};
+
 	const handleSubmit = () => {
 		// Validation logic
 		onSubmit($credentialStore);
 	};
 </script>
 
-// Create a separate CredentialForm component that handles the common form
-elements and logic. This component can be used for both adding and editing
-credentials.
-
 <form on:submit|preventDefault="{handleSubmit}">
-	<input
-		bind:value="{$credentialStore.name}"
-		placeholder="Enter Credential name..." />
+	<div
+		class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack z-50"
+		in:fly
+		out:blur>
+		<div class="flex justify-between items-center px-12 py-6">
+			<div>
+				<button
+					class="text-[28px] font-sans font-normal {$credentialStore.credentialType ===
+					'Login'
+						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
+						: 'text-osvauld-sheffieldgrey '}"
+					type="button"
+					on:click="{() => credentialTypeSelection('Login')}">
+					{edit ? "Edit Login" : "Login"}
+				</button>
+				<button
+					class="text-[28px] font-sans font-normal ml-8 {$credentialStore.credentialType ===
+					'Custom'
+						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
+						: 'text-osvauld-sheffieldgrey '}"
+					type="button"
+					on:click="{() => credentialTypeSelection('Custom')}">
+					{edit ? "Edit Custom" : "Custom"}
+				</button>
 
-	<svelte:component
-		this="{credentialComponent}"
-		bind:credentialFields="{$credentialStore.credentialFields}"
-		{edit} />
+				<button
+					class="text-[28px] font-sans font-normal ml-8 {$credentialStore.credentialType ===
+					'Note'
+						? 'text-osvauld-quarzowhite border-b-2 border-osvauld-carolinablue'
+						: 'text-osvauld-sheffieldgrey '}"
+					type="button"
+					on:click="{() => credentialTypeSelection('Note')}">
+					{edit ? "Edit Note" : "Note"}
+				</button>
+			</div>
+			<div>
+				<!-- {#if edit}
+					<button
+						class="bg-osvauld-frameblack p-4"
+						on:click="{deleteCredential}"
+						type="button"><BinIcon /></button>
+				{/if} -->
 
-	<textarea
-		bind:value="{$credentialStore.description}"
-		placeholder="Enter description about the secret"></textarea>
+				<button
+					class="bg-osvauld-frameblack p-4"
+					on:click="{onCancel}"
+					type="button"><ClosePanel /></button>
+			</div>
+		</div>
+		<div class="border-b border-osvauld-iconblack w-full"></div>
 
-	<button type="submit">
-		{edit ? "Save Changes" : "Add credential"}
-	</button>
-	<button on:click="{onCancel}">Cancel</button>
+		<svelte:component this="{credentialComponent}" {edit} />
+		<!-- {#if errorMessage !== ""}
+			{errorMessage}
+		{/if} -->
+
+		<div class="border-b border-osvauld-iconblack w-full my-2"></div>
+		<div class="flex justify-end items-center mx-10 py-2">
+			<button
+				class="px-3 py-1.5 mb-6 whitespace-nowrap text-osvauld-fadedCancel bg-osvauld-frameblack hover:bg-osvauld-cardshade flex justify-center items-center rounded-md hover:text-osvauld-textActive text-base font-normal"
+				type="button"
+				on:click="{onCancel}">Cancel</button>
+			<button
+				type="submit"
+				class="px-3 py-1.5 mb-6 whitespace-nowrap flex justify-center items-center ml-3 border border-osvauld-textActive text-osvauld-textActive hover:bg-osvauld-carolinablue hover:text-osvauld-frameblack hover:border-osvauld-carolinablue font-normal text-base rounded-md">
+				<span class="w-[8.6rem]"
+					>{edit ? "Save Changes" : "Add credential"}</span>
+			</button>
+		</div>
+	</div>
 </form>
