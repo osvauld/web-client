@@ -11,7 +11,10 @@
 		fetchCredentialUsersForDataSync,
 		fetchFolderUsersForDataSync,
 	} from "../apis";
-	import { addCredentialHandler } from "./credentialTypes/credentialHelper";
+	import {
+		addCredentialHandler,
+		updateCredentialHandler,
+	} from "./credentialTypes/credentialHelper";
 	import { selectedFolder } from "../store";
 	import { Folder } from "../../../dtos/folder.dto";
 	import { AddCredentialPayload, UpdateCredentialPayload } from "../dtos";
@@ -19,6 +22,9 @@
 	export let edit: boolean = false;
 	export let credentialId: string = "";
 	let isLoaderActive: boolean = false;
+	let successView: boolean = false;
+	let operationFailed: boolean = false;
+	let failureMessage: string = "";
 	const dispatcher = createEventDispatcher();
 
 	onMount(async () => {
@@ -53,16 +59,39 @@
 		credentialId?: string,
 	) => {
 		isLoaderActive = true;
+		let operationResponse: {
+			success: boolean;
+			message: string;
+		};
 		if (edit && isUpdateCredentialPayload(credentialData)) {
 			// need to create addCredentialPaylod.userFields with sendMessage before sending
-			// await updateCredential(credentialData, credentialId!);
+			operationResponse = await updateCredentialHandler(
+				credentialData,
+				credentialId!,
+			);
 		} else if (!edit && isAddCredentialPayload(credentialData)) {
-			await addCredentialHandler(credentialData, $selectedFolder.id);
-			await setCredentialStore();
+			operationResponse = await addCredentialHandler(
+				credentialData,
+				$selectedFolder.id,
+			);
 		}
-		isLoaderActive = false;
-		dispatcher("close");
-		// Close dialog or navigate away
+
+		if (operationResponse.success) {
+			await setCredentialStore();
+			isLoaderActive = false;
+			successView = true;
+			setTimeout(() => {
+				successView = false;
+			}, 1000);
+			dispatcher("close");
+		} else {
+			operationFailed = true;
+			failureMessage = operationResponse.message;
+			setTimeout(() => {
+				operationFailed = false;
+				failureMessage = "";
+			}, 1500);
+		}
 	};
 
 	const handleCancel = () => {
