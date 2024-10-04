@@ -19,6 +19,12 @@ const initialState: CredentialStoreData = {
 	usersToShare: [],
 };
 
+export const credentialFieldsStore = writable([
+	{ fieldName: "Username", fieldValue: "", sensitive: false },
+	{ fieldName: "Password", fieldValue: "", sensitive: true },
+	{ fieldName: "URL", fieldValue: "https://", sensitive: false },
+	{ fieldName: "TOTP", fieldValue: "", sensitive: true },
+]);
 export const credentialStore = writable<CredentialStoreData>(initialState);
 
 export const updateCredentialStore = (

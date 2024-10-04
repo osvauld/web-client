@@ -4,7 +4,7 @@
 	export let edit;
 	let changedFields;
 
-	$: isCredentialNamed = $credentialStore.name.length !== 0;
+	export let isCredentialNamed = true;
 </script>
 
 <div class="mx-6">

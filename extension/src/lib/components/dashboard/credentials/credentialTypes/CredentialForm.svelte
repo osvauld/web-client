@@ -4,6 +4,7 @@
 		CredentialStoreData,
 		updateCredentialStore,
 		CredentialType,
+		credentialFieldsStore,
 	} from "./credentialStore";
 	import LoginCredential from "./LoginCredential.svelte";
 	import CustomCredential from "./CustomCredential.svelte";
@@ -12,6 +13,9 @@
 	import { ClosePanel, Add, BinIcon } from "../../icons";
 
 	export let edit = false;
+	let isEnter: boolean;
+	let hoveredIndex: number;
+	export let isCredentialNamed;
 	export let onSubmit;
 	export let onCancel: () => void;
 
@@ -21,7 +25,35 @@
 		Note: NoteCredential,
 	}[$credentialStore.credentialType];
 
+	const updateCredentialFormat = (type) => {
+		let credentialType = type;
+		let credentialFields;
+		if (credentialType === "Custom") {
+			credentialFields = [
+				{
+					fieldName: "Field Name",
+					fieldValue: "",
+					sensitive: false,
+				},
+				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
+			];
+		} else if (credentialType === "Login") {
+			credentialFields = [
+				{ fieldName: "Username", fieldValue: "", sensitive: false },
+				{ fieldName: "Password", fieldValue: "", sensitive: true },
+				{ fieldName: "URL", fieldValue: "https://", sensitive: false },
+				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
+			];
+		} else if (credentialType == "Note") {
+			credentialFields = [
+				{ fieldName: "Note", fieldValue: "", sensitive: false },
+			];
+		}
+		credentialFieldsStore.set(credentialFields);
+	};
+
 	const credentialTypeSelection = (type: CredentialType) => {
+		updateCredentialFormat(type);
 		updateCredentialStore({ credentialType: type });
 	};
 
@@ -83,7 +115,11 @@
 		</div>
 		<div class="border-b border-osvauld-iconblack w-full"></div>
 
-		<svelte:component this="{credentialComponent}" {edit} />
+		<svelte:component
+			this="{credentialComponent}"
+			{edit}
+			{isCredentialNamed}
+			{hoveredIndex} />
 		<!-- {#if errorMessage !== ""}
 			{errorMessage}
 		{/if} -->

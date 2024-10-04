@@ -13,7 +13,7 @@
 	} from "../apis";
 	import { addCredentialHandler } from "./credentialTypes/addCredentialHelper";
 	import { updateCredentialHandler } from "./credentialTypes/updateCredentialHelper";
-	import { selectedFolder } from "../store";
+	import { credentialStore, selectedFolder } from "../store";
 	import { Folder } from "../../../dtos/folder.dto";
 	import {
 		AddCredentialPayload,
@@ -23,6 +23,7 @@
 
 	export let edit: boolean = false;
 	export let credentialId: string = "";
+	let isCredentialNamed = true;
 	export let name: string = "";
 	export let description: string = "";
 	export let credentialType: string = "";
@@ -70,6 +71,10 @@
 		edit: boolean,
 		credentialId?: string,
 	) => {
+		if (credentialData.name.length === 0) {
+			isCredentialNamed = false;
+			return;
+		}
 		isLoaderActive = true;
 		let operationResponse: {
 			success: boolean;
@@ -113,4 +118,8 @@
 	};
 </script>
 
-<CredentialForm {edit} onSubmit="{handleSubmit}" onCancel="{handleCancel}" />
+<CredentialForm
+	{edit}
+	{isCredentialNamed}
+	onSubmit="{handleSubmit}"
+	onCancel="{handleCancel}" />
