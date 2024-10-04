@@ -1,0 +1,170 @@
+import { CredentialStoreData } from "./credentialStore";
+import { sendMessage, getDomain } from "../../helper";
+import {
+	AddCredentialPayload,
+	CredentialFieldComponentProps,
+	Field,
+} from "../../dtos";
+
+import { addCredential } from "../../apis";
+
+const totpValidator = (secretKey: string): boolean => {
+	// Base32 encoded TOTP secrets typically range in size, allowing for flexibility
+	if (secretKey.length < 10 || secretKey.length > 64) {
+		return false;
+	}
+
+	// Check character set: Only uppercase letters A-Z and digits 2-7 are valid
+	const validBase32Regex = /^[A-Z2-7]+$/;
+	if (!validBase32Regex.test(secretKey)) {
+		return false;
+	}
+
+	return true;
+};
+
+const fieldValidator = (credentialFields: any) => {
+	let totpPresence = credentialFields.find(
+		(field: CredentialFieldComponentProps) => {
+			if (field.fieldName === "TOTP" && field.fieldValue.length !== 0) {
+				return field;
+			}
+		},
+	);
+
+	let isValidUrl = !credentialFields.some(
+		(field: CredentialFieldComponentProps) => {
+			if (field.fieldName === "URL") {
+				try {
+					getDomain(field.fieldValue);
+					return false;
+				} catch (_) {
+					return true;
+				}
+			}
+			return false;
+		},
+	);
+
+	if (totpPresence) {
+		const isTotpValid = totpValidator(totpPresence.fieldValue);
+		if (!isTotpValid) {
+			// Need to communicate with the UI that TOTP is invalid
+
+			// isLoaderActive = false;
+			// invalidTotp = true;
+			// setTimeout(() => {
+			// 	invalidTotp = false;
+			// }, 1000);
+			return {
+				success: false,
+				message: "TOTP entered is Invalid!",
+			};
+		}
+	}
+	if (!isValidUrl) {
+		// Need to convey in the UI taht the url is invalid
+
+		// isLoaderActive = false;
+		// invalidUrl = true;
+		// setTimeout(() => {
+		// 	invalidUrl = false;
+		// }, 1000);
+		return {
+			success: false,
+			message: "Invalid URL",
+		};
+	}
+
+	return {
+		success: true,
+		message: "Successful Validation",
+	};
+};
+
+export const addCredentialHandler = async (
+	credentialData: CredentialStoreData,
+	folderId: string,
+) => {
+	const { usersToShare, credentialFields, name, description, credentialType } =
+		credentialData;
+
+	const fieldValidationResponse: { success: boolean; message: string } =
+		fieldValidator(credentialFields);
+
+	if (fieldValidationResponse.success) return fieldValidationResponse;
+
+	let addCredentialFields: Field[] = [];
+
+	for (const field of credentialFields) {
+		if (field.fieldName === "URL" && field.fieldValue.length !== 0) {
+			try {
+				if (
+					!field.fieldValue.startsWith("https://") &&
+					!field.fieldValue.startsWith("http://")
+				) {
+					return {
+						success: false,
+						message: "Invalid URL",
+					};
+				}
+				const domain = getDomain(field.fieldValue);
+				addCredentialFields.push({
+					fieldName: "Domain",
+					fieldValue: domain,
+					fieldType: "additional",
+				});
+			} catch (error) {
+				return {
+					success: false,
+					message: "Invalid URL",
+				};
+			}
+		}
+		if (
+			(field.fieldName.length !== 0 || field.fieldValue.length !== 0) &&
+			field.fieldName !== "Domain"
+		) {
+			const baseField: Field = {
+				fieldName: field.fieldName,
+				fieldValue: field.fieldValue,
+				fieldType: field.sensitive ? "sensitive" : "meta",
+			};
+			if (field.fieldName === "TOTP") {
+				if (field.fieldValue.length !== 0) {
+					baseField.fieldType = "totp";
+					addCredentialFields.push(baseField);
+				} else {
+					continue;
+				}
+			} else {
+				addCredentialFields.push(baseField);
+			}
+		}
+	}
+
+	const addCredentialPaylod: AddCredentialPayload = {
+		name: name,
+		description: description,
+		folderId: folderId,
+		credentialType,
+		userFields: [],
+		domain: "",
+	};
+
+	const response = await sendMessage("addCredential", {
+		users: usersToShare,
+		addCredentialFields,
+	});
+
+	addCredentialPaylod.userFields = response;
+	const addCredResponse = await addCredential(addCredentialPaylod);
+	console.log("Checking add credential response", addCredResponse);
+	return {
+		success: addCredResponse.status === 200,
+		message:
+			addCredResponse.status === 200
+				? "Adding credential successful"
+				: "Failed to add credential",
+	};
+};

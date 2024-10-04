@@ -98,3 +98,25 @@ export type CapturedCredentialData = {
 	domain: string;
 	url: string;
 };
+
+export type EditedUserField = {
+	fieldId: string;
+	fieldName: string;
+	fieldType: string;
+	fieldValues: EncryptedEditField[];
+};
+
+export type EnvField = {
+	envFieldId: string;
+	fieldValue: string;
+};
+
+export type NewFieldPayload = {
+	fieldName: string;
+	fieldType: string;
+	fieldValues: {
+		fieldValue: string;
+		userId: string;
+		envFieldValues: { envId: string; fieldValue: string }[];
+	}[];
+};

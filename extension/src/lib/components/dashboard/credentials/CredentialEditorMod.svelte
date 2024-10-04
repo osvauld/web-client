@@ -11,10 +11,8 @@
 		fetchCredentialUsersForDataSync,
 		fetchFolderUsersForDataSync,
 	} from "../apis";
-	import {
-		addCredentialHandler,
-		updateCredentialHandler,
-	} from "./credentialTypes/credentialHelper";
+	import { addCredentialHandler } from "./credentialTypes/addCredentialHelper";
+	import { updateCredentialHandler } from "./credentialTypes/updateCredentialHelper";
 	import { selectedFolder } from "../store";
 	import { Folder } from "../../../dtos/folder.dto";
 	import { AddCredentialPayload, UpdateCredentialPayload } from "../dtos";
