@@ -3,8 +3,9 @@
 	import { Add, BinIcon } from "../../icons";
 	import { credentialStore, credentialFieldsStore } from "./credentialStore";
 	import { AddCredentialField } from "../../dtos";
+	import { fieldEditHandler } from "./fieldHelper";
 	export let edit;
-
+	export let hoveredIndex;
 	export let isCredentialNamed = true;
 
 	const newField = {
@@ -16,6 +17,26 @@
 	function addNewField() {
 		credentialFieldsStore.update((fields) => [...fields, newField]);
 	}
+
+	const triggerSensitiveBubble = (index: number, isEnter: boolean) => {
+		isEnter ? (hoveredIndex = index) : (hoveredIndex = null);
+	};
+
+	// $: isCredentialNamed = $credentialStore.name.length !== 0;
+
+	const removeField = (index: number) => {
+		// const field = $credentialFieldsStore[index];
+		// if (field && field.fieldId) {
+		// 	const fieldId = field.fieldId;
+		// 	if (typeof fieldId === "string") {
+		// 		deletedFields.push(fieldId);
+		// 	}
+		// }
+		const filterRemaining = $credentialFieldsStore.filter(
+			(_, indexToRemove) => index !== indexToRemove,
+		);
+		credentialFieldsStore.set(filterRemaining);
+	};
 </script>
 
 <div class="mx-6">
@@ -31,9 +52,9 @@
 			placeholder="Enter Credential name...."
 			autocomplete="off"
 			bind:value="{$credentialStore.name}" />
-		{#each $credentialStore.credentialFields as field, index}
+		{#each $credentialFieldsStore as field, index}
 			{#if field.fieldName !== "Domain"}
-				<!-- <AddLoginFields
+				<AddLoginFields
 					{field}
 					{index}
 					{hoveredIndex}
@@ -41,8 +62,8 @@
 						triggerSensitiveBubble(e.detail.index, e.detail.identifier)}"
 					on:remove="{(e) => removeField(e.detail)}"
 					on:change="{() => {
-						fieldEditHandler(field);
-					}}" /> -->
+						fieldEditHandler(field, $credentialFieldsStore, edit);
+					}}" />
 			{/if}
 		{/each}
 	</div>

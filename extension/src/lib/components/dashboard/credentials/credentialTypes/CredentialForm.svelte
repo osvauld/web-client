@@ -46,7 +46,7 @@
 			];
 		} else if (credentialType == "Note") {
 			credentialFields = [
-				{ fieldName: "Note", fieldValue: "", sensitive: false },
+				{ fieldName: "Note1", fieldValue: "", sensitive: false },
 			];
 		}
 		credentialFieldsStore.set(credentialFields);

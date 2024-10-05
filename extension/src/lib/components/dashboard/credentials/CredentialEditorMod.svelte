@@ -4,6 +4,8 @@
 		updateCredentialStore,
 		resetCredentialStore,
 		CredentialStoreData,
+		credentialFieldsStore,
+		credentialStore,
 	} from "./credentialTypes/credentialStore";
 	import { setCredentialStore } from "../../../store/storeHelper";
 	import CredentialForm from "./credentialTypes/CredentialForm.svelte";
@@ -13,7 +15,7 @@
 	} from "../apis";
 	import { addCredentialHandler } from "./credentialTypes/addCredentialHelper";
 	import { updateCredentialHandler } from "./credentialTypes/updateCredentialHelper";
-	import { credentialStore, selectedFolder } from "../store";
+	import { selectedFolder } from "../store";
 	import { Folder } from "../../../dtos/folder.dto";
 	import {
 		AddCredentialPayload,
@@ -55,6 +57,8 @@
 			updateCredentialStore({ usersToShare: responseJson.data });
 		}
 	});
+
+	$: console.log($credentialFieldsStore);
 
 	function isUpdateCredentialPayload(
 		data: any,
