@@ -46,6 +46,7 @@ export const fetchCredentialById = async (credentialId: string) => {
 };
 
 export const addCredential = async (payload: AddCredentialPayload) => {
+	console.log("Final add cred ==>", payload);
 	const headers = new Headers();
 	const transformedPayload = transformAddCredentialPayload(payload);
 	const signatureResponse = await sendMessage("hashAndSign", {

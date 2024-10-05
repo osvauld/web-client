@@ -15,6 +15,7 @@
 	export let edit = false;
 	let isEnter: boolean;
 	let hoveredIndex: number;
+	export let failureMessage = "";
 	export let isCredentialNamed;
 	export let onSubmit;
 	export let onCancel: () => void;
@@ -58,7 +59,7 @@
 	};
 
 	const handleSubmit = () => {
-		// Validation logic
+		updateCredentialStore({ credentialFields: $credentialFieldsStore });
 		onSubmit($credentialStore);
 	};
 </script>
@@ -120,9 +121,13 @@
 			{edit}
 			{isCredentialNamed}
 			{hoveredIndex} />
-		<!-- {#if errorMessage !== ""}
-			{errorMessage}
-		{/if} -->
+
+		{#if failureMessage !== ""}
+			<span class="text-red-500 text-base font-normal mr-3 mb-6"
+				>{failureMessage}</span>
+		{/if}
+
+		<div class="border-b border-osvauld-iconblack w-full my-2"></div>
 
 		<div class="border-b border-osvauld-iconblack w-full my-2"></div>
 		<div class="flex justify-end items-center mx-10 py-2">

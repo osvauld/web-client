@@ -88,11 +88,17 @@ export const addCredentialHandler = async (
 ) => {
 	const { usersToShare, credentialFields, name, description, credentialType } =
 		credentialData;
+	console.log("addCredentialHandler =>", credentialData, folderId);
 
 	const fieldValidationResponse: { success: boolean; message: string } =
 		fieldValidator(credentialFields);
+	console.log(
+		"Field validator response",
+		fieldValidationResponse,
+		fieldValidationResponse.success,
+	);
 
-	if (fieldValidationResponse.success) return fieldValidationResponse;
+	if (!fieldValidationResponse.success) return fieldValidationResponse;
 
 	let addCredentialFields: Field[] = [];
 
@@ -161,10 +167,9 @@ export const addCredentialHandler = async (
 	const addCredResponse = await addCredential(addCredentialPaylod);
 	console.log("Checking add credential response", addCredResponse);
 	return {
-		success: addCredResponse.status === 200,
-		message:
-			addCredResponse.status === 200
-				? "Adding credential successful"
-				: "Failed to add credential",
+		success: addCredResponse.success,
+		message: addCredResponse.success
+			? "Adding credential successful"
+			: "Failed to add credential",
 	};
 };

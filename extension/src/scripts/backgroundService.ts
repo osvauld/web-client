@@ -91,6 +91,7 @@ export const addCredentialHandler = async (payload: {
 	users: UsersForDataSync[];
 	addCredentialFields: Field[];
 }): Promise<UserEncryptedFields[]> => {
+	console.log("Encrypting add cred stage", payload);
 	return await encrypt_new_credential(
 		payload.users,
 		payload.addCredentialFields,

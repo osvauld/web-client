@@ -58,7 +58,7 @@
 		}
 	});
 
-	$: console.log($credentialFieldsStore);
+	$: console.log("credentialFieldsStore in editorMod", $credentialFieldsStore);
 
 	function isUpdateCredentialPayload(
 		data: any,
@@ -98,6 +98,7 @@
 		}
 
 		if (operationResponse.success) {
+			console.log("OPeration success");
 			await setCredentialStore();
 			isLoaderActive = false;
 			successView = true;
@@ -106,6 +107,7 @@
 			}, 1000);
 			dispatcher("close");
 		} else {
+			console.log("OPeration fail");
 			operationFailed = true;
 			failureMessage = operationResponse.message;
 			setTimeout(() => {
@@ -125,5 +127,6 @@
 <CredentialForm
 	{edit}
 	{isCredentialNamed}
+	{failureMessage}
 	onSubmit="{handleSubmit}"
 	onCancel="{handleCancel}" />
