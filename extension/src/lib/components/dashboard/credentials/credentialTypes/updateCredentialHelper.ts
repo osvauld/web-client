@@ -15,7 +15,7 @@ import {
 } from "../../apis";
 
 export const updateCredentialHandler = async (
-	credentialData: CredentialStoreData,
+	credentialData: any,
 	credentialId: string | undefined,
 ) => {
 	const { usersToShare, credentialFields, name, description, credentialType } =

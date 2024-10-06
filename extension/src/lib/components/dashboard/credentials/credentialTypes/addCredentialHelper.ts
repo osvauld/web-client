@@ -1,4 +1,3 @@
-import { CredentialStoreData } from "./credentialStore";
 import { sendMessage, getDomain } from "../../helper";
 import {
 	AddCredentialPayload,
@@ -49,13 +48,6 @@ const fieldValidator = (credentialFields: any) => {
 	if (totpPresence) {
 		const isTotpValid = totpValidator(totpPresence.fieldValue);
 		if (!isTotpValid) {
-			// Need to communicate with the UI that TOTP is invalid
-
-			// isLoaderActive = false;
-			// invalidTotp = true;
-			// setTimeout(() => {
-			// 	invalidTotp = false;
-			// }, 1000);
 			return {
 				success: false,
 				message: "TOTP entered is Invalid!",
@@ -63,13 +55,6 @@ const fieldValidator = (credentialFields: any) => {
 		}
 	}
 	if (!isValidUrl) {
-		// Need to convey in the UI taht the url is invalid
-
-		// isLoaderActive = false;
-		// invalidUrl = true;
-		// setTimeout(() => {
-		// 	invalidUrl = false;
-		// }, 1000);
 		return {
 			success: false,
 			message: "Invalid URL",
@@ -83,20 +68,14 @@ const fieldValidator = (credentialFields: any) => {
 };
 
 export const addCredentialHandler = async (
-	credentialData: CredentialStoreData,
+	credentialData: any,
 	folderId: string,
 ) => {
 	const { usersToShare, credentialFields, name, description, credentialType } =
 		credentialData;
-	console.log("addCredentialHandler =>", credentialData, folderId);
 
 	const fieldValidationResponse: { success: boolean; message: string } =
 		fieldValidator(credentialFields);
-	console.log(
-		"Field validator response",
-		fieldValidationResponse,
-		fieldValidationResponse.success,
-	);
 
 	if (!fieldValidationResponse.success) return fieldValidationResponse;
 
@@ -165,7 +144,6 @@ export const addCredentialHandler = async (
 
 	addCredentialPaylod.userFields = response;
 	const addCredResponse = await addCredential(addCredentialPaylod);
-	console.log("Checking add credential response", addCredResponse);
 	return {
 		success: addCredResponse.success,
 		message: addCredResponse.success

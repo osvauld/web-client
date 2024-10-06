@@ -1,11 +1,11 @@
 <script lang="ts">
 	import AddLoginFields from "../AddLoginFields.svelte";
 	import { Add } from "../../icons";
-	import { credentialStore, credentialFieldsStore } from "./credentialStore";
 	import type { AddCredentialField } from "../../dtos";
-	import { fieldEditHandler } from "./fieldHelper";
 
 	export let edit: boolean;
+	export let name: string;
+	export let description: string;
 	export let credentialFields: AddCredentialField[];
 	export let isCredentialNamed = true;
 
@@ -44,7 +44,7 @@ focus:border-osvauld-activeBorder flex focus:ring-0 placeholder-osvauld-iconblac
 			type="text"
 			placeholder="Enter Credential name...."
 			autocomplete="off"
-			bind:value="{$credentialStore.name}" />
+			bind:value="{name}" />
 		{#each credentialFields as field, index (index)}
 			{#if field.fieldName !== "Domain"}
 				<AddLoginFields
@@ -72,6 +72,6 @@ focus:border-osvauld-activeBorder flex focus:ring-0 placeholder-osvauld-iconblac
 	<textarea
 		rows="2"
 		class="w-5/6 mt-4 h-auto min-h-[6rem] max-h-[10rem] bg-osvauld-frameblack rounded-lg scrollbar-thin border-osvauld-iconblack resize-none text-base focus:border-osvauld-iconblack focus:ring-0"
-		bind:value="{$credentialStore.description}"
+		bind:value="{description}"
 		placeholder="Enter description about the secret"></textarea>
 </div>

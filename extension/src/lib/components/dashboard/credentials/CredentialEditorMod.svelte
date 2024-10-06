@@ -15,27 +15,23 @@
 		credentialFieldsUpdater,
 	} from "./credentialTypes/fieldHelper";
 
-	import {
-		CredentialStoreData,
-		updateCredentialStore,
-	} from "./credentialTypes/credentialStore";
-	import LoginCredential from "./credentialTypes/LoginCredential.svelte";
 	import CustomCredential from "./credentialTypes/CustomCredential.svelte";
-	import NoteCredential from "./credentialTypes/NoteCredential.svelte";
 	import { fly, blur } from "svelte/transition";
 	import { ClosePanel } from "../icons";
 
 	export let edit: boolean = false;
 	export let credentialId: string = "";
-	let isCredentialNamed = true;
 	export let name: string = "";
 	export let description: string = "";
+
+	let isCredentialNamed = true;
 	let credentialType: string = "";
 	let isLoaderActive: boolean = false;
 	let successView: boolean = false;
 	let operationFailed: boolean = false;
 	let failureMessage: string = "";
 	let credentialFields;
+	let usersToShare = [];
 	const templateTypes = [
 		"Login",
 		"Credit/DebitCard",
@@ -55,7 +51,7 @@
 	onMount(async () => {
 		if (edit && credentialId) {
 			const responseJson = await fetchCredentialUsersForDataSync(credentialId);
-			updateCredentialStore({ usersToShare: responseJson.data });
+			usersToShare = responseJson.data;
 		} else {
 			const folder = $selectedFolder as Folder | undefined;
 			if (folder === undefined) {
@@ -64,15 +60,28 @@
 			const responseJson = await fetchFolderUsersForDataSync(
 				$selectedFolder.id,
 			);
-			updateCredentialStore({ usersToShare: responseJson.data });
+			usersToShare = responseJson.data;
 		}
 	});
 
-	const handleSubmitParent = async (
-		credentialData: CredentialStoreData,
+	const credentialTypeSelection = (type: string) => {
+		credentialFields = credentialFieldsUpdater(type);
+		credentialType = type;
+	};
+
+	const handleSubmit = async (
+		credentialFields: any,
 		edit: boolean,
 		credentialId?: string,
 	) => {
+		const credentialData = {
+			name: name,
+			description: description,
+			credentialType: credentialType,
+			credentialFields: credentialFields,
+			usersToShare: usersToShare,
+		};
+
 		if (credentialData.name.length === 0) {
 			isCredentialNamed = false;
 			return;
@@ -83,7 +92,6 @@
 			message: string;
 		};
 		if (edit && isUpdateCredentialPayload(credentialData)) {
-			// need to create addCredentialPaylod.userFields with sendMessage before sending
 			operationResponse = await updateCredentialHandler(
 				credentialData,
 				credentialId!,
@@ -96,7 +104,6 @@
 		}
 
 		if (operationResponse.success) {
-			console.log("OPeration success");
 			await setCredentialStore();
 			isLoaderActive = false;
 			successView = true;
@@ -105,7 +112,6 @@
 			}, 1000);
 			dispatcher("close");
 		} else {
-			console.log("OPeration fail");
 			operationFailed = true;
 			failureMessage = operationResponse.message;
 			setTimeout(() => {
@@ -115,24 +121,12 @@
 		}
 	};
 
-	const credentialTypeSelection = (type) => {
-		credentialFields = credentialFieldsUpdater(type);
-		credentialType = type;
-	};
-
-	const handleSubmit = () => {
-		// updateCredentialStore({ credentialFields: $credentialFieldsStore });
-		// handleSubmitParent($credentialStore, edit, credentialId);
-	};
-
 	const handleCancel = () => {
-		// resetCredentialStore();
 		dispatcher("close");
-		// Close dialog or navigate away
 	};
 </script>
 
-<form on:submit|preventDefault="{handleSubmit}">
+<form on:submit|preventDefault="{() => handleSubmit(credentialFields, edit)}">
 	<div
 		class="bg-osvauld-frameblack rounded-3xl border border-osvauld-iconblack z-50"
 		in:fly
@@ -161,7 +155,12 @@
 		<div class="border-b border-osvauld-iconblack w-full"></div>
 
 		{#if credentialType !== ""}
-			<CustomCredential {credentialFields} {edit} {isCredentialNamed} />
+			<CustomCredential
+				bind:credentialFields
+				bind:name
+				bind:description
+				{edit}
+				{isCredentialNamed} />
 		{:else}
 			<div class="w-full grid grid-cols-2 grid-rows-6 gap-3 pl-4 py-2">
 				{#each templateTypes as type}
