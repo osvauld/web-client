@@ -18,7 +18,7 @@
 	};
 
 	function addNewField() {
-		credentialFields = [...credentialFields, newField];
+		credentialFields = [...credentialFields, { ...newField }];
 	}
 
 	function triggerSensitiveBubble(index: number, isEnter: boolean) {
