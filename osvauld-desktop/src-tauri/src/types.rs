@@ -92,3 +92,13 @@ pub struct EncryptEditFieldsInput {
     pub field_value: String,
     pub users_to_share: Vec<PublicKey>,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CredentialType {
+    pub credential_id: String,
+    pub credential_type: String,
+    pub data: String,
+    pub folder_id: String,
+    pub signature: String,
+    pub permission: String,
+}
