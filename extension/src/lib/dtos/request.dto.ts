@@ -13,6 +13,23 @@ export type AddCredentialPayload = {
 	domain: string;
 };
 
+type EnvEncryptedFields = {
+	envFieldId : string;
+	fieldValue: string;
+}
+
+export type UpdateCredentialPayload = {
+	name: string;
+	description: string;
+	credentialId: string;
+	credentialType: 'Login' | 'Custom' | 'Note';
+	editedUserFields: UserEncryptedFields[];
+	editedEnvFields: EnvEncryptedFields[];
+	newFields: UserEncryptedFields[];
+    domain: string,
+	deletedFields : string[];
+}
+
 export type UserEncryptedDataForShareCredentials = UserEncryptedCredentials & {
 	accessType: string;
 };

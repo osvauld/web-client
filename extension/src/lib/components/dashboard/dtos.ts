@@ -20,4 +20,5 @@ export type {
 	ShareCredentialsWithGroupsPayload,
 	ShareCredentialsWithUsersPayload,
 	AddCredentialPayload,
+	UpdateCredentialPayload
 } from "../../dtos/request.dto";

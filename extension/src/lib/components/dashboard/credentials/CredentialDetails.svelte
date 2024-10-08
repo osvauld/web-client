@@ -16,7 +16,7 @@
 	import { ClosePanel, EditIcon, EyeScan } from "../icons";
 	import { onMount } from "svelte";
 	import ExistingListItem from "../components/ExistingListItem.svelte";
-	import CredentialEditor from "./CredentialEditor.svelte";
+	import CredentialEditorMod from "./CredentialEditorMod.svelte";
 	import { sendMessage } from "../helper";
 
 	import {
@@ -166,33 +166,28 @@
 
 {#if showEditCredentialModal}
 	<div
-		class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-	>
+		class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]">
 		<button class="p-6 rounded bg-transparent" on:click|stopPropagation>
-			<CredentialEditor
+			<CredentialEditorMod
 				on:close="{closeCredentialEditor}"
 				edit="{true}"
 				credentialId="{credential.credentialId}"
 				name="{credential.name}"
 				description="{credential.description}"
 				credentialType="{credential.credentialType}"
-				credentialFields="{fieldsForEdit}"
-			/>
+				credentialFields="{fieldsForEdit}" />
 		</button>
 	</div>
 {/if}
 <div
 	class="fixed top-0 right-0 z-0 flex justify-end rounded-xl blur-none"
 	in:fly
-	out:fly
->
+	out:fly>
 	<div
-		class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6 overflow-y-auto scrollbar-thin"
-	>
+		class="w-[30vw] h-screen shadow-xl translate-x-0 bg-osvauld-frameblack p-6 overflow-y-auto scrollbar-thin">
 		<div class="flex pb-4">
 			<div
-				class="text-3xl font-semibold w-full text-left ml-2 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
-			>
+				class="text-3xl font-semibold w-full text-left ml-2 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
 				<span class="">{credential.name}</span>
 			</div>
 			{#if credential.accessType === "manager" && !accessListSelected}
@@ -200,42 +195,36 @@
 					class="p-2 mr-3 rounded-lg {showEditCredentialModal
 						? 'bg-osvauld-sensitivebgblue'
 						: ''}"
-					on:click="{handleEditCredential}"
-				>
+					on:click="{handleEditCredential}">
 					<EditIcon />
 				</button>
 			{/if}
 			<button
 				class="p-2"
 				on:click="{() => showCredentialDetailsDrawer.set(false)}"
-				><ClosePanel /></button
-			>
+				><ClosePanel /></button>
 		</div>
 		<div class="flex justify-start items-center mb-6">
 			<button
 				on:click="{() => (accessListSelected = false)}"
 				class="px-4 py-1.5 flex items-center text-sm font-light rounded-md mr-2 {!accessListSelected &&
-					' text-osvauld-carolinablue bg-osvauld-modalFieldActive'}"
-			>
+					' text-osvauld-carolinablue bg-osvauld-modalFieldActive'}">
 				<FileText color="{!accessListSelected ? '#89B4FA' : '#85889C'}" />
 				<span
 					class="{!accessListSelected
 						? 'text-osvauld-carolinablue'
 						: 'text-osvauld-fieldText '} ml-2">Details</span
-				></button
-			>
+				></button>
 			<button
 				class="rounded-md flex justify-around items-center px-4 py-1.5 text-sm {accessListSelected &&
 					'bg-osvauld-modalFieldActive'}
           ''}"
-				on:click="{() => (accessListSelected = true)}"
-			>
+				on:click="{() => (accessListSelected = true)}">
 				<EyeScan color="{accessListSelected ? '#89B4FA' : '#85889C'}" />
 				<span
 					class="ml-2 {accessListSelected
 						? 'text-osvauld-carolinablue'
-						: 'text-osvauld-fieldText '}">Access List</span
-				>
+						: 'text-osvauld-fieldText '}">Access List</span>
 			</button>
 		</div>
 		<div class="border border-osvauld-iconblack rounded-xl p-3">
@@ -244,8 +233,7 @@
 					<PlainField
 						fieldName="{field.fieldName}"
 						fieldValue="{field.fieldValue}"
-						hoverEffect="{true}"
-					/>
+						hoverEffect="{true}" />
 				{/each}
 				{#if sensitiveFields}
 					{#each sensitiveFields as field}
@@ -253,21 +241,18 @@
 							fieldName="{field.fieldName}"
 							fieldValue="{field.fieldValue}"
 							fieldType="{field.fieldType}"
-							hoverEffect="{true}"
-						/>
+							hoverEffect="{true}" />
 					{/each}
 				{/if}
 				{#if credential.description.length !== 0}
 					<label
 						class="text-osvauld-dusklabel block text-left text-sm font-normal"
-						for="credential-description"
-					>
+						for="credential-description">
 						Description
 					</label>
 					<div
 						class="mt-4 w-full h-[4rem] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin resize-none text-base text-osvauld-quarzowhite"
-						id="credential-description"
-					>
+						id="credential-description">
 						{credential.description}
 					</div>
 				{/if}
@@ -282,8 +267,7 @@
 									: ''}"
 								on:click="{() => {
 									editPermissionTrigger = !editPermissionTrigger;
-								}}"
-							>
+								}}">
 								<EditIcon />
 							</button>
 						{/if}
@@ -300,8 +284,7 @@
 								{editPermissionTrigger}
 								on:remove="{() => removeGroupFromCredentialHandler(group)}"
 								on:permissonChange="{(e) =>
-									permissionChangeHandler(e, group.groupId, 'group')}"
-							/>
+									permissionChangeHandler(e, group.groupId, 'group')}" />
 						{/each}
 					{:else if selectedTab == "Users"}
 						{#each users as user, index}
@@ -313,8 +296,7 @@
 								{editPermissionTrigger}
 								on:remove="{() => removeUserFromCredentialHandler(user)}"
 								on:permissonChange="{(e) =>
-									permissionChangeHandler(e, user.id, 'user')}"
-							/>
+									permissionChangeHandler(e, user.id, 'user')}" />
 						{/each}
 					{/if}
 				</div>
@@ -325,15 +307,13 @@
 							on:click="{() => {
 								editPermissionTrigger = false;
 								accessChangeDetected = false;
-							}}">Cancel</button
-						>
+							}}">Cancel</button>
 						<button
 							class="px-3 py-1.5 bg-osvauld-carolinablue text-osvauld-frameblack font-normal text-base rounded-md"
 							on:click="{() => {
 								savePermissions();
 								editPermissionTrigger = false;
-							}}">Save Changes</button
-						>
+							}}">Save Changes</button>
 					</div>
 				{/if}
 			{/if}

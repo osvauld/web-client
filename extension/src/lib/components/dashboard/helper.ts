@@ -153,7 +153,7 @@ export const transformAddCredentialPayload = (
 };
 
 export const getDomain = (urlString: string) => {
-	let url;
+	let url: URL;
 	try {
 		url = new URL(urlString);
 	} catch (_) {
@@ -161,7 +161,7 @@ export const getDomain = (urlString: string) => {
 	}
 	const hostname = url.hostname;
 	const parts = hostname.split(".");
-	let domain;
+	let domain: string | undefined;
 	if (parts.length > 2) {
 		domain = parts.slice(-2).join(".");
 	} else {
