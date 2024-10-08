@@ -1,4 +1,4 @@
-use log::{error, info};
+use log::{error, info, LevelFilter};
 use std::time::Duration;
 use surrealdb::engine::local::{Db, RocksDb};
 use surrealdb::Surreal;
