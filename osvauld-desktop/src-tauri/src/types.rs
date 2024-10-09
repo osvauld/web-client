@@ -102,3 +102,16 @@ pub struct CredentialType {
     pub signature: String,
     pub permission: String,
 }
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AddFolderInput {
+    pub name: String,
+    pub description: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Folder {
+    pub name: String,
+    pub description: String,
+    pub folder_id: String,
+}

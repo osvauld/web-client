@@ -1,6 +1,7 @@
-use crate::types::CredentialType;
+use crate::types::{CredentialType, Folder};
 use crate::DbConnection;
 use log::info;
+use serde_json::to_string;
 
 pub async fn fetch_credential(
     db: &DbConnection,
@@ -25,4 +26,13 @@ pub async fn insert_credential(
         .map_err(|e| format!("Failed to insert credential: {}", e))?;
 
     created.ok_or_else(|| "Failed to retrieve created credential".to_string())
+}
+
+pub async fn add_folder(db: &DbConnection, folder_params: Folder) -> Result<Folder, String> {
+    let folder: Option<Folder> = db
+        .create("folders")
+        .content(folder_params)
+        .await
+        .map_err(|e| format!("Failed to insert folder: {}", e))?;
+    folder.ok_or_else(|| "Failed to retrieve created folder".to_string())
 }

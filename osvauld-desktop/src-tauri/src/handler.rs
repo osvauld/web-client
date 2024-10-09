@@ -1,9 +1,9 @@
 use crate::service::{
-    decrypt_credentials, get_certificate_and_salt, get_public_key, initialize_database,
-    is_signed_up, save_passphrase, sign_hashed_message, store_certificate_and_salt,
+    add_folder, decrypt_credentials, get_certificate_and_salt, get_public_key, is_signed_up,
+    save_passphrase, sign_hashed_message, store_certificate_and_salt,
 };
 use crate::types::{
-    AddCredentialInput, CryptoResponse, EncryptEditFieldsInput, HashAndSignInput,
+    AddCredentialInput, AddFolderInput, CryptoResponse, EncryptEditFieldsInput, HashAndSignInput,
     ImportCertificateInput, LoadPvtKeyInput, PasswordChangeInput, SavePassphraseInput,
     SignChallengeInput,
 };
@@ -193,6 +193,17 @@ pub async fn handle_crypto_action(
                 .encrypt_field_value(&input.field_value, input.users_to_share)
                 .unwrap();
             Ok(CryptoResponse::EncryptedEditFields(encrypted))
+        }
+        "addFolder" => {
+            let add_folder_params: AddFolderInput =
+                serde_json::from_value(data).map_err(|e| format!("invalid input: {}", e))?;
+            let _ = add_folder(
+                &add_folder_params.name,
+                &add_folder_params.description,
+                db_connection,
+            )
+            .await;
+            Ok(CryptoResponse::IsSignedUp { isSignedUp: false })
         }
         _ => Err(format!("Unknown action: {}", action)),
     }

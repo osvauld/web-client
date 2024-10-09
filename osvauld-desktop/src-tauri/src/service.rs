@@ -2,6 +2,7 @@ use crate::database::queries;
 use crate::handler::CRYPTO_UTILS;
 use crate::types::CredentialType;
 use crate::types::CryptoResponse;
+use crate::types::Folder;
 use crate::DbConnection;
 use crypto_utils::types::{Credential, CredentialFields, CredentialsForUser};
 use crypto_utils::CryptoUtils;
@@ -16,45 +17,13 @@ pub async fn is_signed_up(
     stores: State<'_, StoreCollection<Wry>>,
     db_connection: State<'_, DbConnection>,
 ) -> Result<bool, String> {
-    let path = PathBuf::from("my_app_store5.bin");
+    let path = PathBuf::from("my_app_store6.bin");
     let is_signed = tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
         let is_signed = store.get("certificate").is_some();
         println!("Is signed up: {}", is_signed); // Debug print
         Ok(is_signed)
     })
     .map_err(|e| e.to_string())?;
-
-    let test_credential_id = Uuid::new_v4().to_string();
-    let test_credential = CredentialType {
-        credential_id: test_credential_id.clone(),
-        credential_type: "test".to_string(),
-        data: "test_data".to_string(),
-        folder_id: "test_folder".to_string(),
-        signature: "test_signature".to_string(),
-        permission: "test_permission".to_string(),
-    };
-    // Insert the test credential
-    match queries::insert_credential(&db_connection, test_credential).await {
-        Ok(inserted_credential) => {
-            info!("Test credential inserted: {:?}", inserted_credential);
-        }
-        Err(e) => {
-            error!("Failed to insert test credential: {}", e);
-            return Err(e);
-        }
-    }
-
-    // Fetch the test credential
-    match queries::fetch_credential(&db_connection, &test_credential_id).await {
-        Ok(fetched_credential) => {
-            info!("Fetched test credential: {:?}", fetched_credential);
-        }
-        Err(e) => {
-            error!("Failed to fetch test credential: {}", e);
-            return Err(e);
-        }
-    }
-
     Ok(is_signed)
 }
 
@@ -72,7 +41,7 @@ pub async fn save_passphrase(
             .map_err(|e| e.to_string())?
     };
 
-    let path = PathBuf::from("my_app_store5.bin");
+    let path = PathBuf::from("my_app_store6.bin");
     tauri_plugin_store::with_store(app_handle.clone(), stores.clone(), path, |store| {
         store.insert(
             "certificate".to_string(),
@@ -107,7 +76,7 @@ pub async fn get_public_key(
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
 ) -> Result<CryptoResponse, String> {
-    let path = PathBuf::from("my_app_store5.bin");
+    let path = PathBuf::from("my_app_store6.bin");
 
     // Retrieve certificate and salt from storage
     let (certificate, salt) =
@@ -125,14 +94,18 @@ pub async fn get_public_key(
         .map_err(|e| e.to_string())?;
 
     // Create a new CryptoUtils instance and decrypt the certificate
+
+    let mut crypto = CryptoUtils::new();
+    // TODO: change unwrap to proper error handling
+    crypto
+        .decrypt_and_load_certificate(&certificate.unwrap(), &salt.unwrap(), passphrase)
+        .map_err(|e| format!("Failed to decrypt and load certificate: {}", e))?;
     {
-        let mut crypto = CryptoUtils::new();
-        // TODO: change unwrap to proper error handling
-        crypto
-            .decrypt_and_load_certificate(&certificate.unwrap(), &salt.unwrap(), passphrase)
-            .map_err(|e| format!("Failed to decrypt and load certificate: {}", e))?;
+        let mut crypto_utils = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+        *crypto_utils = crypto;
     }
     // Get the public key
+
     let public_key = {
         let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
         crypto
@@ -163,7 +136,7 @@ pub fn store_certificate_and_salt(
     certificate: &str,
     salt: &str,
 ) -> Result<(), String> {
-    let path = PathBuf::from("my_app_store5.bin");
+    let path = PathBuf::from("my_app_store6.bin");
     tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
         store.insert("certificate".to_string(), certificate.to_string().into())?;
         store.insert("salt".to_string(), salt.to_string().into())?;
@@ -176,7 +149,7 @@ pub fn get_certificate_and_salt(
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
 ) -> Result<(String, String), String> {
-    let path = PathBuf::from("my_app_store5.bin");
+    let path = PathBuf::from("my_app_store6.bin");
     tauri_plugin_store::with_store(app_handle.clone(), stores, path, |store| {
         let certificate = store
             .get("certificate")
@@ -193,15 +166,17 @@ pub fn get_certificate_and_salt(
     .map_err(|e| e.to_string())
 }
 
-pub async fn initialize_database(
-    username: &str,
+pub async fn add_folder(
+    name: &str,
+    description: &str,
     db_connection: State<'_, DbConnection>,
 ) -> Result<(), String> {
-    db_connection
-        .use_ns(username)
-        .use_db("main")
-        .await
-        .map_err(|e| format!("Failed to select namespace and database: {}", e))?;
-
+    let folder_id = Uuid::new_v4().to_string();
+    let folder_params = Folder {
+        folder_id: folder_id,
+        name: name.to_string(),
+        description: description.to_string(),
+    };
+    queries::add_folder(&db_connection, folder_params).await;
     Ok(())
 }

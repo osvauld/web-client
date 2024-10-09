@@ -41,6 +41,7 @@ pub async fn initialize_database(db: &Surreal<Db>) -> Result<(), String> {
 
     // Create credential table without enforcing schema
     create_table(db, "credential").await?;
+    create_table(db, "folders").await?;
 
     // Create index for better query performance
     create_index(db, "credential", "credential_id").await?;

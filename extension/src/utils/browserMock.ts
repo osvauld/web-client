@@ -1,6 +1,6 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { invoke } from "@tauri-apps/api/core";
-const store = new Store(".my_app_store5.bin");
+const store = new Store(".my_app_store6.bin");
 const tauriBrowser = {
 	storage: {
 		local: {
@@ -57,7 +57,6 @@ const tauriBrowser = {
 					action,
 					data,
 				});
-				console.log(response, action);
 				return response;
 			} catch (error) {
 				console.error("Error invoking Tauri command:", error);
