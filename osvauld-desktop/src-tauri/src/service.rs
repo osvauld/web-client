@@ -3,15 +3,18 @@ use crate::handler::CRYPTO_UTILS;
 use crate::types::CredentialType;
 use crate::types::CryptoResponse;
 use crate::types::Folder;
+use crate::types::FolderResponse;
 use crate::DbConnection;
 use crypto_utils::types::{Credential, CredentialFields, CredentialsForUser};
 use crypto_utils::CryptoUtils;
 use log::{error, info};
 use std::path::PathBuf;
+use surrealdb::sql::Thing;
 use tauri::{AppHandle, Wry};
 use tauri::{Manager, State};
 use tauri_plugin_store::StoreCollection;
 use uuid::Uuid;
+
 pub async fn is_signed_up(
     app_handle: &AppHandle,
     stores: State<'_, StoreCollection<Wry>>,
@@ -171,12 +174,30 @@ pub async fn add_folder(
     description: &str,
     db_connection: State<'_, DbConnection>,
 ) -> Result<(), String> {
-    let folder_id = Uuid::new_v4().to_string();
+    let folder_id = uuid::Uuid::new_v4().to_string();
+
     let folder_params = Folder {
-        folder_id: folder_id,
+        id: Thing::from(("folders", folder_id.as_str())),
         name: name.to_string(),
         description: description.to_string(),
     };
-    queries::add_folder(&db_connection, folder_params).await;
+
+    // Insert the folder into the database
+    queries::add_folder(&db_connection, folder_params)
+        .await
+        .map_err(|e| format!("Failed to add folder: {}", e))?;
+
     Ok(())
+}
+pub async fn get_all_folders(
+    db_connection: State<'_, DbConnection>,
+) -> Result<Vec<FolderResponse>, String> {
+    let folders = queries::get_all_folders(&db_connection)
+        .await
+        .map_err(|e| format!("Failed to fetch folders: {}", e))?;
+
+    // Convert Folder instances to FolderResponse
+    let response: Vec<FolderResponse> = folders.into_iter().map(FolderResponse::from).collect();
+
+    Ok(response)
 }

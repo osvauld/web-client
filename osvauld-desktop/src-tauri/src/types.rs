@@ -3,6 +3,7 @@ use crypto_utils::types::{
 };
 use crypto_utils::Credential;
 use serde::{Deserialize, Serialize};
+use surrealdb::sql::{Id, Thing};
 #[derive(Serialize)]
 #[serde(untagged)]
 pub enum CryptoResponse {
@@ -34,6 +35,7 @@ pub enum CryptoResponse {
     ChangedPassphrase(String),
     ExportedCertificate(String),
     EncryptedEditFields(Vec<EncryptedFieldValue>),
+    Folders(Vec<FolderResponse>),
 }
 
 #[derive(Deserialize)]
@@ -113,5 +115,27 @@ pub struct AddFolderInput {
 pub struct Folder {
     pub name: String,
     pub description: String,
-    pub folder_id: String,
+    pub id: Thing,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct FolderResponse {
+    pub id: String,
+    pub name: String,
+    pub description: String,
+}
+
+impl From<Folder> for FolderResponse {
+    fn from(folder: Folder) -> Self {
+        let id_str = match folder.id.id {
+            Id::String(ref s) => s.clone(),
+            _ => "dfs".to_string(),
+        };
+
+        FolderResponse {
+            id: id_str,
+            name: folder.name,
+            description: folder.description,
+        }
+    }
 }

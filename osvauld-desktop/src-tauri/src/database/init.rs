@@ -34,8 +34,8 @@ pub async fn connect_database(db_path: &str) -> Result<Surreal<Db>, String> {
 
 pub async fn initialize_database(db: &Surreal<Db>) -> Result<(), String> {
     // Set up namespace and database
-    db.use_ns("myapp")
-        .use_db("mydb")
+    db.use_ns("myapp1")
+        .use_db("mydb1")
         .await
         .map_err(|e| format!("Failed to select namespace and database: {}", e))?;
 

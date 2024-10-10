@@ -14,6 +14,8 @@ import { User } from "../dtos/user.dto";
 import { LocalStorageService } from "../../scripts/storageHelper";
 export const setFolderStore = async () => {
 	const responseJson = await fetchAllFolders();
+	const folderResponse = await sendMessage('getFolder', {})
+	console.log(folderResponse[0])
 	const sortedData = responseJson.data.sort((a: Folder, b: Folder) =>
 		a.name.localeCompare(b.name),
 	);

@@ -1,6 +1,6 @@
 use crate::service::{
-    add_folder, decrypt_credentials, get_certificate_and_salt, get_public_key, is_signed_up,
-    save_passphrase, sign_hashed_message, store_certificate_and_salt,
+    add_folder, decrypt_credentials, get_all_folders, get_certificate_and_salt, get_public_key,
+    is_signed_up, save_passphrase, sign_hashed_message, store_certificate_and_salt,
 };
 use crate::types::{
     AddCredentialInput, AddFolderInput, CryptoResponse, EncryptEditFieldsInput, HashAndSignInput,
@@ -204,6 +204,10 @@ pub async fn handle_crypto_action(
             )
             .await;
             Ok(CryptoResponse::IsSignedUp { isSignedUp: false })
+        }
+        "getFolder" => {
+            let folders_response = get_all_folders(db_connection).await.unwrap();
+            Ok(CryptoResponse::Folders(folders_response))
         }
         _ => Err(format!("Unknown action: {}", action)),
     }
