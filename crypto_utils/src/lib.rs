@@ -3,9 +3,10 @@ mod errors;
 pub mod types;
 
 use crate::crypto_core::{
-    decrypt_certificate, decrypt_message, encrypt_certificate, encrypt_text, generate_certificate,
-    get_decryption_key, get_public_key_armored, get_recipient, get_salt_arr, get_signing_keypair,
-    hash_text_sha512, sign_message,
+    decrypt_certificate, decrypt_message, decrypt_multi_recipient_message, encrypt_certificate,
+    encrypt_for_multiple_recipients, encrypt_text, generate_certificate, get_decryption_key,
+    get_public_key_armored, get_recipient, get_salt_arr, get_signing_keypair, hash_text_sha512,
+    sign_message,
 };
 use crate::errors::CryptoUtilsError;
 pub use crate::types::{
@@ -375,6 +376,43 @@ impl CryptoUtils {
             });
         }
         Ok(encrypted_creds)
+    }
+    pub fn multi_recipient_encryption_poc() -> Result<()> {
+        // Generate two certificates
+        println!("Generating two certificates...");
+        let cert1 = generate_certificate("user1")?;
+        let cert2 = generate_certificate("user2")?;
+        println!("Certificates generated.");
+
+        // Get public keys from certificates
+        let public_key1 = get_public_key_armored(&cert1)?;
+        let public_key2 = get_public_key_armored(&cert2)?;
+
+        // Static plaintext
+        let plaintext = "This is a secret message for multiple recipients.";
+        println!("Original plaintext: {}", plaintext);
+
+        // Encrypt for both recipients
+        println!("Encrypting for both recipients...");
+        let encrypted = encrypt_for_multiple_recipients(plaintext, &[&public_key1, &public_key2])?;
+        println!("Encryption complete.");
+
+        // Decrypt with first certificate
+        println!("Decrypting with first certificate...");
+        let decrypted1 = decrypt_multi_recipient_message(&cert1, &encrypted)?;
+        println!("Decrypted with cert1: {}", decrypted1);
+
+        // Decrypt with second certificate
+        println!("Decrypting with second certificate...");
+        let decrypted2 = decrypt_multi_recipient_message(&cert2, &encrypted)?;
+        println!("Decrypted with cert2: {}", decrypted2);
+
+        // Verify results
+        assert_eq!(plaintext, decrypted1);
+        assert_eq!(plaintext, decrypted2);
+        println!("Assertion passed: Both decrypted texts match the original!");
+
+        Ok(())
     }
 }
 
