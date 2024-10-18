@@ -1,9 +1,8 @@
 use crate::errors::{AesError, PgpError};
 use aes_gcm::{
-    aead::{Aead, KeyInit},
-    Aes256Gcm, Nonce,
+    aead::{Aead, AeadCore, KeyInit},
+    Aes256Gcm, Key as Aes_Key, Nonce,
 };
-
 use anyhow::{Context, Result};
 use argon2::Argon2;
 use base64::{decode, encode};
@@ -27,6 +26,7 @@ use openpgp::{
     types::{HashAlgorithm, KeyFlags, SymmetricAlgorithm},
     Cert,
 };
+use rand::rngs::OsRng;
 use sequoia_openpgp::parse::stream::Decryptor;
 use sequoia_openpgp::serialize::stream::Encryptor2;
 use sequoia_openpgp::{self as openpgp};
@@ -117,42 +117,41 @@ pub fn get_public_key_armored(cert: &openpgp::Cert) -> Result<String> {
     cert.armored().serialize(&mut buf)?;
     Ok(String::from_utf8(buf)?)
 }
+pub fn encrypt_text_pgp(
+    recipient: &Key<PublicParts, UnspecifiedRole>,
+    text: &str,
+) -> Result<String, anyhow::Error> {
+    // Perform the encryption
+    let mut encrypted = Vec::new();
+    {
+        let message = Message::new(&mut encrypted);
+        let message = Encryptor2::for_recipients(message, vec![recipient])
+            .build()
+            .map_err(|e| PgpError::EncryptorCreationError(e.to_string()))?;
+        let mut writer = LiteralWriter::new(message)
+            .build()
+            .map_err(|e| PgpError::LiteralWriterCreationError(e.to_string()))?;
+        writer.write_all(text.as_bytes())?;
+        writer
+            .finalize()
+            .map_err(|e| PgpError::FinalizationError(e.to_string()))?;
+    }
 
-// pub fn encrypt_text(
-//     recipients: &[&Key<PublicParts, UnspecifiedRole>],
-//     text: &str,
-// ) -> Result<String> {
-//     // Perform the encryption
-//     let mut encrypted = Vec::new();
-//     {
-//         let message = Message::new(&mut encrypted);
-//         let message = Encryptor2::for_recipients(message, recipients)
-//             .build()
-//             .map_err(|e| PgpError::EncryptorCreationError(e.to_string()))?;
-//         let mut writer = LiteralWriter::new(message)
-//             .build()
-//             .map_err(|e| PgpError::LiteralWriterCreationError(e.to_string()))?;
-//         writer.write_all(text.as_bytes())?;
-//         writer
-//             .finalize()
-//             .map_err(|e| PgpError::FinalizationError(e.to_string()))?;
-//     }
+    // Armor the encrypted data
+    let mut armored = Vec::new();
+    {
+        let mut writer = openpgp::armor::Writer::new(&mut armored, openpgp::armor::Kind::Message)
+            .map_err(|e| PgpError::ArmorWriterCreationError(e.to_string()))?;
+        writer.write_all(&encrypted)?;
+        writer
+            .finalize()
+            .map_err(|e| PgpError::FinalizationError(e.to_string()))?;
+    }
 
-//     // Armor the encrypted data
-//     let mut armored = Vec::new();
-//     {
-//         let mut writer = openpgp::armor::Writer::new(&mut armored, openpgp::armor::Kind::Message)
-//             .map_err(|e| PgpError::ArmorWriterCreationError(e.to_string()))?;
-//         writer.write_all(&encrypted)?;
-//         writer
-//             .finalize()
-//             .map_err(|e| PgpError::FinalizationError(e.to_string()))?;
-//     }
+    Ok(String::from_utf8(armored)?)
+}
 
-//     Ok(String::from_utf8(armored)?)
-// }
-
-pub fn decrypt_message(
+pub fn decrypt_text_pgp(
     policy: &dyn Policy,
     decrypt_key: &openpgp::packet::Key<SecretParts, UnspecifiedRole>,
     ciphertext: &[u8],
@@ -240,79 +239,24 @@ pub fn hash_text_sha512(text: &str) -> Result<Vec<u8>, PgpError> {
     Ok(digest)
 }
 
-// pub fn get_recipient(public_key: &str) -> Result<(Recipient, Key<PublicParts, UnspecifiedRole>)> {
-//     let cert = Cert::from_bytes(public_key.as_bytes())?;
-//     let policy = &StandardPolicy::new();
+pub fn get_recipient(public_key: &str) -> Result<Key<PublicParts, UnspecifiedRole>, PgpError> {
+    // Parse the public key bytes into a Cert
+    let cert = Cert::from_bytes(&public_key.as_bytes())
+        .map_err(|e| PgpError::CertificateParseError(e.to_string()))?;
 
-//     cert.keys()
-//         .with_policy(policy, None)
-//         .supported()
-//         .alive()
-//         .revoked(false)
-//         .for_storage_encryption()
-//         .next()
-//         .map(|ka| {
-//             let key = ka.key().clone();
-//             let keyid = key.keyid();
-//             let recipient = Recipient::new(keyid, &key);
-//             (recipient, key)
-//         })
-//         .ok_or_else(|| anyhow::anyhow!("No suitable encryption key found"))
-// }
+    // Create a policy for key selection
+    let policy = &StandardPolicy::new();
 
-pub fn encrypt_for_multiple_recipients(
-    message: &str,
-    public_keys: &[String],
-) -> Result<String, Box<dyn std::error::Error>> {
-    // Create a vector to store the encryption keys
-    let mut encryption_keys = Vec::new();
-
-    // Convert each public key string into an encryption key
-    for public_key in public_keys {
-        let cert = Cert::from_bytes(public_key.as_bytes())?;
-        let policy = &StandardPolicy::new();
-
-        let key = cert
-            .keys()
-            .with_policy(policy, None)
-            .supported()
-            .alive()
-            .revoked(false)
-            .for_storage_encryption()
-            .next()
-            .ok_or_else(|| anyhow::anyhow!("No suitable encryption key found"))?;
-
-        // Clone the key to own it
-        let owned_key = key.key().clone();
-        encryption_keys.push(owned_key);
-    }
-
-    // Create recipients from the owned keys
-    let recipients: Vec<_> = encryption_keys.iter().map(Recipient::from).collect();
-
-    // Perform the encryption
-    let mut encrypted = Vec::new();
-    {
-        let message_writer = Message::new(&mut encrypted);
-        let message_encryptor = Encryptor2::for_recipients(message_writer, recipients)
-            .symmetric_algo(SymmetricAlgorithm::AES256)
-            .build()?;
-
-        let mut literal_writer = LiteralWriter::new(message_encryptor).build()?;
-        literal_writer.write_all(message.as_bytes())?;
-        literal_writer.finalize()?;
-    }
-
-    // Armor the encrypted data
-    let mut armored = Vec::new();
-    {
-        let mut writer = openpgp::armor::Writer::new(&mut armored, openpgp::armor::Kind::Message)?;
-        writer.write_all(&encrypted)?;
-        writer.finalize()?;
-    }
-
-    // Convert the armored data to a string
-    Ok(String::from_utf8(armored)?)
+    // Find a suitable encryption key
+    cert.keys()
+        .with_policy(policy, None)
+        .supported()
+        .alive()
+        .revoked(false)
+        .for_storage_encryption()
+        .next()
+        .map(|key| key.key().clone())
+        .ok_or(PgpError::NoSuitableEncryptionKeyError)
 }
 
 pub fn get_signing_keypair(cert: &Cert) -> Result<KeyPair, PgpError> {
@@ -380,54 +324,40 @@ pub fn sign_message(keypair: &KeyPair, message: &str) -> Result<Vec<u8>, PgpErro
     Ok(armored_signature)
 }
 
-// pub fn encrypt_for_multiple_recipients(plaintext: &str, public_keys: &[&str]) -> Result<Vec<u8>> {
-//     let policy = &StandardPolicy::new();
+pub fn generate_aes_key() -> Aes_Key<Aes256Gcm> {
+    Aes256Gcm::generate_key(OsRng)
+}
 
-//     let recipients: Vec<Cert> = public_keys
-//         .iter()
-//         .map(|&key| Cert::from_bytes(key.as_bytes()))
-//         .collect::<Result<Vec<Cert>>>()?;
+pub fn encrypt_with_aes(key: &Aes_Key<Aes256Gcm>, plaintext: &str) -> Result<String, AesError> {
+    let cipher = Aes256Gcm::new(key);
 
-//     let recipient_keys: Vec<Key<PublicParts, UnspecifiedRole>> = recipients
-//         .iter()
-//         .filter_map(|cert| {
-//             cert.keys()
-//                 .with_policy(policy, None)
-//                 .for_storage_encryption()
-//                 .next()
-//                 .map(|ka| ka.key().clone())
-//         })
-//         .collect();
+    let nonce = Aes256Gcm::generate_nonce(&mut OsRng); // 96-bits; unique per message
+    let ciphertext = cipher
+        .encrypt(&nonce, plaintext.as_bytes())
+        .map_err(|e| AesError::EncryptionError(e.to_string()))?;
 
-//     let mut encrypted = Vec::new();
-//     {
-//         let message = Message::new(&mut encrypted);
-//         let message = Encryptor2::for_recipients(message, &recipient_keys).build()?;
-//         let mut writer = LiteralWriter::new(message).build()?;
-//         writer.write_all(plaintext.as_bytes())?;
-//         writer.finalize()?;
-//     }
+    let mut combined = nonce.to_vec();
+    combined.extend_from_slice(&ciphertext);
 
-//     Ok(encrypted)
-// }
+    Ok(encode(combined))
+}
 
-// pub fn decrypt_multi_recipient_message(cert: &Cert, encrypted: &[u8]) -> Result<String> {
-//     let policy = &StandardPolicy::new();
-//     let decrypt_key = cert
-//         .keys()
-//         .unencrypted_secret()
-//         .with_policy(policy, None)
-//         .for_storage_encryption()
-//         .next()
-//         .context("No suitable decryption key found")?
-//         .key()
-//         .clone();
+pub fn decrypt_with_aes(key_bytes: &[u8], encoded: &str) -> Result<String, AesError> {
+    let key = Aes_Key::<Aes256Gcm>::from_slice(key_bytes);
+    let cipher = Aes256Gcm::new(key);
 
-//     let helper = DecryptionHelperStruct { decrypt_key };
+    let decoded = decode(encoded).map_err(|e| AesError::Base64DecodeError(e.to_string()))?;
 
-//     let mut decrypted = Vec::new();
-//     let mut decryptor =
-//         DecryptorBuilder::from_bytes(encrypted)?.with_policy(policy, None, helper)?;
-//     std::io::copy(&mut decryptor, &mut decrypted)?;
-//     String::from_utf8(decrypted).context("Failed to convert decrypted data to UTF-8")
-// }
+    if decoded.len() < 12 {
+        return Err(AesError::DecryptionError("Invalid ciphertext".to_string()));
+    }
+
+    let nonce = Nonce::from_slice(&decoded[..12]);
+    let ciphertext = &decoded[12..];
+
+    let plaintext = cipher
+        .decrypt(nonce, ciphertext)
+        .map_err(|e| AesError::DecryptionError(e.to_string()))?;
+
+    String::from_utf8(plaintext).map_err(|e| AesError::Utf8ConversionError(e.to_string()))
+}

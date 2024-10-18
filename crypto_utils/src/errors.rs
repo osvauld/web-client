@@ -18,6 +18,8 @@ pub enum AesError {
     CertificateParseError(String),
     #[error("Failed to decode: {0}")]
     Base64DecodeError(String),
+    #[error("Failed to decode: {0}")]
+    Utf8ConversionError(String),
 }
 
 #[derive(Error, Debug)]

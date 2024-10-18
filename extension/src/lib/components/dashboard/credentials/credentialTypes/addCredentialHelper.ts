@@ -136,18 +136,28 @@ export const addCredentialHandler = async (
 		userFields: [],
 		domain: "",
 	};
+	const credentialPayload = JSON.stringify({
+		name: name,
+		description,
+		credentialType,
+		credentialFields: addCredentialFields,
+	})
 
+	// const response = await sendMessage("addCredential", {
+	// 	users: usersToShare,
+	// 	addCredentialFields,
+	// });
 	const response = await sendMessage("addCredential", {
-		users: usersToShare,
-		addCredentialFields,
+		credentialPayload,
+		folderId: folderId,
 	});
 
-	addCredentialPaylod.userFields = response;
-	const addCredResponse = await addCredential(addCredentialPaylod);
-	return {
-		success: addCredResponse.success,
-		message: addCredResponse.success
-			? "Adding credential successful"
-			: "Failed to add credential",
-	};
+	// addCredentialPaylod.userFields = response;
+	// const addCredResponse = await addCredential(addCredentialPaylod);
+	// return {
+	// 	success: addCredResponse.success,
+	// 	message: addCredResponse.success
+	// 		? "Adding credential successful"
+	// 		: "Failed to add credential",
+	// };
 };

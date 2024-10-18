@@ -6,4 +6,5 @@ export type Folder = {
 	description?: string;
 	accessType: FolderAccessType;
 	type: FolderType;
+	shared: boolean
 };
