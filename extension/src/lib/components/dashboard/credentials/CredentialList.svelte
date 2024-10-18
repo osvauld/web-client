@@ -42,9 +42,7 @@
 
 	$: isShareCredActive = checkedCards.length !== 0;
 
-	$: sortedCredentials = $credentialStore.sort(
-		(a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-	);
+	let sortedCredentials = [];
 
 	$: minOneCredentialManager = sortedCredentials.some(
 		(credential) => credential.accessType === "manager",

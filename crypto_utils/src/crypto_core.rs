@@ -1,9 +1,9 @@
 use crate::errors::{AesError, PgpError};
 use aes_gcm::{
-    aead::{Aead, KeyInit},
-    Aes256Gcm, Nonce,
+    aead::{Aead, AeadCore, KeyInit},
+    Aes256Gcm, Key as Aes_Key, Nonce,
 };
-use anyhow::Result;
+use anyhow::{Context, Result};
 use argon2::Argon2;
 use base64::{decode, encode};
 use openpgp::{
@@ -23,10 +23,14 @@ use openpgp::{
         stream::{Message, *},
         Marshal,
     },
-    types::{HashAlgorithm, KeyFlags},
+    types::{HashAlgorithm, KeyFlags, SymmetricAlgorithm},
     Cert,
 };
+use rand::rngs::OsRng;
+use sequoia_openpgp::parse::stream::Decryptor;
+use sequoia_openpgp::serialize::stream::Encryptor2;
 use sequoia_openpgp::{self as openpgp};
+use sequoia_openpgp::{cert::prelude::*, policy};
 use std::error::Error;
 use std::io::Write;
 use std::io::{self};
@@ -113,8 +117,7 @@ pub fn get_public_key_armored(cert: &openpgp::Cert) -> Result<String> {
     cert.armored().serialize(&mut buf)?;
     Ok(String::from_utf8(buf)?)
 }
-
-pub fn encrypt_text(
+pub fn encrypt_text_pgp(
     recipient: &Key<PublicParts, UnspecifiedRole>,
     text: &str,
 ) -> Result<String, anyhow::Error> {
@@ -148,7 +151,7 @@ pub fn encrypt_text(
     Ok(String::from_utf8(armored)?)
 }
 
-pub fn decrypt_message(
+pub fn decrypt_text_pgp(
     policy: &dyn Policy,
     decrypt_key: &openpgp::packet::Key<SecretParts, UnspecifiedRole>,
     ciphertext: &[u8],
@@ -209,17 +212,19 @@ impl DecryptionHelper for DecryptionHelperStruct {
                 .into_keypair()
                 .map_err(|e| PgpError::KeyPairCreationError(e.to_string()))?,
         );
-        // Attempt to decrypt the first PKESK
-        pkesks[0]
-            .decrypt(&mut pair, sym_algo)
-            .map(|(algo, session_key)| {
-                decrypt(algo, &session_key);
-            });
 
-        Ok(None)
+        for pkesk in pkesks {
+            if let Some((algo, session_key)) = pkesk.decrypt(&mut pair, sym_algo) {
+                if decrypt(algo, &session_key) {
+                    return Ok(Some(self.decrypt_key.fingerprint()));
+                }
+            }
+        }
+
+        // If we've reached this point, decryption failed for all PKESKs
+        Err(anyhow::anyhow!("Decryption failed for all provided PKESKs"))
     }
 }
-
 pub fn hash_text_sha512(text: &str) -> Result<Vec<u8>, PgpError> {
     let mut ctx = HashAlgorithm::SHA512
         .context()
@@ -317,4 +322,42 @@ pub fn sign_message(keypair: &KeyPair, message: &str) -> Result<Vec<u8>, PgpErro
     }
 
     Ok(armored_signature)
+}
+
+pub fn generate_aes_key() -> Aes_Key<Aes256Gcm> {
+    Aes256Gcm::generate_key(OsRng)
+}
+
+pub fn encrypt_with_aes(key: &Aes_Key<Aes256Gcm>, plaintext: &str) -> Result<String, AesError> {
+    let cipher = Aes256Gcm::new(key);
+
+    let nonce = Aes256Gcm::generate_nonce(&mut OsRng); // 96-bits; unique per message
+    let ciphertext = cipher
+        .encrypt(&nonce, plaintext.as_bytes())
+        .map_err(|e| AesError::EncryptionError(e.to_string()))?;
+
+    let mut combined = nonce.to_vec();
+    combined.extend_from_slice(&ciphertext);
+
+    Ok(encode(combined))
+}
+
+pub fn decrypt_with_aes(key_bytes: &[u8], encoded: &str) -> Result<String, AesError> {
+    let key = Aes_Key::<Aes256Gcm>::from_slice(key_bytes);
+    let cipher = Aes256Gcm::new(key);
+
+    let decoded = decode(encoded).map_err(|e| AesError::Base64DecodeError(e.to_string()))?;
+
+    if decoded.len() < 12 {
+        return Err(AesError::DecryptionError("Invalid ciphertext".to_string()));
+    }
+
+    let nonce = Nonce::from_slice(&decoded[..12]);
+    let ciphertext = &decoded[12..];
+
+    let plaintext = cipher
+        .decrypt(nonce, ciphertext)
+        .map_err(|e| AesError::DecryptionError(e.to_string()))?;
+
+    String::from_utf8(plaintext).map_err(|e| AesError::Utf8ConversionError(e.to_string()))
 }

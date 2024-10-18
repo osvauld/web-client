@@ -1,11 +1,10 @@
 use log::{error, info};
-use std::path::PathBuf;
 use tauri::Manager;
-use tauri::Wry;
-use tauri_plugin_store::StoreCollection;
+use tauri_plugin_store::StoreExt;
 mod database;
-use database::{setup_database, DbConnection};
+use database::{initialize_database, DbConnection};
 pub mod handler;
+
 mod server;
 mod service;
 mod types;
@@ -15,6 +14,7 @@ use tokio::runtime::Runtime;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(
             tauri_plugin_log::Builder::new()
@@ -27,23 +27,23 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let handle = app.handle();
-            let stores = handle.state::<StoreCollection<Wry>>();
-            let path = PathBuf::from("my_app_store5.bin");
+            let store = handle.store_builder("my_app_store8.bin").build();
+            store.save()?;
+            app.manage(store);
 
-            // Initialize the store
-            tauri_plugin_store::with_store(handle.clone(), stores, path, |store| store.save())
-                .expect("failed to initialize store");
-
-            let db_path = app.path().app_data_dir().unwrap().join("surrealdb");
+            let app_dir = app.path().app_data_dir().unwrap();
+            let db_path = app_dir.join("sqlite.db").to_str().unwrap().to_string();
 
             // Create a new Tokio runtime
             let rt = Arc::new(Runtime::new().expect("Failed to create Tokio runtime"));
 
             // Clone the Arc<Runtime> for use in the database setup
             let rt_clone = Arc::clone(&rt);
-
-            let db_connection: Result<DbConnection, String> =
-                rt_clone.block_on(async { setup_database(db_path.to_str().unwrap()).await });
+            let db_connection: Result<DbConnection, String> = rt_clone.block_on(async {
+                initialize_database(&db_path)
+                    .await
+                    .map_err(|e| format!("Failed to initialize database: {}", e))
+            });
 
             match db_connection {
                 Ok(connection) => {

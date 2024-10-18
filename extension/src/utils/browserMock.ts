@@ -1,10 +1,14 @@
-import { Store } from "@tauri-apps/plugin-store";
+
+import { createStore } from '@tauri-apps/plugin-store';
 import { invoke } from "@tauri-apps/api/core";
-const store = new Store(".my_app_store5.bin");
 const tauriBrowser = {
 	storage: {
 		local: {
 			get: async (key) => {
+				const store = await createStore('my_app_store8.bin', {
+					// we can save automatically after each store modification
+					// autoSave: true,
+				});
 				// console.log("Tauri: Getting", key);
 				try {
 					const value = await store.get(key);
@@ -24,6 +28,10 @@ const tauriBrowser = {
 				}
 			},
 			set: async (data) => {
+				const store = await createStore('my_app_store8.bin', {
+					// we can save automatically after each store modification
+					// autoSave: true,
+				});
 				// console.log("Tauri: Setting", data);
 				try {
 					const key = Object.keys(data)[0];
@@ -34,6 +42,7 @@ const tauriBrowser = {
 						throw new Error("Both key and value must be strings");
 					}
 
+					console.log(key, value);
 					await store.set(key, value);
 					await store.save(); // Save changes to disk
 				} catch (error) {
@@ -57,7 +66,6 @@ const tauriBrowser = {
 					action,
 					data,
 				});
-				console.log(response, action);
 				return response;
 			} catch (error) {
 				console.error("Error invoking Tauri command:", error);

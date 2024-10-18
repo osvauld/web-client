@@ -13,18 +13,16 @@ import { getUser } from "../apis/user.api";
 import { User } from "../dtos/user.dto";
 import { LocalStorageService } from "../../scripts/storageHelper";
 export const setFolderStore = async () => {
-	const responseJson = await fetchAllFolders();
-	const sortedData = responseJson.data.sort((a: Folder, b: Folder) =>
-		a.name.localeCompare(b.name),
-	);
+	const folderResponse = await sendMessage('getFolder', {})
+
 	const selectedFolderValue = get(selectedFolder);
 	if (!selectedFolderValue) {
 		const storedFolder: any = LocalStorageService.get("selectedFolder", true);
 		if (storedFolder && storedFolder != "undefined") {
-			for (const folder of sortedData) {
+			for (const folder of folderResponse) {
 				if (folder.id === storedFolder.id) {
 					selectedFolder.set(folder);
-					if (folder.type === "private") {
+					if (!folder.shared) {
 						selectedSection.set("PrivateFolders");
 					}
 					return;
@@ -32,7 +30,7 @@ export const setFolderStore = async () => {
 			}
 		}
 	}
-	folderStore.set(sortedData);
+	folderStore.set(folderResponse);
 };
 
 export const setGroupStore = async () => {

@@ -5,8 +5,8 @@
   "identifier": "com.osvauld.app",
   "build": {
     "beforeDevCommand": "cd ../extension && npm run dev:tauri",
-    "devUrl": "http://localhost:5173",
     "beforeBuildCommand": "cd ../extension && npm run build:tauri",
+    "devUrl": "http://localhost:5173",
     "frontendDist": "../../extension/dist"
   },
   "app": {

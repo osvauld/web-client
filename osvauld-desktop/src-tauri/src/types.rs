@@ -1,7 +1,3 @@
-use crypto_utils::types::{
-    CredentialsForUser, EncryptedField, EncryptedFieldValue, Field, PublicKey,
-};
-use crypto_utils::Credential;
 use serde::{Deserialize, Serialize};
 #[derive(Serialize)]
 #[serde(untagged)]
@@ -19,12 +15,10 @@ pub enum CryptoResponse {
     CheckPvtKeyLoaded(bool),
     PublicKey(String),
     Signature(String),
-    EncryptedCredential(Vec<EncryptedField>),
+
     SignatureResponse {
         signature: String,
     },
-    DecryptedCredentials(Vec<Credential>),
-    ShareCredsPayload(Vec<CredentialsForUser>),
     DecryptedText(String),
     ImportedCertificate {
         certificate: String,
@@ -33,7 +27,7 @@ pub enum CryptoResponse {
     },
     ChangedPassphrase(String),
     ExportedCertificate(String),
-    EncryptedEditFields(Vec<EncryptedFieldValue>),
+    Folders(Vec<FolderResponse>),
 }
 
 #[derive(Deserialize)]
@@ -57,18 +51,13 @@ pub struct SignChallengeInput {
 #[serde(rename_all = "camelCase")]
 
 pub struct AddCredentialInput {
-    pub users: Vec<PublicKey>,
-    pub add_credential_fields: Vec<Field>,
+    pub credential_payload: String,
+    pub folder_id: String,
 }
 
 #[derive(Deserialize)]
 pub struct HashAndSignInput {
     pub message: String,
-}
-
-#[derive(Deserialize)]
-pub struct DecryptMetaInput {
-    pub credentials: Vec<Credential>,
 }
 
 #[derive(Deserialize)]
@@ -85,14 +74,6 @@ pub struct PasswordChangeInput {
     pub new_password: String,
 }
 
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-
-pub struct EncryptEditFieldsInput {
-    pub field_value: String,
-    pub users_to_share: Vec<PublicKey>,
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CredentialType {
     pub credential_id: String,
@@ -101,4 +82,29 @@ pub struct CredentialType {
     pub folder_id: String,
     pub signature: String,
     pub permission: String,
+}
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AddFolderInput {
+    pub name: String,
+    pub description: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SavePassphraseResponse {
+    pub signature: String,
+    pub username: String,
+    pub public_key: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+
+pub struct FolderResponse {
+    pub id: String,
+    pub name: String,
+    pub description: String,
+    pub shared: bool,
+    #[serde(rename = "accessType")]
+    pub access_type: String,
 }
