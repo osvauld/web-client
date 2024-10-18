@@ -1,6 +1,10 @@
-use crate::database::models::{Credential, Folder, FolderAccess, FolderAccessWithPublicKey, User};
-use crate::database::schema::{credentials, folder_access, folders, users};
+use crate::database::models::{
+    Credential, Folder, FolderAccess, FolderAccessWithPublicKey, NewCredential,
+    NewCredentialAccess, User,
+};
+use crate::database::schema::{credential_access, credentials, folder_access, folders, users};
 use crate::DbConnection;
+use crypto_utils::types::UserAccess;
 use diesel::prelude::*;
 use diesel::result::Error;
 use uuid::Uuid;
@@ -88,27 +92,48 @@ pub async fn get_folder_access(
         .load::<FolderAccessWithPublicKey>(&mut *conn)
 }
 
-pub async fn add_credential(
-    conn: &DbConnection,
-    credential_type: String,
-    data: String,
+pub async fn add_credential_and_access(
+    db: &DbConnection,
+    encrypted_payload: String,
     folder_id: String,
-    signature: String,
-    permission: String,
-) -> Result<Credential, Error> {
-    let new_credential = Credential {
-        id: Uuid::new_v4().to_string(),
-        credential_type,
-        data,
-        folder_id,
-        signature,
-        permission,
-    };
+    user_access_list: Vec<UserAccess>,
+) -> Result<(), diesel::result::Error> {
+    let mut conn = db.lock().await;
 
-    let mut conn = conn.lock().await;
-    diesel::insert_into(credentials::table)
-        .values(&new_credential)
-        .execute(&mut *conn)?;
+    conn.transaction(|conn| {
+        let credential_id = Uuid::new_v4().to_string();
 
-    Ok(new_credential)
+        // Insert the credential
+        let new_credential = NewCredential {
+            id: credential_id.clone(),
+            data: encrypted_payload,
+            folder_id: folder_id.clone(),
+            permission: "read".to_string(),
+            signature: "signature".to_string(),
+            credential_type: "credential_type".to_string(),
+        };
+
+        diesel::insert_into(credentials::table)
+            .values(&new_credential)
+            .execute(conn)?;
+
+        // Insert credential access entries
+        let credential_access_entries: Vec<NewCredentialAccess> = user_access_list
+            .into_iter()
+            .map(|access| NewCredentialAccess {
+                id: Uuid::new_v4().to_string(),
+                credential_id: credential_id.clone(),
+                user_id: access.user_id,
+                access_type: access.access,
+                folder_id: folder_id.clone(),
+                encrypted_key: access.encrypted_key,
+            })
+            .collect();
+
+        diesel::insert_into(credential_access::table)
+            .values(&credential_access_entries)
+            .execute(conn)?;
+
+        Ok(())
+    })
 }

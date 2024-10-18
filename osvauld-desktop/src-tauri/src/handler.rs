@@ -1,6 +1,7 @@
 use crate::service::{
-    add_folder, get_all_folders, get_certificate_and_salt, get_folder_access, get_public_key,
-    is_signed_up, save_passphrase, sign_hashed_message, store_certificate_and_salt,
+    add_credential_service, add_folder, get_all_folders, get_certificate_and_salt,
+    get_folder_access, get_public_key, is_signed_up, save_passphrase, sign_hashed_message,
+    store_certificate_and_salt,
 };
 use crate::types::{
     AddCredentialInput, AddFolderInput, CryptoResponse, HashAndSignInput, ImportCertificateInput,
@@ -12,12 +13,13 @@ use log::{error, info};
 use once_cell::sync::Lazy;
 use serde_json::Value;
 use std::sync::Arc;
-use std::sync::Mutex;
 use tauri::State;
 use tauri::Wry;
 use tauri_plugin_store::Store;
-use tokio::runtime::Runtime;
+use tokio::sync::Mutex;
+
 pub static CRYPTO_UTILS: Lazy<Mutex<CryptoUtils>> = Lazy::new(|| Mutex::new(CryptoUtils::new()));
+
 #[tauri::command]
 pub async fn handle_crypto_action(
     action: String,
@@ -46,8 +48,10 @@ pub async fn handle_crypto_action(
         }
 
         "checkPvtLoaded" => {
-            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
-            let is_loaded = crypto.is_cert_loaded();
+            let is_loaded = {
+                let crypto = CRYPTO_UTILS.lock().await;
+                crypto.is_cert_loaded()
+            };
             Ok(CryptoResponse::CheckPvtKeyLoaded(is_loaded))
         }
         "getPubKey" => {
@@ -57,11 +61,12 @@ pub async fn handle_crypto_action(
         "signChallenge" => {
             let input: SignChallengeInput = serde_json::from_value(data)
                 .map_err(|e| format!("Invalid signChallenge input: {}", e))?;
-            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
-
-            let signature = crypto
-                .sign_message(&input.challenge)
-                .map_err(|e| format!("Signing error: {}", e))?;
+            let signature = {
+                let crypto = CRYPTO_UTILS.lock().await;
+                crypto
+                    .sign_message(&input.challenge)
+                    .map_err(|e| format!("Signing error: {}", e))?
+            };
 
             Ok(CryptoResponse::Signature(signature))
         }
@@ -69,12 +74,26 @@ pub async fn handle_crypto_action(
             log::info!("Adding credential....{:?}", data);
             let input: AddCredentialInput = serde_json::from_value(data)
                 .map_err(|e| format!("Invalid addCredential input: {}", e))?;
-            let folder_access = get_folder_access(db_connection, &input.folder_id)
+            let folder_access = get_folder_access(&db_connection, &input.folder_id)
                 .await
                 .unwrap();
-            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
-            let response = crypto.encrypt_data_for_users(input.credential_payload, folder_access);
+
+            let response = {
+                let crypto = CRYPTO_UTILS.lock().await;
+                crypto
+                    .encrypt_data_for_users(input.credential_payload, folder_access)
+                    .map_err(|e| format!("Failed to encrypt data: {}", e))?
+            };
+
             log::info!("Response: {:?}", response);
+            add_credential_service(
+                &db_connection,
+                response.encrypted_data,
+                input.folder_id,
+                response.access_list,
+            )
+            .await
+            .unwrap();
             // let encrypted_fields = crypto
             //     .encrypt_fields_for_multiple_keys(input.users, input.add_credential_fields)
             //     .unwrap();
@@ -83,9 +102,12 @@ pub async fn handle_crypto_action(
         "hashAndSign" => {
             let input: HashAndSignInput = serde_json::from_value(data)
                 .map_err(|e| format!("Invalid hashAndSign input: {}", e))?;
-            let mut crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
-            let signature = sign_hashed_message(&mut crypto, &input.message)
-                .map_err(|e| format!("Hash and sign error: {}", e))?;
+            let signature = {
+                let crypto = CRYPTO_UTILS.lock().await;
+                crypto
+                    .sign_message(&input.message)
+                    .map_err(|e| format!("Hash and sign error: {}", e))?
+            };
             Ok(CryptoResponse::IsSignedUp { isSignedUp: false })
         }
         "decryptMeta" => Ok(CryptoResponse::IsSignedUp { isSignedUp: false }),
@@ -93,10 +115,12 @@ pub async fn handle_crypto_action(
         "importPvtKey" => {
             let input: ImportCertificateInput = serde_json::from_value(data)
                 .map_err(|e| format!("Invalid importPvtKey input: {}", e))?;
-            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
-            let result = crypto
-                .import_certificate(input.certificate, input.passphrase)
-                .map_err(|e| format!("Error importing certificate: {}", e))?;
+            let result = {
+                let crypto = CRYPTO_UTILS.lock().await;
+                crypto
+                    .import_certificate(input.certificate, input.passphrase)
+                    .map_err(|e| format!("Error importing certificate: {}", e))?
+            };
             store_certificate_and_salt(&store, &result.private_key, &result.salt)?;
             Ok(CryptoResponse::ImportedCertificate {
                 certificate: result.private_key,
@@ -111,10 +135,12 @@ pub async fn handle_crypto_action(
 
             let (pvt_key, salt) = get_certificate_and_salt(&store)?;
 
-            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
-            let exported_cert = crypto
-                .export_certificate(passphrase, &pvt_key, &salt)
-                .map_err(|e| format!("Error exporting certificate: {}", e))?;
+            let exported_cert = {
+                let crypto = CRYPTO_UTILS.lock().await;
+                crypto
+                    .export_certificate(passphrase, &pvt_key, &salt)
+                    .map_err(|e| format!("Error exporting certificate: {}", e))?
+            };
 
             Ok(CryptoResponse::ExportedCertificate(exported_cert))
         }
@@ -125,16 +151,17 @@ pub async fn handle_crypto_action(
 
             let (pvt_key, salt) = get_certificate_and_salt(&store)?;
 
-            let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
-            let new_certificate = crypto
-                .change_certificate_password(
-                    &pvt_key,
-                    &salt,
-                    &input.old_password,
-                    &input.new_password,
-                )
-                .map_err(|e| format!("Error changing certificate password: {}", e))?;
-
+            let new_certificate = {
+                let crypto = CRYPTO_UTILS.lock().await;
+                crypto
+                    .change_certificate_password(
+                        &pvt_key,
+                        &salt,
+                        &input.old_password,
+                        &input.new_password,
+                    )
+                    .map_err(|e| format!("Error changing certificate password: {}", e))?
+            };
             // Store the new certificate
             store_certificate_and_salt(&store, &new_certificate, &salt)?;
 

@@ -48,3 +48,35 @@ pub struct FolderAccessWithPublicKey {
     pub access_type: String,
     pub public_key: String,
 }
+
+#[derive(Insertable)]
+#[table_name = "credentials"]
+pub struct NewCredential {
+    pub id: String,
+    pub credential_type: String,
+    pub data: String,
+    pub folder_id: String,
+    pub signature: String,
+    pub permission: String,
+}
+
+#[derive(Insertable)]
+#[table_name = "credential_access"]
+pub struct NewCredentialAccess {
+    pub id: String,
+    pub credential_id: String,
+    pub user_id: String,
+    pub access_type: String,
+    pub folder_id: String,
+    pub encrypted_key: String,
+}
+
+// Update your AddCredentialInput struct:
+#[derive(Serialize, Deserialize, Debug)]
+pub struct AddCredentialInput {
+    pub folder_id: String,
+    pub credential_payload: String,
+    pub credential_type: String,
+    pub signature: String,
+    pub permission: String,
+}

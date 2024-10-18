@@ -3,6 +3,7 @@ use crate::database::queries;
 use crate::handler::CRYPTO_UTILS;
 use crate::types::{CryptoResponse, FolderResponse};
 use crate::DbConnection;
+use crypto_utils::types::UserAccess;
 use crypto_utils::CryptoUtils;
 use log::{error, info};
 use tauri::State;
@@ -23,21 +24,21 @@ pub async fn save_passphrase(
     db_connection: State<'_, DbConnection>,
 ) -> Result<CryptoResponse, String> {
     let key_pair = {
-        let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+        let crypto = CRYPTO_UTILS.lock().await;
         crypto
             .generate_keys(passphrase, username)
             .map_err(|e| e.to_string())?
     };
 
     {
-        let mut crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+        let mut crypto = CRYPTO_UTILS.lock().await;
         crypto
             .decrypt_and_load_certificate(&key_pair.private_key, &key_pair.salt, passphrase)
             .map_err(|e| e.to_string())?;
     }
 
     let signature = {
-        let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+        let crypto = CRYPTO_UTILS.lock().await;
         crypto.sign_message(challenge).map_err(|e| e.to_string())?
     };
     let user_id = add_user(
@@ -81,13 +82,13 @@ pub async fn get_public_key(
         .decrypt_and_load_certificate(&certificate, &salt, passphrase)
         .map_err(|e| format!("Failed to decrypt and load certificate: {}", e))?;
     {
-        let mut crypto_utils = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+        let mut crypto_utils = CRYPTO_UTILS.lock().await;
         *crypto_utils = crypto;
     }
     // Get the public key
 
     let public_key = {
-        let crypto = CRYPTO_UTILS.lock().map_err(|e| e.to_string())?;
+        let crypto = CRYPTO_UTILS.lock().await;
         crypto
             .get_public_key()
             .map_err(|e| format!("Failed to get public key: {}", e))?
@@ -196,7 +197,7 @@ pub async fn add_user(
 }
 
 pub async fn get_folder_access(
-    db_connection: State<'_, DbConnection>,
+    db_connection: &State<'_, DbConnection>,
     folder_id: &str,
 ) -> Result<Vec<UserPublicKey>, String> {
     // Get folder access information
@@ -213,4 +214,20 @@ pub async fn get_folder_access(
             access: fa.access_type,
         })
         .collect())
+}
+
+pub async fn add_credential_service(
+    db_connection: &State<'_, DbConnection>,
+    encrypted_payload: String,
+    folder_id: String,
+    user_access_list: Vec<UserAccess>,
+) -> Result<(), String> {
+    queries::add_credential_and_access(
+        &db_connection,
+        encrypted_payload,
+        folder_id,
+        user_access_list,
+    )
+    .await
+    .map_err(|e| format!("Failed to add credential and access: {}", e))
 }
