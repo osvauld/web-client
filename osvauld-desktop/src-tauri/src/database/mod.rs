@@ -1,19 +1,38 @@
-pub mod init;
-pub mod queries;
-
-use log::{error, info};
+use diesel::sqlite::SqliteConnection;
+use diesel::Connection;
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+use log::info;
+use std::path::Path;
 use std::sync::Arc;
-use surrealdb::engine::local::Db;
-use surrealdb::Surreal;
+use tokio::sync::Mutex;
 
-pub type DbConnection = Arc<Surreal<Db>>;
+pub mod models;
+pub mod queries;
+pub mod schema;
 
-pub async fn setup_database(db_path: &str) -> Result<DbConnection, String> {
-    info!("Starting database setup...");
-    let db = init::connect_database(db_path).await?;
-    let connection = Arc::new(db);
-    info!("Database connection established. Initializing database...");
-    init::initialize_database(&connection).await?;
-    info!("Database initialized successfully.");
-    Ok(connection)
+pub type DbConnection = Arc<Mutex<SqliteConnection>>;
+
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("src/database/migrations");
+
+pub async fn connect_database(db_path: &str) -> Result<DbConnection, diesel::result::Error> {
+    let path = Path::new(db_path);
+    let conn = SqliteConnection::establish(path.to_str().unwrap()).unwrap();
+    Ok(Arc::new(Mutex::new(conn)))
+}
+
+pub async fn run_migrations(
+    conn: &DbConnection,
+) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    let mut conn = conn.lock().await;
+    conn.run_pending_migrations(MIGRATIONS)?;
+    info!("Migrations completed successfully");
+    Ok(())
+}
+
+pub async fn initialize_database(
+    db_path: &str,
+) -> Result<DbConnection, Box<dyn std::error::Error + Send + Sync>> {
+    let conn = connect_database(db_path).await?;
+    run_migrations(&conn).await?;
+    Ok(conn)
 }

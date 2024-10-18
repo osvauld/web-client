@@ -13,6 +13,7 @@
     "store:allow-save",
     "store:allow-load",
     "log:default",
-    "clipboard-manager:allow-write-text"
+    "clipboard-manager:allow-write-text",
+    "store:default"
   ]
 }

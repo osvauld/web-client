@@ -1,9 +1,4 @@
-use crypto_utils::types::{
-    CredentialsForUser, EncryptedField, EncryptedFieldValue, Field, PublicKey,
-};
-use crypto_utils::Credential;
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Id, Thing};
 #[derive(Serialize)]
 #[serde(untagged)]
 pub enum CryptoResponse {
@@ -20,12 +15,10 @@ pub enum CryptoResponse {
     CheckPvtKeyLoaded(bool),
     PublicKey(String),
     Signature(String),
-    EncryptedCredential(Vec<EncryptedField>),
+
     SignatureResponse {
         signature: String,
     },
-    DecryptedCredentials(Vec<Credential>),
-    ShareCredsPayload(Vec<CredentialsForUser>),
     DecryptedText(String),
     ImportedCertificate {
         certificate: String,
@@ -34,7 +27,6 @@ pub enum CryptoResponse {
     },
     ChangedPassphrase(String),
     ExportedCertificate(String),
-    EncryptedEditFields(Vec<EncryptedFieldValue>),
     Folders(Vec<FolderResponse>),
 }
 
@@ -59,18 +51,13 @@ pub struct SignChallengeInput {
 #[serde(rename_all = "camelCase")]
 
 pub struct AddCredentialInput {
-    pub users: Vec<PublicKey>,
-    pub add_credential_fields: Vec<Field>,
+    pub credential_payload: String,
+    pub folder_id: String,
 }
 
 #[derive(Deserialize)]
 pub struct HashAndSignInput {
     pub message: String,
-}
-
-#[derive(Deserialize)]
-pub struct DecryptMetaInput {
-    pub credentials: Vec<Credential>,
 }
 
 #[derive(Deserialize)]
@@ -85,14 +72,6 @@ pub struct ImportCertificateInput {
 pub struct PasswordChangeInput {
     pub old_password: String,
     pub new_password: String,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-
-pub struct EncryptEditFieldsInput {
-    pub field_value: String,
-    pub users_to_share: Vec<PublicKey>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -112,30 +91,20 @@ pub struct AddFolderInput {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Folder {
-    pub name: String,
-    pub description: String,
-    pub id: Thing,
+pub struct SavePassphraseResponse {
+    pub signature: String,
+    pub username: String,
+    pub public_key: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+
 pub struct FolderResponse {
     pub id: String,
     pub name: String,
     pub description: String,
-}
-
-impl From<Folder> for FolderResponse {
-    fn from(folder: Folder) -> Self {
-        let id_str = match folder.id.id {
-            Id::String(ref s) => s.clone(),
-            _ => "dfs".to_string(),
-        };
-
-        FolderResponse {
-            id: id_str,
-            name: folder.name,
-            description: folder.description,
-        }
-    }
+    pub shared: bool,
+    #[serde(rename = "accessType")]
+    pub access_type: String,
 }
