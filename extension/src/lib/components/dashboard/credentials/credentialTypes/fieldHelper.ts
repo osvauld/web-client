@@ -1,7 +1,5 @@
 import {
 	CredentialFieldComponentProps,
-	UpdateCredentialPayload,
-	AddCredentialPayload,
 } from "../../dtos";
 import { getDomain } from "../../helper";
 
@@ -27,17 +25,17 @@ export const fieldEditHandler = (
 	// return changedFields;
 };
 
-export const isUpdateCredentialPayload = (
-	data: any,
-): data is UpdateCredentialPayload => {
-	return "credentialId" in data;
-};
+// export const isUpdateCredentialPayload = (
+// 	data: any,
+// ): data is UpdateCredentialPayload => {
+// 	return "credentialId" in data;
+// };
 
-export const isAddCredentialPayload = (
-	data: any,
-): data is AddCredentialPayload => {
-	return !("credentialId" in data);
-};
+// export const isAddCredentialPayload = (
+// 	data: any,
+// ): data is AddCredentialPayload => {
+// 	return !("credentialId" in data);
+// };
 
 export const credentialFieldsUpdater = (type: string) => {
 	switch (type) {

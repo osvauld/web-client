@@ -1,11 +1,9 @@
 import { sendMessage, getDomain } from "../../helper";
 import {
-	AddCredentialPayload,
 	CredentialFieldComponentProps,
 	Field,
 } from "../../dtos";
 
-import { addCredential } from "../../apis";
 
 const totpValidator = (secretKey: string): boolean => {
 	// Base32 encoded TOTP secrets typically range in size, allowing for flexibility
@@ -128,14 +126,7 @@ export const addCredentialHandler = async (
 		}
 	}
 
-	const addCredentialPaylod: AddCredentialPayload = {
-		name: name,
-		description: description,
-		folderId: folderId,
-		credentialType,
-		userFields: [],
-		domain: "",
-	};
+
 	const credentialPayload = JSON.stringify({
 		name: name,
 		description,
@@ -143,21 +134,15 @@ export const addCredentialHandler = async (
 		credentialFields: addCredentialFields,
 	})
 
-	// const response = await sendMessage("addCredential", {
-	// 	users: usersToShare,
-	// 	addCredentialFields,
-	// });
+
 	const response = await sendMessage("addCredential", {
 		credentialPayload,
 		folderId: folderId,
 	});
+	return {
+		success: true,
+		message: "Credential added successfully",
+	}
 
-	// addCredentialPaylod.userFields = response;
-	// const addCredResponse = await addCredential(addCredentialPaylod);
-	// return {
-	// 	success: addCredResponse.success,
-	// 	message: addCredResponse.success
-	// 		? "Adding credential successful"
-	// 		: "Failed to add credential",
-	// };
+
 };

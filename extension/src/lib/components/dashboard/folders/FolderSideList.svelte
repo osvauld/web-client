@@ -15,14 +15,17 @@
 	import { Folder } from "../dtos";
 	import { Menu, FolderIcon, Add, RightArrow } from "../icons";
 	import { onMount } from "svelte";
-	import { setFolderStore, setEnvStore } from "../../../store/storeHelper";
+	import {
+		setFolderStore,
+		setCredentialStore,
+	} from "../../../store/storeHelper";
 	let iconColor = "#6E7681";
 	let hoveringFolderId: string | null = null;
 
 	const selectFolder = async (folder: Folder) => {
 		try {
 			selectedFolder.set(folder);
-			credentialStore.set([]);
+			await setCredentialStore();
 		} catch (error) {
 			console.error(error);
 		}
@@ -54,7 +57,6 @@
 
 	onMount(async () => {
 		await setFolderStore();
-		await setEnvStore();
 	});
 </script>
 

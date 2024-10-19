@@ -9,11 +9,9 @@
 	import { onMount } from "svelte";
 	import {
 		selectedFolder,
-		selectedPage,
 		credentialStore,
 		searchedCredential,
 		folderStore,
-		selectedSection,
 	} from "./store";
 
 	import ProfileModal from "./components/ProfileModal.svelte";
@@ -63,12 +61,6 @@
 	};
 	const handleSearchClick = (e: any) => {
 		searchedCredential.set(e.detail);
-		selectedPage.set("Folders");
-		if (e.detail.folderType === "shared") {
-			selectedSection.set("SharedFolders");
-		} else if (e.detail.folderType === "private") {
-			selectedSection.set("PrivateFolders");
-		}
 		for (const folder of $folderStore) {
 			if (folder.id === e.detail.folderId) {
 				selectedFolder.set(folder);
@@ -77,10 +69,6 @@
 		}
 		closeModal();
 	};
-
-	selectedPage.subscribe(() => {
-		credentialStore.set([]);
-	});
 
 	function handleKeyDown(event: any) {
 		if (event.key === "Enter") {

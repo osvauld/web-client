@@ -1,5 +1,4 @@
 import { writable } from "svelte/store";
-export let selectedPage = writable("");
 export let showAddFolderDrawer = writable(false);
 export let showAddGroupDrawer = writable(false);
 export let showFolderShareDrawer = writable(false);
@@ -17,8 +16,6 @@ export let modalManager = writable<MoreActions | null>(null);
 export let DeleteConfirmationModal = writable(false);
 export let showMoreGroupOptions = writable(false);
 export let toastStore = writable({ show: false, message: "", type: true });
-export let showAddCliDrawer = writable(false);
-export let showAddEnvDrawer = writable(false);
 export let promptPassword = writable(false);
 export let changePassword = writable(false);
 

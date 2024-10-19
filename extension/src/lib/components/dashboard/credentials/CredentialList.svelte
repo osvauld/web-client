@@ -66,7 +66,7 @@
 	}
 </style>
 
-{#if $showCredentialDetailsDrawer}
+<!-- {#if $showCredentialDetailsDrawer}
 	<button
 		class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
 		on:click="{withdrawDetailDrawer}">
@@ -77,7 +77,7 @@
 				on:close="{withdrawDetailDrawer}" />
 		</button>
 	</button>
-{/if}
+{/if} -->
 
 <div class="w-full min-h-[80vh]">
 	{#if $selectedFolder}

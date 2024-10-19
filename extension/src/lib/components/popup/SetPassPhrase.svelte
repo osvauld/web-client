@@ -4,17 +4,13 @@
 	import Loader from "../dashboard/components/Loader.svelte";
 	import { sendMessage } from "../dashboard/helper";
 	import { createEventDispatcher } from "svelte";
-	import {
-		createChallenge,
-		finalRegistration,
-		initiateAuth,
-	} from "../dashboard/apis";
+
 	import { StorageService } from "../../../scripts/storageHelper";
 	import PasswordStrengthValidator from "../basic/PasswordStrengthValidator.svelte";
 	const dispatch = createEventDispatcher();
 
 	export let challenge: string;
-	export let username: string;
+	let username = "test";
 
 	let passphrase = "";
 	let confirmPassphrase = "";
@@ -41,38 +37,26 @@
 		}
 		isLoaderActive = true;
 		if (passphrase === confirmPassphrase) {
-			const response = await sendMessage("savePassphrase", {
-				passphrase,
-				challenge,
-				username,
-			});
-			const registrationResponse = await finalRegistration(
-				response.username,
-				response.signature,
-				response.deviceKey,
-				response.encryptionKey,
-			);
-			if (registrationResponse.success) {
+			try {
+				const response = await sendMessage("savePassphrase", {
+					passphrase,
+					challenge,
+					username,
+				});
+
 				isLoaderActive = false;
 				const pubkey = await sendMessage("getPubKey", { passphrase });
-				const challengeResponse = await createChallenge(pubkey);
-				const signature = await sendMessage("signChallenge", {
-					challenge: challengeResponse.data.challenge,
-				});
-				const verificationResponse = await initiateAuth(signature, pubkey);
-				const token = verificationResponse.data.token;
-				if (token) {
-					await StorageService.setToken(token);
-					await StorageService.setIsLoggedIn("true");
-				}
+
+				await StorageService.setIsLoggedIn("true");
+
 				dispatch("signedUp");
+			} catch (error) {
+				showPassphraseMismatchError = true;
+				isLoaderActive = false;
+				setTimeout(() => {
+					showPassphraseMismatchError = false;
+				}, 1500);
 			}
-		} else {
-			showPassphraseMismatchError = true;
-			isLoaderActive = false;
-			setTimeout(() => {
-				showPassphraseMismatchError = false;
-			}, 1500);
 		}
 	};
 	function onInput(event: any, type: string) {
@@ -89,26 +73,22 @@
 
 <form
 	class="flex flex-col justify-center items-center"
-	on:submit|preventDefault="{handlePassPhraseSubmit}"
->
+	on:submit|preventDefault="{handlePassPhraseSubmit}">
 	<label for="passphrase" class="font-normal mt-6">Enter Passphrase</label>
 
 	<div
-		class="w-[300px] flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack"
-	>
+		class="w-[300px] flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack">
 		<input
 			class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 w-full"
 			type="{firstInputType}"
 			autocomplete="off"
 			id="password"
-			on:input="{(e) => onInput(e, 'passphrase')}"
-		/>
+			on:input="{(e) => onInput(e, 'passphrase')}" />
 
 		<button
 			type="button"
 			class="flex justify-center items-center"
-			on:click="{() => togglePassword(true)}"
-		>
+			on:click="{() => togglePassword(true)}">
 			{#if showFirstPassword}
 				<ClosedEye />
 			{:else}
@@ -120,21 +100,18 @@
 	<label for="passphrase" class="font-normal mt-6">Confirm Passphrase</label>
 
 	<div
-		class="w-[300px] flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack"
-	>
+		class="w-[300px] flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack">
 		<input
 			class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 w-full"
 			type="{secondInputType}"
 			autocomplete="off"
 			id="password"
-			on:input="{(e) => onInput(e, 'confirmPassphrase')}"
-		/>
+			on:input="{(e) => onInput(e, 'confirmPassphrase')}" />
 
 		<button
 			type="button"
 			class="flex justify-center items-center"
-			on:click="{() => togglePassword(false)}"
-		>
+			on:click="{() => togglePassword(false)}">
 			{#if showSecondPassword}
 				<ClosedEye />
 			{:else}
@@ -147,14 +124,12 @@
 		<span
 			class="mt-2 text-xs text-red-400 font-light {passphraseEmpty
 				? 'visible'
-				: 'invisible'}">Passphrase Empty!</span
-		>
+				: 'invisible'}">Passphrase Empty!</span>
 	{:else}
 		<span
 			class="mt-2 text-xs text-red-400 font-light {showPassphraseMismatchError
 				? 'visible'
-				: 'invisible'}">Passphrase doesn't match</span
-		>
+				: 'invisible'}">Passphrase doesn't match</span>
 	{/if}
 
 	<button
@@ -162,12 +137,10 @@
 			? 'border border-osvauld-iconblack text-osvauld-sheffieldgrey'
 			: 'bg-osvauld-carolinablue text-osvauld-ninjablack'} py-2 px-10 mt-8 rounded-lg font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
 		type="submit"
-		disabled="{submitDisabled}"
-	>
+		disabled="{submitDisabled}">
 		{#if isLoaderActive}
 			<Loader size="{24}" color="#1F242A" duration="{1}" />
 		{:else}
 			<span>Submit</span>
-		{/if}</button
-	>
+		{/if}</button>
 </form>

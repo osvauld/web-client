@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { createEventDispatcher } from "svelte";
-	import { fetchSensitiveFieldsByCredentialId } from "../apis";
 	import EncryptedField from "./EncryptedField.svelte";
 	import PlainField from "./PlainField.svelte";
 	import { More } from "../icons";
@@ -36,14 +35,6 @@
 	}
 	function handleMouseEnter() {
 		hoverEffect = true;
-		if (!decrypted) {
-			hoverTimeout = setTimeout(async () => {
-				const response = await fetchSensitiveFieldsByCredentialId(
-					credential.credentialId,
-				);
-				sensitiveFields = response.data;
-			}, 300);
-		}
 	}
 	function handleMouseLeave() {
 		if (!$showCredentialDetailsDrawer) {
@@ -66,13 +57,6 @@
 	};
 
 	const handleClick = async () => {
-		if (sensitiveFields.length) {
-			clearTimeout(hoverTimeout);
-			const response = await fetchSensitiveFieldsByCredentialId(
-				credential.credentialId,
-			);
-			sensitiveFields = response.data;
-		}
 		dispatch("select", sensitiveFields);
 		sensitiveFields = [];
 	}; /* eslint-disable */

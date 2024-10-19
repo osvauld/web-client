@@ -10,7 +10,6 @@
 		showFolderShareDrawer,
 		showFolderRenameDrawer,
 		showCredentialShareDrawer,
-		selectedSection,
 	} from "../store";
 	import { clickOutside } from "../helper";
 	import { derived } from "svelte/store";
@@ -54,16 +53,6 @@
 		closeModal();
 	};
 
-	const callShareFolderModal = () => {
-		closeModal();
-		showFolderShareDrawer.set(true);
-	};
-
-	const callShareCredentialModal = () => {
-		showMoreOptions.set(false);
-		showCredentialShareDrawer.set(true);
-	};
-
 	const callRenameFolderModal = () => {
 		closeModal();
 		showFolderRenameDrawer.set(true);
@@ -99,36 +88,14 @@
 			: 'w-[130px]'} rounded-2xl"
 		style="top: {$buttonCoords.top}px; left: {$buttonCoords.left}px;"
 		use:clickOutside
-		on:clickedOutside="{handleClickOutside}"
-	>
+		on:clickedOutside="{handleClickOutside}">
 		<div class="flex flex-col items-start p-2 gap-2 w-full h-full">
-			{#if $selectedSection !== "PrivateFolders"}
-				<button
-					class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
-					on:mouseenter="{() => (isShareHovered = true)}"
-					on:mouseleave="{() => (isShareHovered = false)}"
-				>
-					<FolderShare
-						size="{24}"
-						color="{isShareHovered ? '#F2F2F0' : '#85889C'}"
-					/>
-					<button
-						class="font-inter text-base whitespace-nowrap"
-						on:click|stopPropagation="{moreOptionType === 'Folder'
-							? callShareFolderModal
-							: callShareCredentialModal}"
-					>
-						Share {moreOptionType === "Folder" ? "folder" : ""}
-					</button>
-				</button>
-			{/if}
 			{#if moreOptionType === "Folder"}
 				<button
 					class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
 					on:mouseenter="{() => (isEditHovered = true)}"
 					on:mouseleave="{() => (isEditHovered = false)}"
-					on:click|stopPropagation="{callRenameFolderModal}"
-				>
+					on:click|stopPropagation="{callRenameFolderModal}">
 					<div class="w-6 h-6 flex items-center justify-center">
 						<EditIcon color="{isEditHovered ? '#F2F2F0' : '#85889C'}" />
 					</div>
@@ -140,8 +107,7 @@
 				class="flex justify-start gap-2 items-center w-full p-2 text-osvauld-fieldText hover:text-osvauld-sideListTextActive hover:bg-osvauld-modalFieldActive rounded-lg cursor-pointer"
 				on:mouseenter="{() => (isBinHovered = true)}"
 				on:mouseleave="{() => (isBinHovered = false)}"
-				on:click|preventDefault="{deleteInitiate}"
-			>
+				on:click|preventDefault="{deleteInitiate}">
 				<div class="w-6 h-6 flex items-center justify-center">
 					<BinIcon color="{isBinHovered ? '#F2F2F0' : '#85889C'}" />
 				</div>
