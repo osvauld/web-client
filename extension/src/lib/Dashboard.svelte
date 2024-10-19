@@ -9,21 +9,14 @@
 		showMoreOptions,
 		DeleteConfirmationModal,
 		modalManager,
-		accessListSelected,
-		showMoreGroupOptions,
 		toastStore,
 		promptPassword,
 	} from "./store/ui.store";
 	import { sendMessage } from "./components/dashboard/helper";
 	import Welcome from "./components/popup/Welcome.svelte";
 	import Signup from "./components/popup/Signup.svelte";
-	import { getUser } from "./apis/user.api";
-	import AccessListModal from "./components/dashboard/credentials/AccessListModal.svelte";
-	import MoreActionsGroup from "./components/dashboard/components/MoreActionsGroup.svelte";
-	import GroupDeleteModal from "./components/dashboard/groups/GroupDeleteModal.svelte";
 	import ShareToast from "./components/dashboard/components/ShareToast.svelte";
 	import { setFolderStore } from "./store/storeHelper";
-	import { selectedFolder } from "./store/folder.store";
 	import PasswordPromptModal from "./components/dashboard/components/PasswordPromptModal.svelte";
 	import { LocalStorageService } from "../scripts/storageHelper";
 
@@ -46,8 +39,6 @@
 	};
 
 	const handleAuthenticated = async () => {
-		const user = await getUser();
-		LocalStorageService.set("user", user.data, true);
 		await setFolderStore();
 		showWelcome = false;
 	};
@@ -87,16 +78,9 @@
 				<CredentialDeleteModal />
 			{:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
 				<FolderDeleteModal />
-			{:else if $DeleteConfirmationModal && $modalManager.type === "Group"}
-				<GroupDeleteModal />
 			{/if}
 		{/if}
-		{#if $accessListSelected && $selectedFolder}
-			<AccessListModal />
-		{/if}
-		{#if $showMoreGroupOptions}
-			<MoreActionsGroup />
-		{/if}
+
 		{#if $toastStore.show}
 			<!-- {#if true} -->
 			<div class="z-100">

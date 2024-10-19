@@ -6,31 +6,27 @@
 
 	export let credential: Credential;
 
-	let sensitiveFields = credential.fields.filter(
+	let sensitiveFields = credential.credentialFields.filter(
 		(field) => field.fieldType === "totp" || field.fieldType === "sensitive",
 	);
 
-	let nonSensitiveFields = credential.fields.filter(
+	let nonSensitiveFields = credential.credentialFields.filter(
 		(field) => field.fieldType !== "totp" && field.fieldType !== "sensitive",
 	);
 </script>
 
 <button
-	class="mb-1 w-full overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite"
->
+	class="mb-1 w-full overflow-x-hidden flex-none rounded-xl text-osvauld-chalkwhite">
 	<button
-		class="container mx-auto py-0 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
-	>
+		class="container mx-auto py-0 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl">
 		<div
-			class="w-full h-[90%] overflow-y-scroll scrollbar-thin pr-0 active mt-2"
-		>
+			class="w-full h-[90%] overflow-y-scroll scrollbar-thin pr-0 active mt-2">
 			{#each nonSensitiveFields as field}
 				{#if field.fieldName !== "Domain"}
 					<PlainField
 						fieldName="{field.fieldName}"
 						fieldValue="{field.fieldValue}"
-						hoverEffect="{true}"
-					/>
+						hoverEffect="{true}" />
 				{/if}
 			{/each}
 			{#if sensitiveFields}
@@ -39,20 +35,17 @@
 						fieldName="{field.fieldName}"
 						fieldValue="{field.fieldValue}"
 						fieldType="{field.fieldType}"
-						hoverEffect="{true}"
-					/>
+						hoverEffect="{true}" />
 				{/each}
 			{/if}
 		</div>
 		<div
 			class="{credential.description && credential.description.length !== 0
 				? 'visible'
-				: 'invisible'}"
-		>
+				: 'invisible'}">
 			<label
 				class="text-osvauld-dusklabel block text-left text-sm font-normal"
-				for="credential-description"
-			>
+				for="credential-description">
 				Description
 			</label>
 			<div
@@ -60,8 +53,7 @@
 					? 'h-[4rem]'
 					: ''} mt-4 w-[96%] py-1 px-2 overflow-y-scroll bg-osvauld-fieldActive rounded-lg text-left scrollbar-thin resize-none text-base
      text-osvauld-fieldTextActive font-normal text-sm"
-				id="credential-description"
-			>
+				id="credential-description">
 				{credential.description}
 			</div>
 		</div>

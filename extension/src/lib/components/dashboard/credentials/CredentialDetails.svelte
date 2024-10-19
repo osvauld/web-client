@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { fly } from "svelte/transition";
 	import EncryptedField from "./EncryptedField.svelte";
 	import PlainField from "./PlainField.svelte";
@@ -319,4 +319,4 @@
 			{/if}
 		</div>
 	</div>
-</div>
+</div> -->

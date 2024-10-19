@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { createFolder, renameFolder } from "../apis";
 	import {
 		showAddFolderDrawer,
 		folderStore,
@@ -10,7 +9,6 @@
 	import { ClosePanel } from "../icons";
 	import { setFolderStore } from "../../../store/storeHelper";
 	import { fly } from "svelte/transition";
-	import Toggle from "../Toggle.svelte";
 	import { sendMessage } from "../helper";
 
 	export let name = "";
@@ -31,17 +29,17 @@
 			showFolderRenameDrawer.set(false);
 			throw new Error("folder not selected");
 		}
-		const renameResponse = await renameFolder(payload, $selectedFolder.id);
+		// const renameResponse = await renameFolder(payload, $selectedFolder.id);
 		await setFolderStore();
-		showFolderRenameDrawer.set(false);
-		const actionMessage = renameResponse.success
-			? "Folder Successfully Renamed"
-			: "Failed to Rename folder";
-		toastStore.set({
-			type: renameResponse.success,
-			message: actionMessage,
-			show: true,
-		});
+		// showFolderRenameDrawer.set(false);
+		// const actionMessage = renameResponse.success
+		// 	? "Folder Successfully Renamed"
+		// 	: "Failed to Rename folder";
+		// toastStore.set({
+		// 	type: renameResponse.success,
+		// 	message: actionMessage,
+		// 	show: true,
+		// });
 	};
 
 	const addFolderFunc = async () => {
@@ -50,24 +48,24 @@
 			description: description,
 			sharedFolder: selectedTab === "shared",
 		};
-		const folderResponse = await createFolder(payload);
+		// const folderResponse = await createFolder(payload);
 		sendMessage("addFolder", { name, description });
 		await setFolderStore();
-		for (const folder of $folderStore) {
-			if (folder.id == folderResponse.data.folderId) {
-				selectedFolder.set(folder);
-				break;
-			}
-		}
+		// for (const folder of $folderStore) {
+		// 	if (folder.id == folderResponse.data.folderId) {
+		// 		selectedFolder.set(folder);
+		// 		break;
+		// 	}
+		// }
 		showAddFolderDrawer.set(false);
-		const actionMessage = folderResponse.success
-			? "Folder Successfully Created"
-			: "Failed to Create folder";
-		toastStore.set({
-			type: folderResponse.success,
-			message: actionMessage,
-			show: true,
-		});
+		// const actionMessage = folderResponse.success
+		// 	? "Folder Successfully Created"
+		// 	: "Failed to Create folder";
+		// toastStore.set({
+		// 	type: folderResponse.success,
+		// 	message: actionMessage,
+		// 	show: true,
+		// });
 	};
 
 	const handleClose = () => {
@@ -95,9 +93,7 @@
 			<ClosePanel />
 		</button>
 	</div>
-	{#if addFolder}
-		<Toggle on:select="{toggleSelect}" tabs="{['shared', 'private']}" />
-	{/if}
+
 	<div
 		class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4">
 	</div>

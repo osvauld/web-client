@@ -17,7 +17,6 @@ export { default as Share } from "../basic/icons/share.svelte";
 export { default as Add } from "../basic/icons/add.svelte";
 export { default as Profile } from "../basic/icons/profile.svelte";
 export { default as Logo } from "../basic/icons/logo.svelte";
-export { default as Toggle } from "../basic/toggle.svelte";
 export { default as GroupIcon } from "../basic/icons/groupIcon.svelte";
 export { default as UserIcon } from "../basic/icons/userIcon.svelte";
 export { default as BlueClose } from "../basic/icons/blueClose.svelte";

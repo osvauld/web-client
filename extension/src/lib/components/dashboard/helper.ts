@@ -1,6 +1,5 @@
 import browser from "webextension-polyfill";
 import { SearchedCredential } from "../../dtos/credential.dto";
-import { AddCredentialPayload } from "./dtos";
 import { StorageService } from "../../../scripts/storageHelper";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 type TypeToClassKey = "reader" | "manager";
@@ -96,61 +95,7 @@ export const generatePassword = (length: number) => {
 	return password;
 };
 
-type TransformedPayload = {
-	name: string;
-	description: string;
-	folderId: string;
-	credentialType: string;
-	domain: string;
-	fields: {
-		fieldName?: string;
-		fieldType?: string;
-		fieldValues: {
-			userId: string;
-			fieldValue: string;
-		}[];
-	}[];
-};
 
-export const transformAddCredentialPayload = (
-	payload: AddCredentialPayload,
-): TransformedPayload => {
-	const fieldsMap: {
-		[key: string]: {
-			fieldName?: string;
-			fieldType?: string;
-			fieldValues: { userId: string; fieldValue: string }[];
-		};
-	} = {};
-
-	payload.userFields.forEach((userField) => {
-		userField.fields.forEach((field) => {
-			const key = field.fieldName;
-			if (!fieldsMap[key]) {
-				fieldsMap[key] = {
-					fieldName: field.fieldName,
-					fieldType: field.fieldType,
-					fieldValues: [],
-				};
-			}
-			fieldsMap[key].fieldValues.push({
-				userId: userField.userId,
-				fieldValue: field.fieldValue,
-			});
-		});
-	});
-
-	const transformedFields = Object.values(fieldsMap);
-
-	return {
-		name: payload.name,
-		description: payload.description,
-		folderId: payload.folderId,
-		credentialType: payload.credentialType,
-		domain: payload.domain,
-		fields: transformedFields,
-	};
-};
 
 export const getDomain = (urlString: string) => {
 	let url: URL;

@@ -1,9 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import {
-		fetchCredentialById,
-		fetchSensitiveFieldsByCredentialId,
-	} from "../../dashboard/apis";
+
 	import CredentialPopupCard from "../../dashboard/components/CredentialPopupCard.svelte";
 	import { sendMessage } from "../../dashboard/helper";
 	import { RightArrow, DownArrow } from "../icons";
@@ -15,21 +12,21 @@
 	let credentialDetails;
 	let credentialClicked = false;
 	const dropDownClicked = async () => {
-		const credentialValues = await Promise.all([
-			fetchCredentialById(credential.credentialId),
-			fetchSensitiveFieldsByCredentialId(credential.credentialId),
-		]);
-		credentialDetails = credentialValues[0].data;
-		const credentialDecryptedResponse = await sendMessage("decryptMeta", [
-			credentialDetails,
-		]);
-		credentialDetails = credentialDecryptedResponse[0];
-		credentialDetails.fields = [
-			...credentialDetails.fields,
-			...credentialValues[1].data,
-		];
-		selectedCredentialId = credential.credentialId;
-		credentialClicked = !credentialClicked;
+		// const credentialValues = await Promise.all([
+		// 	fetchCredentialById(credential.credentialId),
+		// 	fetchSensitiveFieldsByCredentialId(credential.credentialId),
+		// ]);
+		// credentialDetails = credentialValues[0].data;
+		// const credentialDecryptedResponse = await sendMessage("decryptMeta", [
+		// 	credentialDetails,
+		// ]);
+		// credentialDetails = credentialDecryptedResponse[0];
+		// credentialDetails.fields = [
+		// 	...credentialDetails.fields,
+		// 	...credentialValues[1].data,
+		// ];
+		// selectedCredentialId = credential.credentialId;
+		// credentialClicked = !credentialClicked;
 		LocalStorageService.set("selectedCredentialId", selectedCredentialId);
 		dispatch("credentialClicked", { credentialId: credential.credentialId });
 	};
@@ -46,18 +43,15 @@
 	credential.credentiaId
 		? 'border border-osvauld-iconblack'
 		: ''}"
-	on:click="{dropDownClicked}"
->
+	on:click="{dropDownClicked}">
 	<div
 		class="w-full flex justify-between items-center px-4 {selectedCredentialId ===
 		credential.credentialId
 			? 'text-osvauld-quarzowhite mb-2'
-			: 'mb-0'}"
-	>
+			: 'mb-0'}">
 		<span
 			class="text-base font-normal tracking-wide text-osvauld-fieldText overflow-hidden whitespace-nowrap text-ellipsis"
-			>{credential.name}</span
-		>
+			>{credential.name}</span>
 		<button class="px-4 py-1 cursor-pointer">
 			{#if selectedCredentialId === credential.credentialId}
 				<DownArrow type="{'common'}" />

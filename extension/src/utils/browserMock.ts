@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 import { createStore } from '@tauri-apps/plugin-store';
 import { invoke } from "@tauri-apps/api/core";
 const tauriBrowser = {
