@@ -1,6 +1,6 @@
 use crate::database::models::{
-    Credential, Folder, FolderAccess, FolderAccessWithPublicKey, NewCredential,
-    NewCredentialAccess, User,
+    Credential, CredentialWithEncryptedKey, Folder, FolderAccess, FolderAccessWithPublicKey,
+    NewCredential, NewCredentialAccess, User,
 };
 use crate::database::schema::{credential_access, credentials, folder_access, folders, users};
 use crate::DbConnection;
@@ -136,4 +136,28 @@ pub async fn add_credential_and_access(
 
         Ok(())
     })
+}
+
+pub async fn get_credentials_with_encrypted_key(
+    conn: &DbConnection,
+    folder_id: String,
+    user_id: String,
+) -> Result<Vec<CredentialWithEncryptedKey>, Error> {
+    let mut conn = conn.lock().await;
+
+    credentials::table
+        .inner_join(
+            credential_access::table.on(credentials::id.eq(credential_access::credential_id)),
+        )
+        .filter(credentials::folder_id.eq(folder_id))
+        .filter(credential_access::user_id.eq(user_id))
+        .select((
+            credentials::id,
+            credentials::credential_type,
+            credentials::data,
+            credentials::signature,
+            credentials::permission,
+            credential_access::encrypted_key,
+        ))
+        .load::<CredentialWithEncryptedKey>(&mut *conn)
 }

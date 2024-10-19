@@ -130,18 +130,15 @@
 	style="border: {$borderHighLight ? '1px solid #89B4FA' : ''}"
 	on:mouseenter="{handleMouseEnter}"
 	on:mouseleave="{handleMouseLeave}"
-	on:click="{handleClick}"
->
+	on:click="{handleClick}">
 	<button
-		class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl"
-	>
+		class="container mx-auto py-3 pl-3 pr-1 relative group bg-osvauld-cardshade rounded-xl">
 		<!-- svelte-ignore a11y-<code> -->
 		<button
 			class="flex {credential.accessType !== 'manager' && !privateFolder
 				? 'justify-start'
 				: 'justify-center'} items-center border-osvauld-iconblack pb-2"
-			on:click|stopPropagation
-		>
+			on:click|stopPropagation>
 			{#if credential.accessType === "manager" && !privateFolder}
 				<input
 					type="checkbox"
@@ -153,15 +150,13 @@
 					on:change|stopPropagation="{(e) => {
 						toggleCheck();
 					}}"
-					{checked}
-				/>
+					{checked} />
 			{/if}
 			<label
 				class="text-lg font-light text-left ml-2 cursor-pointer w-[10rem] overflow-x-hidden whitespace-nowrap {hoverEffect
 					? 'text-osvauld-sideListTextActive'
 					: 'text-osvauld-fieldTextActive '} "
-				for="{credential.credentialId}"
-			>
+				for="{credential.credentialId}">
 				{credential.name}
 			</label>
 			{#if credential.accessType === "manager"}
@@ -171,23 +166,21 @@
 			{/if}
 		</button>
 		<div
-			class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3"
-		></div>
+			class="border-b border-osvauld-iconblack w-[calc(100%+1.5rem)] -translate-x-3">
+		</div>
 		<div
 			class="w-[15rem] {credential.description.length !== 0
 				? 'h-[11.5rem]'
 				: 'h-[15rem]'} overflow-y-scroll scrollbar-thin pr-0 {hoverEffect
 				? 'active'
-				: ''} mt-2"
-		>
+				: ''} mt-2">
 			{#if credential.credentialType !== "Note"}
-				{#each credential.fields as field}
+				{#each credential.credentialFields as field}
 					{#if field.fieldName !== "Domain" && field.fieldName && field.fieldValue}
 						<PlainField
 							fieldName="{field.fieldName}"
 							fieldValue="{field.fieldValue}"
-							{hoverEffect}
-						/>
+							{hoverEffect} />
 					{/if}
 				{/each}
 				{#if sensitiveFields}
@@ -197,8 +190,7 @@
 								fieldName="{field.fieldName}"
 								fieldValue="{field.fieldValue}"
 								fieldType="{field.fieldType}"
-								{hoverEffect}
-							/>
+								{hoverEffect} />
 						{/if}
 					{/each}
 				{/if}
@@ -206,8 +198,7 @@
 				<div>
 					<label
 						class="text-osvauld-dusklabel block text-left text-xs font-normal"
-						for="Note"
-					>
+						for="Note">
 						Note
 					</label>
 					<div
@@ -215,20 +206,17 @@
     {hoverEffect
 							? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive'
 							: 'text-osvauld-fieldText'}"
-						id="credential-description"
-					>
-						{credential.fields[0].fieldValue}
+						id="credential-description">
+						{credential.credentialFields[0].fieldValue}
 					</div>
 				</div>
 			{/if}
 		</div>
 		<div
-			class="{credential.description.length !== 0 ? 'visible' : 'invisible'}"
-		>
+			class="{credential.description.length !== 0 ? 'visible' : 'invisible'}">
 			<label
 				class="text-osvauld-dusklabel block text-left text-xs font-normal"
-				for="credential-description"
-			>
+				for="credential-description">
 				Description
 			</label>
 			<div
@@ -238,8 +226,7 @@
     {hoverEffect
 					? 'text-osvauld-fieldTextActive bg-osvauld-fieldActive'
 					: 'text-osvauld-fieldText'}"
-				id="credential-description"
-			>
+				id="credential-description">
 				{credential.description}
 			</div>
 		</div>

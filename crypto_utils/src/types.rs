@@ -34,3 +34,14 @@ pub struct EncryptedDataWithAccess {
     pub encrypted_data: String,
     pub access_list: Vec<UserAccess>,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+
+pub struct CredentialWithEncryptedKey {
+    pub id: String,
+    pub credential_type: String,
+    pub data: String,
+    pub signature: String,
+    pub permission: String,
+    pub encrypted_key: String,
+}

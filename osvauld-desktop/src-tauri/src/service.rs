@@ -1,4 +1,4 @@
-use crate::database::models::FolderAccessWithPublicKey;
+use crate::database::models::{CredentialWithEncryptedKey, FolderAccessWithPublicKey};
 use crate::database::queries;
 use crate::handler::CRYPTO_UTILS;
 use crate::types::{CryptoResponse, FolderResponse};
@@ -230,4 +230,19 @@ pub async fn add_credential_service(
     )
     .await
     .map_err(|e| format!("Failed to add credential and access: {}", e))
+}
+
+pub async fn get_credentials_for_folder(
+    db_connection: &State<'_, DbConnection>,
+    folder_id: String,
+    store: &Store<Wry>,
+) -> Result<Vec<CredentialWithEncryptedKey>, String> {
+    let user_id = store
+        .get("user_id")
+        .and_then(|v| v.as_str().map(String::from))
+        .ok_or_else(|| "user not found in store".to_string())?;
+
+    queries::get_credentials_with_encrypted_key(&db_connection, folder_id, user_id)
+        .await
+        .map_err(|e| format!("Failed to get credentials with encrypted key: {}", e))
 }

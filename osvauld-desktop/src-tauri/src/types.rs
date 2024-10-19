@@ -28,6 +28,7 @@ pub enum CryptoResponse {
     ChangedPassphrase(String),
     ExportedCertificate(String),
     Folders(Vec<FolderResponse>),
+    Credentials(Vec<CredentialResponse>),
 }
 
 #[derive(Deserialize)]
@@ -107,4 +108,17 @@ pub struct FolderResponse {
     pub shared: bool,
     #[serde(rename = "accessType")]
     pub access_type: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GetCredentialForFolderInput {
+    pub folder_id: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct CredentialResponse {
+    pub id: String,
+    pub data: serde_json::Value,
+    pub permission: String,
 }
