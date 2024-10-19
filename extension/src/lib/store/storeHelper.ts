@@ -46,13 +46,21 @@ export const setCredentialStore = async () => {
 	if (!selectedFolderValue) {
 		return;
 	}
-	const responseJson = await fetchCredentialsByFolder(selectedFolderValue.id);
-	if (!responseJson.data) {
-		credentialStore.set([]);
-		return;
-	}
-	const response = await sendMessage("decryptMeta", responseJson.data);
-	credentialStore.set(response);
+	const responseJson = await sendMessage("getCredentialsForFolder", { folderId: selectedFolderValue.id });
+	const credentials = responseJson.map((credential: any) => {
+		return {
+			credentialId: credential.id,
+			...credential.data,
+			accessType: credential.permission
+		}
+	})
+	credentialStore.set(credentials);
+	// if (!responseJson.data) {
+	// 	credentialStore.set([]);
+	// 	return;
+	// }
+	// const response = await sendMessage("decryptMeta", responseJson.data);
+	// credentialStore.set(response);
 };
 
 export const setEnvStore = async () => {

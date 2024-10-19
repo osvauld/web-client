@@ -80,3 +80,13 @@ pub struct AddCredentialInput {
     pub signature: String,
     pub permission: String,
 }
+
+#[derive(Queryable, Serialize, Deserialize, Debug, Clone)]
+pub struct CredentialWithEncryptedKey {
+    pub id: String,
+    pub credential_type: String,
+    pub data: String,
+    pub signature: String,
+    pub permission: String,
+    pub encrypted_key: String,
+}

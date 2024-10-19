@@ -42,9 +42,7 @@
 
 	$: isShareCredActive = checkedCards.length !== 0;
 
-	let sortedCredentials = [];
-
-	$: minOneCredentialManager = sortedCredentials.some(
+	$: minOneCredentialManager = $credentialStore.some(
 		(credential) => credential.accessType === "manager",
 	);
 	const handleCheck = (isChecked: boolean, card: Credential) => {
@@ -299,10 +297,10 @@
 			<ImportModal on:close="{closeImportModal}" />
 		</div>
 	{/if}
-	{#if sortedCredentials.length !== 0}
+	{#if $credentialStore.length !== 0}
 		<div
 			class="flex flex-wrap pt-3 pb-7 px-7 gap-3.5 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border">
-			{#each sortedCredentials as credential}
+			{#each $credentialStore as credential}
 				<CredentialCard
 					{privateFolder}
 					{credential}

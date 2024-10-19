@@ -1,13 +1,15 @@
 use crate::service::{
     add_credential_service, add_folder, get_all_folders, get_certificate_and_salt,
-    get_folder_access, get_public_key, is_signed_up, save_passphrase, sign_hashed_message,
-    store_certificate_and_salt,
+    get_credentials_for_folder, get_folder_access, get_public_key, is_signed_up, save_passphrase,
+    sign_hashed_message, store_certificate_and_salt,
 };
 use crate::types::{
-    AddCredentialInput, AddFolderInput, CryptoResponse, HashAndSignInput, ImportCertificateInput,
-    LoadPvtKeyInput, PasswordChangeInput, SavePassphraseInput, SignChallengeInput,
+    AddCredentialInput, AddFolderInput, CredentialResponse, CryptoResponse,
+    GetCredentialForFolderInput, HashAndSignInput, ImportCertificateInput, LoadPvtKeyInput,
+    PasswordChangeInput, SavePassphraseInput, SignChallengeInput,
 };
 use crate::DbConnection;
+use crypto_utils::types::CredentialWithEncryptedKey as CredentialType;
 use crypto_utils::CryptoUtils;
 use log::{error, info};
 use once_cell::sync::Lazy;
@@ -183,6 +185,51 @@ pub async fn handle_crypto_action(
         "getFolder" => {
             let folders_response = get_all_folders(db_connection).await.unwrap();
             Ok(CryptoResponse::Folders(folders_response))
+        }
+
+        "getCredentialsForFolder" => {
+            let input: GetCredentialForFolderInput =
+                serde_json::from_value(data).map_err(|e| format!("invalid input: {}", e))?;
+            let folder_id = input.folder_id;
+            let db_credentials = get_credentials_for_folder(&db_connection, folder_id, &store)
+                .await
+                .unwrap();
+            let credentials: Vec<CredentialType> = db_credentials
+                .into_iter()
+                .map(|db_cred| CredentialType {
+                    id: db_cred.id,
+                    credential_type: db_cred.credential_type,
+                    data: db_cred.data,
+                    signature: db_cred.signature,
+                    permission: db_cred.permission,
+                    encrypted_key: db_cred.encrypted_key,
+                })
+                .collect();
+            let decrypted_credentials = {
+                let crypto = CRYPTO_UTILS.lock().await;
+                crypto
+                    .decrypt_credentials(credentials)
+                    .map_err(|e| format!("Error changing certificate password: {}", e))?
+            };
+            log::info!("Decrypted credentials: {:?}", decrypted_credentials);
+            let credential_responses: Vec<CredentialResponse> = decrypted_credentials
+                .into_iter()
+                .map(|cred| {
+                    let parsed_data: Value = serde_json::from_str(&cred.data).unwrap_or_else(
+                        |_| serde_json::json!({"error": "Failed to parse credential data"}),
+                    );
+
+                    CredentialResponse {
+                        id: cred.id,
+                        data: parsed_data,
+                        permission: cred.permission,
+                    }
+                })
+                .collect();
+
+            log::info!("Credential responses: {:?}", credential_responses);
+
+            Ok(CryptoResponse::Credentials(credential_responses))
         }
         _ => Err(format!("Unknown action: {}", action)),
     }

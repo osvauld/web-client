@@ -19,7 +19,7 @@ export type UserEncryptedFields = {
 
 export type CredentialBasic = {
 	credentialId: string;
-	fields: Field[];
+	credentialFields: Field[];
 };
 
 export type Credential = CredentialBasic & {

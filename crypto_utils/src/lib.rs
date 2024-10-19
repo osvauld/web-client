@@ -8,7 +8,9 @@ use crate::crypto_core::{
     get_recipient, get_salt_arr, get_signing_keypair, hash_text_sha512, sign_message,
 };
 use crate::errors::CryptoUtilsError;
-pub use crate::types::{EncryptedDataWithAccess, GeneratedKeys, UserAccess, UserPublicKey};
+pub use crate::types::{
+    CredentialWithEncryptedKey, EncryptedDataWithAccess, GeneratedKeys, UserAccess, UserPublicKey,
+};
 use anyhow::{Error as AnyhowError, Result};
 use argon2::password_hash::rand_core::OsRng;
 use base64::{decode, encode};
@@ -164,16 +166,6 @@ impl CryptoUtils {
         get_public_key_armored(cert)
     }
 
-    pub fn encrypt_with_generated_aes_key(
-        &self,
-        plaintext: &str,
-    ) -> Result<(String, String), Box<dyn std::error::Error>> {
-        let aes_key = generate_aes_key();
-        let ciphertext = encrypt_with_aes(&aes_key, plaintext)?;
-        let encoded_key = encode(aes_key);
-        Ok((ciphertext, encoded_key))
-    }
-
     pub fn decrypt_with_aes_key(
         &self,
         ciphertext: &str,
@@ -211,6 +203,41 @@ impl CryptoUtils {
             encrypted_data,
             access_list,
         })
+    }
+
+    pub fn decrypt_credentials(
+        &self,
+        credentials: Vec<CredentialWithEncryptedKey>,
+    ) -> Result<Vec<CredentialWithEncryptedKey>, Box<dyn std::error::Error>> {
+        let policy = &StandardPolicy::new();
+        let cert = self.cert.as_ref().ok_or("No certificate loaded")?;
+        let decrypt_key = crypto_core::get_decryption_key(cert)?;
+
+        let mut decrypted_credentials = Vec::new();
+
+        for credential in credentials {
+            // Decrypt the encrypted key
+            let encrypted_key_bytes = credential.encrypted_key.as_bytes();
+            let decrypted_key = decrypt_text_pgp(policy, &decrypt_key, encrypted_key_bytes)?;
+            let aes_key = String::from_utf8(decrypted_key)?;
+
+            // Use the decrypted AES key to decrypt the data
+            let decrypted_data = decrypt_with_aes(&decode(&aes_key)?, &credential.data)?;
+
+            // Create a new CredentialWithEncryptedKey with decrypted data
+            let decrypted_credential = CredentialWithEncryptedKey {
+                id: credential.id,
+                credential_type: credential.credential_type,
+                data: decrypted_data,
+                signature: credential.signature,
+                permission: credential.permission,
+                encrypted_key: credential.encrypted_key, // Keep the original encrypted key
+            };
+
+            decrypted_credentials.push(decrypted_credential);
+        }
+
+        Ok(decrypted_credentials)
     }
 }
 
