@@ -1,10 +1,7 @@
 <script lang="ts">
 	import CredentialList from "./credentials/CredentialList.svelte";
-	import GroupList from "./groups/GroupList.svelte";
 	import SearchModal from "./SearchModal.svelte";
-	import Environments from "./credentials/Environments.svelte";
 	import { searchObjects } from "./helper";
-	import { getSearchFields, fetchAllUserUrls } from "./apis";
 	import { Profile, Lens, DownArrow } from "./icons";
 	import { sendMessage } from "./helper";
 	import { getUserDetails } from "../../store/storeHelper";
@@ -12,11 +9,9 @@
 	import { onMount } from "svelte";
 	import {
 		selectedFolder,
-		selectedPage,
 		credentialStore,
 		searchedCredential,
 		folderStore,
-		selectedSection,
 	} from "./store";
 
 	import ProfileModal from "./components/ProfileModal.svelte";
@@ -33,25 +28,25 @@
 
 	const getSearchData = async () => {
 		showModal = true;
-		const searchFieldSResponse = await getSearchFields();
-		searchData = searchFieldSResponse.data;
-		const urlJson = await fetchAllUserUrls();
-		const urls = urlJson.data;
-		const decryptedData: UrlCredMap[] = await sendMessage(
-			"getDecryptedUrls",
-			urls,
-		);
-		const mergedArray = searchData.map((item) => {
-			const replacement = decryptedData.find(
-				(decryptedItem) => decryptedItem.credentialId === item.credentialId,
-			);
-			if (replacement) {
-				return { ...item, domain: replacement.value };
-			}
-			return item;
-		});
-		searchData = mergedArray;
-		searchResults = query.length !== 0 ? searchObjects(query, searchData) : [];
+		// const searchFieldSResponse = await getSearchFields();
+		// searchData = searchFieldSResponse.data;
+		// const urlJson = await fetchAllUserUrls();
+		// const urls = urlJson.data;
+		// const decryptedData: UrlCredMap[] = await sendMessage(
+		// 	"getDecryptedUrls",
+		// 	urls,
+		// );
+		// const mergedArray = searchData.map((item) => {
+		// 	const replacement = decryptedData.find(
+		// 		(decryptedItem) => decryptedItem.credentialId === item.credentialId,
+		// 	);
+		// 	if (replacement) {
+		// 		return { ...item, domain: replacement.value };
+		// 	}
+		// 	return item;
+		// });
+		// searchData = mergedArray;
+		// searchResults = query.length !== 0 ? searchObjects(query, searchData) : [];
 	};
 
 	const handleInputChange = (e: any) => {
@@ -66,12 +61,6 @@
 	};
 	const handleSearchClick = (e: any) => {
 		searchedCredential.set(e.detail);
-		selectedPage.set("Folders");
-		if (e.detail.folderType === "shared") {
-			selectedSection.set("SharedFolders");
-		} else if (e.detail.folderType === "private") {
-			selectedSection.set("PrivateFolders");
-		}
 		for (const folder of $folderStore) {
 			if (folder.id === e.detail.folderId) {
 				selectedFolder.set(folder);
@@ -80,10 +69,6 @@
 		}
 		closeModal();
 	};
-
-	selectedPage.subscribe(() => {
-		credentialStore.set([]);
-	});
 
 	function handleKeyDown(event: any) {
 		if (event.key === "Enter") {
@@ -119,11 +104,9 @@
 
 <div class="flex flex-col h-auto">
 	<div
-		class="h-[6rem] pr-4 flex justify-between items-center border-b border-osvauld-iconblack"
-	>
+		class="h-[6rem] pr-4 flex justify-between items-center border-b border-osvauld-iconblack">
 		<div
-			class="h-[2.2rem] w-[31.25rem] px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer"
-		>
+			class="h-[2.2rem] w-[31.25rem] px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer">
 			<Lens />
 			<input
 				type="text"
@@ -133,25 +116,21 @@
 				on:click="{getSearchData}"
 				on:input="{handleInputChange}"
 				bind:value="{query}"
-				on:keyup="{handleKeyDown}"
-			/>
+				on:keyup="{handleKeyDown}" />
 		</div>
 		<button
 			class="profile-button min-w-[8rem] max-w-[12rem] bg-osvauld-cardshade rounded-md flex justify-around text-osvauld-fieldText items-center cursor-pointer py-1"
-			on:click|stopPropagation="{profileSelectionManager}"
-		>
+			on:click|stopPropagation="{profileSelectionManager}">
 			<div class="flex justify-center items-center">
 				<Profile color="{isProfileClicked ? '#F2F2F0' : '#85889C'}" /><span
 					class="font-inter text-base overflow-hidden max-w-[6rem] text-ellipsis whitespace-nowrap {isProfileClicked
 						? 'text-osvauld-sideListTextActive'
-						: 'text-osvauld-fieldText'} ">{username}</span
-				>
+						: 'text-osvauld-fieldText'} ">{username}</span>
 			</div>
 			<span
 				class="transition-transform duration-100 ease-linear {isProfileClicked
 					? 'rotate-180'
-					: 'rotate-0'}"
-			>
+					: 'rotate-0'}">
 				<DownArrow type="{isProfileClicked ? 'profileActive' : 'profile'}" />
 			</span>
 		</button>
@@ -168,16 +147,9 @@
 			on:close="{closeModal}"
 			on:select="{handleSearchClick}"
 			on:change="{handleInputChange}"
-			on:enter="{handleKeyDown}"
-		/>
+			on:enter="{handleKeyDown}" />
 	{/if}
 	<div class="h-[90vh] bg-osvauld-frameblack mr-4 overflow-hidden">
-		{#if $selectedPage === "Folders" && ($selectedSection === "SharedFolders" || $selectedSection === "PrivateFolders")}
-			<CredentialList />
-		{:else if $selectedPage === "Folders" && $selectedSection === "Environments"}
-			<Environments />
-		{:else if $selectedPage === "Groups"}
-			<GroupList />
-		{/if}
+		<CredentialList />
 	</div>
 </div>

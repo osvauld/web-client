@@ -1,90 +1,38 @@
 <script lang="ts">
 	import { fly } from "svelte/transition";
 	import CredentialEditorMod from "./CredentialEditorMod.svelte";
-	import ShareFolderModal from "../folders/ShareFolderModal.svelte";
-	import ShareCredentialModal from "./ShareCredentialModal.svelte";
 	import CredentialCard from "./CredentialCard.svelte";
-	import CredentialDetails from "./CredentialDetails.svelte";
+	// import CredentialDetails from "./CredentialDetails.svelte";
 
-	import { Share, Add, EyeScan, FolderShare, Import } from "../icons";
-	import { fetchSignedUpUsers, fetchAllUserGroups, addCliUser } from "../apis";
-	import { User, Group, Credential, Field, SelectedGroup } from "../dtos";
+	import { Add, Import } from "../icons";
+	import { User, Credential, Field } from "../dtos";
 
 	import {
 		credentialStore,
-		showFolderShareDrawer,
-		showCredentialShareDrawer,
 		selectedFolder,
 		showCredentialDetailsDrawer,
 		selectedCredential,
 	} from "../store";
-	import { onDestroy } from "svelte";
 	import DownArrow from "../../basic/icons/downArrow.svelte";
 	import Placeholder from "../components/Placeholder.svelte";
-	import { accessListSelected, buttonRef } from "../../../store/ui.store";
+	import { buttonRef } from "../../../store/ui.store";
 	import { setCredentialStore } from "../../../store/storeHelper";
 	import ImportModal from "./ImportModal.svelte";
 
 	let checkedCards: Credential[] = [];
-	let users: User[] = [];
-	let allGroups: SelectedGroup[] = [];
-	let selectedCard: any;
 	let sensitiveFields: Field[] = [];
-	let areCardsSelected = false;
-	let noCardsSelected = false;
 	let showCreateCredentialModal = false;
-	let isShareHovered = false;
-	let accesslistHovered = false;
 	let addCredentialHovered = false;
-	let privateFolder = false;
 	let importHovered = false;
 	let importSelected = false;
-
-	$: isShareCredActive = checkedCards.length !== 0;
-
-	$: minOneCredentialManager = $credentialStore.some(
-		(credential) => credential.accessType === "manager",
-	);
-	const handleCheck = (isChecked: boolean, card: Credential) => {
-		if (isChecked) {
-			checkedCards = [...checkedCards, card];
-		} else {
-			checkedCards = checkedCards.filter(
-				(c) => c.credentialId !== card.credentialId,
-			);
-		}
-	};
-
-	const handleActionModalCall = (triggerAction: boolean, card: Credential) => {
-		// When the action modal is called from a credential, it clears all other checked credentials and make that credential checked.
-		checkedCards = [card];
-	};
-
-	const subscribe = selectedFolder.subscribe(async (folder) => {
-		if (folder === undefined) {
-			return;
-		}
-		if (folder === null) {
-			return;
-		}
-		if (folder.type === "private") {
-			privateFolder = true;
-		} else {
-			privateFolder = false;
-		}
-		selectedCredential.set(null);
-		await setCredentialStore();
-		let [allUsersResponse, allGroupResponse] = await Promise.all([
-			fetchSignedUpUsers(),
-			fetchAllUserGroups(),
-		]);
-		allGroups = allGroupResponse.data;
-		users = allUsersResponse.data;
-		checkedCards = [];
-	});
-
+	let selectedCard: any;
 	const withdrawDetailDrawer = () => {
 		showCredentialDetailsDrawer.set(false);
+	};
+
+	const addCredentialManager = () => {
+		showCreateCredentialModal = true;
+		checkedCards = [];
 	};
 
 	const onSelectingCard = (
@@ -96,40 +44,10 @@
 		showCredentialDetailsDrawer.set(true);
 	};
 
-	const folderShareManager = async () => {
-		areCardsSelected = checkedCards.length !== 0;
-		setTimeout(() => {
-			areCardsSelected = false;
-		}, 1000);
-		!areCardsSelected && showFolderShareDrawer.set(true);
-	};
-
-	const credentialShareManager = async () => {
-		noCardsSelected = checkedCards.length === 0;
-		setTimeout(() => {
-			noCardsSelected = false;
-		}, 1000);
-		!noCardsSelected && showCredentialShareDrawer.set(true);
-	};
-
-	const addCredentialManager = () => {
-		showCreateCredentialModal = true;
-		checkedCards = [];
-	};
-
-	const handleAccessListSelection = (e: any) => {
-		buttonRef.set(e.currentTarget);
-		accessListSelected.set(true);
-	};
-
 	const closeImportModal = async () => {
 		importSelected = false;
 		await setCredentialStore();
 	};
-
-	onDestroy(() => {
-		subscribe();
-	});
 </script>
 
 <style>
@@ -148,7 +66,7 @@
 	}
 </style>
 
-{#if $showCredentialDetailsDrawer}
+<!-- {#if $showCredentialDetailsDrawer}
 	<button
 		class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
 		on:click="{withdrawDetailDrawer}">
@@ -159,7 +77,7 @@
 				on:close="{withdrawDetailDrawer}" />
 		</button>
 	</button>
-{/if}
+{/if} -->
 
 <div class="w-full min-h-[80vh]">
 	{#if $selectedFolder}
@@ -169,71 +87,8 @@
 					class="text-3xl p-4 font-normal whitespace-nowrap text-osvauld-sideListTextActive">
 					{$selectedFolder.name}
 				</h1>
-				<!-- TODO: update to share credentials in the same api -->
-				{#if $selectedFolder.accessType === "manager" && !privateFolder}
-					<button
-						class="py-1.5 px-4 !text-lg text-osvauld-textActive flex justify-between items-center whitespace-nowrap text-sm mr-2 relative"
-						on:click="{folderShareManager}"
-						on:mouseenter="{() => (isShareHovered = true)}"
-						on:mouseleave="{() => (isShareHovered = false)}">
-						<FolderShare
-							color="{isShareHovered ? '#F2F2F0' : '#85889C'}"
-							size="{28}" />
-						{#if isShareHovered}
-							<div class="tooltip">Share Folder</div>
-						{/if}
-					</button>
-				{/if}
-				{#if minOneCredentialManager && !privateFolder}
-					<button
-						class="border border-osvauld-iconblack rounded-md py-1.5 px-4 !text-lg flex justify-between items-center whitespace-nowrap {isShareCredActive
-							? 'text-osvauld-frameblack bg-osvauld-carolinablue'
-							: 'text-osvauld-textActive bg-osvauld-frameblack'}"
-						on:click="{credentialShareManager}">
-						<span class="mr-1 text-sm">Share Credentials</span>
-						<Share
-							color="{isShareCredActive ? '#0D0E13' : '#A3A4B5'}"
-							size="{16}" />
-					</button>
-				{/if}
-				{#if areCardsSelected}
-					<span
-						class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"
-						in:fly
-						out:fly>Credentials are selected</span>
-				{:else if noCardsSelected}
-					<span
-						class="text-red-400 whitespace-nowrap text-sm ml-2 inline-block"
-						in:fly
-						out:fly>No cards are selected</span>
-				{/if}
 			</div>
 			<div class="w-[40%] flex justify-end items-center">
-				{#if !privateFolder}
-					<button
-						class="hover:bg-osvauld-modalFieldActive {$accessListSelected
-							? 'bg-osvauld-modalFieldActive text-osvauld-carolinablue'
-							: 'bg-osvauld-frameblack text-osvauld-fieldText'} rounded-md flex justify-around items-center px-4 py-1.5 text-sm {$selectedFolder.accessType ===
-						'none'
-							? 'hidden'
-							: 'visible'}"
-						on:click="{handleAccessListSelection}"
-						on:mouseenter="{() => (accesslistHovered = true)}"
-						on:mouseleave="{() => (accesslistHovered = false)}">
-						<EyeScan
-							color="{$accessListSelected
-								? '#89B4FA'
-								: accesslistHovered
-									? '#F2F2F0'
-									: '#85889C'}" />
-						<span
-							class="ml-2 whitespace-nowrap {$accessListSelected
-								? 'text-osvauld-carolinablue'
-								: accesslistHovered
-									? 'text-osvauld-sideListTextActive'
-									: 'text-osvauld-fieldText'} ">Access List</span>
-					</button>
-				{/if}
 				<button
 					class="border border-osvauld-iconblack text-osvauld-textPassive hidden justify-center items-center py-1.5 px-4 text-sm rounded-md ml-4">
 					<span class="mr-2 pl-2">Latest</span>
@@ -267,30 +122,6 @@
 			</button>
 		</button>
 	{/if}
-	{#if $showFolderShareDrawer}
-		<button
-			class="fixed inset-0 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50"
-			on:click="{() => showFolderShareDrawer.set(false)}">
-			<button class="p-6 rounded shadow-lg" on:click|stopPropagation>
-				<ShareFolderModal
-					{users}
-					on:close="{() => showFolderShareDrawer.set(false)}" />
-			</button>
-		</button>
-	{/if}
-	{#if $showCredentialShareDrawer}
-		<button
-			class="fixed inset-0 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50"
-			on:click="{() => showCredentialShareDrawer.set(false)}">
-			<button class="p-6 rounded shadow-lg" on:click|stopPropagation>
-				<ShareCredentialModal
-					{users}
-					credentials="{checkedCards}"
-					groups="{allGroups}"
-					on:close="{() => showCredentialShareDrawer.set(false)}" />
-			</button>
-		</button>
-	{/if}
 	{#if importSelected}
 		<div
 			class="fixed inset-0 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50">
@@ -302,14 +133,11 @@
 			class="flex flex-wrap pt-3 pb-7 px-7 gap-3.5 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border">
 			{#each $credentialStore as credential}
 				<CredentialCard
-					{privateFolder}
 					{credential}
 					checked="{checkedCards.some(
 						(c) => c.credentialId === credential.credentialId,
 					)}"
-					on:check="{(e) => handleCheck(e.detail, credential)}"
-					on:select="{(e) => onSelectingCard(e.detail, credential)}"
-					on:action="{(e) => handleActionModalCall(e.detail, credential)}" />
+					on:select="{(e) => onSelectingCard(e.detail, credential)}" />
 			{/each}
 		</div>
 	{/if}

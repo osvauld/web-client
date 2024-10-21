@@ -10,7 +10,6 @@
 	} from "../store";
 	import { fly } from "svelte/transition";
 	import { Warning } from "../icons";
-	import { removeFolder } from "../apis";
 	import { setFolderStore } from "../../../store/storeHelper";
 
 	let cancelHovered = false;
@@ -23,18 +22,18 @@
 	}
 
 	async function DeleteConfirmation() {
-		if ($selectedFolder && $selectedFolder.id === $modalManager.id) {
-			selectedFolder.set(null);
-			credentialStore.set([]);
-		}
-		let removalResponse = await removeFolder($modalManager.id);
-		if (removalResponse.success) {
-			toastStore.set({
-				type: removalResponse.success,
-				message: removalResponse.message,
-				show: true,
-			});
-		}
+		// if ($selectedFolder && $selectedFolder.id === $modalManager.id) {
+		// 	selectedFolder.set(null);
+		// 	credentialStore.set([]);
+		// }
+		// let removalResponse = await removeFolder($modalManager.id);
+		// if (removalResponse.success) {
+		// 	toastStore.set({
+		// 		type: removalResponse.success,
+		// 		message: removalResponse.message,
+		// 		show: true,
+		// 	});
+		// }
 		withdrawFolderDeleteModal();
 		await setFolderStore();
 	}
@@ -42,29 +41,24 @@
 
 <button
 	class="fixed inset-0 flex items-center justify-center z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px]"
-	on:click|preventDefault="{withdrawFolderDeleteModal}"
->
+	on:click|preventDefault="{withdrawFolderDeleteModal}">
 	<div
 		class="p-4 bg-osvauld-frameblack border border-osvauld-activeBorder rounded-3xl w-[32rem] h-[17.6rem] flex flex-col items-start justify-center gap-3"
-		in:fly
-	>
+		in:fly>
 		<div class="flex justify-between items-center w-full">
 			<span class="text-[21px] font-medium text-osvauld-quarzowhite"
-				>Delete {$modalManager.name} folder</span
-			>
+				>Delete {$modalManager.name} folder</span>
 			<button
 				class="cursor-pointer p-2"
-				on:click|preventDefault="{withdrawFolderDeleteModal}"
-			>
+				on:click|preventDefault="{withdrawFolderDeleteModal}">
 				<ClosePanel />
 			</button>
 		</div>
 		<div
-			class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
-		></div>
+			class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4">
+		</div>
 		<div
-			class=" h-[140px] w-full font-normal text-base flex justify-center items-start bg-osvauld-fieldActive rounded-lg gap-3 p-2"
-		>
+			class=" h-[140px] w-full font-normal text-base flex justify-center items-start bg-osvauld-fieldActive rounded-lg gap-3 p-2">
 			<div class="w-16 h-9 justify-center items-center flex">
 				<Warning />
 			</div>
@@ -76,8 +70,8 @@
 			</div>
 		</div>
 		<div
-			class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4"
-		></div>
+			class="border-b border-osvauld-iconblack w-[calc(100%+2rem)] -translate-x-4">
+		</div>
 		<div class="flex justify-end items-center gap-4 w-full">
 			<button
 				class="font-medium text-base rounded-md py-[5px] px-[15px] {cancelHovered
@@ -85,8 +79,7 @@
 					: 'text-osvauld-fadedCancel'}"
 				on:click|preventDefault="{withdrawFolderDeleteModal}"
 				on:mouseenter="{() => (cancelHovered = true)}"
-				on:mouseleave="{() => (cancelHovered = false)}">Cancel</button
-			>
+				on:mouseleave="{() => (cancelHovered = false)}">Cancel</button>
 			<button
 				class="border border-osvauld-dangerRed py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md {finalActionHovered
 					? 'bg-osvauld-dangerRed text-osvauld-frameblack'
@@ -94,8 +87,7 @@
 				on:click|preventDefault="{DeleteConfirmation}"
 				on:mouseenter="{() => (finalActionHovered = true)}"
 				on:mouseleave="{() => (finalActionHovered = false)}"
-				>Delete Folder</button
-			>
+				>Delete Folder</button>
 		</div>
 	</div>
 </button>

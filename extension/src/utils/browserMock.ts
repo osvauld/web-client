@@ -1,14 +1,11 @@
-
-import { createStore } from '@tauri-apps/plugin-store';
+// @ts-nocheck
+import { Store } from '@tauri-apps/plugin-store';
 import { invoke } from "@tauri-apps/api/core";
 const tauriBrowser = {
 	storage: {
 		local: {
 			get: async (key) => {
-				const store = await createStore('my_app_store8.bin', {
-					// we can save automatically after each store modification
-					// autoSave: true,
-				});
+				const store = await Store.load('my_app_store8.bin');
 				// console.log("Tauri: Getting", key);
 				try {
 					const value = await store.get(key);
@@ -28,10 +25,7 @@ const tauriBrowser = {
 				}
 			},
 			set: async (data) => {
-				const store = await createStore('my_app_store8.bin', {
-					// we can save automatically after each store modification
-					// autoSave: true,
-				});
+				const store = await Store.load('my_app_store8.bin');
 				// console.log("Tauri: Setting", data);
 				try {
 					const key = Object.keys(data)[0];

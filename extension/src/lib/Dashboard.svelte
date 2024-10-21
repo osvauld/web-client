@@ -9,26 +9,19 @@
 		showMoreOptions,
 		DeleteConfirmationModal,
 		modalManager,
-		accessListSelected,
-		showMoreGroupOptions,
 		toastStore,
 		promptPassword,
 	} from "./store/ui.store";
 	import { sendMessage } from "./components/dashboard/helper";
 	import Welcome from "./components/popup/Welcome.svelte";
 	import Signup from "./components/popup/Signup.svelte";
-	import { getUser } from "./apis/user.api";
-	import AccessListModal from "./components/dashboard/credentials/AccessListModal.svelte";
-	import MoreActionsGroup from "./components/dashboard/components/MoreActionsGroup.svelte";
-	import GroupDeleteModal from "./components/dashboard/groups/GroupDeleteModal.svelte";
 	import ShareToast from "./components/dashboard/components/ShareToast.svelte";
 	import { setFolderStore } from "./store/storeHelper";
-	import { selectedFolder } from "./store/folder.store";
 	import PasswordPromptModal from "./components/dashboard/components/PasswordPromptModal.svelte";
 	import { LocalStorageService } from "../scripts/storageHelper";
 
 	let showWelcome = false;
-	let signedUp = true;
+	let signedUp = false;
 	onMount(async () => {
 		const response = await sendMessage("isSignedUp");
 		const checkPvtLoad = await sendMessage("checkPvtLoaded");
@@ -46,8 +39,6 @@
 	};
 
 	const handleAuthenticated = async () => {
-		const user = await getUser();
-		LocalStorageService.set("user", user.data, true);
 		await setFolderStore();
 		showWelcome = false;
 	};
@@ -56,8 +47,7 @@
 <main
 	class="
     bg-osvauld-frameblack
-   w-screen h-screen text-macchiato-text text-lg overflow-hidden !font-sans"
->
+   w-screen h-screen text-macchiato-text text-lg overflow-hidden !font-sans">
 	{#if !signedUp}
 		<Signup on:signedUp="{handleSignedUp}" />
 	{:else if showWelcome}
@@ -67,14 +57,12 @@
 	{:else}
 		<div class="flex h-full">
 			<div
-				class="w-1/5 h-full scrollbar-thin overflow-y-hidden overflow-x-hidden relative z-10"
-			>
+				class="w-1/5 h-full scrollbar-thin overflow-y-hidden overflow-x-hidden relative z-10">
 				<LeftContainer />
 			</div>
 			<!-- Right container -->
 			<div
-				class="w-4/5 h-full overflow-hidden border-l border-osvauld-iconblack"
-			>
+				class="w-4/5 h-full overflow-hidden border-l border-osvauld-iconblack">
 				<RightContainer />
 			</div>
 		</div>
@@ -90,16 +78,9 @@
 				<CredentialDeleteModal />
 			{:else if $DeleteConfirmationModal && $modalManager.type === "Folder"}
 				<FolderDeleteModal />
-			{:else if $DeleteConfirmationModal && $modalManager.type === "Group"}
-				<GroupDeleteModal />
 			{/if}
 		{/if}
-		{#if $accessListSelected && $selectedFolder}
-			<AccessListModal />
-		{/if}
-		{#if $showMoreGroupOptions}
-			<MoreActionsGroup />
-		{/if}
+
 		{#if $toastStore.show}
 			<!-- {#if true} -->
 			<div class="z-100">

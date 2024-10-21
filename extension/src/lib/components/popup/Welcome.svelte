@@ -4,7 +4,6 @@
 	import { createEventDispatcher } from "svelte";
 	import { ClosedEye } from "../dashboard/icons";
 	import { sendMessage } from "../dashboard/helper";
-	import { createChallenge, initiateAuth } from "../dashboard/apis";
 	import { StorageService } from "../../../scripts/storageHelper";
 	const dispatch = createEventDispatcher();
 
@@ -21,19 +20,8 @@
 	async function handleSubmit() {
 		isLoaderActive = true;
 		const pubkey = await sendMessage("getPubKey", { passphrase });
-		const challengeResponse = await createChallenge(pubkey);
-		const signature = await sendMessage("signChallenge", {
-			challenge: challengeResponse.data.challenge,
-		});
-		const verificationResponse = await initiateAuth(signature, pubkey);
-		const token = verificationResponse.data.token;
-		if (token) {
-			await StorageService.setToken(token);
-			await StorageService.setIsLoggedIn("true");
-			dispatch("authenticated", true);
-		} else {
-			errorMessage = true;
-		}
+		dispatch("authenticated", true);
+
 		isLoaderActive = false;
 	}
 	const onInput = (event: any) => {
@@ -42,30 +30,25 @@
 </script>
 
 <div
-	class="h-auto mt-10 flex justify-center items-center text-base font-normal text-osvauld-sheffieldgrey"
->
+	class="h-auto mt-10 flex justify-center items-center text-base font-normal text-osvauld-sheffieldgrey">
 	<form
 		class="flex flex-col justify-center items-center"
-		on:submit|preventDefault="{handleSubmit}"
-	>
+		on:submit|preventDefault="{handleSubmit}">
 		<label for="passphrase">Enter Passphrase</label>
 
 		<div
-			class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack focus-within:border-osvauld-activeBorder"
-		>
+			class="flex bg-osvauld-frameblack px-3 mt-4 border rounded-lg border-osvauld-iconblack focus-within:border-osvauld-activeBorder">
 			<input
 				class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 focus:border-osvauld-activeBorder"
 				{type}
 				id="passphrase"
 				autofocus
 				autocomplete="off"
-				on:input="{onInput}"
-			/>
+				on:input="{onInput}" />
 			<button
 				type="button"
 				class="flex justify-center items-center"
-				on:click="{toggleShowPassword}"
-			>
+				on:click="{toggleShowPassword}">
 				{#if showPassword}
 					<ClosedEye />
 				{:else}
@@ -76,17 +59,14 @@
 		<span
 			class="text-xs text-red-500 font-thin mt-2 {errorMessage
 				? 'visible'
-				: 'invisible'}">Passphrase doesn't match</span
-		>
+				: 'invisible'}">Passphrase doesn't match</span>
 		<button
 			class="bg-osvauld-carolinablue py-2 px-10 mt-8 rounded-lg text-osvauld-ninjablack font-medium w-[150px] flex justify-center items-center whitespace-nowrap"
-			type="submit"
-		>
+			type="submit">
 			{#if isLoaderActive}
 				<Loader size="{24}" color="#1F242A" duration="{1}" />
 			{:else}
 				<span>Submit</span>
-			{/if}</button
-		>
+			{/if}</button>
 	</form>
 </div>

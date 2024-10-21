@@ -1,19 +1,12 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from "svelte";
 	import { setCredentialStore } from "../../../store/storeHelper";
-	import {
-		fetchCredentialUsersForDataSync,
-		fetchFolderUsersForDataSync,
-	} from "../apis";
+
 	import { addCredentialHandler } from "./credentialTypes/addCredentialHelper";
 	import { updateCredentialHandler } from "./credentialTypes/updateCredentialHelper";
 	import { selectedFolder } from "../store";
 	import { Folder } from "../../../dtos/folder.dto";
-	import {
-		isUpdateCredentialPayload,
-		isAddCredentialPayload,
-		credentialFieldsUpdater,
-	} from "./credentialTypes/fieldHelper";
+	import { credentialFieldsUpdater } from "./credentialTypes/fieldHelper";
 
 	import CustomCredential from "./credentialTypes/CustomCredential.svelte";
 	import { fly, blur } from "svelte/transition";
@@ -50,17 +43,13 @@
 
 	onMount(async () => {
 		if (edit && credentialId) {
-			const responseJson = await fetchCredentialUsersForDataSync(credentialId);
-			usersToShare = responseJson.data;
+			usersToShare = [];
 		} else {
 			const folder = $selectedFolder as Folder | undefined;
 			if (folder === undefined) {
 				throw new Error("Folder not selected");
 			}
-			const responseJson = await fetchFolderUsersForDataSync(
-				$selectedFolder.id,
-			);
-			usersToShare = responseJson.data;
+			usersToShare = [];
 		}
 	});
 
@@ -87,21 +76,11 @@
 			return;
 		}
 		isLoaderActive = true;
-		let operationResponse: {
-			success: boolean;
-			message: string;
-		};
-		if (edit && isUpdateCredentialPayload(credentialData)) {
-			operationResponse = await updateCredentialHandler(
-				credentialData,
-				credentialId!,
-			);
-		} else if (!edit && isAddCredentialPayload(credentialData)) {
-			operationResponse = await addCredentialHandler(
-				credentialData,
-				$selectedFolder.id,
-			);
-		}
+
+		let operationResponse = await addCredentialHandler(
+			credentialData,
+			$selectedFolder.id,
+		);
 
 		if (operationResponse.success) {
 			await setCredentialStore();

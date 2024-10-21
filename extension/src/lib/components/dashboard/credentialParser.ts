@@ -1,4 +1,3 @@
-import { fetchFolderUsersForDataSync } from "../dashboard/apis";
 
 import {
 	IntermediateCredential,
@@ -110,22 +109,23 @@ export const approvedCredentialSubmit = async ({
 	folderId,
 	...otherData
 }: ApprovedCredentialSubmitParams): Promise<boolean> => {
-	const response = await fetchFolderUsersForDataSync(folderId);
-	const usersToShare = response.data;
-	try {
-		const operationCompletionStatus = await Promise.allSettled(
-			Object.values(otherData).map((data) =>
-				finalProcessing(folderId, usersToShare, data),
-			),
-		);
+	// const response = await fetchFolderUsersForDataSync(folderId);
+	// const usersToShare = response.data;
+	// try {
+	// 	const operationCompletionStatus = await Promise.allSettled(
+	// 		Object.values(otherData).map((data) =>
+	// 			finalProcessing(folderId, usersToShare, data),
+	// 		),
+	// 	);
 
-		const operationsCompletion = operationCompletionStatus.every(
-			(result) => result.status === "fulfilled" && result.value.success,
-		);
+	// 	const operationsCompletion = operationCompletionStatus.every(
+	// 		(result) => result.status === "fulfilled" && result.value.success,
+	// 	);
 
-		return operationsCompletion;
-	} catch (error) {
-		console.error("Error in approvedCredentialSubmit:", error);
-		return false;
-	}
+	// 	return operationsCompletion;
+	return true;
+	// } catch (error) {
+	// 	console.error("Error in approvedCredentialSubmit:", error);
+	// 	return false;
+	// }
 };

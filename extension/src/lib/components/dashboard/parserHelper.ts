@@ -15,7 +15,6 @@ import {
 	CredentialData,
 } from "../../dtos/import.dto";
 
-import { addCredential } from "../dashboard/apis";
 import { UsersForDataSync } from "./dtos";
 
 import { sendMessage } from "./helper";
@@ -334,8 +333,8 @@ export const finalProcessing = async (
 		}
 
 		addCredentialPayload.userFields = userFields;
-		const response = await addCredential(addCredentialPayload);
-		return { success: true, response };
+		// const response = await addCredential(addCredentialPayload);
+		return { success: true };
 	} catch (error) {
 		console.error("Error posting credential:", error);
 		return { success: false, error };

@@ -3,7 +3,6 @@
 	const dispatch = createEventDispatcher();
 	import { sendMessage } from "../dashboard/helper";
 	import { StorageService } from "../../../scripts/storageHelper";
-	import { createChallenge, initiateAuth } from "../dashboard/apis";
 	import NewPassword from "../basic/NewPassword.svelte";
 
 	let recoveryData = "";
@@ -22,17 +21,7 @@
 			certificate,
 		});
 		const pubkey = await sendMessage("getPubKey", { passphrase });
-		const challengeResponse = await createChallenge(pubkey);
-		const signature = await sendMessage("signChallenge", {
-			challenge: challengeResponse.data.challenge,
-		});
-		const verificationResponse = await initiateAuth(signature, pubkey);
-		const token = verificationResponse.data.token;
-		if (token) {
-			await StorageService.setToken(token);
-			await StorageService.setIsLoggedIn("true");
-			dispatch("login", true);
-		}
+		dispatch("login", true);
 	};
 </script>
 
