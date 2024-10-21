@@ -5,6 +5,7 @@
 	import MoreActions from "./components/dashboard/components/MoreActions.svelte";
 	import CredentialDeleteModal from "./components/dashboard/credentials/CredentialDeleteModal.svelte";
 	import FolderDeleteModal from "./components/dashboard/folders/FolderDeleteModal.svelte";
+	import Loader from "./components/dashboard/components/Loader.svelte";
 	import {
 		showMoreOptions,
 		DeleteConfirmationModal,
@@ -22,14 +23,22 @@
 
 	let showWelcome = false;
 	let signedUp = false;
+	let isLoading = true;
+
 	onMount(async () => {
-		const response = await sendMessage("isSignedUp");
-		const checkPvtLoad = await sendMessage("checkPvtLoaded");
-		signedUp = response.isSignedUp;
-		if (checkPvtLoad === false) {
-			showWelcome = true;
-		} else {
-			await setFolderStore();
+		try {
+			const response = await sendMessage("isSignedUp");
+			const checkPvtLoad = await sendMessage("checkPvtLoaded");
+			signedUp = response.isSignedUp;
+			if (checkPvtLoad === false) {
+				showWelcome = true;
+			} else {
+				await setFolderStore();
+			}
+		} catch (error) {
+			console.error("Error during initialization:", error);
+		} finally {
+			isLoading = false;
 		}
 	});
 
@@ -44,11 +53,21 @@
 	};
 </script>
 
+<style>
+	:root {
+		overflow: hidden;
+	}
+</style>
+
 <main
 	class="
     bg-osvauld-frameblack
-   w-screen h-screen text-macchiato-text text-lg overflow-hidden !font-sans">
-	{#if !signedUp}
+   w-screen h-screen text-macchiato-text text-lg !font-sans">
+	{#if isLoading}
+		<div class="flex justify-center items-center w-full h-full">
+			<Loader size="{24}" color="#1F242A" duration="{1}" />
+		</div>
+	{:else if !signedUp}
 		<Signup on:signedUp="{handleSignedUp}" />
 	{:else if showWelcome}
 		<div class="overflow-hidden flex justify-center items-center w-full h-full">
@@ -60,9 +79,8 @@
 				class="w-1/5 h-full scrollbar-thin overflow-y-hidden overflow-x-hidden relative z-10">
 				<LeftContainer />
 			</div>
-			<!-- Right container -->
 			<div
-				class="w-4/5 h-full overflow-hidden border-l border-osvauld-iconblack">
+				class="w-4/5 min-w-[330px] h-full overflow-hidden border-l border-osvauld-iconblack">
 				<RightContainer />
 			</div>
 		</div>

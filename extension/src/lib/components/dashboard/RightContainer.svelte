@@ -104,7 +104,7 @@
 
 <div class="flex flex-col h-auto">
 	<div
-		class="h-[6rem] pr-4 flex justify-between items-center border-b border-osvauld-iconblack">
+		class="h-[6rem] px-7 flex justify-between items-center border-b border-osvauld-iconblack">
 		<div
 			class="h-[2.2rem] w-[31.25rem] px-2 mx-auto flex justify-start items-center border border-osvauld-iconblack focus-within:border-osvauld-activeBorder rounded-lg cursor-pointer">
 			<Lens />
@@ -119,7 +119,7 @@
 				on:keyup="{handleKeyDown}" />
 		</div>
 		<button
-			class="profile-button min-w-[8rem] max-w-[12rem] bg-osvauld-cardshade rounded-md flex justify-around text-osvauld-fieldText items-center cursor-pointer py-1"
+			class="profile-button min-w-[8rem] max-w-[12rem] bg-osvauld-cardshade rounded-md flex justify-around text-osvauld-fieldText items-center cursor-pointer py-1 ml-4"
 			on:click|stopPropagation="{profileSelectionManager}">
 			<div class="flex justify-center items-center">
 				<Profile color="{isProfileClicked ? '#F2F2F0' : '#85889C'}" /><span
