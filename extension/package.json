@@ -8,9 +8,6 @@
 		"build:rollup": "BUILD_ENV=chrome rollup -c",
 		"dev": "rollup -c  -w",
 		"firefox": "BUILD_ENV=firefox rollup -c",
-		"build:popup": "browserify public/build/popup.js -p [ lavamoat-browserify --writeAutoPolicy --policy lavamoat/browserify/popup-policy.json ] -o public/build/popup.js",
-		"build:background": "browserify public/background.js -p [ lavamoat-browserify --writeAutoPolicy   --policy lavamoat/browserify/background-policy.json] -o public/background.js",
-		"build:dashboard": "browserify public/build/dashboard.js -p [ lavamoat-browserify --writeAutoPolicy --policy lavamoat/browserify/dashboard-policy.json ] -o public/build/dashboard.js",
 		"check": "svelte-check --tsconfig ./tsconfig.app.json",
 		"watch": "svelte-check --tsconfig ./tsconfig.app.json --watch",
 		"build": "npm run build:rollup",
@@ -24,7 +21,6 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
-		"@lavamoat/allow-scripts": "^3.0.0",
 		"@rollup/plugin-alias": "^5.1.0",
 		"@rollup/plugin-commonjs": "^25.0.7",
 		"@rollup/plugin-node-resolve": "^15.2.3",
@@ -36,12 +32,10 @@
 		"@types/webextension-polyfill": "^0.10.7",
 		"@typescript-eslint/eslint-plugin": "^6.13.2",
 		"autoprefixer": "^10.4.16",
-		"browserify": "^17.0.0",
 		"cross-env": "^7.0.3",
 		"eslint-plugin-svelte": "^2.35.1",
 		"espree": "^9.6.1",
 		"husky": "^8.0.3",
-		"lavamoat-browserify": "^17.0.0",
 		"postcss": "^8.4.32",
 		"prettier": "^3.2.5",
 		"prettier-plugin-svelte": "^3.2.3",
@@ -59,17 +53,10 @@
 		"webextension-polyfill": "^0.10.0"
 	},
 	"dependencies": {
-		"@lavamoat/preinstall-always-fail": "^2.0.0",
 		"@tauri-apps/api": "^2.0.0-rc.5",
 		"@tauri-apps/plugin-clipboard-manager": "^2.0.0-rc.2",
 		"@tauri-apps/plugin-store": "^2.0.0",
 		"papaparse": "^5.4.1",
 		"totp-generator": "^1.0.0"
-	},
-	"lavamoat": {
-		"allowScripts": {
-			"@lavamoat/preinstall-always-fail": false,
-			"svelte-preprocess": false
-		}
 	}
 }
