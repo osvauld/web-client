@@ -102,15 +102,6 @@ pub fn sign_hashed_message(crypto: &mut CryptoUtils, message: &str) -> Result<St
         .map_err(|e| format!("Failed to hash and sign message: {}", e))
 }
 
-// pub fn decrypt_credentials(
-//     crypto: &mut CryptoUtils,
-//     credentials: Vec<Credential>,
-// ) -> Result<Vec<Credential>, String> {
-//     crypto
-//         .decrypt_credentials(credentials)
-//         .map_err(|e| format!("Failed to decrypt credentials: {}", e))
-// }
-
 pub fn store_certificate_and_salt(
     store: &Store<Wry>,
     certificate: &str,

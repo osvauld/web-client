@@ -5,7 +5,6 @@ mod database;
 use database::{initialize_database, DbConnection};
 pub mod handler;
 
-mod server;
 mod service;
 mod types;
 use log::LevelFilter;
@@ -18,14 +17,12 @@ pub fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(
             tauri_plugin_log::Builder::new()
-                .level(LevelFilter::Info) // Set the general log level
-                .filter(|metadata| {
-                    !metadata.target().starts_with("surrealdb") // Filter out SurrealDB logs
-                })
+                .level(LevelFilter::Info)
                 .build(),
         )
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
+            log::info!("Setting up Tauri app");
             let handle = app.handle();
             let store = handle.store_builder("my_app_store8.bin").build();
             store.save()?;
@@ -48,17 +45,6 @@ pub fn run() {
             match db_connection {
                 Ok(connection) => {
                     app.manage(connection.clone());
-
-                    // Start the HTTP/2 server
-                    let server_connection = connection.clone();
-                    let rt_clone = Arc::clone(&rt);
-                    std::thread::spawn(move || {
-                        rt_clone.block_on(async {
-                            if let Err(e) = server::run_server(server_connection).await {
-                                error!("Local HTTP/2 server error: {}", e);
-                            }
-                        });
-                    });
                 }
                 Err(e) => {
                     error!("Failed to set up database: {}", e);
