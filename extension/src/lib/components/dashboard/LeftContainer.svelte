@@ -3,11 +3,13 @@
 	import FolderSideList from "./folders/FolderSideList.svelte";
 </script>
 
-<div class="flex justify-center items-center h-[6rem] scale-[0.8]">
+<div
+	class="flex justify-center items-center h-[6rem] min-w-[200px]"
+	aria-label="osvauld logo">
 	<Logo />
 </div>
 
-<div
-	class="scroll-m-0 h-[82%] w-full scroll-smooth justify-center flex items-center mt-6">
+<aside
+	class="scroll-m-0 h-[82%] w-full min-w-[200px] scroll-smooth justify-center flex items-center">
 	<FolderSideList />
-</div>
+</aside>

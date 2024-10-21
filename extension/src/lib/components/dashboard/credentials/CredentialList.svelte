@@ -130,7 +130,7 @@
 	{/if}
 	{#if $credentialStore.length !== 0}
 		<div
-			class="flex flex-wrap pt-3 pb-7 px-7 gap-3.5 w-full max-h-[80vh] !overflow-y-scroll scrollbar-thin box-border">
+			class="flex flex-wrap pt-3 pb-7 px-7 gap-3.5 w-full max-h-[80vh] !overflow-y-scroll overflow-x-hidden scrollbar-thin box-border">
 			{#each $credentialStore as credential}
 				<CredentialCard
 					{credential}
@@ -143,7 +143,7 @@
 	{/if}
 	{#if $selectedFolder && $selectedFolder.accessType === "manager"}
 		<button
-			class="text-2xl absolute bottom-10 right-14 bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack rounded-lg py-2 px-3.5 flex justify-center items-center"
+			class="text-lg absolute bottom-10 right-14 bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack rounded-lg py-2 px-3.5 flex justify-center items-center"
 			type="button"
 			on:mouseenter="{() => (importHovered = true)}"
 			on:mouseleave="{() => (importHovered = false)}"
