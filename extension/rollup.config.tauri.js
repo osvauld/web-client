@@ -40,15 +40,19 @@ export default {
 			],
 		}),
 		svelte({
+			compilerOptions: {
+				dev: !production,
+			},
 			preprocess: preprocess({
-				sourceMap: !production,
-				typescript: true,
+				typescript: {
+					tsconfigFile: "./tsconfig.app.json",
+				},
+				postcss: {
+					plugins: [tailwindcss, autoprefixer],
+				},
 			}),
 		}),
-		typescript({
-			sourceMap: !production,
-			include: ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
-		}),
+		typescript({ sourceMap: !production, tsconfig: "./tsconfig.app.json" }),
 		resolve({
 			browser: true,
 			dedupe: ["svelte"],
