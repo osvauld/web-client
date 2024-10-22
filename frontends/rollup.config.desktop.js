@@ -20,7 +20,7 @@ const isTauri = process.env.IS_TAURI === "true";
 export default {
 	input: "src/dashboard.ts",
 	output: {
-		file: "dist/index.js",
+		file: "desktop/index.js",
 		format: "iife",
 		name: "app",
 		sourcemap: !production,
@@ -62,7 +62,7 @@ export default {
 			plugins: [tailwindcss(), autoprefixer()],
 			extract: "index.css",
 		}),
-		!production && serve({ contentBase: "dist", port: 1420, host: "0.0.0.0" }),
-		!production && livereload("dist"),
+		!production && serve({ contentBase: "desktop", port: 1420, host: "0.0.0.0" }),
+		!production && livereload("desktop"),
 	],
 };

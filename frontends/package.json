@@ -14,8 +14,10 @@
 		"lint": "eslint \"src/**/*.{js,ts,svelte}\" --fix",
 		"prepare": "husky install",
 		"format": "prettier --write \"src/**/*.{js,ts,svelte}\"",
-		"dev:tauri": "cross-env IS_TAURI=true rollup -c rollup.config.tauri.js -w",
-		"build:tauri": "cross-env IS_TAURI=true rollup -c rollup.config.tauri.js"
+		"dev:desktop": "cross-env IS_TAURI=true rollup -c rollup.config.desktop.js -w",
+		"build:desktop": "cross-env IS_TAURI=true rollup -c rollup.config.desktop.js",
+		"dev:mobile": "cross-env IS_TAURI=true rollup -c rollup.config.mobile.js -w",
+		"build:mobile": "cross-env IS_TAURI=true rollup -c rollup.config.mobile.js"
 	},
 	"keywords": [],
 	"author": "",
