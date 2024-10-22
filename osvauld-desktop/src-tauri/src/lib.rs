@@ -4,8 +4,10 @@ use tauri_plugin_store::StoreExt;
 mod database;
 use database::{initialize_database, DbConnection};
 pub mod handler;
-
+mod p2p;
 mod service;
+use p2p::P2PManager;
+use tokio::sync::Mutex;
 mod types;
 use log::LevelFilter;
 use std::sync::Arc;
@@ -54,6 +56,16 @@ pub fn run() {
 
             // Manage the runtime
             app.manage(rt);
+            let p2p_manager = rt_clone.block_on(async {
+                let manager = p2p::initialize_p2p()
+                    .await
+                    .map_err(|e| format!("Failed to initialize P2P: {}", e))?;
+
+                Ok::<Arc<Mutex<P2PManager>>, String>(Arc::new(Mutex::new(manager)))
+            })?;
+            app.manage(p2p_manager.clone());
+
+            app.manage(p2p_manager);
 
             #[cfg(debug_assertions)]
             {
@@ -63,7 +75,11 @@ pub fn run() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![handler::handle_crypto_action])
+        .invoke_handler(tauri::generate_handler![
+            handler::handle_crypto_action,
+            handler::connect_to_peer,
+            handler::get_connection_string
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

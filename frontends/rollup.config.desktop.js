@@ -62,7 +62,7 @@ export default {
 			plugins: [tailwindcss(), autoprefixer()],
 			extract: "index.css",
 		}),
-		!production && serve({ contentBase: "desktop", port: 1420, host: "0.0.0.0" }),
+		!production && serve({ contentBase: "desktop", port: 1421, host: "0.0.0.0" }),
 		!production && livereload("desktop"),
 	],
 };
