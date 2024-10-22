@@ -4,7 +4,8 @@ use tauri_plugin_store::StoreExt;
 mod database;
 use database::{initialize_database, DbConnection};
 pub mod handler;
-
+mod p2p;
+use p2p::initialize_p2p;
 mod service;
 mod types;
 use log::LevelFilter;
@@ -54,6 +55,13 @@ pub fn run() {
 
             // Manage the runtime
             app.manage(rt);
+            let p2p_manager = rt_clone.block_on(async {
+                p2p::initialize_p2p()
+                    .await
+                    .map_err(|e| format!("Failed to initialize P2P: {}", e))
+            })?;
+
+            app.manage(p2p_manager);
 
             #[cfg(debug_assertions)]
             {
