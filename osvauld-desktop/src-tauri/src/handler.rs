@@ -1,3 +1,4 @@
+use super::p2p::P2PManager;
 use crate::service::{
     add_credential_service, add_folder, get_all_folders, get_certificate_and_salt,
     get_credentials_for_folder, get_folder_access, get_public_key, is_signed_up, save_passphrase,
@@ -11,6 +12,7 @@ use crate::types::{
 use crate::DbConnection;
 use crypto_utils::types::CredentialWithEncryptedKey as CredentialType;
 use crypto_utils::CryptoUtils;
+use libp2p::multiaddr::Multiaddr;
 use log::{error, info};
 use once_cell::sync::Lazy;
 use serde_json::Value;
@@ -233,4 +235,37 @@ pub async fn handle_crypto_action(
         }
         _ => Err(format!("Unknown action: {}", action)),
     }
+}
+
+#[tauri::command]
+pub async fn get_connection_string(
+    p2p_manager: State<'_, Arc<Mutex<P2PManager>>>,
+) -> Result<String, String> {
+    let mut manager = p2p_manager.lock().await;
+    let connection_info = manager
+        .get_connection_info()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    // Convert the connection info to a shareable string
+    Ok(connection_info.public_address.to_string())
+}
+
+#[tauri::command]
+pub async fn connect_to_peer(
+    connection_string: String,
+    p2p_manager: State<'_, Arc<Mutex<P2PManager>>>,
+) -> Result<(), String> {
+    // Parse the connection string back to a Multiaddr
+    let peer_addr: Multiaddr = connection_string
+        .parse()
+        .map_err(|e| format!("Invalid connection string: {}", e))?;
+
+    let mut manager = p2p_manager.lock().await;
+    manager
+        .connect_to_peer(peer_addr)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    Ok(())
 }

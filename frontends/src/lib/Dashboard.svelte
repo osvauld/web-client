@@ -13,6 +13,7 @@
 		toastStore,
 		promptPassword,
 	} from "./store/ui.store";
+	import { invoke } from "@tauri-apps/api/core";
 	import { sendMessage } from "./components/dashboard/helper";
 	import Welcome from "./components/popup/Welcome.svelte";
 	import Signup from "./components/popup/Signup.svelte";
@@ -26,6 +27,9 @@
 	let isLoading = true;
 
 	onMount(async () => {
+		const connectionString = await invoke("get_connection_string");
+		console.log("Share this connection string:", connectionString);
+		console.log(process.env.IS_TAURI);
 		try {
 			const response = await sendMessage("isSignedUp");
 			const checkPvtLoad = await sendMessage("checkPvtLoaded");

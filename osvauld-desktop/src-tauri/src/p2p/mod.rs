@@ -1,6 +1,4 @@
 use anyhow::Result;
-use base64::{engine::general_purpose::URL_SAFE as BASE64_URL, Engine as _};
-use futures::TryFutureExt;
 use libp2p::futures::StreamExt;
 use libp2p::{
     core::muxing::StreamMuxerBox,
@@ -96,29 +94,22 @@ impl P2PManager {
         info!("Local address: {}", conn.local_addr()?);
         info!("Connecting to STUN server: {}", server);
 
-        // Connect to STUN server
         conn.connect(server).await?;
 
-        // Create communication channel
         let (handler_tx, mut handler_rx) = tokio::sync::mpsc::unbounded_channel();
 
-        // Create STUN client
         let mut client = ClientBuilder::new().with_conn(Arc::new(conn)).build()?;
 
-        // Create and build STUN message
         let mut msg = Message::new();
         msg.build(&[Box::<TransactionId>::default(), Box::new(BINDING_REQUEST)])?;
 
-        // Send request
         client.send(&msg, Some(Arc::new(handler_tx))).await?;
 
-        // Wait for response
         if let Some(event) = handler_rx.recv().await {
             let msg = event.event_body?;
             let mut xor_addr = XorMappedAddress::default();
             xor_addr.get_from(&msg)?;
 
-            // Convert XorMappedAddress to SocketAddr
             let socket_addr: SocketAddr = StunSocketAddr(xor_addr).into_socket_addr();
             info!("STUN response: {}", socket_addr);
 
@@ -140,19 +131,17 @@ impl P2PManager {
             self.get_public_address().await?
         };
 
-        // Extract certhash directly without encoding/decoding
         let certhash = local_addr
             .iter()
             .find_map(|proto| {
                 if let Protocol::Certhash(hash) = proto {
-                    Some(hash.clone()) // Clone the Multihash directly
+                    Some(hash.clone())
                 } else {
                     None
                 }
             })
             .ok_or_else(|| anyhow::anyhow!("Certhash not found in local address"))?;
 
-        // Create public multiaddr with proper IP handling
         let public_multiaddr = match public_addr.ip() {
             IpAddr::V4(ipv4) => Multiaddr::empty()
                 .with(Protocol::Ip4(ipv4))
@@ -162,7 +151,7 @@ impl P2PManager {
                 .with(Protocol::Udp(public_addr.port())),
         }
         .with(Protocol::WebRTCDirect)
-        .with(Protocol::Certhash(certhash)) // Use the Multihash directly
+        .with(Protocol::Certhash(certhash))
         .with(Protocol::P2p(*self.swarm.lock().await.local_peer_id()));
 
         Ok(ConnectionInfo {
@@ -197,7 +186,7 @@ impl P2PManager {
         Ok(addr)
     }
 
-    pub async fn run_event_loop(self: Arc<Self>) {
+    pub async fn run_event_loop(&self) {
         let mut swarm = self.swarm.lock().await;
 
         loop {
@@ -217,7 +206,7 @@ impl P2PManager {
         }
     }
 
-    pub async fn connect_to_peer(&mut self, peer_addr: Multiaddr) -> Result<()> {
+    pub async fn connect_to_peer(&self, peer_addr: Multiaddr) -> Result<()> {
         let mut swarm = self.swarm.lock().await;
         info!("Attempting to connect to peer: {}", peer_addr);
         swarm.dial(peer_addr)?;
@@ -236,8 +225,8 @@ pub struct ConnectionInfo {
     pub public_socket: SocketAddr,
     pub peer_id: String,
 }
-
-pub async fn initialize_p2p() -> Result<Arc<P2PManager>> {
+pub async fn initialize_p2p() -> Result<P2PManager> {
+    // Return P2PManager directly
     info!("Initializing P2P manager");
     let mut p2p_manager = P2PManager::new().await?;
     let addr = p2p_manager.start_listening().await?;
@@ -249,15 +238,6 @@ pub async fn initialize_p2p() -> Result<Arc<P2PManager>> {
     info!("Public address: {}", connection_info.public_address);
     info!("Public socket: {}", connection_info.public_socket);
     info!("Peer ID: {}", connection_info.peer_id);
-
-    let p2p_manager = Arc::new(p2p_manager);
-
-    // Spawn the event loop
-    let p2p_manager_clone = Arc::clone(&p2p_manager);
-    tokio::spawn(async move {
-        info!("Starting P2P event loop");
-        p2p_manager_clone.run_event_loop().await;
-    });
 
     Ok(p2p_manager)
 }
