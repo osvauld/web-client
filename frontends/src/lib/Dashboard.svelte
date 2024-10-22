@@ -29,7 +29,6 @@
 	onMount(async () => {
 		const connectionString = await invoke("get_connection_string");
 		console.log("Share this connection string:", connectionString);
-		console.log(process.env.IS_TAURI);
 		try {
 			const response = await sendMessage("isSignedUp");
 			const checkPvtLoad = await sendMessage("checkPvtLoaded");
