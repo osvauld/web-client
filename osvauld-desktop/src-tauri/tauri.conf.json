@@ -4,10 +4,9 @@
   "version": "0.1.0",
   "identifier": "com.osvauld.app",
   "build": {
-    "beforeDevCommand": "cd ../extension && npm run dev:tauri",
-    "beforeBuildCommand": "cd ../extension && npm run build:tauri",
-    "devUrl": "http://localhost:1420",
-    "frontendDist": "../../extension/dist"
+    "beforeDevCommand": "cd ../frontends && npm run dev:desktop",
+    "beforeBuildCommand": "cd ../frontends && npm run build:desktop",
+    "devUrl": "http://localhost:1420"
   },
   "app": {
     "withGlobalTauri": true,

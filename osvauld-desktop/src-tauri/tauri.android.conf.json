@@ -1,0 +1,6 @@
+{
+    "build": {
+        "beforeDevCommand": "cd ../frontends && npm run dev:mobile",
+        "beforeBuildCommand": "cd ../frontends && npm run build:mobile"
+    }
+}
