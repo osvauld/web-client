@@ -3,18 +3,16 @@
 	import { listen } from "@tauri-apps/api/event";
 	import { onMount, onDestroy } from "svelte";
 
-	let status = "Ready to connect";
+	let connectionTicket = "";
+	let status = "Initializing...";
 	let error = "";
-	let ticket = "";
-	let connected = false;
 	let peerStatus = new Set();
 	let unlistenHandlers: (() => void)[] = [];
 
 	async function setupEventListeners() {
 		// Listen for peer connection events
 		const unlisten1 = await listen("peer-connected", () => {
-			status = "Connected to peer!";
-			connected = true;
+			status = "Peer connected!";
 		});
 
 		const unlisten2 = await listen("peer-up", (event) => {
@@ -39,9 +37,13 @@
 	onMount(async () => {
 		try {
 			await setupEventListeners();
+			connectionTicket = await invoke("get_ticket");
+			status = "Ready to connect";
+			console.log("Connection ticket generated:", connectionTicket);
 		} catch (err) {
 			error = err.toString();
-			console.error("Error setting up event listeners:", err);
+			status = "Failed to initialize";
+			console.error("Error generating ticket:", err);
 		}
 	});
 
@@ -50,38 +52,23 @@
 		unlistenHandlers.forEach((unlisten) => unlisten());
 	});
 
-	async function connect() {
-		if (!ticket.trim()) {
-			error = "Please enter a connection ticket";
-			return;
-		}
-
+	async function copyTicket() {
 		try {
-			status = "Connecting...";
-			error = "";
-			await invoke("connect_with_ticket", { ticket: ticket.trim() });
-			status = "Connection initiated...";
+			await navigator.clipboard.writeText(connectionTicket);
+			status = "Ticket copied to clipboard!";
+			setTimeout(() => {
+				status = "Ready to connect";
+			}, 2000);
 		} catch (err) {
-			error = err.toString();
-			status = "Connection failed";
-			console.error("Connection error:", err);
-		}
-	}
-
-	async function pasteTicket() {
-		try {
-			const text = await navigator.clipboard.readText();
-			ticket = text;
-		} catch (err) {
-			error = "Failed to paste from clipboard";
-			console.error("Paste error:", err);
+			error = "Failed to copy ticket";
+			console.error("Copy error:", err);
 		}
 	}
 </script>
 
 <main class="container p-4 mx-auto">
 	<div class="max-w-2xl mx-auto">
-		<h1 class="text-2xl font-bold mb-4">Mobile Connection</h1>
+		<h1 class="text-2xl font-bold mb-4">Desktop Connection</h1>
 
 		<div class="mb-4">
 			<p class="font-semibold">
@@ -96,25 +83,16 @@
 			</div>
 		{/if}
 
-		{#if !connected}
-			<div class="space-y-4">
-				<div class="flex gap-2">
-					<input
-						type="text"
-						placeholder="Enter connection ticket"
-						class="flex-1 p-2 border rounded"
-						bind:value="{ticket}" />
-					<button
-						class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
-						on:click="{pasteTicket}">
-						Paste
-					</button>
+		{#if connectionTicket}
+			<div class="bg-gray-100 p-4 rounded mb-4">
+				<h2 class="font-semibold mb-2">Your Connection Ticket:</h2>
+				<div class="bg-white p-3 rounded break-all mb-2 font-mono text-sm">
+					{connectionTicket}
 				</div>
-
 				<button
-					class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-					on:click="{connect}">
-					Connect
+					class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+					on:click="{copyTicket}">
+					Copy Ticket
 				</button>
 			</div>
 		{/if}

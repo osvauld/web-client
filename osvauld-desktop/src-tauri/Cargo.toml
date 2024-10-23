@@ -32,11 +32,7 @@ rcgen = "0.10"
 diesel_migrations = "2.0.0"
 diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "r2d2"] }
 libsqlite3-sys = { version = "0.25.2", features = ["bundled", "unlock_notify", "min_sqlite_version_3_7_16"] }
-libp2p-webrtc = { version = "0.8.0-alpha", features = ["tokio"] }
-rand = "0.8"
-futures = "0.3"
-anyhow = "1.0"
-libp2p-core = "0.42.0"
-libp2p = {version="0.54.1", features= ["ed25519", "macros", "ping", "tokio"] }
-stun = "0.6.0"
-base64 = "0.22.1"
+iroh = "0.27.0"
+anyhow = "1.0.91"
+futures-lite = "2.3.0"
+iroh-base = "0.27.0"

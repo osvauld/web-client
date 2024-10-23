@@ -6,12 +6,12 @@ use database::{initialize_database, DbConnection};
 pub mod handler;
 mod p2p;
 mod service;
-use p2p::P2PManager;
 use tokio::sync::Mutex;
 mod types;
 use log::LevelFilter;
 use std::sync::Arc;
 use tokio::runtime::Runtime;
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -26,7 +26,7 @@ pub fn run() {
         .setup(|app| {
             log::info!("Setting up Tauri app");
             let handle = app.handle();
-            let store = handle.store_builder("my_app_store8.bin").build();
+            let store = handle.store_builder("my_app_store8.bin").build().unwrap();
             store.save()?;
             app.manage(store);
 
@@ -36,7 +36,7 @@ pub fn run() {
             // Create a new Tokio runtime
             let rt = Arc::new(Runtime::new().expect("Failed to create Tokio runtime"));
 
-            // Clone the Arc<Runtime> for use in the database setup
+            // Initialize database
             let rt_clone = Arc::clone(&rt);
             let db_connection: Result<DbConnection, String> = rt_clone.block_on(async {
                 initialize_database(&db_path)
@@ -54,18 +54,24 @@ pub fn run() {
                 }
             }
 
+            // Initialize P2P synchronously to ensure state is managed before app starts
+            let rt_clone = rt.clone();
+            let app_handle = handle.clone();
+
+            // Block on P2P initialization
+            match rt_clone.block_on(async { p2p::initialize_p2p(&app_handle).await }) {
+                Ok(app_state) => {
+                    info!("P2P initialization successful");
+                    app.manage(app_state);
+                }
+                Err(e) => {
+                    error!("Failed to initialize P2P: {}", e);
+                    panic!("Cannot continue without P2P initialization");
+                }
+            }
+
             // Manage the runtime
             app.manage(rt);
-            let p2p_manager = rt_clone.block_on(async {
-                let manager = p2p::initialize_p2p()
-                    .await
-                    .map_err(|e| format!("Failed to initialize P2P: {}", e))?;
-
-                Ok::<Arc<Mutex<P2PManager>>, String>(Arc::new(Mutex::new(manager)))
-            })?;
-            app.manage(p2p_manager.clone());
-
-            app.manage(p2p_manager);
 
             #[cfg(debug_assertions)]
             {
@@ -73,12 +79,13 @@ pub fn run() {
                 window.open_devtools();
                 window.close_devtools();
             }
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             handler::handle_crypto_action,
-            handler::connect_to_peer,
-            handler::get_connection_string
+            handler::get_ticket,
+            handler::connect_with_ticket
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

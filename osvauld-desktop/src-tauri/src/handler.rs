@@ -1,4 +1,4 @@
-use super::p2p::P2PManager;
+use super::p2p::{AppState, P2PConnection};
 use crate::service::{
     add_credential_service, add_folder, get_all_folders, get_certificate_and_salt,
     get_credentials_for_folder, get_folder_access, get_public_key, is_signed_up, save_passphrase,
@@ -12,7 +12,6 @@ use crate::types::{
 use crate::DbConnection;
 use crypto_utils::types::CredentialWithEncryptedKey as CredentialType;
 use crypto_utils::CryptoUtils;
-use libp2p::multiaddr::Multiaddr;
 use log::{error, info};
 use once_cell::sync::Lazy;
 use serde_json::Value;
@@ -238,34 +237,54 @@ pub async fn handle_crypto_action(
 }
 
 #[tauri::command]
-pub async fn get_connection_string(
-    p2p_manager: State<'_, Arc<Mutex<P2PManager>>>,
-) -> Result<String, String> {
-    let mut manager = p2p_manager.lock().await;
-    let connection_info = manager
-        .get_connection_info()
-        .await
-        .map_err(|e| e.to_string())?;
-
-    // Convert the connection info to a shareable string
-    Ok(connection_info.public_address.to_string())
+pub async fn get_ticket(state: State<'_, AppState>) -> Result<String, String> {
+    let p2p_lock = state.p2p.lock().await;
+    match &*p2p_lock {
+        Some((p2p, _)) => {
+            match p2p.share_ticket().await {
+                Ok(ticket) => {
+                    info!("Generated doc ticket: {}", ticket);
+                    Ok(ticket)
+                }
+                Err(e) => {
+                    error!("Failed to get share ticket: {}", e);
+                    // Try to regenerate P2P connection
+                    drop(p2p_lock); // Release the lock before attempting reconnection
+                    Err("Failed to get share ticket. Please try again.".to_string())
+                }
+            }
+        }
+        None => Err("P2P not initialized".to_string()),
+    }
 }
 
 #[tauri::command]
-pub async fn connect_to_peer(
-    connection_string: String,
-    p2p_manager: State<'_, Arc<Mutex<P2PManager>>>,
+pub async fn connect_with_ticket(
+    app_handle: tauri::AppHandle,
+    ticket: String,
+    state: State<'_, AppState>,
 ) -> Result<(), String> {
-    // Parse the connection string back to a Multiaddr
-    let peer_addr: Multiaddr = connection_string
-        .parse()
-        .map_err(|e| format!("Invalid connection string: {}", e))?;
+    info!("Attempting to connect with doc ticket: {}", ticket);
 
-    let mut manager = p2p_manager.lock().await;
-    manager
-        .connect_to_peer(peer_addr)
-        .await
-        .map_err(|e| e.to_string())?;
+    let p2p = match P2PConnection::new(Some(ticket), &state.iroh_client).await {
+        Ok(connection) => connection,
+        Err(e) => {
+            error!("Failed to create P2P connection: {}", e);
+            return Err(
+                "Failed to establish connection. Please check the ticket and try again."
+                    .to_string(),
+            );
+        }
+    };
 
-    Ok(())
+    match state.init_p2p(app_handle, p2p).await {
+        Ok(_) => {
+            info!("Successfully connected with doc ticket");
+            Ok(())
+        }
+        Err(e) => {
+            error!("Failed to initialize P2P connection: {}", e);
+            Err("Failed to initialize connection. Please try again.".to_string())
+        }
+    }
 }
