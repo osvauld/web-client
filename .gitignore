@@ -3,9 +3,7 @@ frontends/public/background.js
 frontends/node_modules
 frontends/public/content.js
 frontends/dist
-frontends/desktop/index.css
-frontends/desktop/index.js
-frontends/desktop/index.js.map
+frontends/desktop
 frontends/mobile/index.css
 frontends/mobile/index.js
 frontends/mobile/index.js.map

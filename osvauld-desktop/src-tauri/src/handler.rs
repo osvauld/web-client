@@ -1,4 +1,4 @@
-use super::p2p::P2PManager;
+use super::p2p::AppState;
 use crate::service::{
     add_credential_service, add_folder, get_all_folders, get_certificate_and_salt,
     get_credentials_for_folder, get_folder_access, get_public_key, is_signed_up, save_passphrase,
@@ -12,7 +12,6 @@ use crate::types::{
 use crate::DbConnection;
 use crypto_utils::types::CredentialWithEncryptedKey as CredentialType;
 use crypto_utils::CryptoUtils;
-use libp2p::multiaddr::Multiaddr;
 use log::{error, info};
 use once_cell::sync::Lazy;
 use serde_json::Value;
@@ -238,34 +237,27 @@ pub async fn handle_crypto_action(
 }
 
 #[tauri::command]
-pub async fn get_connection_string(
-    p2p_manager: State<'_, Arc<Mutex<P2PManager>>>,
-) -> Result<String, String> {
-    let mut manager = p2p_manager.lock().await;
-    let connection_info = manager
-        .get_connection_info()
-        .await
-        .map_err(|e| e.to_string())?;
-
-    // Convert the connection info to a shareable string
-    Ok(connection_info.public_address.to_string())
+pub async fn get_ticket(state: State<'_, AppState>) -> Result<String, String> {
+    let p2p_lock = state.p2p.lock().await;
+    match &*p2p_lock {
+        Some(p2p) => p2p
+            .share_ticket()
+            .await
+            .map_err(|e| format!("Failed to generate ticket: {}", e)),
+        None => Err("P2P not initialized".to_string()),
+    }
 }
 
 #[tauri::command]
-pub async fn connect_to_peer(
-    connection_string: String,
-    p2p_manager: State<'_, Arc<Mutex<P2PManager>>>,
-) -> Result<(), String> {
-    // Parse the connection string back to a Multiaddr
-    let peer_addr: Multiaddr = connection_string
-        .parse()
-        .map_err(|e| format!("Invalid connection string: {}", e))?;
+pub async fn connect_with_ticket(ticket: String, state: State<'_, AppState>) -> Result<(), String> {
+    info!("Attempting to connect with ticket: {}", ticket);
 
-    let mut manager = p2p_manager.lock().await;
-    manager
-        .connect_to_peer(peer_addr)
-        .await
-        .map_err(|e| e.to_string())?;
-
-    Ok(())
+    let p2p_lock = state.p2p.lock().await;
+    match &*p2p_lock {
+        Some(p2p) => p2p
+            .connect_with_ticket(&ticket)
+            .await
+            .map_err(|e| format!("Failed to connect: {}", e)),
+        None => Err("P2P not initialized".to_string()),
+    }
 }

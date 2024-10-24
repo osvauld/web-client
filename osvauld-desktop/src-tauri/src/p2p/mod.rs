@@ -1,243 +1,243 @@
 use anyhow::Result;
-use libp2p::futures::StreamExt;
-use libp2p::{
-    core::muxing::StreamMuxerBox,
-    core::Transport,
-    multiaddr::{Multiaddr, Protocol},
-    ping,
-    swarm::SwarmEvent,
-};
-use libp2p_webrtc as webrtc;
-use log::{debug, error, info};
-use rand::thread_rng;
-use std::{
-    net::{IpAddr, Ipv4Addr, SocketAddr},
-    sync::Arc,
-    time::Duration,
-};
-use stun::{agent::*, client::*, message::*, xoraddr::*};
-use tokio::net::UdpSocket;
+use futures_lite::stream::StreamExt;
+use iroh::net::relay::RelayMode;
+use iroh::net::{Endpoint, NodeAddr};
+use iroh_net::endpoint::Connection;
+use log::{error, info};
+use serde::{Deserialize, Serialize};
+use std::sync::Arc;
+use tauri::Emitter;
+use tauri::Manager;
 use tokio::sync::Mutex;
+const ALPN_PROTOCOL: &[u8] = b"n0/osvauld/0";
 
-pub struct P2PManager {
-    swarm: Arc<Mutex<libp2p::Swarm<ping::Behaviour>>>,
-    address: Option<Multiaddr>,
-    public_addr: Option<SocketAddr>,
+#[derive(Serialize, Deserialize)]
+struct ConnectionTicket {
+    node_id: String,
+    addresses: Vec<String>,
 }
 
-struct StunSocketAddr(XorMappedAddress);
-
-impl StunSocketAddr {
-    fn into_socket_addr(self) -> SocketAddr {
-        SocketAddr::new(self.0.ip, self.0.port)
-    }
+pub struct P2PConnection {
+    endpoint: Endpoint,
 }
 
-impl P2PManager {
+pub struct AppState {
+    pub p2p: Arc<Mutex<Option<P2PConnection>>>,
+}
+
+impl P2PConnection {
     pub async fn new() -> Result<Self> {
-        let mut swarm = libp2p::SwarmBuilder::with_new_identity()
-            .with_tokio()
-            .with_other_transport(|id_keys| {
-                Ok(webrtc::tokio::Transport::new(
-                    id_keys.clone(),
-                    webrtc::tokio::Certificate::generate(&mut thread_rng())?,
-                )
-                .map(|(peer_id, conn), _| (peer_id, StreamMuxerBox::new(conn))))
-            })?
-            .with_behaviour(|_| ping::Behaviour::default())?
-            .with_swarm_config(|cfg| {
-                cfg.with_idle_connection_timeout(Duration::from_secs(u64::MAX))
-            })
-            .build();
+        let endpoint = Endpoint::builder()
+            .relay_mode(RelayMode::Disabled)
+            .alpns(vec![ALPN_PROTOCOL.to_vec()])
+            .bind_addr_v4("0.0.0.0:0".parse()?)
+            .bind()
+            .await?;
 
-        let address_webrtc = Multiaddr::empty()
-            .with(Protocol::Ip4(Ipv4Addr::UNSPECIFIED))
-            .with(Protocol::Udp(0))
-            .with(Protocol::WebRTCDirect);
+        let connection = Self { endpoint };
+        info!(
+            "Created endpoint with ID: {}",
+            connection.endpoint.node_id()
+        );
 
-        swarm.listen_on(address_webrtc)?;
-
-        Ok(Self {
-            swarm: Arc::new(Mutex::new(swarm)),
-            address: None,
-            public_addr: None,
-        })
-    }
-
-    pub async fn get_public_address(&mut self) -> Result<SocketAddr> {
-        let stun_servers = [
-            "stun.l.google.com:19302",
-            "stun1.l.google.com:19302",
-            "stun2.l.google.com:19302",
-        ];
-
-        for &server in &stun_servers {
-            match self.query_stun_server(server).await {
-                Ok(addr) => {
-                    info!("Got public address {} from STUN server {}", addr, server);
-                    self.public_addr = Some(addr);
-                    return Ok(addr);
-                }
-                Err(e) => {
-                    error!("Failed to get address from STUN server {}: {}", server, e);
-                    continue;
-                }
-            }
+        if let Some(addrs) = connection.endpoint.direct_addresses().next().await {
+            info!("Local addresses: {:?}", addrs);
         }
 
-        Err(anyhow::anyhow!("All STUN servers failed"))
+        Ok(connection)
     }
 
-    async fn query_stun_server(&self, server: &str) -> Result<SocketAddr> {
-        // Create a UDP socket
-        let conn = UdpSocket::bind("0.0.0.0:0").await?;
-        info!("Local address: {}", conn.local_addr()?);
-        info!("Connecting to STUN server: {}", server);
+    async fn handle_connection(&self, conn: &Connection, is_initiator: bool) -> Result<()> {
+        if is_initiator {
+            // Mobile (initiator) side
+            info!("Initiating handshake as mobile");
 
-        conn.connect(server).await?;
+            // Open bi-directional stream
+            let (mut send, mut recv) = conn.open_bi().await?;
 
-        let (handler_tx, mut handler_rx) = tokio::sync::mpsc::unbounded_channel();
+            // Send hello and wait for it to complete
+            info!("Sending hello");
+            send.write_all(b"hello").await?;
+            send.finish()?; // finish() is not async
+            info!("Hello sent, waiting for welcome");
+            let mut buffer = vec![0u8; 1024];
 
-        let mut client = ClientBuilder::new().with_conn(Arc::new(conn)).build()?;
+            // Set a timeout for reading the response
+            match tokio::time::timeout(std::time::Duration::from_secs(5), recv.read(&mut buffer))
+                .await
+            {
+                Ok(read_result) => {
+                    let n = read_result?;
+                    match n {
+                        Some(size) => {
+                            let msg = String::from_utf8_lossy(&buffer[0..size]);
+                            info!("Received response: {:?}", msg);
 
-        let mut msg = Message::new();
-        msg.build(&[Box::<TransactionId>::default(), Box::new(BINDING_REQUEST)])?;
-
-        client.send(&msg, Some(Arc::new(handler_tx))).await?;
-
-        if let Some(event) = handler_rx.recv().await {
-            let msg = event.event_body?;
-            let mut xor_addr = XorMappedAddress::default();
-            xor_addr.get_from(&msg)?;
-
-            let socket_addr: SocketAddr = StunSocketAddr(xor_addr).into_socket_addr();
-            info!("STUN response: {}", socket_addr);
-
-            client.close().await?;
-            Ok(socket_addr)
-        } else {
-            Err(anyhow::anyhow!("No response from STUN server"))
-        }
-    }
-
-    pub async fn get_connection_info(&mut self) -> Result<ConnectionInfo> {
-        let local_addr = self
-            .get_address()
-            .ok_or_else(|| anyhow::anyhow!("Local address not available"))?;
-
-        let public_addr = if let Some(addr) = self.public_addr {
-            addr
-        } else {
-            self.get_public_address().await?
-        };
-
-        let certhash = local_addr
-            .iter()
-            .find_map(|proto| {
-                if let Protocol::Certhash(hash) = proto {
-                    Some(hash.clone())
-                } else {
-                    None
-                }
-            })
-            .ok_or_else(|| anyhow::anyhow!("Certhash not found in local address"))?;
-
-        let public_multiaddr = match public_addr.ip() {
-            IpAddr::V4(ipv4) => Multiaddr::empty()
-                .with(Protocol::Ip4(ipv4))
-                .with(Protocol::Udp(public_addr.port())),
-            IpAddr::V6(ipv6) => Multiaddr::empty()
-                .with(Protocol::Ip6(ipv6))
-                .with(Protocol::Udp(public_addr.port())),
-        }
-        .with(Protocol::WebRTCDirect)
-        .with(Protocol::Certhash(certhash))
-        .with(Protocol::P2p(*self.swarm.lock().await.local_peer_id()));
-
-        Ok(ConnectionInfo {
-            local_address: local_addr,
-            public_address: public_multiaddr,
-            public_socket: public_addr,
-            peer_id: self.swarm.lock().await.local_peer_id().to_string(),
-        })
-    }
-
-    pub async fn start_listening(&mut self) -> Result<Multiaddr> {
-        let mut swarm = self.swarm.lock().await;
-
-        let address = loop {
-            match swarm.select_next_some().await {
-                SwarmEvent::NewListenAddr { address, .. } => {
-                    if !address
-                        .iter()
-                        .any(|p| matches!(p, Protocol::Ip4(addr) if addr == Ipv4Addr::LOCALHOST))
-                    {
-                        info!("Listening on {}", address);
-                        break address;
+                            if msg != "welcome" {
+                                return Err(anyhow::anyhow!(
+                                    "Invalid response: expected 'welcome', got '{}'",
+                                    msg
+                                ));
+                            }
+                            info!("Handshake completed successfully");
+                            Ok(())
+                        }
+                        None => Err(anyhow::anyhow!(
+                            "Connection closed before receiving welcome"
+                        )),
                     }
-                    debug!("Ignoring localhost address");
                 }
-                evt => debug!("Other event during listen: {:?}", evt),
+                Err(_) => Err(anyhow::anyhow!("Timeout waiting for welcome message")),
             }
-        };
+        } else {
+            info!("Waiting for handshake as desktop");
 
-        let addr = address.with(Protocol::P2p(*swarm.local_peer_id()));
-        self.address = Some(addr.clone());
-        Ok(addr)
-    }
+            // Accept incoming stream with timeout
+            let (mut send, mut recv) = conn.accept_bi().await?;
 
-    pub async fn run_event_loop(&self) {
-        let mut swarm = self.swarm.lock().await;
+            // Create a buffer to read into
+            let mut buffer = vec![0u8; 1024];
 
-        loop {
-            match swarm.select_next_some().await {
-                SwarmEvent::Behaviour(ping::Event { peer, result, .. }) => match result {
-                    Ok(rtt) => info!("Ping success from {}: {:?}", peer, rtt),
-                    Err(e) => error!("Ping failure from {}: {:?}", peer, e),
-                },
-                SwarmEvent::ConnectionEstablished { peer_id, .. } => {
-                    info!("Connected to peer: {}", peer_id);
+            // Set a timeout for reading the hello message
+            match tokio::time::timeout(std::time::Duration::from_secs(5), recv.read(&mut buffer))
+                .await
+            {
+                Ok(read_result) => {
+                    let n = read_result?;
+                    match n {
+                        Some(size) => {
+                            let msg = String::from_utf8_lossy(&buffer[0..size]);
+                            info!("Received message: {:?}", msg);
+
+                            if msg == "hello" {
+                                // Send welcome and ensure it's sent
+                                info!("Sending welcome");
+                                send.write_all(b"welcome").await?;
+                                send.finish()?; // Make finish async
+                                info!("Welcome sent and confirmed");
+
+                                // Keep the connection alive for a moment to ensure message is received
+                                tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+                                Ok(())
+                            } else {
+                                Err(anyhow::anyhow!("Expected 'hello', got '{}'", msg))
+                            }
+                        }
+                        None => Err(anyhow::anyhow!("Connection closed before receiving hello")),
+                    }
                 }
-                SwarmEvent::ConnectionClosed { peer_id, cause, .. } => {
-                    info!("Disconnected from peer: {} (cause: {:?})", peer_id, cause);
-                }
-                evt => debug!("Other event: {:?}", evt),
+                Err(_) => Err(anyhow::anyhow!("Timeout waiting for hello message")),
             }
         }
     }
 
-    pub async fn connect_to_peer(&self, peer_addr: Multiaddr) -> Result<()> {
-        let mut swarm = self.swarm.lock().await;
-        info!("Attempting to connect to peer: {}", peer_addr);
-        swarm.dial(peer_addr)?;
+    pub async fn share_ticket(&self) -> Result<String> {
+        let addrs = self
+            .endpoint
+            .direct_addresses()
+            .next()
+            .await
+            .ok_or_else(|| anyhow::anyhow!("No direct addresses available"))?;
+
+        let ticket = ConnectionTicket {
+            node_id: self.endpoint.node_id().to_string(),
+            addresses: addrs.into_iter().map(|e| e.addr.to_string()).collect(),
+        };
+
+        let ticket_str = serde_json::to_string(&ticket)?;
+        info!("Generated connection ticket: {}", ticket_str);
+        Ok(ticket_str)
+    }
+
+    pub async fn connect_with_ticket(&self, ticket_str: &str) -> Result<()> {
+        info!("Connecting with ticket: {}", ticket_str);
+        let ticket: ConnectionTicket = serde_json::from_str(ticket_str)?;
+
+        let addresses = ticket
+            .addresses
+            .iter()
+            .filter_map(|addr| addr.parse().ok())
+            .collect::<Vec<_>>();
+
+        if addresses.is_empty() {
+            return Err(anyhow::anyhow!("No valid addresses in ticket"));
+        }
+
+        let node_addr = NodeAddr::from_parts(ticket.node_id.parse()?, None, addresses);
+
+        let conn = tokio::time::timeout(
+            std::time::Duration::from_secs(10),
+            self.endpoint.connect(node_addr, ALPN_PROTOCOL),
+        )
+        .await??;
+
+        info!("Connected to: {}", conn.remote_address());
+
+        // Handle as initiator (mobile)
+        self.handle_connection(&conn, true).await?;
+
         Ok(())
     }
 
-    pub fn get_address(&self) -> Option<Multiaddr> {
-        self.address.clone()
+    pub async fn start_listening(&self, app_handle: tauri::AppHandle) {
+        let endpoint = self.endpoint.clone();
+
+        tokio::spawn(async move {
+            while let Some(incoming) = endpoint.accept().await {
+                let endpoint_clone = endpoint.clone();
+                match incoming.accept() {
+                    Ok(connecting) => {
+                        info!(
+                            "New incoming connection from {}",
+                            connecting.remote_address()
+                        );
+
+                        if let Err(e) = app_handle.emit("peer-connected", true) {
+                            error!("Failed to emit connection event: {}", e);
+                        }
+
+                        let app_handle_clone = app_handle.clone();
+                        tokio::spawn(async move {
+                            match connecting.await {
+                                Ok(conn) => {
+                                    let p2p = P2PConnection {
+                                        endpoint: endpoint_clone,
+                                    };
+                                    // Handle as responder (desktop)
+                                    match p2p.handle_connection(&conn, false).await {
+                                        Ok(_) => {
+                                            if let Err(e) =
+                                                app_handle_clone.emit("sync-complete", true)
+                                            {
+                                                error!("Failed to emit sync event: {}", e);
+                                            }
+                                        }
+                                        Err(e) => error!("Connection handling failed: {}", e),
+                                    }
+                                }
+                                Err(e) => error!("Connection failed: {}", e),
+                            }
+                        });
+                    }
+                    Err(e) => error!("Failed to accept connection: {}", e),
+                }
+            }
+        });
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct ConnectionInfo {
-    pub local_address: Multiaddr,
-    pub public_address: Multiaddr,
-    pub public_socket: SocketAddr,
-    pub peer_id: String,
-}
-pub async fn initialize_p2p() -> Result<P2PManager> {
-    // Return P2PManager directly
-    info!("Initializing P2P manager");
-    let mut p2p_manager = P2PManager::new().await?;
-    let addr = p2p_manager.start_listening().await?;
-    info!("P2P manager listening on local address: {}", addr);
+pub async fn initialize_p2p(app_handle: &tauri::AppHandle) -> Result<AppState> {
+    info!("Initializing P2P connection...");
 
-    // Get both local and public addresses
-    let connection_info = p2p_manager.get_connection_info().await?;
-    info!("Local address: {}", connection_info.local_address);
-    info!("Public address: {}", connection_info.public_address);
-    info!("Public socket: {}", connection_info.public_socket);
-    info!("Peer ID: {}", connection_info.peer_id);
+    // Create P2P connection
+    let p2p = P2PConnection::new().await?;
 
-    Ok(p2p_manager)
+    // Start listening for connections
+    // p2p.start_listening(app_handle.clone()).await;
+
+    info!("P2P initialization complete");
+
+    Ok(AppState {
+        p2p: Arc::new(Mutex::new(Some(p2p))),
+    })
 }
