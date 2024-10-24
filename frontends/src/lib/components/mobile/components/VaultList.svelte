@@ -1,0 +1,23 @@
+<script>
+	import Add from "../../basic/icons/add.svelte";
+	export const location = "Home";
+	export let currentVault;
+	const VAULTS = [
+		{ id: "all", name: "All", count: 54 },
+		{ id: "personal", name: "Personal", count: 4 },
+		{ id: "work", name: "Work", count: 50 },
+	];
+</script>
+
+<div class="h-[56px] p-3 flex gap-2.5 text-mobile-textPrimary">
+	{#each VAULTS as vault (vault.id)}
+		<button
+			class="bg-mobile-bgFade rounded-lg px-4 py-2.5 flex justify-center items-center"
+			class:bg-mobile-bgHighlight="{currentVault === vault.name}"
+			on:click="{() => (currentVault = vault.name)}"
+			>{vault.name} ({vault.count})</button>
+	{/each}
+	<button
+		class="bg-mobile-bgFade rounded-lg px-2.5 py-2.5 flex justify-center items-center"
+		><Add color="#85889C" /></button>
+</div>
