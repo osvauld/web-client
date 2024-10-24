@@ -4854,6 +4854,8 @@ dependencies = [
  "futures-lite 2.3.0",
  "iroh",
  "iroh-base",
+ "iroh-blobs",
+ "iroh-net",
  "libsqlite3-sys",
  "log",
  "once_cell",

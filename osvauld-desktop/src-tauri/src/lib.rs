@@ -54,12 +54,8 @@ pub fn run() {
                 }
             }
 
-            // Initialize P2P synchronously to ensure state is managed before app starts
-            let rt_clone = rt.clone();
-            let app_handle = handle.clone();
-
-            // Block on P2P initialization
-            match rt_clone.block_on(async { p2p::initialize_p2p(&app_handle).await }) {
+            let rt_clone = Arc::clone(&rt);
+            match rt_clone.block_on(p2p::initialize_p2p(&handle)) {
                 Ok(app_state) => {
                     info!("P2P initialization successful");
                     app.manage(app_state);
@@ -69,7 +65,6 @@ pub fn run() {
                     panic!("Cannot continue without P2P initialization");
                 }
             }
-
             // Manage the runtime
             app.manage(rt);
 

@@ -1,4 +1,4 @@
-use super::p2p::{AppState, P2PConnection};
+use super::p2p::AppState;
 use crate::service::{
     add_credential_service, add_folder, get_all_folders, get_certificate_and_salt,
     get_credentials_for_folder, get_folder_access, get_public_key, is_signed_up, save_passphrase,
@@ -240,51 +240,24 @@ pub async fn handle_crypto_action(
 pub async fn get_ticket(state: State<'_, AppState>) -> Result<String, String> {
     let p2p_lock = state.p2p.lock().await;
     match &*p2p_lock {
-        Some((p2p, _)) => {
-            match p2p.share_ticket().await {
-                Ok(ticket) => {
-                    info!("Generated doc ticket: {}", ticket);
-                    Ok(ticket)
-                }
-                Err(e) => {
-                    error!("Failed to get share ticket: {}", e);
-                    // Try to regenerate P2P connection
-                    drop(p2p_lock); // Release the lock before attempting reconnection
-                    Err("Failed to get share ticket. Please try again.".to_string())
-                }
-            }
-        }
+        Some(p2p) => p2p
+            .share_ticket()
+            .await
+            .map_err(|e| format!("Failed to generate ticket: {}", e)),
         None => Err("P2P not initialized".to_string()),
     }
 }
 
 #[tauri::command]
-pub async fn connect_with_ticket(
-    app_handle: tauri::AppHandle,
-    ticket: String,
-    state: State<'_, AppState>,
-) -> Result<(), String> {
-    info!("Attempting to connect with doc ticket: {}", ticket);
+pub async fn connect_with_ticket(ticket: String, state: State<'_, AppState>) -> Result<(), String> {
+    info!("Attempting to connect with ticket: {}", ticket);
 
-    let p2p = match P2PConnection::new(Some(ticket), &state.iroh_client).await {
-        Ok(connection) => connection,
-        Err(e) => {
-            error!("Failed to create P2P connection: {}", e);
-            return Err(
-                "Failed to establish connection. Please check the ticket and try again."
-                    .to_string(),
-            );
-        }
-    };
-
-    match state.init_p2p(app_handle, p2p).await {
-        Ok(_) => {
-            info!("Successfully connected with doc ticket");
-            Ok(())
-        }
-        Err(e) => {
-            error!("Failed to initialize P2P connection: {}", e);
-            Err("Failed to initialize connection. Please try again.".to_string())
-        }
+    let p2p_lock = state.p2p.lock().await;
+    match &*p2p_lock {
+        Some(p2p) => p2p
+            .connect_with_ticket(&ticket)
+            .await
+            .map_err(|e| format!("Failed to connect: {}", e)),
+        None => Err("P2P not initialized".to_string()),
     }
 }
