@@ -56,16 +56,6 @@ pub fn run() {
 
             // Manage the runtime
             app.manage(rt);
-            let p2p_manager = rt_clone.block_on(async {
-                let manager = p2p::initialize_p2p()
-                    .await
-                    .map_err(|e| format!("Failed to initialize P2P: {}", e))?;
-
-                Ok::<Arc<Mutex<P2PManager>>, String>(Arc::new(Mutex::new(manager)))
-            })?;
-            app.manage(p2p_manager.clone());
-
-            app.manage(p2p_manager);
 
             #[cfg(debug_assertions)]
             {
