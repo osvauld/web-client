@@ -1,133 +1,20 @@
-<script lang="ts">
-	import { invoke } from "@tauri-apps/api/core";
-	import { listen } from "@tauri-apps/api/event";
-	import { onMount, onDestroy } from "svelte";
+<script>
+	import LocationSearchFilter from "./components/mobile/components/LocationSearchFilter.svelte";
+	import MainNav from "./components/mobile/components/MainNav.svelte";
+	import RecentsList from "./components/mobile/components/RecentsList.svelte";
+	import Categories from "./components/mobile/components/Categories.svelte";
+	import VaultList from "./components/mobile/components/VaultList.svelte";
 
-	let status = "Ready to connect";
-	let error = "";
-	let ticket = "";
-	let connected = false;
-	let peerStatus = new Set();
-	let unlistenHandlers: (() => void)[] = [];
+	let isRecentsVisible = true;
 
-	async function setupEventListeners() {
-		// Listen for peer connection events
-		const unlisten1 = await listen("peer-connected", () => {
-			status = "Connected to peer!";
-			connected = true;
-		});
-
-		const unlisten2 = await listen("peer-up", (event) => {
-			peerStatus.add(event.payload);
-			peerStatus = peerStatus; // trigger reactivity
-			status = `Peer ${event.payload} joined`;
-		});
-
-		const unlisten3 = await listen("peer-down", (event) => {
-			peerStatus.delete(event.payload);
-			peerStatus = peerStatus; // trigger reactivity
-			status = `Peer ${event.payload} left`;
-		});
-
-		const unlisten4 = await listen("sync-complete", () => {
-			status = "Sync completed";
-		});
-
-		unlistenHandlers.push(unlisten1, unlisten2, unlisten3, unlisten4);
-	}
-
-	onMount(async () => {
-		try {
-			await setupEventListeners();
-		} catch (err) {
-			error = err.toString();
-			console.error("Error setting up event listeners:", err);
-		}
-	});
-
-	onDestroy(() => {
-		// Clean up event listeners
-		unlistenHandlers.forEach((unlisten) => unlisten());
-	});
-
-	async function connect() {
-		if (!ticket.trim()) {
-			error = "Please enter a connection ticket";
-			return;
-		}
-
-		try {
-			status = "Connecting...";
-			error = "";
-			await invoke("connect_with_ticket", { ticket: ticket.trim() });
-			status = "Connection initiated...";
-		} catch (err) {
-			error = err.toString();
-			status = "Connection failed";
-			console.error("Connection error:", err);
-		}
-	}
-
-	async function pasteTicket() {
-		try {
-			const text = await navigator.clipboard.readText();
-			ticket = text;
-		} catch (err) {
-			error = "Failed to paste from clipboard";
-			console.error("Paste error:", err);
-		}
-	}
+	let currentVault = "All";
 </script>
 
-<main class="container p-4 mx-auto">
-	<div class="max-w-2xl mx-auto">
-		<h1 class="text-2xl font-bold mb-4">Mobile Connection</h1>
-
-		<div class="mb-4">
-			<p class="font-semibold">
-				Status: <span class="text-blue-600">{status}</span>
-			</p>
-		</div>
-
-		{#if error}
-			<div
-				class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-				{error}
-			</div>
-		{/if}
-
-		{#if !connected}
-			<div class="space-y-4">
-				<div class="flex gap-2">
-					<input
-						type="text"
-						placeholder="Enter connection ticket"
-						class="flex-1 p-2 border rounded"
-						bind:value="{ticket}" />
-					<button
-						class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
-						on:click="{pasteTicket}">
-						Paste
-					</button>
-				</div>
-
-				<button
-					class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-					on:click="{connect}">
-					Connect
-				</button>
-			</div>
-		{/if}
-
-		{#if peerStatus.size > 0}
-			<div class="mt-4">
-				<h2 class="font-semibold mb-2">Connected Peers:</h2>
-				<ul class="list-disc pl-5">
-					{#each [...peerStatus] as peer}
-						<li class="text-gray-700">{peer}</li>
-					{/each}
-				</ul>
-			</div>
-		{/if}
-	</div>
+<main
+	class="w-screen h-screen bg-mobile-bgPrimary text-white flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
+	<LocationSearchFilter {currentVault} />
+	<VaultList bind:currentVault />
+	<RecentsList bind:isRecentsVisible />
+	<Categories {isRecentsVisible} />
+	<MainNav />
 </main>
