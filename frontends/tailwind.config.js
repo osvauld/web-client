@@ -97,6 +97,20 @@ export default {
 					cancelBackground: "#21222C",
 					tickGreen: "#00FF00",
 				},
+
+				mobile: {
+					bgPrimary: "#000000",
+					bgSeconary: "#0D0E13",
+					bgHighlight: "#2F303E",
+					bgFade: "#161722",
+					bgLight: "#20212B",
+					bgExtraLight: "#111218",
+					textPrimary: "#85889C",
+					textSecondary: "#4D4F60",
+					iconPrimary: "#5B5D6D",
+					highlightBlue: "#89B4FA",
+					navBlue: "#010109",
+				},
 			},
 			fontFamily: {
 				sans: [
