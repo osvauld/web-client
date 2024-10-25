@@ -28,7 +28,7 @@ pub struct AppState {
 impl P2PConnection {
     pub async fn new() -> Result<Self> {
         let endpoint = Endpoint::builder()
-            .relay_mode(RelayMode::Disabled)
+            .relay_mode(RelayMode::Default)
             .alpns(vec![ALPN_PROTOCOL.to_vec()])
             .bind_addr_v4("0.0.0.0:0".parse()?)
             .bind()
