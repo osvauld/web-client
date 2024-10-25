@@ -229,11 +229,14 @@ impl P2PConnection {
 pub async fn initialize_p2p(app_handle: &tauri::AppHandle) -> Result<AppState> {
     info!("Initializing P2P connection...");
 
-    // Create P2P connection
-    let p2p = P2PConnection::new().await?;
-
     // Start listening for connections
-    // p2p.start_listening(app_handle.clone()).await;
+
+    let p2p = P2PConnection::new().await?;
+    #[cfg(desktop)]
+    {
+        p2p.start_listening(app_handle.clone()).await;
+    }
+    // Create P2P connection
 
     info!("P2P initialization complete");
 
