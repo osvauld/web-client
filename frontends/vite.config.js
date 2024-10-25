@@ -15,10 +15,16 @@ const createConfig = ({ mode, platform }) => {
     const isDev = mode === 'development';
     const isMobile = process.env.TAURI_ENV_PLATFORM === 'mobile';
 
+    // Determine root directory based on platform and environment
+    let root = 'src/extension';
+    if (isTauri) {
+        root = isMobile ? 'src/mobile' : 'src/desktop';
+    }
+
     return {
         appType: 'spa',
         clearScreen: false,
-        root: process.cwd(),
+        root: path.resolve(__dirname, root),
 
         plugins: [
             svelte({
