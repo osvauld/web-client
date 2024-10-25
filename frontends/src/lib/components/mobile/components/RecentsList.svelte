@@ -1,7 +1,7 @@
 <script>
 	import CreditCard from "../../basic/icons/creditCard.svelte";
 	import DownArrow from "../../basic/icons/mobileDownArrow.svelte";
-	const testArray = Array(4).fill(null);
+	const testArray = Array(6).fill(null);
 	export let isRecentsVisible = true;
 </script>
 
@@ -17,7 +17,8 @@
 </button>
 
 {#if isRecentsVisible}
-	<ul class="px-3 text-mobile-textPrimary">
+	<ul
+		class="px-1 text-mobile-textPrimary max-h-[240px] overflow-y-auto scrollbar-thin mx-2">
 		{#each testArray as card, index}
 			<li
 				key="{index}"

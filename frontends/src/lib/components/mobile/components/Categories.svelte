@@ -34,9 +34,18 @@
 
 <style>
 	.overflow-container {
-		max-height: 300px;
+		max-height: 380px;
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
+		overscroll-behavior: contain;
+		scroll-behavior: smooth;
+		will-change: transform;
+		transform: translateZ(0);
+		-webkit-transform: translateZ(0);
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		perspective: 1000;
+		-webkit-perspective: 1000;
 	}
 
 	.overflow-container::-webkit-scrollbar {
