@@ -11,10 +11,10 @@
 </script>
 
 <main
-	class="w-screen h-screen bg-mobile-bgPrimary text-white flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
+	class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
 	<LocationSearchFilter {currentVault} />
 	<VaultList bind:currentVault />
 	<RecentsList bind:isRecentsVisible />
 	<Categories {isRecentsVisible} />
-	<MainNav />
+	<MainNav bind:currentVault />
 </main>

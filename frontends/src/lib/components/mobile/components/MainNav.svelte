@@ -3,11 +3,14 @@
 	import Add from "../../basic/icons/mobileAdd.svelte";
 	import PwdGen from "../../basic/icons/pwdGen.svelte";
 	import Home from "../../basic/icons/mobileHome.svelte";
+	export let currentVault;
 </script>
 
 <nav
 	class="h-[60px] w-full fixed bottom-0 bg-mobile-navBlue flex text-base font-sans font-normal text-mobile-iconPrimary">
-	<button class=" flex-1 flex justify-center items-center flex-col">
+	<button
+		class=" flex-1 flex justify-center items-center flex-col"
+		on:click="{() => (currentVault = 'All')}">
 		<span class="flex justify-center items-center"
 			><Home color="{'#5B5D6D'}" /></span>
 		<span>Home</span>
