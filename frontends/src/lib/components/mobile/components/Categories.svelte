@@ -1,21 +1,30 @@
 <script>
 	import DownArrow from "../../basic/icons/mobileDownArrow.svelte";
 	import CreditCard from "../../basic/icons/creditCard.svelte";
+	import KeyIcon from "../../basic/icons/mobileKey.svelte";
+	import LoginIcon from "../../basic/icons/pwdGen.svelte";
+	import MobileOldKey from "../../basic/icons/mobileOldKey.svelte";
+	import MobileBank from "../../basic/icons/mobileBank.svelte";
+	import MobileDatabase from "../../basic/icons/mobileDatabase.svelte";
+	import MobileApiIcon from "../../basic/icons/mobileApiIcon.svelte";
+	import MobileNote from "../../basic/icons/mobileNote.svelte";
+	import MobileContact from "../../basic/icons/mobileContact.svelte";
+	import MobileWallet from "../../basic/icons/mobileWallet.svelte";
 
 	export let isRecentsVisible;
 	let isCategoriesVisible = true;
 
 	const categories = [
-		{ id: "login", name: "Login", icon: null },
-		{ id: "pin", name: "PIN", icon: null },
-		{ id: "card", name: "Credit/Debit Card", icon: CreditCard },
-		{ id: "note", name: "Note", icon: null },
-		{ id: "contact", name: "Contact", icon: null },
-		{ id: "bank", name: "Bank Account", icon: null },
-		{ id: "wallet", name: "Digital Wallet", icon: null },
-		{ id: "ssh", name: "SSH Key", icon: null },
-		{ id: "api", name: "API Credential", icon: null },
-		{ id: "database", name: "Database", icon: null },
+		{ id: "login", name: "Logins", icon: LoginIcon },
+		{ id: "pin", name: "PINs", icon: KeyIcon },
+		{ id: "card", name: "Credit/Debit Cards", icon: CreditCard },
+		{ id: "note", name: "Notes", icon: MobileNote },
+		{ id: "contact", name: "Contacts", icon: MobileContact },
+		{ id: "bank", name: "Bank Accounts", icon: MobileBank },
+		{ id: "wallet", name: "Digital Wallets", icon: MobileWallet },
+		{ id: "ssh", name: "SSH Keys", icon: MobileOldKey },
+		{ id: "api", name: "API Credentials", icon: MobileApiIcon },
+		{ id: "database", name: "Databases", icon: MobileDatabase },
 	];
 
 	const handleCategoryClick = (itemId) => {
