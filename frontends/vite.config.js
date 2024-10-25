@@ -15,38 +15,17 @@ const createConfig = ({ mode, platform }) => {
     const isDev = mode === 'development';
     const isMobile = process.env.TAURI_ENV_PLATFORM === 'mobile';
 
+    // Determine root directory based on platform and environment
     let root = 'src/extension';
     if (isTauri) {
         root = isMobile ? 'src/mobile' : 'src/desktop';
     }
 
-    // Mobile-specific server configuration
-    const serverConfig = isMobile ? {
-        host: '0.0.0.0',  // Important: Allow external connections
-        port: 1420,
-        strictPort: true,
-        hmr: {
-            protocol: 'ws',
-            host: process.env.TAURI_DEV_HOST || '0.0.0.0',
-            port: 1422,
-            clientPort: 1422
-        },
-        watch: {
-            usePolling: true
-        },
-        cors: true  // Enable CORS
-    } : {
-        strictPort: true,
-        port: 1421,
-        host: 'localhost'
-    };
-
-    console.log('Server Config:', serverConfig);  // Debug log
-
     return {
         appType: 'spa',
         clearScreen: false,
         root: path.resolve(__dirname, root),
+
         plugins: [
             svelte({
                 preprocess: preprocess({
@@ -63,6 +42,7 @@ const createConfig = ({ mode, platform }) => {
                 }
             })
         ],
+
         resolve: {
             alias: {
                 '*': path.resolve(__dirname, 'src/*'),
@@ -71,6 +51,7 @@ const createConfig = ({ mode, platform }) => {
                 } : {}),
             }
         },
+
         css: {
             postcss: {
                 plugins: [
@@ -79,6 +60,7 @@ const createConfig = ({ mode, platform }) => {
                 ]
             }
         },
+
         build: {
             target: isTauri
                 ? (process.env.TAURI_ENV_PLATFORM === 'windows' ? 'chrome105' : 'safari13')
@@ -88,20 +70,28 @@ const createConfig = ({ mode, platform }) => {
             outDir: isTauri ? (isMobile ? 'mobile' : 'desktop') : 'public/build',
             emptyOutDir: true
         },
-        server: serverConfig
+
+        server: {
+            strictPort: true,
+            port: isTauri
+                ? (isMobile ? 1420 : 1421)
+                : 1421,
+            host: process.env.TAURI_DEV_HOST || '0.0.0.0'
+        }
     };
 };
+
 export default defineConfig(({ command, mode }) => {
     console.log('Build Mode:', mode);
     console.log('IS_TAURI:', process.env.IS_TAURI);
-    console.log('TAURI_DEV_HOST:', process.env.TAURI_DEV_HOST);
-    console.log('TAURI_ENV_PLATFORM:', process.env.TAURI_ENV_PLATFORM);
 
     if (process.env.IS_TAURI === 'true') {
         return createConfig({ mode, platform: 'tauri' });
     }
+
     if (process.env.BUILD_ENV === 'extension') {
         return createConfig({ mode, platform: 'extension' });
     }
+
     return createConfig({ mode, platform: 'extension' });
 });

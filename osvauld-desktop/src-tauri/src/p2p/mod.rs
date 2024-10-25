@@ -3,12 +3,15 @@ use futures_lite::stream::StreamExt;
 use iroh::net::relay::RelayMode;
 use iroh::net::{Endpoint, NodeAddr};
 use iroh_net::endpoint::Connection;
+use iroh_net::AddrInfo;
 use log::{error, info};
 use serde::{Deserialize, Serialize};
+use std::net::IpAddr;
 use std::sync::Arc;
 use tauri::Emitter;
 use tauri::Manager;
 use tokio::sync::Mutex;
+use tokio::time::Duration;
 const ALPN_PROTOCOL: &[u8] = b"n0/osvauld/0";
 
 #[derive(Serialize, Deserialize)]
@@ -30,16 +33,12 @@ impl P2PConnection {
         let endpoint = Endpoint::builder()
             .relay_mode(RelayMode::Default)
             .alpns(vec![ALPN_PROTOCOL.to_vec()])
+            .discovery_n0()
             .bind_addr_v4("0.0.0.0:0".parse()?)
             .bind()
             .await?;
 
         let connection = Self { endpoint };
-        info!(
-            "Created endpoint with ID: {}",
-            connection.endpoint.node_id()
-        );
-
         if let Some(addrs) = connection.endpoint.direct_addresses().next().await {
             info!("Local addresses: {:?}", addrs);
         }
@@ -48,153 +47,105 @@ impl P2PConnection {
     }
 
     async fn handle_connection(&self, conn: &Connection, is_initiator: bool) -> Result<()> {
-        if is_initiator {
-            // Mobile (initiator) side
-            info!("Initiating handshake as mobile");
-
-            // Open bi-directional stream
-            let (mut send, mut recv) = conn.open_bi().await?;
-
-            // Send hello and wait for it to complete
-            info!("Sending hello");
-            send.write_all(b"hello").await?;
-            send.finish()?; // finish() is not async
-            info!("Hello sent, waiting for welcome");
-            let mut buffer = vec![0u8; 1024];
-
-            // Set a timeout for reading the response
-            match tokio::time::timeout(std::time::Duration::from_secs(5), recv.read(&mut buffer))
-                .await
-            {
-                Ok(read_result) => {
-                    let n = read_result?;
-                    match n {
-                        Some(size) => {
-                            let msg = String::from_utf8_lossy(&buffer[0..size]);
-                            info!("Received response: {:?}", msg);
-
-                            if msg != "welcome" {
-                                return Err(anyhow::anyhow!(
-                                    "Invalid response: expected 'welcome', got '{}'",
-                                    msg
-                                ));
-                            }
-                            info!("Handshake completed successfully");
-                            Ok(())
-                        }
-                        None => Err(anyhow::anyhow!(
-                            "Connection closed before receiving welcome"
-                        )),
-                    }
-                }
-                Err(_) => Err(anyhow::anyhow!("Timeout waiting for welcome message")),
-            }
+        let (mut send, mut recv) = if is_initiator {
+            conn.open_bi().await?
         } else {
-            info!("Waiting for handshake as desktop");
+            conn.accept_bi().await?
+        };
 
-            // Accept incoming stream with timeout
-            let (mut send, mut recv) = conn.accept_bi().await?;
+        // Important: The docs mention that streams are lazy - sender must send first
+        if is_initiator {
+            info!("Sending initial message");
+            send.write_all(b"hello").await?;
+            send.finish()?;
+        }
 
-            // Create a buffer to read into
-            let mut buffer = vec![0u8; 1024];
+        // Set timeout for both reading and writing
+        let timeout = std::time::Duration::from_secs(5);
 
-            // Set a timeout for reading the hello message
-            match tokio::time::timeout(std::time::Duration::from_secs(5), recv.read(&mut buffer))
-                .await
-            {
-                Ok(read_result) => {
-                    let n = read_result?;
-                    match n {
-                        Some(size) => {
-                            let msg = String::from_utf8_lossy(&buffer[0..size]);
-                            info!("Received message: {:?}", msg);
+        match tokio::time::timeout(timeout, recv.read_to_end(1024)).await {
+            Ok(Ok(data)) => {
+                info!("Received data: {:?}", String::from_utf8_lossy(&data));
 
-                            if msg == "hello" {
-                                // Send welcome and ensure it's sent
-                                info!("Sending welcome");
-                                send.write_all(b"welcome").await?;
-                                send.finish()?; // Make finish async
-                                info!("Welcome sent and confirmed");
-
-                                // Keep the connection alive for a moment to ensure message is received
-                                tokio::time::sleep(std::time::Duration::from_millis(100)).await;
-                                Ok(())
-                            } else {
-                                Err(anyhow::anyhow!("Expected 'hello', got '{}'", msg))
-                            }
-                        }
-                        None => Err(anyhow::anyhow!("Connection closed before receiving hello")),
-                    }
+                if !is_initiator {
+                    send.write_all(b"welcome").await?;
+                    send.finish()?;
                 }
-                Err(_) => Err(anyhow::anyhow!("Timeout waiting for hello message")),
+                Ok(())
             }
+            Ok(Err(e)) => Err(anyhow::anyhow!("Read error: {}", e)),
+            Err(_) => Err(anyhow::anyhow!("Timeout waiting for message")),
         }
     }
 
     pub async fn share_ticket(&self) -> Result<String> {
+        // Wait a bit for STUN to get public addresses
+        tokio::time::sleep(Duration::from_secs(2)).await;
+
         let addrs = self
             .endpoint
             .direct_addresses()
             .next()
             .await
-            .ok_or_else(|| anyhow::anyhow!("No direct addresses available"))?;
+            .ok_or_else(|| anyhow::anyhow!("No addresses available"))?;
+
+        let public_addrs: Vec<String> = addrs
+            .into_iter()
+            .map(|addr| addr.addr.to_string())
+            .collect();
+
+        if public_addrs.is_empty() {
+            return Err(anyhow::anyhow!("No public addresses found"));
+        }
 
         let ticket = ConnectionTicket {
             node_id: self.endpoint.node_id().to_string(),
-            addresses: addrs.into_iter().map(|e| e.addr.to_string()).collect(),
+            addresses: public_addrs,
         };
 
         let ticket_str = serde_json::to_string(&ticket)?;
-        info!("Generated connection ticket: {}", ticket_str);
+        info!("Generated ticket with public addresses: {}", ticket_str);
         Ok(ticket_str)
     }
 
     pub async fn connect_with_ticket(&self, ticket_str: &str) -> Result<()> {
-        info!("Connecting with ticket: {}", ticket_str);
         let ticket: ConnectionTicket = serde_json::from_str(ticket_str)?;
+        info!("Connecting to node: {}", ticket.node_id);
 
-        let addresses = ticket
-            .addresses
-            .iter()
-            .filter_map(|addr| addr.parse().ok())
-            .collect::<Vec<_>>();
+        // Using NodeAddr which can leverage discovery service
 
-        if addresses.is_empty() {
-            return Err(anyhow::anyhow!("No valid addresses in ticket"));
-        }
-
-        let node_addr = NodeAddr::from_parts(ticket.node_id.parse()?, None, addresses);
-
-        let conn = tokio::time::timeout(
-            std::time::Duration::from_secs(10),
-            self.endpoint.connect(node_addr, ALPN_PROTOCOL),
-        )
-        .await??;
-
+        let node_addr = NodeAddr::from_parts(
+            ticket.node_id.parse()?,
+            None,
+            ticket
+                .addresses
+                .iter()
+                .filter_map(|a| a.parse().ok())
+                .collect::<Vec<_>>(),
+        );
+        let conn = self.endpoint.connect(node_addr, ALPN_PROTOCOL).await?;
         info!("Connected to: {}", conn.remote_address());
 
-        // Handle as initiator (mobile)
-        self.handle_connection(&conn, true).await?;
-
-        Ok(())
+        self.handle_connection(&conn, true).await
     }
-
     pub async fn start_listening(&self, app_handle: tauri::AppHandle) {
         let endpoint = self.endpoint.clone();
 
         tokio::spawn(async move {
+            info!("Starting listener for incoming connections");
+
             while let Some(incoming) = endpoint.accept().await {
                 let endpoint_clone = endpoint.clone();
                 match incoming.accept() {
                     Ok(connecting) => {
                         info!(
-                            "New incoming connection from {}",
+                            "Accepting incoming connection from {}",
                             connecting.remote_address()
                         );
 
-                        if let Err(e) = app_handle.emit("peer-connected", true) {
-                            error!("Failed to emit connection event: {}", e);
-                        }
+                        app_handle
+                            .emit("peer-connected", true)
+                            .unwrap_or_else(|e| error!("Failed to emit connection event: {}", e));
 
                         let app_handle_clone = app_handle.clone();
                         tokio::spawn(async move {
@@ -203,19 +154,20 @@ impl P2PConnection {
                                     let p2p = P2PConnection {
                                         endpoint: endpoint_clone,
                                     };
-                                    // Handle as responder (desktop)
+
                                     match p2p.handle_connection(&conn, false).await {
                                         Ok(_) => {
-                                            if let Err(e) =
-                                                app_handle_clone.emit("sync-complete", true)
-                                            {
-                                                error!("Failed to emit sync event: {}", e);
-                                            }
+                                            info!("Handshake completed successfully");
+                                            app_handle_clone
+                                                .emit("sync-complete", true)
+                                                .unwrap_or_else(|e| {
+                                                    error!("Failed to emit sync event: {}", e)
+                                                });
                                         }
-                                        Err(e) => error!("Connection handling failed: {}", e),
+                                        Err(e) => error!("Handshake failed: {}", e),
                                     }
                                 }
-                                Err(e) => error!("Connection failed: {}", e),
+                                Err(e) => error!("Connection establishment failed: {}", e),
                             }
                         });
                     }
