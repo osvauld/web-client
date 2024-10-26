@@ -3,6 +3,6 @@
         "beforeDevCommand": "cd ../frontends && npm run dev:mobile",
         "beforeBuildCommand": "cd ../frontends && npm run build:mobile",
         "devUrl": "http://localhost:1420",
-        "frontendDist": "../../frontends/mobile"
+        "frontendDist": "../../frontends/src/mobile/mobile"
     }
 }
