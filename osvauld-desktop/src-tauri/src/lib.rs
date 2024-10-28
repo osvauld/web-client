@@ -20,6 +20,12 @@ pub fn run() {
         .plugin(
             tauri_plugin_log::Builder::new()
                 .level(LevelFilter::Info)
+                .filter(|metadata| {
+                    !metadata.target().contains("tracing::span")
+                        && !metadata.target().contains("iroh_net::magicsock")
+                        && !metadata.target().contains("iroh_quinn_udp")
+                        && !metadata.target().contains("iroh_net::relay")
+                })
                 .build(),
         )
         .plugin(tauri_plugin_store::Builder::default().build())

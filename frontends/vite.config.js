@@ -16,6 +16,18 @@ const createConfig = ({ mode, platform }) => {
     const isMobile = process.env.TAURI_ENV_PLATFORM === 'mobile';
 
     // Determine root directory based on platform and environment
+    const host = process.env.TAURI_DEV_HOST;
+    const ports = {
+        mobile: {
+            server: 1420,
+            hmr: 1421
+        },
+        desktop: {
+            server: 1422,
+            hmr: 1423
+        }
+    };
+    const currentPorts = isMobile ? ports.mobile : ports.desktop;
     let root = 'src/extension';
     if (isTauri) {
         root = isMobile ? 'src/mobile' : 'src/desktop';
@@ -71,12 +83,20 @@ const createConfig = ({ mode, platform }) => {
             emptyOutDir: true
         },
 
+
         server: {
             strictPort: true,
-            port: isTauri
-                ? (isMobile ? 1420 : 1421)
-                : 1421,
-            host: process.env.TAURI_DEV_HOST || '0.0.0.0'
+            port: currentPorts.server,
+            host: '0.0.0.0', // Always bind to all interfaces for mobile
+            hmr: {
+                protocol: 'ws',
+                host: host || '0.0.0.0',
+                port: currentPorts.hmr,
+                clientPort: currentPorts.hmr // Add this line
+            },
+            watch: {
+                usePolling: true
+            }
         }
     };
 };
@@ -84,7 +104,7 @@ const createConfig = ({ mode, platform }) => {
 export default defineConfig(({ command, mode }) => {
     console.log('Build Mode:', mode);
     console.log('IS_TAURI:', process.env.IS_TAURI);
-
+    console.log('TAURI_DEV_HOST:', process.env.TAURI_DEV_HOST);  // New addition
     if (process.env.IS_TAURI === 'true') {
         return createConfig({ mode, platform: 'tauri' });
     }

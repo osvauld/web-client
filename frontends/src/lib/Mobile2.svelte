@@ -3,7 +3,8 @@
 	import { listen } from "@tauri-apps/api/event";
 	import { onMount, onDestroy } from "svelte";
 
-	let status = "Ready to connectss";
+	let status = "Ready to connect";
+
 	let error = "";
 	let ticket = "";
 	let connected = false;
