@@ -7,6 +7,26 @@ const ru = {
 		personal: "Личное",
 		work: "Работа",
 	},
+	recents: "Недавние",
+	categories: "Категории",
+	tabs: {
+		home: "Главная",
+		add: "Добавить",
+		generator: "Генератор",
+		profile: "Профиль",
+	},
+	types: {
+		logins: "Логины",
+		pins: "PIN-коды",
+		creditdebitcards: "Кредитные/дебетовые карты",
+		notes: "Заметки",
+		contacts: "Контакты",
+		bankaccounts: "Банковские счета",
+		digitalwallets: "Цифровые кошельки",
+		sshkeys: "SSH-ключи",
+		apicredentials: "API-учетные данные",
+		databases: "Базы данных",
+	},
 } satisfies BaseTranslation;
 
 export default ru;

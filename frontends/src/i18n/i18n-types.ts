@@ -43,6 +43,74 @@ type RootTranslation = {
 		 */
 		work: string
 	}
+	/**
+	 * R​e​c​e​n​t​s
+	 */
+	recents: string
+	/**
+	 * C​a​t​e​g​o​r​i​e​s
+	 */
+	categories: string
+	tabs: {
+		/**
+		 * H​o​m​e
+		 */
+		home: string
+		/**
+		 * A​d​d
+		 */
+		add: string
+		/**
+		 * G​e​n​e​r​a​t​o​r
+		 */
+		generator: string
+		/**
+		 * P​r​o​f​i​l​e
+		 */
+		profile: string
+	}
+	types: {
+		/**
+		 * L​o​g​i​n​s
+		 */
+		logins: string
+		/**
+		 * P​I​N​s
+		 */
+		pins: string
+		/**
+		 * C​r​e​d​i​t​/​D​e​b​i​t​ ​C​a​r​d​s
+		 */
+		creditdebitcards: string
+		/**
+		 * N​o​t​e​s
+		 */
+		notes: string
+		/**
+		 * C​o​n​t​a​c​t​s
+		 */
+		contacts: string
+		/**
+		 * B​a​n​k​ ​A​c​c​o​u​n​t​s
+		 */
+		bankaccounts: string
+		/**
+		 * D​i​g​i​t​a​l​ ​W​a​l​l​e​t​s
+		 */
+		digitalwallets: string
+		/**
+		 * S​S​H​-​k​e​y​s
+		 */
+		sshkeys: string
+		/**
+		 * A​P​I​-​k​e​y​s
+		 */
+		apicredentials: string
+		/**
+		 * D​a​t​a​b​a​s​e​s
+		 */
+		databases: string
+	}
 }
 
 export type TranslationFunctions = {
@@ -63,6 +131,74 @@ export type TranslationFunctions = {
 		 * Work
 		 */
 		work: () => LocalizedString
+	}
+	/**
+	 * Recents
+	 */
+	recents: () => LocalizedString
+	/**
+	 * Categories
+	 */
+	categories: () => LocalizedString
+	tabs: {
+		/**
+		 * Home
+		 */
+		home: () => LocalizedString
+		/**
+		 * Add
+		 */
+		add: () => LocalizedString
+		/**
+		 * Generator
+		 */
+		generator: () => LocalizedString
+		/**
+		 * Profile
+		 */
+		profile: () => LocalizedString
+	}
+	types: {
+		/**
+		 * Logins
+		 */
+		logins: () => LocalizedString
+		/**
+		 * PINs
+		 */
+		pins: () => LocalizedString
+		/**
+		 * Credit/Debit Cards
+		 */
+		creditdebitcards: () => LocalizedString
+		/**
+		 * Notes
+		 */
+		notes: () => LocalizedString
+		/**
+		 * Contacts
+		 */
+		contacts: () => LocalizedString
+		/**
+		 * Bank Accounts
+		 */
+		bankaccounts: () => LocalizedString
+		/**
+		 * Digital Wallets
+		 */
+		digitalwallets: () => LocalizedString
+		/**
+		 * SSH-keys
+		 */
+		sshkeys: () => LocalizedString
+		/**
+		 * API-keys
+		 */
+		apicredentials: () => LocalizedString
+		/**
+		 * Databases
+		 */
+		databases: () => LocalizedString
 	}
 }
 
