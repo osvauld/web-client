@@ -13,8 +13,8 @@
 	{#each VAULTS as vault (vault.id)}
 		<button
 			class="bg-mobile-bgFade rounded-lg px-4 py-2.5 flex justify-center items-center whitespace-nowrap"
-			class:bg-mobile-bgHighlight="{currentVault === vault.name}"
-			on:click="{() => (currentVault = vault.name)}"
+			class:bg-mobile-bgHighlight="{currentVault === vault.id}"
+			on:click="{() => (currentVault = vault.id)}"
 			>{vault.name} ({vault.count})</button>
 	{/each}
 	<button

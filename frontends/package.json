@@ -7,7 +7,7 @@
 	"scripts": {
 		"dev:desktop": "cross-env IS_TAURI=true TAURI_ENV_PLATFORM=desktop vite",
 		"build:desktop": "cross-env IS_TAURI=true TAURI_ENV_PLATFORM=desktop vite build",
-		"dev:mobile": "cross-env IS_TAURI=true TAURI_ENV_PLATFORM=mobile vite typesafe-i18n",
+		"dev:mobile": "cross-env IS_TAURI=true TAURI_ENV_PLATFORM=mobile vite",
 		"build:mobile": "cross-env IS_TAURI=true TAURI_ENV_PLATFORM=mobile vite build",
 		"dev:extension": "cross-env BUILD_ENV=extension vite",
 		"build:extension": "cross-env BUILD_ENV=extension vite build",
@@ -17,7 +17,7 @@
 		"lint": "eslint \"src/**/*.{js,ts,svelte}\" --fix",
 		"prepare": "husky install",
 		"format": "prettier --write \"src/**/*.{js,ts,svelte}\"",
-		"typesafe-i18n": "typesafe-i18n"
+		"i18n": "typesafe-i18n"
 	},
 	"keywords": [],
 	"author": "",

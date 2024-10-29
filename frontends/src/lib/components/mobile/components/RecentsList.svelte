@@ -20,8 +20,7 @@
 {#if isRecentsVisible}
 	<ul
 		class="px-1 text-mobile-textPrimary max-h-[240px] overflow-y-auto scrollbar-thin mx-2">
-		<h3>{$LL.HI({ name: "tony" })}</h3>
-		<!-- {#each testArray as card, index}
+		{#each testArray as card, index}
 			<li
 				key="{index}"
 				class="border border-mobile-bgHighlight bg-mobile-bgSeconary rounded-lg my-3 px-3 py-2">
@@ -34,6 +33,6 @@
 					</div>
 				</div>
 			</li>
-		{/each} -->
+		{/each}
 	</ul>
 {/if}

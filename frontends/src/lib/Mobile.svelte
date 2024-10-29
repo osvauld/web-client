@@ -1,4 +1,9 @@
 <script>
+	import { invoke } from "@tauri-apps/api/core";
+	import { setLocale } from "../i18n/i18n-svelte";
+	import { loadLocaleAsync } from "../i18n/i18n-util.async";
+	import { onMount } from "svelte";
+
 	import LocationSearchFilter from "./components/mobile/components/LocationSearchFilter.svelte";
 	import MainNav from "./components/mobile/components/MainNav.svelte";
 	import RecentsList from "./components/mobile/components/RecentsList.svelte";
@@ -6,14 +11,44 @@
 	import VaultList from "./components/mobile/components/VaultList.svelte";
 
 	let isRecentsVisible = true;
-	import { setLocale } from "../i18n/i18n-svelte";
-	import { loadLocaleAsync } from "../i18n/i18n-util.async";
-	import { onMount } from "svelte";
-	onMount(async () => {
-		await loadLocaleAsync("en");
-		setLocale("en");
+	const supportedLanguages = [
+		"en",
+		"de",
+		"ar",
+		"fr",
+		"hi",
+		"it",
+		"ja",
+		"ko",
+		"nl",
+		"pl",
+		"ru",
+		"tr",
+		"zh",
+	];
+	let currentVault = "all";
+
+	async function initializeLanguage() {
+		try {
+			const locale = await invoke("get_system_locale");
+			const deviceLanguage = String(locale).split(/[-_]/)[0].toLowerCase();
+			console.log("Device langige detected as", deviceLanguage);
+			const languageToUse = supportedLanguages.includes(deviceLanguage)
+				? deviceLanguage
+				: "en";
+			// const languageToUse = "ko";
+			await loadLocaleAsync(languageToUse);
+			setLocale(languageToUse);
+		} catch (error) {
+			console.error("Error detecting system language:", error);
+			await loadLocaleAsync("en");
+			setLocale("en");
+		}
+	}
+
+	onMount(() => {
+		initializeLanguage();
 	});
-	let currentVault = "All";
 </script>
 
 <main

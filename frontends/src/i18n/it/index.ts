@@ -1,12 +1,12 @@
 import type { BaseTranslation } from "../i18n-types";
 
-const en = {
+const it = {
 	nav: {
 		home: "Home",
-		all: "All",
-		personal: "Personal",
-		work: "Work",
+		all: "Tutto",
+		personal: "Personale",
+		work: "Lavoro",
 	},
 } satisfies BaseTranslation;
 
-export default en;
+export default it;
