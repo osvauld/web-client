@@ -10,21 +10,22 @@
 	import MobileNote from "../../basic/icons/mobileNote.svelte";
 	import MobileContact from "../../basic/icons/mobileContact.svelte";
 	import MobileWallet from "../../basic/icons/mobileWallet.svelte";
+	import LL from "../../../../i18n/i18n-svelte";
 
 	export let isRecentsVisible;
 	let isCategoriesVisible = true;
 
 	const categories = [
-		{ id: "login", name: "Logins", icon: LoginIcon },
-		{ id: "pin", name: "PINs", icon: KeyIcon },
-		{ id: "card", name: "Credit/Debit Cards", icon: CreditCard },
-		{ id: "note", name: "Notes", icon: MobileNote },
-		{ id: "contact", name: "Contacts", icon: MobileContact },
-		{ id: "bank", name: "Bank Accounts", icon: MobileBank },
-		{ id: "wallet", name: "Digital Wallets", icon: MobileWallet },
-		{ id: "ssh", name: "SSH Keys", icon: MobileOldKey },
-		{ id: "api", name: "API Credentials", icon: MobileApiIcon },
-		{ id: "database", name: "Databases", icon: MobileDatabase },
+		{ id: "logins", name: "Logins", icon: LoginIcon },
+		{ id: "pins", name: "PINs", icon: KeyIcon },
+		{ id: "creditdebitcards", name: "Credit/Debit Cards", icon: CreditCard },
+		{ id: "notes", name: "Notes", icon: MobileNote },
+		{ id: "contacts", name: "Contacts", icon: MobileContact },
+		{ id: "bankaccounts", name: "Bank Accounts", icon: MobileBank },
+		{ id: "digitalwallets", name: "Digital Wallets", icon: MobileWallet },
+		{ id: "sshkeys", name: "SSH Keys", icon: MobileOldKey },
+		{ id: "apicredentials", name: "API Credentials", icon: MobileApiIcon },
+		{ id: "databases", name: "Databases", icon: MobileDatabase },
 	];
 
 	const handleCategoryClick = (itemId) => {
@@ -63,7 +64,7 @@
 	class="px-3 h-[40px] flex justify-between items-center w-full active:bg-mobile-bgHighlight/10"
 	aria-expanded="{isCategoriesVisible}"
 	on:click="{() => (isCategoriesVisible = !isCategoriesVisible)}">
-	<span class="text-mobile-textSecondary">Categories</span>
+	<span class="text-mobile-textSecondary">{$LL.categories()}</span>
 	<span
 		class="transition-transform duration-200"
 		style="transform: rotate({isCategoriesVisible ? 0 : -90}deg)">
@@ -86,7 +87,8 @@
 							<svelte:component this="{category.icon}" color="#85889C" />
 						</span>
 					{/if}
-					<span class="text-center text-sm leading-tight">{category.name}</span>
+					<span class="text-center text-sm leading-tight"
+						>{$LL.types[category.id]()}</span>
 				</div>
 			</button>
 		{/each}
