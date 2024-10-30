@@ -4,18 +4,25 @@ use iroh::net::relay::RelayMode;
 use iroh::net::{Endpoint, NodeAddr};
 use iroh_net::endpoint::Connection;
 use iroh_net::endpoint::DirectAddrType;
-use iroh_net::AddrInfo;
 use log::{error, info};
 use serde::{Deserialize, Serialize};
-use std::net::IpAddr;
 use std::sync::Arc;
 use tauri::Emitter;
-use tauri::Manager;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::io::AsyncWriteExt;
 use tokio::sync::Mutex;
-use tokio::time::timeout;
-use tokio::time::Duration;
+use tokio::time::{timeout, Duration};
+// Constants
 const ALPN_PROTOCOL: &[u8] = b"n0/osvauld/0";
+const CONNECTION_TIMEOUT: Duration = Duration::from_secs(10);
+const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(5);
+
+// Message Types
+#[derive(Debug, Serialize, Deserialize)]
+enum TextMessage {
+    Chat(String),
+    Ping,
+    Pong,
+}
 
 #[derive(Serialize, Deserialize)]
 struct ConnectionTicket {
@@ -23,20 +30,14 @@ struct ConnectionTicket {
     addresses: Vec<String>,
 }
 
-const CONNECTION_TIMEOUT: Duration = Duration::from_secs(10);
-const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(5);
-
-pub struct P2PConnection {
+// Core P2P State Structure
+struct P2PState {
     endpoint: Endpoint,
-    app_handle: tauri::AppHandle,
+    active_connection: Option<Arc<Connection>>,
 }
 
-pub struct AppState {
-    pub p2p: Arc<Mutex<Option<P2PConnection>>>,
-}
-
-impl P2PConnection {
-    pub async fn new(app_handle: tauri::AppHandle) -> Result<Self> {
+impl P2PState {
+    async fn new() -> Result<Self> {
         let endpoint = Endpoint::builder()
             .relay_mode(RelayMode::Default)
             .alpns(vec![ALPN_PROTOCOL.to_vec()])
@@ -45,19 +46,52 @@ impl P2PConnection {
             .bind()
             .await?;
 
-        let connection = Self {
+        Ok(Self {
             endpoint,
-            app_handle, // Store it
-        };
+            active_connection: None,
+        })
+    }
+}
 
-        if let Some(addrs) = connection.endpoint.direct_addresses().next().await {
-            info!("Local addresses: {:?}", addrs);
-        }
+// Main Application State
 
-        Ok(connection)
+#[derive(Clone)]
+pub struct AppState {
+    p2p_state: Arc<Mutex<P2PState>>,
+    app_handle: tauri::AppHandle,
+}
+
+impl AppState {
+    async fn new(app_handle: tauri::AppHandle) -> Result<Self> {
+        let p2p_state = Arc::new(Mutex::new(P2PState::new().await?));
+
+        Ok(Self {
+            p2p_state,
+            app_handle,
+        })
     }
 
-    async fn handle_connection(&self, conn: &Connection, is_initiator: bool) -> Result<()> {
+    async fn handle_connection(&self, conn: Connection, is_initiator: bool) -> Result<()> {
+        self.perform_handshake(&conn, is_initiator).await?;
+
+        {
+            let mut state = self.p2p_state.lock().await;
+            state.active_connection = Some(Arc::new(conn));
+        }
+
+        self.app_handle
+            .emit("sync-complete", true)
+            .map_err(|e| anyhow::anyhow!("Failed to emit sync event: {}", e))?;
+        let app_state = self.clone();
+        tokio::spawn(async move {
+            app_state.run_message_listener().await;
+        });
+
+        Ok(())
+    }
+    // Connection Management
+
+    async fn perform_handshake(&self, conn: &Connection, is_initiator: bool) -> Result<()> {
         let (mut send, mut recv) = match timeout(CONNECTION_TIMEOUT, async {
             if is_initiator {
                 conn.open_bi().await
@@ -65,153 +99,162 @@ impl P2PConnection {
                 conn.accept_bi().await
             }
         })
-        .await
+        .await?
         {
-            Ok(stream_result) => match stream_result {
-                Ok(stream) => stream,
-                Err(e) => {
-                    error!("Failed to establish bi-directional stream: {}", e);
-                    return Err(anyhow::anyhow!("Stream establishment failed: {}", e));
-                }
-            },
-            Err(e) => {
-                error!("Connection timeout: {}", e);
-                return Err(anyhow::anyhow!("Connection timeout: {}", e));
-            }
+            Ok(stream) => stream,
+            Err(e) => return Err(anyhow::anyhow!("Stream establishment failed: {}", e)),
         };
 
         if is_initiator {
             info!("Starting handshake as initiator");
-            let mut attempts = 0;
-            const MAX_ATTEMPTS: u32 = 3;
+            send.write_all(b"hello").await?;
+            send.flush().await?;
 
-            while attempts < MAX_ATTEMPTS {
-                info!("Handshake attempt {}", attempts + 1);
+            let mut buffer = [0u8; 1024];
+            match timeout(HANDSHAKE_TIMEOUT, recv.read(&mut buffer)).await? {
+                Ok(n) => {
+                    let response = String::from_utf8_lossy(&buffer[..n.unwrap_or(0)]);
+                    if response != "welcome" {
+                        return Err(anyhow::anyhow!("Invalid handshake response"));
+                    }
+                }
+                Err(e) => return Err(anyhow::anyhow!("Handshake read error: {}", e)),
+            }
+        } else {
+            info!("Starting handshake as responder");
+            let mut buffer = [0u8; 1024];
+            match timeout(HANDSHAKE_TIMEOUT, recv.read(&mut buffer)).await? {
+                Ok(n) => {
+                    let message = String::from_utf8_lossy(&buffer[..n.unwrap_or(0)]);
+                    if message != "hello" {
+                        return Err(anyhow::anyhow!("Invalid handshake message"));
+                    }
+                }
+                Err(e) => return Err(anyhow::anyhow!("Handshake read error: {}", e)),
+            }
 
-                // Small delay before sending to ensure receiver is ready
-                tokio::time::sleep(Duration::from_millis(50)).await;
+            send.write_all(b"welcome").await?;
+            send.flush().await?;
+        }
 
-                match timeout(Duration::from_secs(5), async {
-                    info!("Sending hello message");
-                    send.write_all(b"hello").await?;
-                    send.flush().await?;
-                    info!("Hello message sent, waiting for welcome");
+        Ok(())
+    }
 
-                    // Small delay before reading to allow for network transit
-                    tokio::time::sleep(Duration::from_millis(100)).await;
+    // Message Handling
+    async fn run_message_listener(&self) {
+        info!("Starting message listener");
 
-                    let mut buffer = [0u8; 1024];
-                    match recv.read(&mut buffer).await {
-                        Ok(Some(n)) if n > 0 => {
-                            let response = String::from_utf8_lossy(&buffer[..n]);
-                            info!("Received response: {:?}", response);
-                            if response == "welcome" {
-                                info!("Valid welcome message received");
-                                self.app_handle
-                                    .emit("sync-complete", true)
-                                    .unwrap_or_else(|e| error!("Failed to emit sync event: {}", e));
-                                Ok(())
-                            } else {
-                                Err(anyhow::anyhow!("Unexpected response: {}", response))
+        let connection = {
+            let state = self.p2p_state.lock().await;
+            match &state.active_connection {
+                Some(conn) => conn.clone(),
+                None => {
+                    error!("No active connection for message listener");
+                    return;
+                }
+            }
+        };
+
+        let (mut send, mut recv) = match connection.accept_bi().await {
+            Ok(stream) => stream,
+            Err(e) => {
+                error!("Failed to accept bi-directional stream: {}", e);
+                return;
+            }
+        };
+
+        loop {
+            let mut buffer = [0u8; 1024];
+            match recv.read(&mut buffer).await {
+                Ok(Some(n)) => {
+                    let message_str = String::from_utf8_lossy(&buffer[..n]);
+                    match serde_json::from_str::<TextMessage>(&message_str) {
+                        Ok(message) => match self.handle_message(message).await {
+                            Ok(response) => {
+                                if let Err(e) = send.write_all(response.as_bytes()).await {
+                                    error!("Failed to send response: {}", e);
+                                    break;
+                                }
+                                send.flush().await.unwrap_or_else(|e| {
+                                    error!("Failed to flush response: {}", e);
+                                });
                             }
-                        }
-                        Ok(Some(0)) => {
-                            Err(anyhow::anyhow!("Peer closed connection during handshake"))
-                        }
-                        Ok(None) => Err(anyhow::anyhow!("Empty response received")),
-                        Err(e) => Err(anyhow::anyhow!("Failed to read welcome message: {}", e)),
-                        _ => Err(anyhow::anyhow!("Unhandled case in read response")),
-                    }
-                })
-                .await
-                {
-                    Ok(Ok(_)) => {
-                        info!("Handshake completed successfully");
-                        return Ok(());
-                    }
-                    Ok(Err(e)) => {
-                        error!("Handshake attempt {} failed: {}", attempts + 1, e);
-                        if attempts == MAX_ATTEMPTS - 1 {
-                            return Err(anyhow::anyhow!("Failed all handshake attempts: {}", e));
-                        }
-                    }
-                    Err(e) => {
-                        error!("Handshake attempt {} timed out: {}", attempts + 1, e);
-                        if attempts == MAX_ATTEMPTS - 1 {
-                            return Err(anyhow::anyhow!("Handshake timed out after all attempts"));
+                            Err(e) => {
+                                error!("Error handling message: {}", e);
+                                break;
+                            }
+                        },
+                        Err(e) => {
+                            error!("Failed to deserialize message: {}", e);
+                            break;
                         }
                     }
                 }
-                attempts += 1;
-                tokio::time::sleep(Duration::from_millis(200 * (attempts as u64))).await;
-            }
-            Err(anyhow::anyhow!(
-                "Failed to complete handshake after all attempts"
-            ))
-        } else {
-            // Responder side
-            info!("Starting handshake as responder");
-            let mut buffer = [0u8; 1024];
-
-            match timeout(HANDSHAKE_TIMEOUT, recv.read(&mut buffer)).await {
-                Ok(read_result) => match read_result {
-                    Ok(Some(n @ 1..)) => {
-                        let message = String::from_utf8_lossy(&buffer[..n]);
-                        info!("Received initial message: {:?}", message);
-
-                        if message != "hello" {
-                            return Err(anyhow::anyhow!("Unexpected initial message: {}", message));
-                        }
-
-                        // Small delay before sending response
-                        tokio::time::sleep(Duration::from_millis(50)).await;
-
-                        info!("Sending welcome message");
-                        match timeout(HANDSHAKE_TIMEOUT, async {
-                            send.write_all(b"welcome").await?;
-                            send.flush().await?;
-
-                            // Hold the connection open briefly to ensure the message is received
-                            tokio::time::sleep(Duration::from_millis(100)).await;
-
-                            Ok::<(), anyhow::Error>(())
-                        })
-                        .await
-                        {
-                            Ok(result) => match result {
-                                Ok(_) => {
-                                    info!("Welcome message sent successfully");
-                                    Ok(())
-                                }
-                                Err(e) => {
-                                    error!("Failed to send welcome message: {}", e);
-                                    Err(anyhow::anyhow!("Failed to send welcome: {}", e))
-                                }
-                            },
-                            Err(e) => {
-                                error!("Timeout sending welcome message: {}", e);
-                                Err(anyhow::anyhow!("Timeout sending welcome: {}", e))
-                            }
-                        }
-                    }
-                    Ok(Some(0)) => Err(anyhow::anyhow!("Peer closed connection")),
-                    Ok(None) => Err(anyhow::anyhow!("Empty message received")),
-                    Err(e) => {
-                        error!("Read error: {}", e);
-                        Err(anyhow::anyhow!("Read error: {}", e))
-                    }
-                },
+                Ok(None) => {
+                    info!("Connection closed by peer");
+                    break;
+                }
                 Err(e) => {
-                    error!("Read timeout: {}", e);
-                    Err(anyhow::anyhow!("Read timeout: {}", e))
+                    error!("Error reading from connection: {}", e);
+                    break;
                 }
             }
         }
+
+        // Clean up connection when listener stops
+        let mut state = self.p2p_state.lock().await;
+        state.active_connection = None;
+        info!("Message listener stopped");
+    }
+
+    async fn handle_message(&self, message: TextMessage) -> Result<String> {
+        match message {
+            TextMessage::Chat(text) => {
+                self.app_handle.emit("message-received", text)?;
+                Ok("ok".to_string())
+            }
+            TextMessage::Ping => Ok("pong".to_string()),
+            TextMessage::Pong => Ok("ok".to_string()),
+        }
+    }
+
+    // Public API
+    pub async fn send_message(&self, message: String) -> Result<()> {
+        let connection = {
+            let state = self.p2p_state.lock().await;
+            match &state.active_connection {
+                Some(conn) => Arc::clone(conn),
+                None => return Err(anyhow::anyhow!("No active connection")),
+            }
+        };
+
+        let (mut send, mut recv) = connection.open_bi().await?;
+        let msg = TextMessage::Chat(message);
+        let serialized = serde_json::to_string(&msg)?;
+
+        send.write_all(serialized.as_bytes()).await?;
+        send.flush().await?;
+
+        // Wait for acknowledgment
+        let mut buffer = [0u8; 1024];
+        match timeout(Duration::from_secs(5), recv.read(&mut buffer)).await {
+            Ok(Ok(Some(n))) => {
+                let response = String::from_utf8_lossy(&buffer[..n]);
+                if response != "ok" {
+                    return Err(anyhow::anyhow!("Unexpected response: {}", response));
+                }
+            }
+            Ok(Ok(None)) => return Err(anyhow::anyhow!("Connection closed by peer")),
+            Ok(Err(e)) => return Err(anyhow::anyhow!("Failed to read response: {}", e)),
+            Err(_) => return Err(anyhow::anyhow!("Response timeout")),
+        }
+
+        Ok(())
     }
 
     pub async fn share_ticket(&self) -> Result<String> {
-        // Only get relay addresses, filter out local addresses
-        let addrs = self
+        let state = self.p2p_state.lock().await;
+        let addrs = state
             .endpoint
             .direct_addresses()
             .next()
@@ -223,13 +266,11 @@ impl P2PConnection {
             .collect::<Vec<_>>();
 
         let ticket = ConnectionTicket {
-            node_id: self.endpoint.node_id().to_string(),
+            node_id: state.endpoint.node_id().to_string(),
             addresses: addrs,
         };
 
-        let ticket_str = serde_json::to_string(&ticket)?;
-        info!("Generated connection ticket: {}", ticket_str);
-        Ok(ticket_str)
+        Ok(serde_json::to_string(&ticket)?)
     }
 
     pub async fn connect_with_ticket(&self, ticket_str: &str) -> Result<()> {
@@ -238,72 +279,74 @@ impl P2PConnection {
 
         let node_addr = NodeAddr::from_parts(
             ticket.node_id.parse()?,
-            Some("https://aps1-1.relay.iroh.network./".parse()?),
+            None,
             ticket
                 .addresses
                 .iter()
-                .filter_map(|addr| addr.parse().ok())
+                .filter_map(|a| a.parse().ok())
                 .collect::<Vec<_>>(),
         );
 
+        let state = self.p2p_state.lock().await;
         match timeout(
             CONNECTION_TIMEOUT,
-            self.endpoint.connect(node_addr, ALPN_PROTOCOL),
+            state.endpoint.connect(node_addr, ALPN_PROTOCOL),
         )
-        .await?
+        .await??
         {
-            Ok(conn) => {
+            conn => {
                 info!("Connected to: {}", conn.remote_address());
-                self.handle_connection(&conn, true).await
-            }
-            Err(e) => {
-                error!("Connection timeout: {}", e);
-                Err(anyhow::anyhow!("Connection timeout: {}", e))
+                drop(state); // Release the lock before handling connection
+                self.handle_connection(conn, true).await
             }
         }
     }
+}
 
-    pub async fn start_listening(&self) {
-        // Remove app_handle parameter since we have it in self
-        let endpoint = self.endpoint.clone();
-        let app_handle = self.app_handle.clone();
+// Initialize function
+pub async fn initialize_p2p(app_handle: &tauri::AppHandle) -> Result<AppState> {
+    info!("Initializing P2P connection...");
+
+    let app_state = AppState::new(app_handle.clone()).await?;
+
+    // Start connection listener for desktop
+    #[cfg(desktop)]
+    {
+        let app_state = app_state.clone();
 
         tokio::spawn(async move {
+            let endpoint = {
+                let state = app_state.p2p_state.lock().await;
+                state.endpoint.clone()
+            };
+
             info!("Starting listener for incoming connections");
             while let Some(incoming) = endpoint.accept().await {
                 match incoming.accept() {
                     Ok(connecting) => {
-                        info!(
-                            "Accepting incoming connection from {}",
-                            connecting.remote_address()
-                        );
-
-                        app_handle
+                        info!("Accepting incoming connection");
+                        app_state
+                            .app_handle
                             .emit("peer-connected", true)
                             .unwrap_or_else(|e| error!("Failed to emit connection event: {}", e));
 
-                        let endpoint = endpoint.clone();
-                        let app_handle = app_handle.clone();
+                        let app_state = app_state.clone();
 
                         tokio::spawn(async move {
                             match timeout(CONNECTION_TIMEOUT, connecting).await {
                                 Ok(Ok(conn)) => {
-                                    let p2p = P2PConnection {
-                                        endpoint,
-                                        app_handle: app_handle.clone(),
-                                    };
-
-                                    match p2p.handle_connection(&conn, false).await {
-                                        Ok(_) => {
-                                            info!("Handshake completed successfully");
-                                            app_handle.emit("sync-complete", true).unwrap_or_else(
-                                                |e| error!("Failed to emit sync event: {}", e),
-                                            );
-                                        }
-                                        Err(e) => error!("Handshake failed: {}", e),
+                                    if let Err(e) = app_state.handle_connection(conn, false).await {
+                                        error!("Connection handling failed: {}", e);
+                                    } else {
+                                        app_state
+                                            .app_handle
+                                            .emit("sync-complete", true)
+                                            .unwrap_or_else(|e| {
+                                                error!("Failed to emit sync event: {}", e)
+                                            });
                                     }
                                 }
-                                Ok(Err(e)) => error!("Connection establishment failed: {}", e),
+                                Ok(Err(e)) => error!("Connection failed: {}", e),
                                 Err(e) => error!("Connection timeout: {}", e),
                             }
                         });
@@ -313,22 +356,7 @@ impl P2PConnection {
             }
         });
     }
-}
-
-pub async fn initialize_p2p(app_handle: &tauri::AppHandle) -> Result<AppState> {
-    info!("Initializing P2P connection...");
-
-    // Start listening for connections
-    let p2p = P2PConnection::new(app_handle.clone()).await?;
-    #[cfg(desktop)]
-    {
-        p2p.start_listening().await;
-    }
-    // Create P2P connection
 
     info!("P2P initialization complete");
-
-    Ok(AppState {
-        p2p: Arc::new(Mutex::new(Some(p2p))),
-    })
+    Ok(app_state)
 }

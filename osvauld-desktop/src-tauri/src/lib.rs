@@ -86,7 +86,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             handler::handle_crypto_action,
             handler::get_ticket,
-            handler::connect_with_ticket
+            handler::connect_with_ticket,
+            handler::send_message,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

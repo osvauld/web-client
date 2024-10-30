@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "cd ../frontends && npm run dev:desktop",
     "beforeBuildCommand": "cd ../frontends && npm run build:desktop",
-    "devUrl": "http://localhost:1422",
+    "devUrl": "http://localhost:1421",
     "frontendDist": "../../frontends/src/desktop/desktop"
   },
   "app": {

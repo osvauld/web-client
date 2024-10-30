@@ -237,27 +237,25 @@ pub async fn handle_crypto_action(
 }
 
 #[tauri::command]
+pub async fn send_message(message: String, state: State<'_, AppState>) -> Result<(), String> {
+    state
+        .send_message(message)
+        .await
+        .map_err(|e| format!("Failed to send message: {}", e))
+}
+
+#[tauri::command]
 pub async fn get_ticket(state: State<'_, AppState>) -> Result<String, String> {
-    let p2p_lock = state.p2p.lock().await;
-    match &*p2p_lock {
-        Some(p2p) => p2p
-            .share_ticket()
-            .await
-            .map_err(|e| format!("Failed to generate ticket: {}", e)),
-        None => Err("P2P not initialized".to_string()),
-    }
+    state
+        .share_ticket()
+        .await
+        .map_err(|e| format!("Failed to generate ticket: {}", e))
 }
 
 #[tauri::command]
 pub async fn connect_with_ticket(ticket: String, state: State<'_, AppState>) -> Result<(), String> {
-    info!("Attempting to connect with ticket: {}", ticket);
-
-    let p2p_lock = state.p2p.lock().await;
-    match &*p2p_lock {
-        Some(p2p) => p2p
-            .connect_with_ticket(&ticket)
-            .await
-            .map_err(|e| format!("Failed to connect: {}", e)),
-        None => Err("P2P not initialized".to_string()),
-    }
+    state
+        .connect_with_ticket(&ticket)
+        .await
+        .map_err(|e| format!("Failed to connect: {}", e))
 }
