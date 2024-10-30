@@ -141,6 +141,7 @@ impl AppState {
     }
 
     // Message Handling
+
     async fn run_message_listener(&self) {
         info!("Starting message listener");
 
@@ -155,15 +156,16 @@ impl AppState {
             }
         };
 
-        let (mut send, mut recv) = match connection.accept_bi().await {
-            Ok(stream) => stream,
-            Err(e) => {
-                error!("Failed to accept bi-directional stream: {}", e);
-                return;
-            }
-        };
-
         loop {
+            // Accept a new bi-directional stream for each message
+            let (mut send, mut recv) = match connection.accept_bi().await {
+                Ok(stream) => stream,
+                Err(e) => {
+                    error!("Failed to accept bi-directional stream: {}", e);
+                    break;
+                }
+            };
+
             let mut buffer = [0u8; 1024];
             match recv.read(&mut buffer).await {
                 Ok(Some(n)) => {
@@ -173,30 +175,31 @@ impl AppState {
                             Ok(response) => {
                                 if let Err(e) = send.write_all(response.as_bytes()).await {
                                     error!("Failed to send response: {}", e);
-                                    break;
+                                    continue;
                                 }
-                                send.flush().await.unwrap_or_else(|e| {
+                                if let Err(e) = send.flush().await {
                                     error!("Failed to flush response: {}", e);
-                                });
+                                    continue;
+                                }
                             }
                             Err(e) => {
                                 error!("Error handling message: {}", e);
-                                break;
+                                continue;
                             }
                         },
                         Err(e) => {
                             error!("Failed to deserialize message: {}", e);
-                            break;
+                            continue;
                         }
                     }
                 }
                 Ok(None) => {
-                    info!("Connection closed by peer");
-                    break;
+                    info!("Stream closed by peer");
+                    continue;
                 }
                 Err(e) => {
                     error!("Error reading from connection: {}", e);
-                    break;
+                    continue;
                 }
             }
         }
@@ -206,7 +209,6 @@ impl AppState {
         state.active_connection = None;
         info!("Message listener stopped");
     }
-
     async fn handle_message(&self, message: TextMessage) -> Result<String> {
         match message {
             TextMessage::Chat(text) => {
@@ -217,8 +219,6 @@ impl AppState {
             TextMessage::Pong => Ok("ok".to_string()),
         }
     }
-
-    // Public API
     pub async fn send_message(&self, message: String) -> Result<()> {
         let connection = {
             let state = self.p2p_state.lock().await;
@@ -228,6 +228,7 @@ impl AppState {
             }
         };
 
+        // Open a new bi-directional stream for each message
         let (mut send, mut recv) = connection.open_bi().await?;
         let msg = TextMessage::Chat(message);
         let serialized = serde_json::to_string(&msg)?;
@@ -252,6 +253,8 @@ impl AppState {
         Ok(())
     }
 
+    // Public API
+
     pub async fn share_ticket(&self) -> Result<String> {
         let state = self.p2p_state.lock().await;
         let addrs = state
@@ -269,7 +272,6 @@ impl AppState {
             node_id: state.endpoint.node_id().to_string(),
             addresses: addrs,
         };
-
         Ok(serde_json::to_string(&ticket)?)
     }
 
