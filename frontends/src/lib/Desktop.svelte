@@ -7,6 +7,8 @@
 	let status = "Initializing...";
 	let error = "";
 	let peerStatus = new Set();
+	let messages: { text: string; sent: boolean }[] = [];
+	let messageInput = "";
 	let unlistenHandlers: (() => void)[] = [];
 
 	async function setupEventListeners() {
@@ -27,7 +29,12 @@
 			status = "Mobile device disconnected";
 		});
 
-		unlistenHandlers.push(unlisten1, unlisten2, unlisten3);
+		// Listen for incoming messages
+		const unlisten4 = await listen("message-received", (event: any) => {
+			messages = [...messages, { text: event.payload, sent: false }];
+		});
+
+		unlistenHandlers.push(unlisten1, unlisten2, unlisten3, unlisten4);
 	}
 
 	onMount(async () => {
@@ -58,6 +65,26 @@
 		} catch (err) {
 			error = "Failed to copy ticket";
 			console.error("Copy error:", err);
+		}
+	}
+
+	async function sendMessage() {
+		if (!messageInput.trim()) return;
+
+		try {
+			await invoke("send_message", { message: messageInput });
+			messages = [...messages, { text: messageInput, sent: true }];
+			messageInput = "";
+		} catch (err) {
+			error = "Failed to send message: " + err.toString();
+			console.error("Send error:", err);
+		}
+	}
+
+	function handleKeyPress(event: KeyboardEvent) {
+		if (event.key === "Enter" && !event.shiftKey) {
+			event.preventDefault();
+			sendMessage();
 		}
 	}
 </script>
@@ -104,6 +131,37 @@
 				</button>
 			</div>
 		{/if}
+
+		<!-- Messages Section -->
+		<div class="mt-6">
+			<h2 class="font-semibold mb-2">Messages</h2>
+			<div
+				class="bg-white border rounded-lg p-4 h-96 overflow-y-auto flex flex-col gap-2 mb-4">
+				{#each messages as message}
+					<div
+						class="p-2 rounded-lg max-w-[80%] {message.sent
+							? 'bg-blue-500 text-white ml-auto'
+							: 'bg-gray-100 mr-auto'}">
+						{message.text}
+					</div>
+				{/each}
+			</div>
+
+			<div class="flex gap-2">
+				<textarea
+					class="flex-1 p-2 border rounded resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+					rows="2"
+					placeholder="Type your message..."
+					bind:value="{messageInput}"
+					on:keypress="{handleKeyPress}"></textarea>
+				<button
+					class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors disabled:bg-gray-400"
+					on:click="{sendMessage}"
+					disabled="{!messageInput.trim()}">
+					Send
+				</button>
+			</div>
+		</div>
 
 		{#if peerStatus.size > 0}
 			<div class="mt-4">
