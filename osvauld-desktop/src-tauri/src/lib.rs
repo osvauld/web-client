@@ -11,6 +11,12 @@ mod types;
 use log::LevelFilter;
 use std::sync::Arc;
 use tokio::runtime::Runtime;
+use sys_locale::get_locale;
+
+#[tauri::command]
+fn get_system_locale() -> String {
+    get_locale().unwrap_or_else(|| String::from("en-US"))
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -35,13 +41,12 @@ pub fn run() {
             let store = handle.store_builder("my_app_store8.bin").build().unwrap();
             store.save()?;
             app.manage(store);
-
             let app_dir = app.path().app_data_dir().unwrap();
             let db_path = app_dir.join("sqlite.db").to_str().unwrap().to_string();
-
+            
             // Create a new Tokio runtime
             let rt = Arc::new(Runtime::new().expect("Failed to create Tokio runtime"));
-
+            
             // Initialize database
             let rt_clone = Arc::clone(&rt);
             let db_connection: Result<DbConnection, String> = rt_clone.block_on(async {
@@ -49,7 +54,7 @@ pub fn run() {
                     .await
                     .map_err(|e| format!("Failed to initialize database: {}", e))
             });
-
+            
             match db_connection {
                 Ok(connection) => {
                     app.manage(connection.clone());
@@ -59,7 +64,7 @@ pub fn run() {
                     panic!("Cannot continue without database connection");
                 }
             }
-
+            
             let rt_clone = Arc::clone(&rt);
             match rt_clone.block_on(p2p::initialize_p2p(&handle)) {
                 Ok(app_state) => {
@@ -71,16 +76,16 @@ pub fn run() {
                     panic!("Cannot continue without P2P initialization");
                 }
             }
+            
             // Manage the runtime
             app.manage(rt);
-
+            
             #[cfg(debug_assertions)]
             {
                 let window = app.get_webview_window("main").unwrap();
                 window.open_devtools();
                 window.close_devtools();
             }
-
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -88,6 +93,8 @@ pub fn run() {
             handler::get_ticket,
             handler::connect_with_ticket,
             handler::send_message,
+            get_system_locale  // Added the new command
+
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
