@@ -1,35 +1,11 @@
 <script>
 	import DownArrow from "../../basic/icons/mobileDownArrow.svelte";
-	import CreditCard from "../../basic/icons/creditCard.svelte";
-	import KeyIcon from "../../basic/icons/mobileKey.svelte";
-	import LoginIcon from "../../basic/icons/pwdGen.svelte";
-	import MobileOldKey from "../../basic/icons/mobileOldKey.svelte";
-	import MobileBank from "../../basic/icons/mobileBank.svelte";
-	import MobileDatabase from "../../basic/icons/mobileDatabase.svelte";
-	import MobileApiIcon from "../../basic/icons/mobileApiIcon.svelte";
-	import MobileNote from "../../basic/icons/mobileNote.svelte";
-	import MobileContact from "../../basic/icons/mobileContact.svelte";
-	import MobileWallet from "../../basic/icons/mobileWallet.svelte";
+	import { CATEGORIES } from "../helper";
+	import LL from "../../../../i18n/i18n-svelte";
 
 	export let isRecentsVisible;
+	export let selectedCredentialType;
 	let isCategoriesVisible = true;
-
-	const categories = [
-		{ id: "login", name: "Logins", icon: LoginIcon },
-		{ id: "pin", name: "PINs", icon: KeyIcon },
-		{ id: "card", name: "Credit/Debit Cards", icon: CreditCard },
-		{ id: "note", name: "Notes", icon: MobileNote },
-		{ id: "contact", name: "Contacts", icon: MobileContact },
-		{ id: "bank", name: "Bank Accounts", icon: MobileBank },
-		{ id: "wallet", name: "Digital Wallets", icon: MobileWallet },
-		{ id: "ssh", name: "SSH Keys", icon: MobileOldKey },
-		{ id: "api", name: "API Credentials", icon: MobileApiIcon },
-		{ id: "database", name: "Databases", icon: MobileDatabase },
-	];
-
-	const handleCategoryClick = (itemId) => {
-		console.log("Item clicked", itemId);
-	};
 </script>
 
 <style>
@@ -75,11 +51,11 @@
 	<div
 		class="text-base grid grid-cols-2 gap-3 px-1 mx-2 text-mobile-textPrimary"
 		class:overflow-container="{isRecentsVisible}">
-		{#each categories as category (category.id)}
+		{#each CATEGORIES as category (category.id)}
 			<button
 				class="relative border border-mobile-bgHighlight bg-mobile-bgSeconary rounded-lg px-3 py-2.5 h-[90px]
                active:bg-mobile-bgHighlight/10 transition-colors touch-manipulation"
-				on:click="{() => handleCategoryClick(category.id)}">
+				on:click="{() => (selectedCredentialType = category.id)}">
 				<div class="flex flex-col h-full items-center justify-center gap-2">
 					{#if category.icon}
 						<span class="flex justify-center items-center">

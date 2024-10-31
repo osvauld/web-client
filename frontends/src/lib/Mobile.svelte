@@ -9,9 +9,9 @@
 	import RecentsList from "./components/mobile/components/RecentsList.svelte";
 	import Categories from "./components/mobile/components/Categories.svelte";
 	import VaultList from "./components/mobile/components/VaultList.svelte";
+	import AddCredential from "./components/mobile/components/addCredential.svelte";
 
-	let isRecentsVisible = true;
-	const supportedLanguages = [
+	const SUPPORTED_LANGUAGES = [
 		"en",
 		"de",
 		"ar",
@@ -26,14 +26,16 @@
 		"tr",
 		"zh",
 	];
+
 	let currentVault = "all";
+	let isRecentsVisible = true;
+	let selectedCredentialType = "";
 
 	async function initializeLanguage() {
 		try {
 			const locale = await invoke("get_system_locale");
 			const deviceLanguage = String(locale).split(/[-_]/)[0].toLowerCase();
-			console.log("Device langige detected as", deviceLanguage);
-			const languageToUse = supportedLanguages.includes(deviceLanguage)
+			const languageToUse = SUPPORTED_LANGUAGES.includes(deviceLanguage)
 				? deviceLanguage
 				: "en";
 			// const languageToUse = "ko";
@@ -51,11 +53,18 @@
 	});
 </script>
 
-<main
-	class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
-	<LocationSearchFilter {currentVault} />
-	<VaultList bind:currentVault />
-	<RecentsList bind:isRecentsVisible />
-	<Categories {isRecentsVisible} />
-	<MainNav bind:currentVault />
-</main>
+{#if selectedCredentialType}
+	<main
+		class="w-screen h-screen bg-mobile-bgPrimary flex flex-col overflow-hidden p-3">
+		<AddCredential bind:selectedCredentialType />
+	</main>
+{:else}
+	<main
+		class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
+		<LocationSearchFilter {currentVault} />
+		<VaultList bind:currentVault />
+		<RecentsList bind:isRecentsVisible />
+		<Categories bind:selectedCredentialType {isRecentsVisible} />
+		<MainNav bind:currentVault />
+	</main>
+{/if}
