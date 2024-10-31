@@ -32,11 +32,10 @@
 		try {
 			const locale = await invoke("get_system_locale");
 			const deviceLanguage = String(locale).split(/[-_]/)[0].toLowerCase();
-			console.log("Device langige detected as", deviceLanguage);
 			const languageToUse = supportedLanguages.includes(deviceLanguage)
 				? deviceLanguage
 				: "en";
-			// const languageToUse = "ko";
+			// const languageToUse = "ar";
 			await loadLocaleAsync(languageToUse);
 			setLocale(languageToUse);
 		} catch (error) {
