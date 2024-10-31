@@ -1,5 +1,6 @@
 <script>
 	import Add from "../../../../icons/add.svelte";
+	import LL from "../../../../i18n/i18n-svelte";
 	export const location = "Home";
 	export let currentVault;
 	const VAULTS = [
@@ -15,7 +16,7 @@
 			class="bg-mobile-bgFade rounded-lg px-4 py-2.5 flex justify-center items-center whitespace-nowrap"
 			class:bg-mobile-bgHighlight="{currentVault === vault.id}"
 			on:click="{() => (currentVault = vault.id)}"
-			>{vault.name} ({vault.count})</button>
+			>{$LL.nav[vault.id]()} ({vault.count})</button>
 	{/each}
 	<button
 		class="bg-mobile-bgFade rounded-lg px-2.5 py-2.5 flex justify-center items-center"

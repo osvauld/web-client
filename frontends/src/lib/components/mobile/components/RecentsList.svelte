@@ -9,7 +9,7 @@
 <button
 	class="px-3 h-[40px] flex justify-between items-center active:bg-mobile-bgHighlight/10"
 	on:click="{() => (isRecentsVisible = !isRecentsVisible)}">
-	<span class="text-mobile-textSecondary">Recents</span>
+	<span class="text-mobile-textSecondary">{$LL.recents()}</span>
 	<span
 		class="transition-transform duration-200"
 		style="transform: rotate({isRecentsVisible ? 0 : -90}deg)">
@@ -28,7 +28,7 @@
 					<span class="flex justify-center items-center"
 						><CreditCard color="#85889C" /></span>
 					<div class="flex flex-col pl-3 justify-center">
-						<span class="text-base">Credit Card</span>
+						<span class="text-base">{$LL.types.apicredentials()}</span>
 						<span>0000 8888 0000 8888</span>
 					</div>
 				</div>
