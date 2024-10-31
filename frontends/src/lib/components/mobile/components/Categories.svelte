@@ -39,7 +39,7 @@
 	class="px-3 h-[40px] flex justify-between items-center w-full active:bg-mobile-bgHighlight/10"
 	aria-expanded="{isCategoriesVisible}"
 	on:click="{() => (isCategoriesVisible = !isCategoriesVisible)}">
-	<span class="text-mobile-textSecondary">Categories</span>
+	<span class="text-mobile-textSecondary">{$LL.categories()}</span>
 	<span
 		class="transition-transform duration-200"
 		style="transform: rotate({isCategoriesVisible ? 0 : -90}deg)">
@@ -62,7 +62,8 @@
 							<svelte:component this="{category.icon}" color="#85889C" />
 						</span>
 					{/if}
-					<span class="text-center text-sm leading-tight">{category.name}</span>
+					<span class="text-center text-sm leading-tight"
+						>{$LL.types[category.id]()}</span>
 				</div>
 			</button>
 		{/each}
