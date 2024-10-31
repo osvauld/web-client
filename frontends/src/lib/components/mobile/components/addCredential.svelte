@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from "svelte";
 	import MobileDownArrow from "../../basic/icons/mobileDownArrow.svelte";
 	import { CATEGORIES, credentialFieldsUpdater } from "../helper";
 
@@ -7,6 +8,8 @@
 	let selectedCategory = CATEGORIES.find(
 		(item) => item.id === selectedCredentialType,
 	);
+
+	let credentialFields = credentialFieldsUpdater(selectedCategory.name);
 </script>
 
 <nav
@@ -24,6 +27,21 @@
 
 <div class="grow p-4 text-mobile-textPrimary">
 	<span>Enter your {selectedCategory?.name} details</span>
+	<div
+		class="max-h-full overflow-y-auto scrollbar-thin flex flex-col gap-4 mt-2">
+		{#each credentialFields as field (field.fieldName)}
+			<input
+				type="text"
+				placeholder="{field.fieldName}"
+				class="w-full bg-mobile-bgPrimary border rounded-lg border-mobile-bgHighlight focus:border-mobile-borderActive focus:ring-0" />
+		{/each}
+		<textarea
+			name="note"
+			id="details"
+			rows="5"
+			class="bg-mobile-bgPrimary border rounded-lg border-mobile-bgHighlight focus:border-mobile-borderActive focus:ring-0"
+			placeholder="Enter description about credential here"></textarea>
+	</div>
 </div>
 
 <div

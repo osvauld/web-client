@@ -110,6 +110,7 @@ export default {
 					iconPrimary: "#5B5D6D",
 					highlightBlue: "#89B4FA",
 					navBlue: "#010109",
+					borderActive: "#67697C",
 				},
 			},
 			fontFamily: {
