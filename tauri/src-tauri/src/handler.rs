@@ -16,6 +16,8 @@ use log::{error, info};
 use once_cell::sync::Lazy;
 use serde_json::Value;
 use std::sync::Arc;
+use sys_locale::get_locale;
+use tauri::command;
 use tauri::State;
 use tauri::Wry;
 use tauri_plugin_store::Store;
@@ -23,6 +25,10 @@ use tokio::sync::Mutex;
 
 pub static CRYPTO_UTILS: Lazy<Mutex<CryptoUtils>> = Lazy::new(|| Mutex::new(CryptoUtils::new()));
 
+#[tauri::command]
+pub fn get_system_locale() -> String {
+    get_locale().unwrap_or_else(|| String::from("en-US"))
+}
 #[tauri::command]
 pub async fn handle_crypto_action(
     action: String,
