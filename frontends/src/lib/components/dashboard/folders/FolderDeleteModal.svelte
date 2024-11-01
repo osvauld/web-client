@@ -1,5 +1,5 @@
 <script>
-	import ClosePanel from "../../basic/icons/closePanel.svelte";
+	import ClosePanel from "../../../../icons/closePanel.svelte";
 	import {
 		modalManager,
 		DeleteConfirmationModal,

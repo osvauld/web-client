@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from "svelte";
 	const dispatch = createEventDispatcher();
 	import { sendMessage } from "../dashboard/helper";
-	import { StorageService } from "../../../scripts/storageHelper";
+	import { StorageService } from "../../../utils/storageHelper";
 	import NewPassword from "../basic/NewPassword.svelte";
 
 	let recoveryData = "";

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import SuccessView from "./components/content/components/SuccessView.svelte";
-	import FolderView from "./components/content/components/FolderView.svelte";
-	import SuggestionView from "./components/content/components/SuggestionView.svelte";
-	import { ModifiedEvent } from "./dtos/event.dto";
+	import SuccessView from "../lib/components/content/components/SuccessView.svelte";
+	import FolderView from "../lib/components/content/components/FolderView.svelte";
+	import SuggestionView from "../lib/components/content/components/SuggestionView.svelte";
+	import { ModifiedEvent } from "../lib/dtos/event.dto";
 
 	let folderView = false;
 	let successView = false;

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Eye from "../basic/icons/eye.svelte";
-	import ClosedEye from "../basic/icons/closedEye.svelte";
+	import Eye from "../../../icons/eye.svelte";
+	import ClosedEye from "../../../icons/closedEye.svelte";
 	import Loader from "../dashboard/components/Loader.svelte";
 	import { sendMessage } from "../dashboard/helper";
 	import { createEventDispatcher } from "svelte";
 
-	import { StorageService } from "../../../scripts/storageHelper";
+	import { StorageService } from "../../../utils/storageHelper";
 	import PasswordStrengthValidator from "../basic/PasswordStrengthValidator.svelte";
 	const dispatch = createEventDispatcher();
 

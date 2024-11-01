@@ -1,4 +1,4 @@
-import App from "./lib/Popup.svelte";
+import App from "./Suggestions.svelte";
 import "./tailwind.css";
 const app = new App({
 	target: document.body,

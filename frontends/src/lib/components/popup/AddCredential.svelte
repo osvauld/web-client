@@ -5,7 +5,7 @@
 
 	import { Eye, ClosedEye, FolderIcon } from "./icons";
 	import { createEventDispatcher } from "svelte";
-	import Locked from "../basic/icons/locked.svelte";
+	import Locked from "../../../icons/locked.svelte";
 	import { Folder } from "../dashboard/dtos";
 	const dispatch = createEventDispatcher();
 	export let username = "";

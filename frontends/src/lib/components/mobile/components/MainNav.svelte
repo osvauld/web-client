@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Profile from "../../basic/icons/profile.svelte";
-	import Add from "../../basic/icons/mobileAdd.svelte";
-	import PwdGen from "../../basic/icons/pwdGen.svelte";
-	import Home from "../../basic/icons/mobileHome.svelte";
+	import Profile from "../../../../icons/profile.svelte";
+	import Add from "../../../../icons/mobileAdd.svelte";
+	import PwdGen from "../../../../icons/pwdGen.svelte";
+	import Home from "../../../../icons/mobileHome.svelte";
 	export let currentVault;
 </script>
 

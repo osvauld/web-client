@@ -1,5 +1,5 @@
 <script>
-	import Add from "../../basic/icons/add.svelte";
+	import Add from "../../../../icons/add.svelte";
 	export const location = "Home";
 	export let currentVault;
 	const VAULTS = [

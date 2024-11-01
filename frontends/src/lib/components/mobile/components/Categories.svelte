@@ -1,15 +1,15 @@
 <script>
-	import DownArrow from "../../basic/icons/mobileDownArrow.svelte";
-	import CreditCard from "../../basic/icons/creditCard.svelte";
-	import KeyIcon from "../../basic/icons/mobileKey.svelte";
-	import LoginIcon from "../../basic/icons/pwdGen.svelte";
-	import MobileOldKey from "../../basic/icons/mobileOldKey.svelte";
-	import MobileBank from "../../basic/icons/mobileBank.svelte";
-	import MobileDatabase from "../../basic/icons/mobileDatabase.svelte";
-	import MobileApiIcon from "../../basic/icons/mobileApiIcon.svelte";
-	import MobileNote from "../../basic/icons/mobileNote.svelte";
-	import MobileContact from "../../basic/icons/mobileContact.svelte";
-	import MobileWallet from "../../basic/icons/mobileWallet.svelte";
+	import DownArrow from "../../../../icons/mobileDownArrow.svelte";
+	import CreditCard from "../../../../icons/creditCard.svelte";
+	import KeyIcon from "../../../../icons/mobileKey.svelte";
+	import LoginIcon from "../../../../icons/pwdGen.svelte";
+	import MobileOldKey from "../../../../icons/mobileOldKey.svelte";
+	import MobileBank from "../../../../icons/mobileBank.svelte";
+	import MobileDatabase from "../../../../icons/mobileDatabase.svelte";
+	import MobileApiIcon from "../../../../icons/mobileApiIcon.svelte";
+	import MobileNote from "../../../../icons/mobileNote.svelte";
+	import MobileContact from "../../../../icons/mobileContact.svelte";
+	import MobileWallet from "../../../../icons/mobileWallet.svelte";
 
 	export let isRecentsVisible;
 	let isCategoriesVisible = true;

@@ -1,6 +1,6 @@
 <script>
-	import CreditCard from "../../basic/icons/creditCard.svelte";
-	import DownArrow from "../../basic/icons/mobileDownArrow.svelte";
+	import CreditCard from "../../../../icons/creditCard.svelte";
+	import DownArrow from "../../../../icons/mobileDownArrow.svelte";
 	const testArray = Array(6).fill(null);
 	export let isRecentsVisible = true;
 	import LL from "../../../../i18n/i18n-svelte";
