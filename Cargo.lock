@@ -4843,7 +4843,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "osvauld-desktop"
+name = "osvauld"
 version = "0.1.0"
 dependencies = [
  "anyhow",

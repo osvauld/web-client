@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Eye from "../basic/icons/eye.svelte";
+	import Eye from "../../../icons/eye.svelte";
 	import Loader from "../dashboard/components/Loader.svelte";
 	import { createEventDispatcher } from "svelte";
 	import { ClosedEye } from "../dashboard/icons";
 	import { sendMessage } from "../dashboard/helper";
-	import { StorageService } from "../../../scripts/storageHelper";
+	import { StorageService } from "../../../utils/storageHelper";
 	const dispatch = createEventDispatcher();
 
 	let passphrase = "";

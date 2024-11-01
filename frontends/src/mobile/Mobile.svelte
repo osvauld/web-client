@@ -4,11 +4,11 @@
 	import { loadLocaleAsync } from "../i18n/i18n-util.async";
 	import { onMount } from "svelte";
 
-	import LocationSearchFilter from "./components/mobile/components/LocationSearchFilter.svelte";
-	import MainNav from "./components/mobile/components/MainNav.svelte";
-	import RecentsList from "./components/mobile/components/RecentsList.svelte";
-	import Categories from "./components/mobile/components/Categories.svelte";
-	import VaultList from "./components/mobile/components/VaultList.svelte";
+	import LocationSearchFilter from "../lib/components/mobile/components/LocationSearchFilter.svelte";
+	import MainNav from "../lib/components/mobile/components/MainNav.svelte";
+	import RecentsList from "../lib/components/mobile/components/RecentsList.svelte";
+	import Categories from "../lib/components/mobile/components/Categories.svelte";
+	import VaultList from "../lib/components/mobile/components/VaultList.svelte";
 
 	let isRecentsVisible = true;
 	const supportedLanguages = [

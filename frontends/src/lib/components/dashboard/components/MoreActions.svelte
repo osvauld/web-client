@@ -1,6 +1,6 @@
 <script lang="ts">
-	import BinIcon from "../../basic/icons/binIcon.svelte";
-	import EditIcon from "../../basic/icons/editIcon.svelte";
+	import BinIcon from "../../../../icons/binIcon.svelte";
+	import EditIcon from "../../../../icons/editIcon.svelte";
 	import { FolderShare } from "../icons";
 	import {
 		buttonRef,

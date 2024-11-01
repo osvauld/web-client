@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import Welcome from "./components/popup/Welcome.svelte";
-	import Home from "./components/popup/Home.svelte";
-	import { Logo } from "./components/dashboard/icons";
-	import Signup from "./components/popup/Signup.svelte";
-	import Loader from "./components/dashboard/components/Loader.svelte";
-	import { sendMessage } from "./components/dashboard/helper";
+	import Welcome from "../lib/components/popup/Welcome.svelte";
+	import Home from "../lib/components/popup/Home.svelte";
+	import { Logo } from "../lib/components/dashboard/icons";
+	import Signup from "../lib/components/popup/Signup.svelte";
+	import Loader from "../lib/components/dashboard/components/Loader.svelte";
+	import { sendMessage } from "../lib/components/dashboard/helper";
 
 	let loggedIn = true;
 	let isLoaderActive = false;
@@ -34,8 +34,7 @@
 		class="w-[22.5rem] h-[36.78rem] p-2 pt-3 flex flex-col !font-sans {isSignedUp &&
 		!loggedIn
 			? 'justify-center'
-			: 'justify-start'} items-center bg-osvauld-frameblack"
-	>
+			: 'justify-start'} items-center bg-osvauld-frameblack">
 		{#if isLoaderActive}
 			<Loader />
 		{:else if !isSignedUp}

@@ -1,6 +1,6 @@
 import browser from "webextension-polyfill";
 import { SearchedCredential } from "../../dtos/credential.dto";
-import { StorageService } from "../../../scripts/storageHelper";
+import { StorageService } from "../../../utils/storageHelper";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 type TypeToClassKey = "reader" | "manager";
 

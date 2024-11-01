@@ -13,7 +13,7 @@
 		showCredentialDetailsDrawer,
 		selectedCredential,
 	} from "../store";
-	import DownArrow from "../../basic/icons/downArrow.svelte";
+	import DownArrow from "../../../../icons/downArrow.svelte";
 	import Placeholder from "../components/Placeholder.svelte";
 	import { buttonRef } from "../../../store/ui.store";
 	import { setCredentialStore } from "../../../store/storeHelper";
