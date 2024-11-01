@@ -1,4 +1,5 @@
 <script>
+
 	import { CATEGORIES, THEMES } from "../utils/helper";
 	import LL from "../../../../i18n/i18n-svelte";
 	import DownArrow from "../../../../icons/mobileDownArrow.svelte";

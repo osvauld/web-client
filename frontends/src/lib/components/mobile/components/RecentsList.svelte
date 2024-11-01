@@ -1,6 +1,8 @@
 <script>
+
 	import LL from "../../../../i18n/i18n-svelte";
 	import { THEMES } from "../utils/helper";
+
 	import CreditCard from "../../../../icons/creditCard.svelte";
 	import DownArrow from "../../../../icons/mobileDownArrow.svelte";
 	const testArray = Array(6).fill(null);

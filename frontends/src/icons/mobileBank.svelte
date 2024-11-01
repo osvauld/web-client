@@ -1,3 +1,4 @@
+
 <script>
 	export let color = "#85889C";
 </script>
