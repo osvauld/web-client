@@ -1,11 +1,12 @@
 <script>
 	import DownArrow from "../../basic/icons/mobileDownArrow.svelte";
-	import { CATEGORIES } from "../utils/helper";
+	import { CATEGORIES, THEMES } from "../utils/helper";
 	import LL from "../../../../i18n/i18n-svelte";
 
 	export let isRecentsVisible;
 	export let selectedCredentialType;
 	let isCategoriesVisible = true;
+	export let selectedTheme;
 </script>
 
 <style>
@@ -43,7 +44,7 @@
 	<span
 		class="transition-transform duration-200"
 		style="transform: rotate({isCategoriesVisible ? 0 : -90}deg)">
-		<DownArrow />
+		<DownArrow color="{THEMES[selectedTheme]}" />
 	</span>
 </button>
 
@@ -59,7 +60,9 @@
 				<div class="flex flex-col h-full items-center justify-center gap-2">
 					{#if category.icon}
 						<span class="flex justify-center items-center">
-							<svelte:component this="{category.icon}" color="#85889C" />
+							<svelte:component
+								this="{category.icon}"
+								color="{THEMES[selectedTheme]}" />
 						</span>
 					{/if}
 					<span class="text-center text-sm leading-tight"

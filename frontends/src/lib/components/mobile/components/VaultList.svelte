@@ -1,8 +1,10 @@
 <script>
 	import Add from "../../basic/icons/add.svelte";
 	import LL from "../../../../i18n/i18n-svelte";
+	import { THEMES } from "../utils/helper";
 	export const location = "Home";
 	export let currentVault;
+	export let selectedTheme;
 	const VAULTS = [
 		{ id: "all", name: "All", count: 54 },
 		{ id: "personal", name: "Personal", count: 4 },
@@ -20,5 +22,5 @@
 	{/each}
 	<button
 		class="bg-mobile-bgFade rounded-lg px-2.5 py-2.5 flex justify-center items-center"
-		><Add color="#85889C" /></button>
+		><Add color="{THEMES[selectedTheme]}" /></button>
 </div>

@@ -22,6 +22,12 @@ export const CATEGORIES = [
 	{ id: "databases", name: "Database", icon: MobileDatabase },
 ];
 
+export const THEMES = {
+	one: "#FAB387",
+	two: "#89B4FA",
+	three: "#A6E3A1",
+};
+
 export const credentialFieldsUpdater = (type: string) => {
 	switch (type) {
 		case "Login":

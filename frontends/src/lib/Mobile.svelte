@@ -32,6 +32,7 @@
 	let currentVault = "all";
 	let isRecentsVisible = true;
 	let selectedCredentialType = "";
+	let selectedTheme = "one";
 
 	async function initializeLanguage() {
 		try {
@@ -64,10 +65,13 @@
 {:else}
 	<main
 		class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
-		<LocationSearchFilter {currentVault} />
-		<VaultList bind:currentVault />
-		<RecentsList bind:isRecentsVisible />
-		<Categories bind:selectedCredentialType {isRecentsVisible} />
-		<MainNav bind:currentVault />
+		<LocationSearchFilter {currentVault} bind:selectedTheme />
+		<VaultList bind:currentVault {selectedTheme} />
+		<RecentsList bind:isRecentsVisible {selectedTheme} />
+		<Categories
+			bind:selectedCredentialType
+			{isRecentsVisible}
+			{selectedTheme} />
+		<MainNav bind:currentVault {selectedTheme} />
 	</main>
 {/if}
