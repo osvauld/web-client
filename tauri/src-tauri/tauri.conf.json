@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2.0.0-rc",
-  "productName": "osvauld-desktop",
+  "productName": "osvauld",
   "version": "0.1.0",
   "identifier": "com.osvauld.app",
   "build": {
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "osvauld-desktop",
+        "title": "osvauld",
         "width": 800,
         "height": 600
       }

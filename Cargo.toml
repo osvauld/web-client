@@ -3,5 +3,5 @@ resolver = "2"
 members = [
     "crypto_utils",
     "wasm",
-    "osvauld-desktop/src-tauri"
+    "tauri/src-tauri"
 ]
