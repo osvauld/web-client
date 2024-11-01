@@ -1,6 +1,6 @@
 <script>
 	import DownArrow from "../../basic/icons/mobileDownArrow.svelte";
-	import { CATEGORIES } from "../helper";
+	import { CATEGORIES } from "../utils/helper";
 	import LL from "../../../../i18n/i18n-svelte";
 
 	export let isRecentsVisible;

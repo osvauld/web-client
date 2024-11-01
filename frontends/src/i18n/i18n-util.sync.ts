@@ -6,31 +6,43 @@ import type { Locales, Translations } from './i18n-types'
 import { loadedFormatters, loadedLocales, locales } from './i18n-util'
 
 import ar from './ar'
+import bn from './bn'
 import de from './de'
 import en from './en'
 import fr from './fr'
 import hi from './hi'
 import it from './it'
 import ja from './ja'
+import kn from './kn'
 import ko from './ko'
+import ml from './ml'
+import mr from './mr'
 import nl from './nl'
 import pl from './pl'
 import ru from './ru'
+import ta from './ta'
+import te from './te'
 import tr from './tr'
 import zh from './zh'
 
 const localeTranslations = {
 	ar,
+	bn,
 	de,
 	en,
 	fr,
 	hi,
 	it,
 	ja,
+	kn,
 	ko,
+	ml,
+	mr,
 	nl,
 	pl,
 	ru,
+	ta,
+	te,
 	tr,
 	zh,
 }

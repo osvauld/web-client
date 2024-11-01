@@ -7,16 +7,22 @@ import { loadedFormatters, loadedLocales, locales } from './i18n-util'
 
 const localeTranslationLoaders = {
 	ar: () => import('./ar'),
+	bn: () => import('./bn'),
 	de: () => import('./de'),
 	en: () => import('./en'),
 	fr: () => import('./fr'),
 	hi: () => import('./hi'),
 	it: () => import('./it'),
 	ja: () => import('./ja'),
+	kn: () => import('./kn'),
 	ko: () => import('./ko'),
+	ml: () => import('./ml'),
+	mr: () => import('./mr'),
 	nl: () => import('./nl'),
 	pl: () => import('./pl'),
 	ru: () => import('./ru'),
+	ta: () => import('./ta'),
+	te: () => import('./te'),
 	tr: () => import('./tr'),
 	zh: () => import('./zh'),
 }

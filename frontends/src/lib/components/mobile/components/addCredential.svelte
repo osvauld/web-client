@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import MobileDownArrow from "../../basic/icons/mobileDownArrow.svelte";
-	import { CATEGORIES, credentialFieldsUpdater } from "../helper";
+	import { CATEGORIES, credentialFieldsUpdater } from "../utils/helper";
 
 	export let selectedCredentialType;
 

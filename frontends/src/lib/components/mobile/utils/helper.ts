@@ -1,13 +1,13 @@
-import CreditCard from "../basic/icons/creditCard.svelte";
-import KeyIcon from "../basic/icons/mobileKey.svelte";
-import LoginIcon from "../basic/icons/pwdGen.svelte";
-import MobileOldKey from "../basic/icons/mobileOldKey.svelte";
-import MobileBank from "../basic/icons/mobileBank.svelte";
-import MobileDatabase from "../basic/icons/mobileDatabase.svelte";
-import MobileApiIcon from "../basic/icons/mobileApiIcon.svelte";
-import MobileNote from "../basic/icons/mobileNote.svelte";
-import MobileContact from "../basic/icons/mobileContact.svelte";
-import MobileWallet from "../basic/icons/mobileWallet.svelte";
+import CreditCard from "../../basic/icons/creditCard.svelte";
+import KeyIcon from "../../basic/icons/mobileKey.svelte";
+import LoginIcon from "../../basic/icons/pwdGen.svelte";
+import MobileOldKey from "../../basic/icons/mobileOldKey.svelte";
+import MobileBank from "../../basic/icons/mobileBank.svelte";
+import MobileDatabase from "../../basic/icons/mobileDatabase.svelte";
+import MobileApiIcon from "../../basic/icons/mobileApiIcon.svelte";
+import MobileNote from "../../basic/icons/mobileNote.svelte";
+import MobileContact from "../../basic/icons/mobileContact.svelte";
+import MobileWallet from "../../basic/icons/mobileWallet.svelte";
 
 export const CATEGORIES = [
 	{ id: "logins", name: "Login", icon: LoginIcon },
@@ -18,7 +18,7 @@ export const CATEGORIES = [
 	{ id: "bankaccounts", name: "Bank Account", icon: MobileBank },
 	{ id: "digitalwallets", name: "Digital Wallet", icon: MobileWallet },
 	{ id: "sshkeys", name: "SSH Key", icon: MobileOldKey },
-	{ id: "apicredentials", name: "API Credential", icon: MobileApiIcon },
+	{ id: "apicredentials", name: "API Key", icon: MobileApiIcon },
 	{ id: "databases", name: "Database", icon: MobileDatabase },
 ];
 
