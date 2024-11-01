@@ -5,7 +5,7 @@
 	import { sendMessage } from "../../dashboard/helper";
 	import { RightArrow, DownArrow } from "../icons";
 	import { createEventDispatcher } from "svelte";
-	import { LocalStorageService } from "../../../../scripts/storageHelper";
+	import { LocalStorageService } from "../../../../utils/storageHelper";
 	const dispatch = createEventDispatcher();
 	export let credential;
 	export let selectedCredentialId;

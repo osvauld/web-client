@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Profile from "../../basic/icons/profile.svelte";
-	import Add from "../../basic/icons/mobileAdd.svelte";
-	import PwdGen from "../../basic/icons/pwdGen.svelte";
-	import Home from "../../basic/icons/mobileHome.svelte";
 	import { THEMES } from "../utils/helper";
 	import LL from "../../../../i18n/i18n-svelte";
+	import Profile from "../../../../icons/profile.svelte";
+	import Add from "../../../../icons/mobileAdd.svelte";
+	import PwdGen from "../../../../icons/pwdGen.svelte";
+	import Home from "../../../../icons/mobileHome.svelte";
 	export let currentVault;
 	export let selectedTheme;
 </script>

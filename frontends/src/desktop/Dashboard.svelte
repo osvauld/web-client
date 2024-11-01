@@ -1,26 +1,26 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import LeftContainer from "./components/dashboard/LeftContainer.svelte";
-	import RightContainer from "./components/dashboard/RightContainer.svelte";
-	import MoreActions from "./components/dashboard/components/MoreActions.svelte";
-	import CredentialDeleteModal from "./components/dashboard/credentials/CredentialDeleteModal.svelte";
-	import FolderDeleteModal from "./components/dashboard/folders/FolderDeleteModal.svelte";
-	import Loader from "./components/dashboard/components/Loader.svelte";
+	import LeftContainer from "../lib/components/dashboard/LeftContainer.svelte";
+	import RightContainer from "../lib/components/dashboard/RightContainer.svelte";
+	import MoreActions from "../lib/components/dashboard/components/MoreActions.svelte";
+	import CredentialDeleteModal from "../lib/components/dashboard/credentials/CredentialDeleteModal.svelte";
+	import FolderDeleteModal from "../lib/components/dashboard/folders/FolderDeleteModal.svelte";
+	import Loader from "../lib/components/dashboard/components/Loader.svelte";
 	import {
 		showMoreOptions,
 		DeleteConfirmationModal,
 		modalManager,
 		toastStore,
 		promptPassword,
-	} from "./store/ui.store";
+	} from "../lib/store/ui.store";
 	import { invoke } from "@tauri-apps/api/core";
-	import { sendMessage } from "./components/dashboard/helper";
-	import Welcome from "./components/popup/Welcome.svelte";
-	import Signup from "./components/popup/Signup.svelte";
-	import ShareToast from "./components/dashboard/components/ShareToast.svelte";
-	import { setFolderStore } from "./store/storeHelper";
-	import PasswordPromptModal from "./components/dashboard/components/PasswordPromptModal.svelte";
-	import { LocalStorageService } from "../scripts/storageHelper";
+	import { sendMessage } from "../lib/components/dashboard/helper";
+	import Welcome from "../lib/components/popup/Welcome.svelte";
+	import Signup from "../lib/components/popup/Signup.svelte";
+	import ShareToast from "../lib/components/dashboard/components/ShareToast.svelte";
+	import { setFolderStore } from "../lib/store/storeHelper";
+	import PasswordPromptModal from "../lib/components/dashboard/components/PasswordPromptModal.svelte";
+	import { LocalStorageService } from "../utils/storageHelper";
 
 	let showWelcome = false;
 	let signedUp = false;

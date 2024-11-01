@@ -4,7 +4,7 @@ import { sendMessage } from "../components/dashboard/helper";
 import { get } from "svelte/store";
 import { Folder } from "../dtos/folder.dto";
 import { User } from "../dtos/user.dto";
-import { LocalStorageService } from "../../scripts/storageHelper";
+import { LocalStorageService } from "../../utils/storageHelper";
 export const setFolderStore = async () => {
 	const folderResponse = await sendMessage('getFolder', {})
 

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Filter from "../../basic/icons/filter.svelte";
-	import Lens from "../../basic/icons/lens.svelte";
-	import Options from "../../basic/icons/options.svelte";
+	import Filter from "../../../../icons/filter.svelte";
+	import Lens from "../../../../icons/lens.svelte";
+	import Options from "../../../../icons/options.svelte";
 	import LL from "../../../../i18n/i18n-svelte";
 	import { THEMES } from "../utils/helper";
 	export let currentVault: "all" | "personal" | "work" = "all";

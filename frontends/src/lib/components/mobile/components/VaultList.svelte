@@ -1,7 +1,7 @@
 <script>
-	import Add from "../../basic/icons/add.svelte";
 	import LL from "../../../../i18n/i18n-svelte";
 	import { THEMES } from "../utils/helper";
+	import Add from "../../../../icons/add.svelte";
 	export const location = "Home";
 	export let currentVault;
 	export let selectedTheme;

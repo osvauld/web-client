@@ -11,7 +11,7 @@
 	import AddCredential from "./AddCredential.svelte";
 	import { Add } from "./icons";
 	import PasswordGenerator from "./PasswordGenerator.svelte";
-	import { LocalStorageService } from "../../../scripts/storageHelper";
+	import { LocalStorageService } from "../../../utils/storageHelper";
 	type ListedCredential = {
 		description: string;
 		domain: string;
