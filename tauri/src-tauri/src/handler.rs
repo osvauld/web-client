@@ -34,7 +34,7 @@ pub fn get_system_locale() -> String {
 pub async fn handle_crypto_action(
     action: String,
     data: Value,
-    app_handle: State<'_, tauri::AppHandle>,
+    app_handle: tauri::AppHandle,
     db_connection: State<'_, DbConnection>,
 ) -> Result<CryptoResponse, String> {
     let store = app_handle.store("my_app_store8.bin").unwrap();
