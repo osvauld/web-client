@@ -27,8 +27,6 @@
 	let isLoading = true;
 
 	onMount(async () => {
-		const connectionString = await invoke("get_connection_string");
-		console.log("Share this connection string:", connectionString);
 		try {
 			const response = await sendMessage("isSignedUp");
 			const checkPvtLoad = await sendMessage("checkPvtLoaded");
