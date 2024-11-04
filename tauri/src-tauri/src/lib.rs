@@ -33,12 +33,8 @@ pub fn run() {
         .setup(|app| {
             log::info!("Setting up Tauri app");
             let handle = app.handle();
-            let store = handle.store_builder("my_app_store8.bin").build().unwrap();
-            store.save()?;
-            app.manage(store);
             let app_dir = app.path().app_data_dir().unwrap();
             let db_path = app_dir.join("sqlite.db").to_str().unwrap().to_string();
-
             // Create a new Tokio runtime
             let rt = Arc::new(Runtime::new().expect("Failed to create Tokio runtime"));
 

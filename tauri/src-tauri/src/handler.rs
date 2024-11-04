@@ -21,6 +21,7 @@ use tauri::command;
 use tauri::State;
 use tauri::Wry;
 use tauri_plugin_store::Store;
+use tauri_plugin_store::StoreExt;
 use tokio::sync::Mutex;
 
 pub static CRYPTO_UTILS: Lazy<Mutex<CryptoUtils>> = Lazy::new(|| Mutex::new(CryptoUtils::new()));
@@ -33,9 +34,10 @@ pub fn get_system_locale() -> String {
 pub async fn handle_crypto_action(
     action: String,
     data: Value,
-    store: State<'_, Store<Wry>>,
+    app_handle: State<'_, tauri::AppHandle>,
     db_connection: State<'_, DbConnection>,
 ) -> Result<CryptoResponse, String> {
+    let store = app_handle.store("my_app_store8.bin").unwrap();
     match action.as_str() {
         "isSignedUp" => {
             let is_signed_up_result = is_signed_up(&store).await?;
