@@ -8,6 +8,13 @@ mod p2p;
 mod service;
 use tokio::sync::Mutex;
 mod types;
+use crate::handler::{
+    check_private_key_loaded, check_signup_status, connect_with_ticket, get_system_locale,
+    get_ticket, handle_add_credential, handle_add_folder, handle_change_passphrase,
+    handle_export_certificate, handle_get_credentials_for_folder, handle_get_folders,
+    handle_get_public_key, handle_hash_and_sign, handle_import_certificate, handle_save_passphrase,
+    handle_sign_challenge, send_message,
+};
 use log::LevelFilter;
 use std::sync::Arc;
 use sys_locale::get_locale;
@@ -80,11 +87,23 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            handler::handle_crypto_action,
-            handler::get_ticket,
-            handler::connect_with_ticket,
-            handler::send_message,
-            handler::get_system_locale // Added the new command
+            get_system_locale,
+            check_signup_status,
+            handle_save_passphrase,
+            check_private_key_loaded,
+            handle_get_public_key,
+            handle_sign_challenge,
+            handle_add_credential,
+            handle_hash_and_sign,
+            handle_import_certificate,
+            handle_export_certificate,
+            handle_change_passphrase,
+            handle_add_folder,
+            handle_get_folders,
+            handle_get_credentials_for_folder,
+            send_message,
+            get_ticket,
+            connect_with_ticket,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -54,13 +54,30 @@ const tauriBrowser = {
 	},
 	runtime: {
 		sendMessage: async ({ action, data }) => {
-			// console.log("Tauri: Sending message", action);
 			try {
-				const response = await invoke("handle_crypto_action", {
-					action,
-					data,
-				});
-				return response;
+				// Map actions to their specific handlers
+				const handlerMap = {
+					'isSignedUp': () => invoke('check_signup_status'),
+					'savePassphrase': (data) => invoke('handle_save_passphrase', { input: data }),
+					'checkPvtLoaded': () => invoke('check_private_key_loaded'),
+					'getPubKey': (data) => invoke('handle_get_public_key', { input: data }),
+					'signChallenge': (data) => invoke('handle_sign_challenge', { input: data }),
+					'addCredential': (data) => invoke('handle_add_credential', { input: data }),
+					'hashAndSign': (data) => invoke('handle_hash_and_sign', { input: data }),
+					'importPvtKey': (data) => invoke('handle_import_certificate', { input: data }),
+					'exportCertificate': (data) => invoke('handle_export_certificate', { input: data }),
+					'changePassphrase': (data) => invoke('handle_change_passphrase', { input: data }),
+					'addFolder': (data) => invoke('handle_add_folder', { input: data }),
+					'getFolder': () => invoke('handle_get_folders'),
+					'getCredentialsForFolder': (data) => invoke('handle_get_credentials_for_folder', { input: data }),
+				};
+
+				const handler = handlerMap[action];
+				if (!handler) {
+					throw new Error(`Unknown action: ${action}`);
+				}
+
+				return await handler(data);
 			} catch (error) {
 				console.error("Error invoking Tauri command:", error);
 				throw error;
