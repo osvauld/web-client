@@ -29,6 +29,7 @@ pub enum CryptoResponse {
     ExportedCertificate(String),
     Folders(Vec<FolderResponse>),
     Credentials(Vec<CredentialResponse>),
+    Success,
 }
 
 #[derive(Deserialize)]
