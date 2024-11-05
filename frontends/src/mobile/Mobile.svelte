@@ -9,9 +9,9 @@
 	import RecentsList from "../lib/components/mobile/components/RecentsList.svelte";
 	import Categories from "../lib/components/mobile/components/Categories.svelte";
 	import VaultList from "../lib/components/mobile/components/VaultList.svelte";
+	import AddVault from "../lib/components/mobile/components/addVault.svelte";
 
-	let isRecentsVisible = true;
-	const supportedLanguages = [
+	const SUPPORTED_LANGUAGES = [
 		"en",
 		"de",
 		"ar",
@@ -26,13 +26,15 @@
 		"tr",
 		"zh",
 	];
+	let isRecentsVisible = true;
 	let currentVault = "all";
+	let vaultSwitchActive = false;
 
 	async function initializeLanguage() {
 		try {
 			const locale = await invoke("get_system_locale");
 			const deviceLanguage = String(locale).split(/[-_]/)[0].toLowerCase();
-			const languageToUse = supportedLanguages.includes(deviceLanguage)
+			const languageToUse = SUPPORTED_LANGUAGES.includes(deviceLanguage)
 				? deviceLanguage
 				: "en";
 			// const languageToUse = "ar";
@@ -52,9 +54,10 @@
 
 <main
 	class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
-	<LocationSearchFilter {currentVault} />
-	<VaultList bind:currentVault />
+	<LocationSearchFilter bind:vaultSwitchActive {currentVault} />
+	<!-- <VaultList bind:currentVault /> -->
 	<RecentsList bind:isRecentsVisible />
 	<Categories {isRecentsVisible} />
 	<MainNav bind:currentVault />
+	<AddVault bind:vaultSwitchActive />
 </main>

@@ -35,7 +35,7 @@
 
 <style>
 	.overflow-container {
-		max-height: 380px;
+		max-height: 440px;
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
 		overscroll-behavior: contain;
