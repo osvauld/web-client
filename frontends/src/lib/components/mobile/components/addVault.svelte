@@ -13,6 +13,10 @@
 	export let vaultSwitchActive;
 	let newVaultInputActive = false;
 	let newVaultName = "";
+
+	const autofocus = (node) => {
+		node.focus();
+	};
 </script>
 
 {#if vaultSwitchActive}
@@ -26,6 +30,7 @@
 				on:click="{() => {
 					vaultSwitchActive = false;
 					newVaultInputActive = false;
+					currentVault = vault.id;
 				}}"
 				class="h-[48px] p-4 text-mobile-textPrimary flex items-center rounded-lg"
 				class:bg-mobile-bgLight="{isActive}"
@@ -42,19 +47,20 @@
 				in:slide
 				out:slide>
 				<span class="text-lg text-center">New Vault</span>
-				<hr />
-				<div class="flex flex-col grow gap-3">
-					<label for="new-vault-name" class="text-sm"> Add a title</label>
+				<hr class="h-px border-0 bg-mobile-bgLight" />
+				<div class="flex flex-col grow gap-1">
+					<label for="new-vault-name" class="text-sm">Add a title</label>
 					<input
 						type="text"
 						id="new-vault-name"
-						class="bg-mobile-bgSeconary border-0 outline-0"
-						focus
+						class="bg-mobile-bgSeconary border-0 outline-0 focus:ring-0 rounded-lg"
+						use:autofocus
 						bind:value="{newVaultName}" />
 					<button
 						type="submit"
-						class="h-[48px] flex justify-center items-center gap-1 rounded-lg bg-mobile-highlightBlue text-mobile-bgPrimary text-lg"
-						>Create New Vault <Add color="#85889C" /></button>
+						class="h-[48px] flex justify-center items-center gap-1 rounded-lg bg-mobile-highlightBlue text-mobile-bgPrimary font-medium text-lg mt-6"
+						on:click="{() => (vaultSwitchActive = false)}"
+						>Create New Vault <Add color="#000" /></button>
 				</div>
 			</div>
 		{:else}

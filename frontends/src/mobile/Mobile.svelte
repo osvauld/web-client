@@ -59,5 +59,5 @@
 	<RecentsList bind:isRecentsVisible />
 	<Categories {isRecentsVisible} />
 	<MainNav bind:currentVault />
-	<AddVault bind:vaultSwitchActive {currentVault} />
+	<AddVault bind:vaultSwitchActive bind:currentVault />
 </main>
