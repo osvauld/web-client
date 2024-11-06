@@ -1,41 +1,16 @@
-<script>
+<script lang="ts">
+	import { CATEGORIES } from "../../../../utils/mobileUtils";
 	import LL from "../../../../i18n/i18n-svelte";
 	import DownArrow from "../../../../icons/mobileDownArrow.svelte";
-	import CreditCard from "../../../../icons/creditCard.svelte";
-	import KeyIcon from "../../../../icons/mobileKey.svelte";
-	import LoginIcon from "../../../../icons/pwdGen.svelte";
-	import MobileOldKey from "../../../../icons/mobileOldKey.svelte";
-	import MobileBank from "../../../../icons/mobileBank.svelte";
-	import MobileDatabase from "../../../../icons/mobileDatabase.svelte";
-	import MobileApiIcon from "../../../../icons/mobileApiIcon.svelte";
-	import MobileNote from "../../../../icons/mobileNote.svelte";
-	import MobileContact from "../../../../icons/mobileContact.svelte";
-	import MobileWallet from "../../../../icons/mobileWallet.svelte";
 
 	export let isRecentsVisible;
+	export let selectedCredentialType;
 	let isCategoriesVisible = true;
-
-	const categories = [
-		{ id: "logins", name: "Logins", icon: LoginIcon },
-		{ id: "pins", name: "PINs", icon: KeyIcon },
-		{ id: "creditdebitcards", name: "Credit/Debit Cards", icon: CreditCard },
-		{ id: "notes", name: "Notes", icon: MobileNote },
-		{ id: "contacts", name: "Contacts", icon: MobileContact },
-		{ id: "bankaccounts", name: "Bank Accounts", icon: MobileBank },
-		{ id: "digitalwallets", name: "Digital Wallets", icon: MobileWallet },
-		{ id: "sshkeys", name: "SSH Keys", icon: MobileOldKey },
-		{ id: "apicredentials", name: "API Credentials", icon: MobileApiIcon },
-		{ id: "databases", name: "Databases", icon: MobileDatabase },
-	];
-
-	const handleCategoryClick = (itemId) => {
-		console.log("Item clicked", itemId);
-	};
 </script>
 
 <style>
 	.overflow-container {
-		max-height: 380px;
+		max-height: 440px;
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
 		overscroll-behavior: contain;
@@ -76,11 +51,11 @@
 	<div
 		class="text-base grid grid-cols-2 gap-3 px-1 mx-2 text-mobile-textPrimary"
 		class:overflow-container="{isRecentsVisible}">
-		{#each categories as category (category.id)}
+		{#each CATEGORIES as category (category.id)}
 			<button
 				class="relative border border-mobile-bgHighlight bg-mobile-bgSeconary rounded-lg px-3 py-2.5 h-[90px]
                active:bg-mobile-bgHighlight/10 transition-colors touch-manipulation"
-				on:click="{() => handleCategoryClick(category.id)}">
+				on:click="{() => (selectedCredentialType = category.id)}">
 				<div class="flex flex-col h-full items-center justify-center gap-2">
 					{#if category.icon}
 						<span class="flex justify-center items-center">

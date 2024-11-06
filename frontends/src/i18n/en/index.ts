@@ -2,8 +2,7 @@ import type { BaseTranslation } from "../i18n-types";
 
 const en = {
 	nav: {
-		home: "Home",
-		all: "All",
+		all: "All Vaults",
 		personal: "Personal",
 		work: "Work",
 	},
