@@ -1,18 +1,7 @@
-<script>
-	import DownArrow from "../../basic/icons/mobileDownArrow.svelte";
-	import { CATEGORIES } from "../helper";
+<script lang="ts">
+	import { CATEGORIES } from "../../../../utils/mobileUtils";
 	import LL from "../../../../i18n/i18n-svelte";
 	import DownArrow from "../../../../icons/mobileDownArrow.svelte";
-	import CreditCard from "../../../../icons/creditCard.svelte";
-	import KeyIcon from "../../../../icons/mobileKey.svelte";
-	import LoginIcon from "../../../../icons/pwdGen.svelte";
-	import MobileOldKey from "../../../../icons/mobileOldKey.svelte";
-	import MobileBank from "../../../../icons/mobileBank.svelte";
-	import MobileDatabase from "../../../../icons/mobileDatabase.svelte";
-	import MobileApiIcon from "../../../../icons/mobileApiIcon.svelte";
-	import MobileNote from "../../../../icons/mobileNote.svelte";
-	import MobileContact from "../../../../icons/mobileContact.svelte";
-	import MobileWallet from "../../../../icons/mobileWallet.svelte";
 
 	export let isRecentsVisible;
 	export let selectedCredentialType;

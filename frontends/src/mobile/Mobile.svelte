@@ -62,8 +62,8 @@
 {:else}
 	<main
 		class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
-		<LocationSearchFilter {currentVault} />
-		<VaultList bind:currentVault />
+		<LocationSearchFilter bind:vaultSwitchActive {currentVault} />
+		<!-- <VaultList bind:currentVault /> -->
 		<RecentsList bind:isRecentsVisible />
 		<Categories bind:selectedCredentialType {isRecentsVisible} />
 		<MainNav bind:currentVault />
