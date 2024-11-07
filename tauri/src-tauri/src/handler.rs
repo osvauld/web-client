@@ -17,11 +17,9 @@ use once_cell::sync::Lazy;
 use serde_json::Value;
 use std::sync::Arc;
 use sys_locale::get_locale;
-use tauri::command;
 use tauri::AppHandle;
 use tauri::State;
 use tauri::Wry;
-use tauri_plugin_store::Store;
 use tauri_plugin_store::StoreExt;
 use tokio::sync::Mutex;
 
@@ -180,26 +178,26 @@ pub async fn handle_change_passphrase(
     Ok(CryptoResponse::ChangedPassphrase(new_certificate))
 }
 
-#[tauri::command]
-pub async fn handle_add_folder(
-    input: AddFolderInput,
-    db_connection: State<'_, DbConnection>,
-) -> Result<CryptoResponse, String> {
-    add_folder(&input.name, &input.description, db_connection)
-        .await
-        .map_err(|e| format!("Failed to add folder: {}", e))?;
-    Ok(CryptoResponse::Success)
-}
+// #[tauri::command]
+// pub async fn handle_add_folder(
+//     input: AddFolderInput,
+//     db_connection: State<'_, DbConnection>,
+// ) -> Result<CryptoResponse, String> {
+//     add_folder(&input.name, &input.description, db_connection)
+//         .await
+//         .map_err(|e| format!("Failed to add folder: {}", e))?;
+//     Ok(CryptoResponse::Success)
+// }
 
-#[tauri::command]
-pub async fn handle_get_folders(
-    db_connection: State<'_, DbConnection>,
-) -> Result<CryptoResponse, String> {
-    let folders_response = get_all_folders(db_connection)
-        .await
-        .map_err(|e| format!("Failed to get folders: {}", e))?;
-    Ok(CryptoResponse::Folders(folders_response))
-}
+// #[tauri::command]
+// pub async fn handle_get_folders(
+//     db_connection: State<'_, DbConnection>,
+// ) -> Result<CryptoResponse, String> {
+//     let folders_response = get_all_folders(db_connection)
+//         .await
+//         .map_err(|e| format!("Failed to get folders: {}", e))?;
+//     Ok(CryptoResponse::Folders(folders_response))
+// }
 
 #[tauri::command]
 pub async fn handle_get_credentials_for_folder(

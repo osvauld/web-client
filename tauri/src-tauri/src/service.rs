@@ -1,13 +1,9 @@
-use crate::database::models::{
-    CredentialWithEncryptedKey, Folder, FolderAccessWithPublicKey, SyncRecord,
-};
+use crate::database::models::{CredentialWithEncryptedKey, Folder, SyncRecord};
 use crate::database::queries;
-use crate::database::schema::credentials::encrypted_key;
 use crate::handler::CRYPTO_UTILS;
 use crate::types::{CryptoResponse, FolderResponse};
 use crate::DbConnection;
 use chrono::{DateTime, Utc};
-use crypto_utils::types::UserAccess;
 use crypto_utils::CryptoUtils;
 use log::{error, info};
 use tauri::State;
@@ -18,7 +14,6 @@ use uuid::Uuid;
 fn get_current_timestamp() -> String {
     Utc::now().format("%Y-%m-%d %H:%M:%S%.3f").to_string()
 }
-use crypto_utils::types::UserPublicKey;
 pub async fn is_signed_up(store: &Store<Wry>) -> Result<bool, String> {
     Ok(store.get("certificate").is_some())
 }

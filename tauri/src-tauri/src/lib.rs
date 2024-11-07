@@ -1,23 +1,26 @@
 use log::{error, info};
 use tauri::Manager;
-use tauri_plugin_store::StoreExt;
+pub mod application;
 mod database;
+pub mod domains;
+pub mod persistence;
 use database::{initialize_database, DbConnection};
 pub mod handler;
+pub mod handlers;
 mod p2p;
 mod service;
-use tokio::sync::Mutex;
 mod types;
+use crate::application::services::FolderService;
 use crate::handler::{
     check_private_key_loaded, check_signup_status, connect_with_ticket, get_system_locale,
-    get_ticket, handle_add_credential, handle_add_folder, handle_change_passphrase,
-    handle_export_certificate, handle_get_credentials_for_folder, handle_get_folders,
-    handle_get_public_key, handle_hash_and_sign, handle_import_certificate, handle_save_passphrase,
-    handle_sign_challenge, send_message,
+    get_ticket, handle_add_credential, handle_change_passphrase, handle_export_certificate,
+    handle_get_credentials_for_folder, handle_get_public_key, handle_hash_and_sign,
+    handle_import_certificate, handle_save_passphrase, handle_sign_challenge, send_message,
 };
+use crate::handlers::folder_handler::{handle_add_folder, handle_get_folders};
+use crate::persistence::repositories::{SqliteFolderRepository, SqliteSyncRepository};
 use log::LevelFilter;
 use std::sync::Arc;
-use sys_locale::get_locale;
 use tokio::runtime::Runtime;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -56,6 +59,14 @@ pub fn run() {
             match db_connection {
                 Ok(connection) => {
                     app.manage(connection.clone());
+                    let folder_repo = Arc::new(SqliteFolderRepository::new(connection.clone()));
+                    let sync_repo = Arc::new(SqliteSyncRepository::new(connection.clone()));
+                    let folder_service = Arc::new(FolderService::new(
+                        folder_repo,
+                        sync_repo,
+                        "1".to_string(), // TODO: Get from config
+                    ));
+                    app.manage(folder_service);
                 }
                 Err(e) => {
                     error!("Failed to set up database: {}", e);
