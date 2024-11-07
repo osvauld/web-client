@@ -49,6 +49,7 @@ pub struct NewCredential {
     pub id: String,
     pub credential_type: String,
     pub data: String,
+    pub encrypted_key: String,
     pub folder_id: String,
     pub signature: String,
     pub permission: String,

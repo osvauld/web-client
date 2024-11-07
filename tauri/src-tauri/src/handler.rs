@@ -96,20 +96,22 @@ pub async fn handle_add_credential(
     input: AddCredentialInput,
     db_connection: State<'_, DbConnection>,
 ) -> Result<CryptoResponse, String> {
-    let folder_access = get_folder_access(&db_connection, &input.folder_id)
-        .await
-        .unwrap();
-
     let response = {
         let crypto = CRYPTO_UTILS.lock().await;
         crypto
-            .encrypt_data_for_users(input.credential_payload, folder_access)
+            .add_credential(input.credential_payload)
             .map_err(|e| format!("Failed to encrypt data: {}", e))?
     };
 
-    add_credential_service(&db_connection, response.encrypted_data, input.folder_id)
-        .await
-        .map_err(|e| format!("Failed to add credential: {}", e))?;
+    add_credential_service(
+        &db_connection,
+        response.encrypted_data,
+        response.encrypted_key.clone(),
+        input.credential_type,
+        input.folder_id,
+    )
+    .await
+    .map_err(|e| format!("Failed to add credential: {}", e))?;
 
     Ok(CryptoResponse::Success)
 }

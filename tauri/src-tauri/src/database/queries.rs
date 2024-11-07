@@ -10,6 +10,8 @@ use diesel::result::Error;
 use log::{error, info};
 use uuid::Uuid;
 
+use super::schema::credentials::credential_type;
+
 pub fn insert_folder(conn: &mut SqliteConnection, folder: &Folder) -> Result<(), Error> {
     match diesel::insert_into(folders::table)
         .values(folder)
@@ -85,6 +87,8 @@ pub async fn add_user(
 fn insert_credential(
     conn: &mut SqliteConnection,
     encrypted_payload: &str,
+    encrypted_key: String,
+    cred_type: String,
     folder_id: &str,
 ) -> Result<String, Error> {
     let credential_id = Uuid::new_v4().to_string();
@@ -92,9 +96,10 @@ fn insert_credential(
         id: credential_id.clone(),
         data: encrypted_payload.to_string(),
         folder_id: folder_id.to_string(),
+        encrypted_key: encrypted_key,
         permission: "read".to_string(),
         signature: "signature".to_string(),
-        credential_type: "credential_type".to_string(),
+        credential_type: cred_type,
     };
 
     match diesel::insert_into(credentials::table)
@@ -139,13 +144,16 @@ fn insert_sync_record(conn: &mut SqliteConnection, credential_id: &str) -> Resul
 pub async fn add_credential_and_access(
     db: &DbConnection,
     encrypted_payload: String,
+    enc_key: String,
+    cred_type: String,
     folder_id: String,
 ) -> Result<(), Error> {
     let mut conn = db.lock().await;
 
     conn.transaction(|conn| {
         // Insert credential and get its ID
-        let credential_id = insert_credential(conn, &encrypted_payload, &folder_id)?;
+        let credential_id =
+            insert_credential(conn, &encrypted_payload, enc_key, cred_type, &folder_id)?;
 
         // Insert sync record
         insert_sync_record(conn, &credential_id)?;

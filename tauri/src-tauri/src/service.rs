@@ -2,6 +2,7 @@ use crate::database::models::{
     CredentialWithEncryptedKey, Folder, FolderAccessWithPublicKey, SyncRecord,
 };
 use crate::database::queries;
+use crate::database::schema::credentials::encrypted_key;
 use crate::handler::CRYPTO_UTILS;
 use crate::types::{CryptoResponse, FolderResponse};
 use crate::DbConnection;
@@ -214,11 +215,19 @@ pub async fn add_user(
 pub async fn add_credential_service(
     db_connection: &State<'_, DbConnection>,
     encrypted_payload: String,
+    enc_key: String,
+    credential_type: String,
     folder_id: String,
 ) -> Result<(), String> {
-    queries::add_credential_and_access(&db_connection, encrypted_payload, folder_id)
-        .await
-        .map_err(|e| format!("Failed to add credential and access: {}", e))
+    queries::add_credential_and_access(
+        &db_connection,
+        encrypted_payload,
+        enc_key,
+        credential_type,
+        folder_id,
+    )
+    .await
+    .map_err(|e| format!("Failed to add credential and access: {}", e))
 }
 
 pub async fn get_credentials_for_folder(

@@ -9,7 +9,8 @@ use crate::crypto_core::{
 };
 use crate::errors::CryptoUtilsError;
 pub use crate::types::{
-    CredentialWithEncryptedKey, EncryptedDataWithAccess, GeneratedKeys, UserAccess, UserPublicKey,
+    CredentialWithEncryptedKey, EncryptedCredential, EncryptedDataWithAccess, GeneratedKeys,
+    UserAccess, UserPublicKey,
 };
 use anyhow::{Error as AnyhowError, Result};
 use argon2::password_hash::rand_core::OsRng;
@@ -238,6 +239,20 @@ impl CryptoUtils {
         }
 
         Ok(decrypted_credentials)
+    }
+
+    pub fn add_credential(&self, data: String) -> Result<EncryptedCredential, Box<dyn Error>> {
+        let cert = self.cert.as_ref().ok_or("No certificate loaded")?;
+        let pubic_key = get_public_key_armored(cert).unwrap();
+        let aes_key = generate_aes_key();
+
+        let encrypted_data = encrypt_with_aes(&aes_key, &data)?;
+        let recipient = get_recipient(&pubic_key).unwrap();
+        let encrypted_key = encrypt_text_pgp(&recipient, &encode(aes_key.as_slice()))?;
+        Ok(EncryptedCredential {
+            encrypted_data,
+            encrypted_key,
+        })
     }
 }
 
