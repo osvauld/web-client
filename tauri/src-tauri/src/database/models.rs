@@ -10,7 +10,9 @@ pub struct User {
     pub public_key: String,
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, Debug, Clone)]
+#[derive(
+    Queryable, Insertable, Serialize, Deserialize, Debug, Clone, Selectable, QueryableByName,
+)]
 #[diesel(table_name = folders)]
 pub struct Folder {
     pub id: String,
@@ -18,16 +20,8 @@ pub struct Folder {
     pub description: Option<String>,
     pub shared: bool,
     pub access_type: String,
-}
-
-#[derive(Queryable, Insertable, Associations, Serialize, Deserialize, Debug, Clone)]
-#[diesel(belongs_to(Folder, foreign_key = folder_id))]
-#[diesel(belongs_to(User, foreign_key = user_id))]
-#[diesel(table_name = folder_access)]
-pub struct FolderAccess {
-    pub folder_id: String,
-    pub user_id: String,
-    pub access_type: String,
+    pub created_at: String,
+    pub updated_at: String,
 }
 
 #[derive(Queryable, Insertable, Associations, Serialize, Deserialize, Debug, Clone)]
@@ -50,7 +44,7 @@ pub struct FolderAccessWithPublicKey {
 }
 
 #[derive(Insertable)]
-#[table_name = "credentials"]
+#[diesel(table_name = credentials)]
 pub struct NewCredential {
     pub id: String,
     pub credential_type: String,
@@ -58,17 +52,6 @@ pub struct NewCredential {
     pub folder_id: String,
     pub signature: String,
     pub permission: String,
-}
-
-#[derive(Insertable)]
-#[table_name = "credential_access"]
-pub struct NewCredentialAccess {
-    pub id: String,
-    pub credential_id: String,
-    pub user_id: String,
-    pub access_type: String,
-    pub folder_id: String,
-    pub encrypted_key: String,
 }
 
 // Update your AddCredentialInput struct:
@@ -81,12 +64,32 @@ pub struct AddCredentialInput {
     pub permission: String,
 }
 
-#[derive(Queryable, Serialize, Deserialize, Debug, Clone)]
+#[derive(Queryable, Serialize, Deserialize, Debug, Clone, Selectable)]
+#[diesel(table_name = credentials)]
 pub struct CredentialWithEncryptedKey {
     pub id: String,
     pub credential_type: String,
     pub data: String,
+    pub folder_id: String,
     pub signature: String,
     pub permission: String,
     pub encrypted_key: String,
+    pub updated_at: String,
+    pub created_at: String,
+}
+
+#[derive(Queryable, Serialize, Deserialize, Insertable, Debug, Clone)]
+#[diesel(table_name = sync_records)]
+pub struct SyncRecord {
+    pub id: String,
+    pub resource_id: String,
+    pub resource_type: String,
+    pub operation_type: String,
+    pub source_device_id: String,
+    pub target_device_id: String,
+    pub status: String,
+    pub created_at: String,
+    pub updated_at: String,
+    pub folder_id: Option<String>,
+    pub credential_id: Option<String>,
 }

@@ -1,8 +1,8 @@
 use super::p2p::AppState;
 use crate::service::{
     add_credential_service, add_folder, get_all_folders, get_certificate_and_salt,
-    get_credentials_for_folder, get_folder_access, get_public_key, is_signed_up, save_passphrase,
-    sign_hashed_message, store_certificate_and_salt,
+    get_credentials_for_folder, get_public_key, is_signed_up, save_passphrase, sign_hashed_message,
+    store_certificate_and_salt,
 };
 use crate::types::{
     AddCredentialInput, AddFolderInput, CredentialResponse, CryptoResponse,
@@ -107,14 +107,9 @@ pub async fn handle_add_credential(
             .map_err(|e| format!("Failed to encrypt data: {}", e))?
     };
 
-    add_credential_service(
-        &db_connection,
-        response.encrypted_data,
-        input.folder_id,
-        response.access_list,
-    )
-    .await
-    .map_err(|e| format!("Failed to add credential: {}", e))?;
+    add_credential_service(&db_connection, response.encrypted_data, input.folder_id)
+        .await
+        .map_err(|e| format!("Failed to add credential: {}", e))?;
 
     Ok(CryptoResponse::Success)
 }
@@ -186,11 +181,9 @@ pub async fn handle_change_passphrase(
 #[tauri::command]
 pub async fn handle_add_folder(
     input: AddFolderInput,
-    app_handle: AppHandle,
     db_connection: State<'_, DbConnection>,
 ) -> Result<CryptoResponse, String> {
-    let store = get_store(&app_handle).await;
-    add_folder(&input.name, &input.description, &store, db_connection)
+    add_folder(&input.name, &input.description, db_connection)
         .await
         .map_err(|e| format!("Failed to add folder: {}", e))?;
     Ok(CryptoResponse::Success)

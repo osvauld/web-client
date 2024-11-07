@@ -130,7 +130,6 @@ export const addCredentialHandler = async (
 	const credentialPayload = JSON.stringify({
 		name: name,
 		description,
-		credentialType,
 		credentialFields: addCredentialFields,
 	})
 
@@ -138,6 +137,7 @@ export const addCredentialHandler = async (
 	const response = await sendMessage("addCredential", {
 		credentialPayload,
 		folderId: folderId,
+		credentialTyoShare: usersToShare,
 	});
 	return {
 		success: true,
