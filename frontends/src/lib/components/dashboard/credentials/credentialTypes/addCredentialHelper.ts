@@ -137,7 +137,7 @@ export const addCredentialHandler = async (
 	const response = await sendMessage("addCredential", {
 		credentialPayload,
 		folderId: folderId,
-		credentialTyoShare: usersToShare,
+		credentialType: credentialType,
 	});
 	return {
 		success: true,

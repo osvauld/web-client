@@ -20,8 +20,8 @@ impl Folder {
             id: Uuid::new_v4().to_string(),
             name,
             description,
-            shared: false,
-            access_type: "private".to_string(),
+            shared: true,
+            access_type: "manager".to_string(),
             created_at: now.clone(),
             updated_at: now,
         }

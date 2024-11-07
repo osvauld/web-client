@@ -1,6 +1,7 @@
-use crate::database::schema::{folders, sync_records};
+use crate::database::schema::{credentials, folders, sync_records};
 use crate::domains::models::{
-    folder::Folder as DomainFolder, sync_record::SyncRecord as DomainSyncRecord,
+    credential::Credential as DomainCredential, folder::Folder as DomainFolder,
+    sync_record::SyncRecord as DomainSyncRecord,
 };
 use diesel::prelude::*;
 
@@ -93,5 +94,70 @@ impl From<SyncRecordModel> for DomainSyncRecord {
             created_at: model.created_at,
             updated_at: model.updated_at,
         }
+    }
+}
+
+#[derive(Queryable, Insertable)]
+#[diesel(table_name = credentials)]
+pub struct CredentialModel {
+    pub id: String,
+    pub credential_type: String,
+    pub data: String,
+    pub folder_id: String,
+    pub signature: String,
+    pub permission: String,
+    pub encrypted_key: String,
+    pub updated_at: String,
+    pub created_at: String,
+}
+
+impl From<&DomainCredential> for CredentialModel {
+    fn from(credential: &DomainCredential) -> Self {
+        Self {
+            id: credential.id.clone(),
+            credential_type: credential.credential_type.clone(),
+            data: credential.data.clone(),
+            folder_id: credential.folder_id.clone(),
+            signature: credential.signature.clone(),
+            permission: credential.permission.clone(),
+            encrypted_key: credential.encrypted_key.clone(),
+            created_at: chrono::Utc::now()
+                .format("%Y-%m-%d %H:%M:%S%.3f")
+                .to_string(),
+            updated_at: chrono::Utc::now()
+                .format("%Y-%m-%d %H:%M:%S%.3f")
+                .to_string(),
+        }
+    }
+}
+
+impl From<CredentialModel> for DomainCredential {
+    fn from(model: CredentialModel) -> Self {
+        Self {
+            id: model.id,
+            credential_type: model.credential_type,
+            data: model.data,
+            folder_id: model.folder_id,
+            signature: model.signature,
+            permission: model.permission,
+            encrypted_key: model.encrypted_key,
+            created_at: model.created_at,
+            updated_at: model.updated_at,
+        }
+    }
+}
+
+impl CredentialModel {
+    // Convert Vec<CredentialModel> to Vec<DomainCredential>
+    pub fn to_domain_credentials(models: Vec<CredentialModel>) -> Vec<DomainCredential> {
+        models.into_iter().map(DomainCredential::from).collect()
+    }
+
+    // Convert Vec<DomainCredential> to Vec<CredentialModel>
+    pub fn from_domain_credentials(credentials: Vec<DomainCredential>) -> Vec<CredentialModel> {
+        credentials
+            .into_iter()
+            .map(|c| CredentialModel::from(&c))
+            .collect()
     }
 }

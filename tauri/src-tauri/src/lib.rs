@@ -10,19 +10,28 @@ pub mod handlers;
 mod p2p;
 mod service;
 mod types;
+use crate::application::services::AuthService;
+use crate::application::services::CredentialService;
 use crate::application::services::FolderService;
-use crate::handler::{
-    check_private_key_loaded, check_signup_status, connect_with_ticket, get_system_locale,
-    get_ticket, handle_add_credential, handle_change_passphrase, handle_export_certificate,
-    handle_get_credentials_for_folder, handle_get_public_key, handle_hash_and_sign,
-    handle_import_certificate, handle_save_passphrase, handle_sign_challenge, send_message,
+use crate::handler::{connect_with_ticket, get_system_locale, get_ticket, send_message};
+use crate::handlers::auth_handler::{
+    check_private_key_loaded, check_signup_status, handle_change_passphrase,
+    handle_export_certificate, handle_get_public_key, handle_hash_and_sign,
+    handle_import_certificate, handle_save_passphrase, handle_sign_challenge,
+};
+use crate::handlers::credential_handler::{
+    handle_add_credential, handle_get_credentials_for_folder,
 };
 use crate::handlers::folder_handler::{handle_add_folder, handle_get_folders};
-use crate::persistence::repositories::{SqliteFolderRepository, SqliteSyncRepository};
+use crate::persistence::repositories::{
+    SqliteCredentialRepository, SqliteFolderRepository, SqliteSyncRepository,
+    TauriStoreAuthRepository,
+};
+use crypto_utils::CryptoUtils;
 use log::LevelFilter;
 use std::sync::Arc;
 use tokio::runtime::Runtime;
-
+use tokio::sync::Mutex;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -66,7 +75,17 @@ pub fn run() {
                         sync_repo,
                         "1".to_string(), // TODO: Get from config
                     ));
+                    let credential_repo =
+                        Arc::new(SqliteCredentialRepository::new(connection.clone()));
+                    let auth_repository = Arc::new(TauriStoreAuthRepository::new(handle.clone()));
+                    let crypto_utils = Arc::new(Mutex::new(CryptoUtils::new()));
+                    let auth_service =
+                        Arc::new(AuthService::new(auth_repository, crypto_utils.clone()));
+                    let credential_service =
+                        Arc::new(CredentialService::new(credential_repo, crypto_utils));
                     app.manage(folder_service);
+                    app.manage(auth_service);
+                    app.manage(credential_service);
                 }
                 Err(e) => {
                     error!("Failed to set up database: {}", e);
