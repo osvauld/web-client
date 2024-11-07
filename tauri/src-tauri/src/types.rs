@@ -55,6 +55,7 @@ pub struct SignChallengeInput {
 pub struct AddCredentialInput {
     pub credential_payload: String,
     pub folder_id: String,
+    pub credential_type: String,
 }
 
 #[derive(Deserialize)]

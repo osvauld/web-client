@@ -1,8 +1,12 @@
-use crate::database::models::{CredentialWithEncryptedKey, FolderAccessWithPublicKey};
+use crate::database::models::{
+    CredentialWithEncryptedKey, Folder, FolderAccessWithPublicKey, SyncRecord,
+};
 use crate::database::queries;
+use crate::database::schema::credentials::encrypted_key;
 use crate::handler::CRYPTO_UTILS;
 use crate::types::{CryptoResponse, FolderResponse};
 use crate::DbConnection;
+use chrono::{DateTime, Utc};
 use crypto_utils::types::UserAccess;
 use crypto_utils::CryptoUtils;
 use log::{error, info};
@@ -11,6 +15,9 @@ use tauri::Wry;
 use tauri_plugin_store::Store;
 use uuid::Uuid;
 
+fn get_current_timestamp() -> String {
+    Utc::now().format("%Y-%m-%d %H:%M:%S%.3f").to_string()
+}
 use crypto_utils::types::UserPublicKey;
 pub async fn is_signed_up(store: &Store<Wry>) -> Result<bool, String> {
     Ok(store.get("certificate").is_some())
@@ -130,29 +137,47 @@ pub fn get_certificate_and_salt(store: &Store<Wry>) -> Result<(String, String), 
 pub async fn add_folder(
     name: &str,
     description: &str,
-    store: &Store<Wry>,
     db_connection: State<'_, DbConnection>,
-) -> Result<(), String> {
-    let user_id = store
-        .get("user_id")
-        .and_then(|v| v.as_str().map(String::from))
-        .ok_or_else(|| "user not found in store".to_string())?;
+) -> Result<Folder, String> {
+    info!("Adding folder: {}", name);
+    let folder_id = Uuid::new_v4().to_string();
+    // Create folder object
 
-    let folder = queries::add_folder(
-        &db_connection,
-        name.to_string(),
-        Some(description.to_string()),
-        true,
-        "manager".to_string(),
-    )
-    .await
-    .map_err(|e| format!("Failed to add folder: {}", e))?;
+    let folder = Folder {
+        id: folder_id.clone(),
+        name: name.to_string(),
+        description: Some(description.to_string()),
+        shared: true,
+        access_type: "private".to_string(),
+        created_at: get_current_timestamp(),
+        updated_at: get_current_timestamp(),
+    };
 
-    queries::add_folder_access(&db_connection, folder.id, user_id, "manager".to_string())
-        .await
-        .map_err(|e| format!("Failed to add folder access: {}", e))?;
+    let current_device_id = 1.to_string();
 
-    Ok(())
+    // Create sync records for each target device
+    let sync_records: Vec<SyncRecord> = ["1", "2"]
+        .iter()
+        .map(|target_id| SyncRecord {
+            id: Uuid::new_v4().to_string(),
+            resource_id: folder_id.clone(),
+            resource_type: "folder".to_string(),
+            operation_type: "create".to_string(),
+            source_device_id: current_device_id.clone(),
+            target_device_id: target_id.to_string(),
+            status: "pending".to_string(),
+            folder_id: Some(folder_id.clone()),
+            credential_id: None,
+            created_at: get_current_timestamp(),
+            updated_at: get_current_timestamp(),
+        })
+        .collect();
+
+    // Execute transaction
+    let mut conn = db_connection.lock().await;
+    let _ = queries::insert_folder_with_sync(&mut *conn, &folder, &sync_records).await;
+
+    Ok(folder)
 }
 
 pub async fn get_all_folders(
@@ -187,37 +212,19 @@ pub async fn add_user(
     Ok(user_id)
 }
 
-pub async fn get_folder_access(
-    db_connection: &State<'_, DbConnection>,
-    folder_id: &str,
-) -> Result<Vec<UserPublicKey>, String> {
-    // Get folder access information
-    let folder_access = queries::get_folder_access(&db_connection, folder_id.to_string())
-        .await
-        .map_err(|e| format!("Failed to get folder access: {}", e))
-        .unwrap();
-
-    Ok(folder_access
-        .into_iter()
-        .map(|fa| UserPublicKey {
-            user_id: fa.user_id,
-            public_key: fa.public_key,
-            access: fa.access_type,
-        })
-        .collect())
-}
-
 pub async fn add_credential_service(
     db_connection: &State<'_, DbConnection>,
     encrypted_payload: String,
+    enc_key: String,
+    credential_type: String,
     folder_id: String,
-    user_access_list: Vec<UserAccess>,
 ) -> Result<(), String> {
     queries::add_credential_and_access(
         &db_connection,
         encrypted_payload,
+        enc_key,
+        credential_type,
         folder_id,
-        user_access_list,
     )
     .await
     .map_err(|e| format!("Failed to add credential and access: {}", e))
@@ -233,7 +240,7 @@ pub async fn get_credentials_for_folder(
         .and_then(|v| v.as_str().map(String::from))
         .ok_or_else(|| "user not found in store".to_string())?;
 
-    queries::get_credentials_with_encrypted_key(&db_connection, folder_id, user_id)
+    queries::get_credentials_with_encrypted_key(&db_connection, folder_id)
         .await
         .map_err(|e| format!("Failed to get credentials with encrypted key: {}", e))
 }

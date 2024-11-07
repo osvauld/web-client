@@ -45,3 +45,10 @@ pub struct CredentialWithEncryptedKey {
     pub permission: String,
     pub encrypted_key: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+
+pub struct EncryptedCredential {
+    pub encrypted_data: String,
+    pub encrypted_key: String,
+}
