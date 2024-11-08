@@ -4,13 +4,10 @@
 	import { loadLocaleAsync } from "../i18n/i18n-util.async";
 	import { onMount } from "svelte";
 
-	import LocationSearchFilter from "../lib/components/mobile/components/LocationSearchFilter.svelte";
-	import MainNav from "../lib/components/mobile/components/MainNav.svelte";
-	import RecentsList from "../lib/components/mobile/components/RecentsList.svelte";
-	import Categories from "../lib/components/mobile/components/Categories.svelte";
-	import VaultList from "../lib/components/mobile/components/VaultList.svelte";
-	import AddVault from "../lib/components/mobile/components/addVault.svelte";
-	import AddCredential from "../lib/components/mobile/components/addCredentialMobile.svelte";
+	import DefaultLayout from "../lib/components/mobile/components/layouts/DefaultLayout.svelte";
+	import CredentialLayout from "../lib/components/mobile/components/layouts/CredentialLayout.svelte";
+	import CategoryLayout from "../lib/components/mobile/components/layouts/CategoryLayout.svelte";
+	import { uiState } from "../lib/components/mobile/store/mobile.ui.store";
 
 	const SUPPORTED_LANGUAGES = [
 		"en",
@@ -27,10 +24,12 @@
 		"tr",
 		"zh",
 	];
-	let isRecentsVisible = true;
-	let currentVault = "all";
-	let vaultSwitchActive = false;
-	let selectedCredentialType = "";
+
+	$: currentLayout = $uiState.selectedCredentialType
+		? "credential"
+		: $uiState.selectedCredentialType
+			? "category"
+			: "default";
 
 	async function initializeLanguage() {
 		try {
@@ -54,19 +53,12 @@
 	});
 </script>
 
-{#if selectedCredentialType}
-	<main
-		class="w-screen h-screen bg-mobile-bgPrimary flex flex-col overflow-hidden p-3">
-		<AddCredential bind:selectedCredentialType />
-	</main>
-{:else}
-	<main
-		class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
-		<LocationSearchFilter bind:vaultSwitchActive {currentVault} />
-		<!-- <VaultList bind:currentVault /> -->
-		<RecentsList bind:isRecentsVisible />
-		<Categories bind:selectedCredentialType {isRecentsVisible} />
-		<MainNav bind:currentVault />
-		<AddVault bind:vaultSwitchActive bind:currentVault />
-	</main>
-{/if}
+{#key currentLayout}
+	{#if currentLayout === "credential"}
+		<CredentialLayout />
+	{:else if currentLayout === "category"}
+		<CategoryLayout />
+	{:else}
+		<DefaultLayout />
+	{/if}
+{/key}
