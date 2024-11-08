@@ -6,8 +6,6 @@ use std::path::Path;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-pub mod models;
-pub mod queries;
 pub mod schema;
 
 pub type DbConnection = Arc<Mutex<SqliteConnection>>;

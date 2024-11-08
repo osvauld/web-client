@@ -5,15 +5,12 @@ mod database;
 pub mod domains;
 pub mod persistence;
 use database::{initialize_database, DbConnection};
-pub mod handler;
 pub mod handlers;
-mod p2p;
-mod service;
 mod types;
 use crate::application::services::AuthService;
 use crate::application::services::CredentialService;
 use crate::application::services::FolderService;
-use crate::handler::{connect_with_ticket, get_system_locale, get_ticket, send_message};
+use crate::application::services::P2PService;
 use crate::handlers::auth_handler::{
     check_private_key_loaded, check_signup_status, handle_change_passphrase,
     handle_export_certificate, handle_get_public_key, handle_hash_and_sign,
@@ -23,6 +20,9 @@ use crate::handlers::credential_handler::{
     handle_add_credential, handle_get_credentials_for_folder,
 };
 use crate::handlers::folder_handler::{handle_add_folder, handle_get_folders};
+use crate::handlers::p2p_handlers::{
+    connect_with_ticket, get_system_locale, get_ticket, send_message,
+};
 use crate::persistence::repositories::{
     SqliteCredentialRepository, SqliteFolderRepository, SqliteSyncRepository,
     TauriStoreAuthRepository,
@@ -75,6 +75,7 @@ pub fn run() {
                         sync_repo,
                         "1".to_string(), // TODO: Get from config
                     ));
+                    let p2p_service = Arc::new(P2PService::new(handle.clone()));
                     let credential_repo =
                         Arc::new(SqliteCredentialRepository::new(connection.clone()));
                     let auth_repository = Arc::new(TauriStoreAuthRepository::new(handle.clone()));
@@ -86,27 +87,13 @@ pub fn run() {
                     app.manage(folder_service);
                     app.manage(auth_service);
                     app.manage(credential_service);
+                    app.manage(p2p_service);
                 }
                 Err(e) => {
                     error!("Failed to set up database: {}", e);
                     panic!("Cannot continue without database connection");
                 }
             }
-
-            let rt_clone = Arc::clone(&rt);
-            match rt_clone.block_on(p2p::initialize_p2p(&handle)) {
-                Ok(app_state) => {
-                    info!("P2P initialization successful");
-                    app.manage(app_state);
-                }
-                Err(e) => {
-                    error!("Failed to initialize P2P: {}", e);
-                    panic!("Cannot continue without P2P initialization");
-                }
-            }
-
-            // Manage the runtime
-            app.manage(rt);
 
             #[cfg(debug_assertions)]
             {
