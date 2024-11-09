@@ -1,15 +1,12 @@
 <script>
 	import CreditCard from "../../../../../icons/creditCard.svelte";
-	const testArray = Array(6).fill(null);
+	export let NUM_CREDS;
+	const testArray = Array(NUM_CREDS).fill(null);
 	import LL from "../../../../../i18n/i18n-svelte";
 </script>
 
-<button
-	class="px-3 h-[40px] flex justify-between items-center active:bg-mobile-bgHighlight/10">
-	<span class="text-mobile-textSecondary">{$LL.recents()}</span>
-</button>
-
-<ul class="px-1 text-mobile-textPrimary mx-2">
+<ul
+	class="px-1 text-mobile-textPrimary mx-2 grow overflow-y-auto scrollbar-thin">
 	{#each testArray as _, index}
 		<li
 			key="{index}"
