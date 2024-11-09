@@ -5,15 +5,18 @@
 		credentialFieldsUpdater,
 	} from "../../../../../utils/mobileUtils";
 
-	import { uiState, uiStateActions } from "../../store/mobile.ui.store";
+	import {
+		selectedCredentialType,
+		categorySelection,
+	} from "../../store/mobile.ui.store";
 
 	let selectedCategory = CATEGORIES.find(
-		(item) => item.id === $uiState.selectedCredentialType,
+		(item) => item.id === $selectedCredentialType,
 	);
 
 	const directToHome = () => {
-		uiStateActions.setCredentialType("");
-		uiStateActions.setCategorySelection(false);
+		selectedCredentialType.set("");
+		categorySelection.set(false);
 	};
 
 	let credentialFields = credentialFieldsUpdater(selectedCategory.name);

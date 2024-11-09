@@ -7,7 +7,10 @@
 	import DefaultLayout from "../lib/components/mobile/components/layouts/DefaultLayout.svelte";
 	import CredentialLayout from "../lib/components/mobile/components/layouts/CredentialLayout.svelte";
 	import CategoryLayout from "../lib/components/mobile/components/layouts/CategoryLayout.svelte";
-	import { uiState } from "../lib/components/mobile/store/mobile.ui.store";
+	import {
+		selectedCredentialType,
+		categorySelection,
+	} from "../lib/components/mobile/store/mobile.ui.store";
 
 	const SUPPORTED_LANGUAGES = [
 		"en",
@@ -25,9 +28,9 @@
 		"zh",
 	];
 
-	$: currentLayout = $uiState.selectedCredentialType
+	$: currentLayout = $selectedCredentialType
 		? "credential"
-		: $uiState.selectedCredentialType
+		: $categorySelection
 			? "category"
 			: "default";
 

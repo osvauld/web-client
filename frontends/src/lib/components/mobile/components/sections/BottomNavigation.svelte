@@ -4,7 +4,7 @@
 	import Add from "../../../../../icons/mobileAdd.svelte";
 	import PwdGen from "../../../../../icons/pwdGen.svelte";
 	import Home from "../../../../../icons/mobileHome.svelte";
-	import { uiState, uiStateActions } from "../../store/mobile.ui.store";
+	import { categorySelection, currentVault } from "../../store/mobile.ui.store";
 </script>
 
 <nav
@@ -12,8 +12,8 @@
 	<button
 		class=" flex-1 flex justify-center items-center flex-col"
 		on:click="{() => {
-			uiStateActions.setCurrentVault('all');
-			uiStateActions.setCategorySelection(false);
+			currentVault.set('all');
+			categorySelection.set(false);
 		}}">
 		<span class="flex justify-center items-center"
 			><Home color="{'#5B5D6D'}" /></span>
@@ -21,8 +21,7 @@
 	</button>
 	<button
 		class=" flex-1 flex justify-center items-center flex-col"
-		on:click="{() =>
-			uiStateActions.setCategorySelection(!$uiState.categorySelection)}">
+		on:click="{() => categorySelection.set(!$categorySelection)}">
 		<span class="flex justify-center items-center"
 			><Add color="{'#5B5D6D'}" /></span>
 		<span>{$LL.tabs.add()}</span></button>
