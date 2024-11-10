@@ -4,6 +4,7 @@
 	import RecentsList from "../views/RecentsList.svelte";
 	import AddVault from "../views/AddVault.svelte";
 	import EmptyVault from "../ui/EmptyVault.svelte";
+	import { vaultSwitchActive } from "../../store/mobile.ui.store";
 
 	const NUM_CREDS = 0;
 </script>
@@ -17,5 +18,7 @@
 		<RecentsList {NUM_CREDS} />
 	{/if}
 	<BottomNavigation />
-	<AddVault />
+	{#if $vaultSwitchActive}
+		<AddVault />
+	{/if}
 </main>
