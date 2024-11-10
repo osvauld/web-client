@@ -20,18 +20,14 @@
 	};
 
 	const handleFolderCreation = () => {
-		sendMessage("addFolder", { name: newVaultName });
+		// sendMessage("addFolder", { name: newVaultName });
 		newVaultName = "";
 		newVaultInputActive = false;
 	};
 
 	onMount(async () => {
-		const resp = await sendMessage("getFolder");
-		console.log("resp ============>", resp);
-	});
-
-	onDestroy(() => {
-		console.log("the component is being destroyed");
+		// const resp = await sendMessage("getFolder");
+		// console.log("resp ============>", resp);
 	});
 </script>
 
