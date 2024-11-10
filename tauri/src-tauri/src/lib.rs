@@ -21,7 +21,7 @@ use crate::handlers::credential_handler::{
 };
 use crate::handlers::folder_handler::{handle_add_folder, handle_get_folders};
 use crate::handlers::p2p_handlers::{
-    connect_with_ticket, get_system_locale, get_ticket, send_message,
+    connect_with_ticket, get_system_locale, get_ticket, send_message, start_p2p_listener,
 };
 use crate::persistence::repositories::{
     SqliteCredentialRepository, SqliteFolderRepository, SqliteSyncRepository,
@@ -75,7 +75,10 @@ pub fn run() {
                         sync_repo,
                         "1".to_string(), // TODO: Get from config
                     ));
+
                     let p2p_service = Arc::new(P2PService::new(handle.clone()));
+                    app.manage(p2p_service);
+
                     let credential_repo =
                         Arc::new(SqliteCredentialRepository::new(connection.clone()));
                     let auth_repository = Arc::new(TauriStoreAuthRepository::new(handle.clone()));
@@ -84,16 +87,19 @@ pub fn run() {
                         Arc::new(AuthService::new(auth_repository, crypto_utils.clone()));
                     let credential_service =
                         Arc::new(CredentialService::new(credential_repo, crypto_utils));
+
                     app.manage(folder_service);
                     app.manage(auth_service);
                     app.manage(credential_service);
-                    app.manage(p2p_service);
                 }
                 Err(e) => {
                     error!("Failed to set up database: {}", e);
                     panic!("Cannot continue without database connection");
                 }
             }
+
+            // Manage the runtime
+            app.manage(rt);
 
             #[cfg(debug_assertions)]
             {
@@ -121,6 +127,7 @@ pub fn run() {
             send_message,
             get_ticket,
             connect_with_ticket,
+            start_p2p_listener
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
