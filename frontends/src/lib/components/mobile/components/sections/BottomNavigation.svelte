@@ -1,22 +1,27 @@
 <script lang="ts">
-	import LL from "../../../../i18n/i18n-svelte";
-	import Profile from "../../../../icons/profile.svelte";
-	import Add from "../../../../icons/mobileAdd.svelte";
-	import PwdGen from "../../../../icons/pwdGen.svelte";
-	import Home from "../../../../icons/mobileHome.svelte";
-	export let currentVault;
+	import LL from "../../../../../i18n/i18n-svelte";
+	import Profile from "../../../../../icons/profile.svelte";
+	import Add from "../../../../../icons/mobileAdd.svelte";
+	import PwdGen from "../../../../../icons/pwdGen.svelte";
+	import Home from "../../../../../icons/mobileHome.svelte";
+	import { categorySelection, currentVault } from "../../store/mobile.ui.store";
 </script>
 
 <nav
 	class="h-[60px] w-full fixed bottom-0 bg-mobile-navBlue flex text-base font-sans font-normal text-mobile-iconPrimary">
 	<button
 		class=" flex-1 flex justify-center items-center flex-col"
-		on:click="{() => (currentVault = 'all')}">
+		on:click="{() => {
+			currentVault.set('all');
+			categorySelection.set(false);
+		}}">
 		<span class="flex justify-center items-center"
 			><Home color="{'#5B5D6D'}" /></span>
 		<span>{$LL.tabs.home()}</span>
 	</button>
-	<button class=" flex-1 flex justify-center items-center flex-col">
+	<button
+		class=" flex-1 flex justify-center items-center flex-col"
+		on:click="{() => categorySelection.set(!$categorySelection)}">
 		<span class="flex justify-center items-center"
 			><Add color="{'#5B5D6D'}" /></span>
 		<span>{$LL.tabs.add()}</span></button>

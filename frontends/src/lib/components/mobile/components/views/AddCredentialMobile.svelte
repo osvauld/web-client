@@ -1,22 +1,30 @@
 <script>
-	import MobileDownArrow from "../../../../icons/mobileDownArrow.svelte";
+	import MobileDownArrow from "../../../../../icons/mobileDownArrow.svelte";
 	import {
 		CATEGORIES,
 		credentialFieldsUpdater,
-	} from "../../../../utils/mobileUtils";
+	} from "../../../../../utils/mobileUtils";
 
-	export let selectedCredentialType;
+	import {
+		selectedCredentialType,
+		categorySelection,
+	} from "../../store/mobile.ui.store";
 
 	let selectedCategory = CATEGORIES.find(
-		(item) => item.id === selectedCredentialType,
+		(item) => item.id === $selectedCredentialType,
 	);
+
+	const directToHome = () => {
+		selectedCredentialType.set("");
+		categorySelection.set(false);
+	};
 
 	let credentialFields = credentialFieldsUpdater(selectedCategory.name);
 </script>
 
 <nav
 	class="w-full h-[48px] pr-3 flex justify-start items-center gap-1 flex-shrink-0">
-	<button on:click="{() => (selectedCredentialType = '')}" class="p-2 pr-1">
+	<button on:click="{directToHome}" class="p-2 pr-1">
 		<span class="inline-block rotate-90">
 			<MobileDownArrow />
 		</span>
@@ -50,7 +58,7 @@
 	class="h-[68px] flex-shrink-0 p-3 flex justify-between items-center text-mobile-bgPrimary">
 	<button
 		class="px-10 py-2.5 text-mobile-textSecondary"
-		on:click="{() => (selectedCredentialType = '')}">Cancel</button>
+		on:click="{directToHome}">Cancel</button>
 	<button class="px-10 py-2.5 bg-osvauld-carolinablue rounded-lg font-medium"
 		>Add Card</button>
 </div>
