@@ -24,6 +24,23 @@
 		// isSignedUp.set(false);
 	});
 
+	const handleSignUp = async () => {
+		try {
+			await Promise.all([
+				invoke("handle_add_folder", {
+					input: { name: "Personal", description: "" },
+				}),
+				invoke("handle_add_folder", {
+					input: { name: "Work", description: "" },
+				}),
+			]);
+		} catch (e) {
+			console.log("error detected", e);
+		}
+
+		isSignedUp = true;
+	};
+
 	const checkAuth = (event: CustomEvent) => {
 		loggedIn = event.detail;
 	};
@@ -37,7 +54,7 @@
 	{#if isLoaderActive}
 		<Loader />
 	{:else if !isSignedUp}
-		<Signup on:signedUp="{() => (isSignedUp = true)}" />
+		<Signup on:signedUp="{handleSignUp}" />
 	{:else if loggedIn}
 		<Home />
 	{:else}

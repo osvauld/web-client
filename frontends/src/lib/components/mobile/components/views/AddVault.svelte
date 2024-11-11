@@ -1,17 +1,15 @@
 <script>
+	import { invoke } from "@tauri-apps/api/core";
 	import { slide } from "svelte/transition";
 	import Add from "../../../../../icons/add.svelte";
 	import RoundedInfo from "../../../../../icons/roundedInfo.svelte";
 	import RightArrow from "../../../../../icons/rightArrow.svelte";
-	import { vaultSwitchActive, currentVault } from "../../store/mobile.ui.store";
-	import { sendMessage } from "../../../dashboard/helper";
-	import { onMount, onDestroy } from "svelte";
+	import {
+		vaultSwitchActive,
+		currentVault,
+		vaults,
+	} from "../../store/mobile.ui.store";
 
-	const VAULTS = [
-		{ id: "all", name: "All Vaults", count: 54 },
-		{ id: "personal", name: "Personal", count: 4 },
-		{ id: "work", name: "Work", count: 50 },
-	];
 	let newVaultInputActive = false;
 	let newVaultName = "";
 
@@ -19,23 +17,30 @@
 		node.focus();
 	};
 
-	const handleFolderCreation = () => {
-		// sendMessage("addFolder", { name: newVaultName });
-		newVaultName = "";
-		newVaultInputActive = false;
+	const handleFolderCreation = async () => {
+		try {
+			await invoke("handle_add_folder", {
+				input: { name: newVaultName, description: "" },
+			});
+		} catch (e) {
+			console.log("Error received", e);
+		} finally {
+			const resp = await invoke("handle_get_folders");
+			const updatedVaults = [...vaults, ...resp];
+			vaults.set(updatedVaults);
+			currentVault.set(newVaultName);
+			vaultSwitchActive.set(false);
+			newVaultName = "";
+			newVaultInputActive = false;
+		}
 	};
-
-	onMount(async () => {
-		// const resp = await sendMessage("getFolder");
-		// console.log("resp ============>", resp);
-	});
 </script>
 
 <div
 	class="absolute w-full h-auto bottom-0 border-t-[1px] border-mobile-textSecondary bg-mobile-bgPrimary rounded-t-2xl px-2 pt-2 pb-3 flex flex-col gap-2 text-lg"
 	in:slide
 	out:slide>
-	{#each VAULTS as vault (vault.id)}
+	{#each vaults as vault (vault.id)}
 		{@const isActive = $currentVault === vault.id}
 		<button
 			on:click="{() => {
@@ -70,7 +75,7 @@
 				<button
 					type="submit"
 					class="h-[48px] flex justify-center items-center gap-1 rounded-lg bg-mobile-highlightBlue text-mobile-bgPrimary font-medium text-lg mt-6"
-					on:click="{() => vaultSwitchActive.set(false)}"
+					on:click="{handleFolderCreation}"
 					>Create New Vault <Add color="#000" /></button>
 			</div>
 		</div>
@@ -78,7 +83,6 @@
 		<button
 			on:click="{() => (newVaultInputActive = true)}"
 			class="h-[48px] flex justify-center items-center gap-1 rounded-lg border-2 border-mobile-bgHighlight p-4 active:bg-mobile-bgLight text-mobile-textActive"
-			on:click="{handleFolderCreation}"
 			>Create New Vault <Add color="#85889C" /></button>
 	{/if}
 </div>
