@@ -9,6 +9,7 @@
 		currentVault,
 		vaults,
 	} from "../../store/mobile.ui.store";
+	import { onMount } from "svelte";
 
 	let newVaultInputActive = false;
 	let newVaultName = "";
@@ -25,15 +26,22 @@
 		} catch (e) {
 			console.log("Error received", e);
 		} finally {
-			const resp = await invoke("handle_get_folders");
-			const updatedVaults = [...vaults, ...resp];
-			vaults.set(updatedVaults);
 			currentVault.set(newVaultName);
 			vaultSwitchActive.set(false);
 			newVaultName = "";
 			newVaultInputActive = false;
 		}
 	};
+
+	onMount(async () => {
+		try {
+			const resp = await invoke("handle_get_folders");
+			const updatedVaults = [...vaults, ...resp];
+			vaults.set(updatedVaults);
+		} catch (e) {
+			console.log("Error received ===>", e);
+		}
+	});
 </script>
 
 <div
@@ -41,18 +49,18 @@
 	in:slide
 	out:slide>
 	{#each vaults as vault (vault.id)}
-		{@const isActive = $currentVault === vault.id}
+		{@const isActive = $currentVault === vault.name}
 		<button
 			on:click="{() => {
 				vaultSwitchActive.set(false);
 				newVaultInputActive = false;
-				currentVault.set(vault.id);
+				currentVault.set(vault.name);
 			}}"
 			class="h-[48px] p-4 text-mobile-textPrimary flex items-center rounded-lg"
 			class:bg-mobile-bgLight="{isActive}"
 			class:text-mobile-textTertiary="{isActive}">
 			<span><RoundedInfo color="{isActive ? '#F2F2F0' : '#85889C'}" /></span>
-			<span class="grow text-left pl-2">{vault.name}</span>
+			<span class="grow text-left pl-2 capitalize">{vault.name}</span>
 			<span><RightArrow color="{isActive ? '#F2F2F0' : '#85889C'}" /></span>
 		</button>
 	{/each}

@@ -9,7 +9,7 @@
 <div class="fixed w-full top-0 h-[48px] flex justify-between items-center px-4">
 	<span><Options color="#85889C" /></span>
 	<button
-		class="text-2xl text-mobile-textPrimary font-semibold flex items-center gap-2"
+		class="text-2xl text-mobile-textPrimary font-semibold flex items-center gap-2 capitalize"
 		on:click="{() => vaultSwitchActive.set(!$vaultSwitchActive)}">
 		{$currentVault === "all" ? "All Vaults" : $currentVault}
 		<span><DownArrow color="#85889C" /></span>
