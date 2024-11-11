@@ -1,3 +1,4 @@
+use crate::application::services::sync_service::SyncService;
 use crate::domains::models::p2p::{ConnectionTicket, Message};
 use crate::types::CryptoResponse;
 use futures_lite::StreamExt;
@@ -5,6 +6,7 @@ use iroh::net::relay::RelayMode;
 use iroh::net::{Endpoint, NodeAddr};
 use iroh_net::endpoint::Connection;
 use iroh_net::endpoint::DirectAddrType;
+
 use iroh_net::endpoint::{RecvStream, SendStream};
 use log::{error, info};
 use std::sync::Arc;
@@ -25,13 +27,15 @@ struct P2PState {
 pub struct P2PService {
     state: Arc<Mutex<Option<P2PState>>>,
     app_handle: AppHandle,
+    sync_service: Arc<SyncService>,
 }
 
 impl P2PService {
-    pub fn new(app_handle: AppHandle) -> Self {
+    pub fn new(app_handle: AppHandle, sync_service: Arc<SyncService>) -> Self {
         Self {
             state: Arc::new(Mutex::new(None)),
             app_handle,
+            sync_service,
         }
     }
     async fn ensure_initialized(&self) -> Result<(), String> {

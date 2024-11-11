@@ -1,6 +1,7 @@
 use chrono::Utc;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SyncRecord {
     pub id: String,
     pub resource_id: String,

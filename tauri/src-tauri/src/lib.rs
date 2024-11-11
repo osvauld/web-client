@@ -11,6 +11,7 @@ use crate::application::services::AuthService;
 use crate::application::services::CredentialService;
 use crate::application::services::FolderService;
 use crate::application::services::P2PService;
+use crate::application::services::SyncService;
 use crate::handlers::auth_handler::{
     check_private_key_loaded, check_signup_status, handle_change_passphrase,
     handle_export_certificate, handle_get_public_key, handle_hash_and_sign,
@@ -68,29 +69,43 @@ pub fn run() {
             match db_connection {
                 Ok(connection) => {
                     app.manage(connection.clone());
+
                     let folder_repo = Arc::new(SqliteFolderRepository::new(connection.clone()));
                     let sync_repo = Arc::new(SqliteSyncRepository::new(connection.clone()));
+                    let credential_repo =
+                        Arc::new(SqliteCredentialRepository::new(connection.clone()));
+
+                    // Initialize folder service with cloned repositories
                     let folder_service = Arc::new(FolderService::new(
-                        folder_repo,
-                        sync_repo,
+                        folder_repo.clone(),
+                        sync_repo.clone(),
                         "1".to_string(), // TODO: Get from config
                     ));
 
-                    let p2p_service = Arc::new(P2PService::new(handle.clone()));
-                    app.manage(p2p_service);
-
-                    let credential_repo =
-                        Arc::new(SqliteCredentialRepository::new(connection.clone()));
                     let auth_repository = Arc::new(TauriStoreAuthRepository::new(handle.clone()));
                     let crypto_utils = Arc::new(Mutex::new(CryptoUtils::new()));
                     let auth_service =
                         Arc::new(AuthService::new(auth_repository, crypto_utils.clone()));
-                    let credential_service =
-                        Arc::new(CredentialService::new(credential_repo, crypto_utils));
+                    let credential_service = Arc::new(CredentialService::new(
+                        credential_repo.clone(),
+                        crypto_utils,
+                    ));
 
+                    // Initialize sync service with cloned repositories
+                    let sync_service = Arc::new(SyncService::new(
+                        sync_repo.clone(),
+                        folder_repo.clone(),
+                        credential_repo.clone(),
+                    ));
+
+                    let p2p_service =
+                        Arc::new(P2PService::new(handle.clone(), sync_service.clone()));
+                    // Manage all services
                     app.manage(folder_service);
                     app.manage(auth_service);
                     app.manage(credential_service);
+                    app.manage(sync_service);
+                    app.manage(p2p_service.clone());
                 }
                 Err(e) => {
                     error!("Failed to set up database: {}", e);

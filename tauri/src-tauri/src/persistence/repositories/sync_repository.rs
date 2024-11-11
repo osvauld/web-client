@@ -29,4 +29,33 @@ impl SyncRepository for SqliteSyncRepository {
             .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
         Ok(())
     }
+
+    async fn get_pending_records(
+        &self,
+        target_device_id: &str,
+    ) -> Result<Vec<SyncRecord>, RepositoryError> {
+        let mut conn = self.connection.lock().await;
+
+        let sync_models = sync_records::table
+            .filter(sync_records::status.eq("pending"))
+            .filter(sync_records::target_device_id.eq(target_device_id))
+            .order_by(sync_records::created_at.asc())
+            .select(SyncRecordModel::as_select())
+            .load::<SyncRecordModel>(&mut *conn)
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+
+        Ok(SyncRecordModel::to_domain_records(sync_models))
+    }
+
+    async fn update_status(&self, sync_id: &str, status: &str) -> Result<(), RepositoryError> {
+        let mut conn = self.connection.lock().await;
+
+        diesel::update(sync_records::table)
+            .filter(sync_records::id.eq(sync_id))
+            .set(sync_records::status.eq(status))
+            .execute(&mut *conn)
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+
+        Ok(())
+    }
 }

@@ -45,7 +45,7 @@ impl From<FolderModel> for DomainFolder {
     }
 }
 
-#[derive(Queryable, Insertable)]
+#[derive(Queryable, Insertable, Selectable, QueryableByName, Debug, Clone)]
 #[diesel(table_name = sync_records)]
 pub struct SyncRecordModel {
     pub id: String,
@@ -76,6 +76,19 @@ impl From<&DomainSyncRecord> for SyncRecordModel {
             created_at: record.created_at.clone(),
             updated_at: record.updated_at.clone(),
         }
+    }
+}
+
+impl SyncRecordModel {
+    pub fn to_domain_records(models: Vec<SyncRecordModel>) -> Vec<DomainSyncRecord> {
+        models.into_iter().map(DomainSyncRecord::from).collect()
+    }
+
+    pub fn from_domain_records(records: Vec<DomainSyncRecord>) -> Vec<SyncRecordModel> {
+        records
+            .into_iter()
+            .map(|r| SyncRecordModel::from(&r))
+            .collect()
     }
 }
 

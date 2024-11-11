@@ -22,6 +22,11 @@ pub trait FolderRepository: Send + Sync {
 #[async_trait]
 pub trait SyncRepository: Send + Sync {
     async fn save_sync_records(&self, records: &[SyncRecord]) -> Result<(), RepositoryError>;
+    async fn get_pending_records(
+        &self,
+        target_device_id: &str,
+    ) -> Result<Vec<SyncRecord>, RepositoryError>;
+    async fn update_status(&self, sync_id: &str, status: &str) -> Result<(), RepositoryError>;
 }
 
 #[async_trait]
