@@ -4,7 +4,7 @@
 	import NavigationPanel from "../sections/NavigationPanel.svelte";
 </script>
 
-<div class="w-full h-full flex flex-col overflow-hidden">
+<div class="w-full h-full bg-osvauld-primaryBg flex flex-col overflow-hidden">
 	<HeaderSection />
 	<div class="grow flex">
 		<NavigationPanel />

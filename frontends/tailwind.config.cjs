@@ -44,6 +44,7 @@ module.exports = {
 					crust: "#11111b",
 				},
 				osvauld: {
+					primaryBg: "#010109",
 					frameblack: "#0D0E13",
 					bordergreen: "#161B22",
 					iconblack: "#2F303E",

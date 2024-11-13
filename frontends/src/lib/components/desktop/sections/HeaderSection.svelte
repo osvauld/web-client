@@ -1,9 +1,28 @@
 <script>
 	import OsvauldDesktopLogo from "../../../../icons/osvauldDesktopLogo.svelte";
+	import Lens from "../../../../icons/lens.svelte";
+	import Profile from "../../../../icons/profile.svelte";
 </script>
 
-<div class="h-[128px] w-full border-b border-osvauld-borderColor">
-	<span class="w-[360px] h-full flex items-center justify-center">
+<div class="h-32 w-full border-b border-osvauld-borderColor flex">
+	<span class="basis-[360px] shrink-0 h-full flex items-center justify-center">
 		<OsvauldDesktopLogo aria-label="Osvauld Logo" />
 	</span>
+	<div class="grow py-10 px-16 flex items-center justify-end gap-6">
+		<div
+			class="flex h-12 w-full min-w-[400px] max-w-2xl items-center bg-osvauld-frameblack py-2.5 px-3 rounded-lg">
+			<span class="sr-only">Search</span>
+			<Lens color="#4D4F60" />
+			<input
+				type="text"
+				name="search"
+				class="grow border-0 focus:ring-0 outline-0 bg-osvauld-frameblack text-osvauld-activeBorder placeholder:text-osvauld-activeBorder font-light text-base leading-6"
+				placeholder="Search" />
+		</div>
+		<button
+			aria-label="Open Profile View"
+			class="p-3 rounded-lg bg-osvauld-frameblack">
+			<Profile color="#4D4F60" />
+		</button>
+	</div>
 </div>
