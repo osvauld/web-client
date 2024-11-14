@@ -28,7 +28,9 @@
 	}
 </script>
 
-<nav class="w-[360px] py-10 px-4" aria-label="Main Navigation">
+<nav
+	class="w-[360px] py-10 px-4 whitespace-nowrap"
+	aria-label="Main Navigation">
 	<div class=" relative">
 		<button
 			class="w-full text-[26px] text-osvauld-fieldText font-medium leading-6 bg-osvauld-frameblack rounded-xl border border-osvauld-defaultBorder px-4 py-3 flex justify-between items-center"

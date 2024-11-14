@@ -76,6 +76,7 @@ module.exports = {
 					managerPurple: "#3B3441",
 					ownerGreen: "#2C3B33",
 					readerOrange: "#3C3B35",
+					buttonOrange: "#FAB387",
 					ownerText: "#A6E3A1",
 					readerText: "#F9E2AF",
 					managerText: "#F5C2E7",
