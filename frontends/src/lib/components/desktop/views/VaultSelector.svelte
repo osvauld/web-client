@@ -1,8 +1,8 @@
 <script>
-	import { slide } from "svelte/transition";
-	import Add from "../.../../../../../icons/add.svelte";
-	import RoundedInfo from "../.../../../../../icons/roundedInfo.svelte";
-	import RightArrow from "../.../../../../../icons/rightArrow.svelte";
+	import { slide, fly, blur } from "svelte/transition";
+	import Add from "../../../../icons/add.svelte";
+	import RoundedInfo from "../../../../icons/roundedInfo.svelte";
+	import RightArrow from "../../../../icons/rightArrow.svelte";
 	import { onMount, onDestroy } from "svelte";
 
 	const VAULTS = [
@@ -12,7 +12,7 @@
 	];
 	let newVaultInputActive = false;
 	let newVaultName = "";
-	let currentVault = { id: "all", name: "All Vaults", count: 54 };
+	let currentVault = "all";
 
 	const autofocus = (node) => {
 		node.focus();
@@ -34,8 +34,8 @@
 	class="absolute w-full h-auto border border-osvauld-iconblack bg-mobile-bgPrimary rounded-2xl px-2 pt-2 pb-3 flex flex-col gap-2 text-lg"
 	style="top: calc(100% + 10px)"
 	id="vaultSelector"
-	in:slide
-	out:slide>
+	in:fly
+	out:blur>
 	{#each VAULTS as vault (vault.id)}
 		{@const isActive = currentVault === vault.id}
 		<button

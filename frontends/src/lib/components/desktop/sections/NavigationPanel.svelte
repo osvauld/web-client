@@ -14,9 +14,9 @@
 	import ContactIcon from "../.../../../../../icons/mobileContact.svelte";
 	import WalletIcon from "../.../../../../../icons/mobileWallet.svelte";
 	import { createEventDispatcher } from "svelte";
-	import { slide } from "svelte/transition";
-	import AddVault from "../views/addVault.svelte";
+	import VaultSelector from "../views/VaultSelector.svelte";
 	const dispatch = createEventDispatcher();
+	import { currentView } from "../store/desktop.ui.store";
 
 	export let activeSection = "home";
 
@@ -24,7 +24,7 @@
 
 	function handleSectionChange(section) {
 		activeSection = section;
-		dispatch("sectionChange", { section });
+		currentView.set(section);
 	}
 </script>
 
@@ -42,14 +42,7 @@
 					: 'rotate-90'}"><Arrow color="#F2F2F0" size="24" /></span
 			></button>
 		{#if vaultSelectorActive}
-			<!-- <div
-				class="absolute w-full h-[100px] bg-green-400"
-				style="top: calc(100% + 10px)"
-				id="vaultSelector"
-				in:slide
-				out:slide>
-			</div> -->
-			<AddVault />
+			<VaultSelector />
 		{/if}
 	</div>
 	<div
@@ -62,11 +55,9 @@
                        {activeSection === 'home'
 						? 'text-osvauld-sideListTextActive bg-osvauld-fieldActive'
 						: ''}"
-					on:click="{() => handleSectionChange('home')}"
+					on:click="{() => handleSectionChange('all')}"
 					aria-current="{activeSection === 'home' ? 'page' : undefined}">
-					<Home
-						aria-hidden="true"
-						color="{activeSection === 'home' ? '#F2F2F0' : '#85889C'}" />
+					<Home color="{activeSection === 'home' ? '#F2F2F0' : '#85889C'}" />
 					<span>Home</span>
 				</button>
 			</li>
@@ -79,7 +70,6 @@
 					on:click="{() => handleSectionChange('favourites')}"
 					aria-current="{activeSection === 'favourites' ? 'page' : undefined}">
 					<Star
-						aria-hidden="true"
 						color="{activeSection === 'favourites' ? '#F2F2F0' : '#85889C'}" />
 					<span>Favourites</span>
 				</button>
@@ -97,7 +87,6 @@
 				on:click="{() => handleSectionChange('logins')}"
 				aria-current="{activeSection === 'logins' ? 'page' : undefined}">
 				<LoginIcon
-					aria-hidden="true"
 					color="{activeSection === 'logins' ? '#F2F2F0' : '#85889C'}" />
 				<span>Logins</span>
 			</button>
@@ -112,9 +101,7 @@
 				logins
 				on:click="{() => handleSectionChange('pins')}"
 				aria-current="{activeSection === 'pins' ? 'page' : undefined}">
-				<KeyIcon
-					aria-hidden="true"
-					color="{activeSection === 'pins' ? '#F2F2F0' : '#85889C'}" />
+				<KeyIcon color="{activeSection === 'pins' ? '#F2F2F0' : '#85889C'}" />
 				<span>PINs</span>
 			</button>
 		</li>
@@ -128,7 +115,6 @@
 				on:click="{() => handleSectionChange('cards')}"
 				aria-current="{activeSection === 'cards' ? 'page' : undefined}">
 				<CreditCard
-					aria-hidden="true"
 					size="24"
 					color="{activeSection === 'cards' ? '#F2F2F0' : '#85889C'}" />
 				<span>Cards</span>
@@ -144,9 +130,7 @@
 					: ''}"
 				on:click="{() => handleSectionChange('notes')}"
 				aria-current="{activeSection === 'notes' ? 'page' : undefined}">
-				<NoteIcon
-					aria-hidden="true"
-					color="{activeSection === 'notes' ? '#F2F2F0' : '#85889C'}" />
+				<NoteIcon color="{activeSection === 'notes' ? '#F2F2F0' : '#85889C'}" />
 				<span>Notes</span>
 			</button>
 		</li>
@@ -161,7 +145,6 @@
 				on:click="{() => handleSectionChange('contacts')}"
 				aria-current="{activeSection === 'contacts' ? 'page' : undefined}">
 				<ContactIcon
-					aria-hidden="true"
 					color="{activeSection === 'contacts' ? '#F2F2F0' : '#85889C'}" />
 				<span>Contacts</span>
 			</button>
@@ -176,9 +159,7 @@
 					: ''}"
 				on:click="{() => handleSectionChange('bank')}"
 				aria-current="{activeSection === 'bank' ? 'page' : undefined}">
-				<BankIcon
-					aria-hidden="true"
-					color="{activeSection === 'bank' ? '#F2F2F0' : '#85889C'}" />
+				<BankIcon color="{activeSection === 'bank' ? '#F2F2F0' : '#85889C'}" />
 				<span>Bank Accounts</span>
 			</button>
 		</li>
@@ -193,7 +174,6 @@
 				on:click="{() => handleSectionChange('wallets')}"
 				aria-current="{activeSection === 'wallets' ? 'page' : undefined}">
 				<WalletIcon
-					aria-hidden="true"
 					color="{activeSection === 'wallets' ? '#F2F2F0' : '#85889C'}" />
 				<span>Digital Wallets</span>
 			</button>
@@ -208,9 +188,7 @@
 					: ''}"
 				on:click="{() => handleSectionChange('socials')}"
 				aria-current="{activeSection === 'socials' ? 'page' : undefined}">
-				<OldKey
-					aria-hidden="true"
-					color="{activeSection === 'socials' ? '#F2F2F0' : '#85889C'}" />
+				<OldKey color="{activeSection === 'socials' ? '#F2F2F0' : '#85889C'}" />
 				<span>Social Medias</span>
 			</button>
 		</li>
@@ -224,9 +202,7 @@
 					: ''}"
 				on:click="{() => handleSectionChange('ssh')}"
 				aria-current="{activeSection === 'ssh' ? 'page' : undefined}">
-				<ApiIcon
-					aria-hidden="true"
-					color="{activeSection === 'ssh' ? '#F2F2F0' : '#85889C'}" />
+				<ApiIcon color="{activeSection === 'ssh' ? '#F2F2F0' : '#85889C'}" />
 				<span>SSH Keys</span>
 			</button>
 		</li>
