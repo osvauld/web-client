@@ -14,9 +14,13 @@
 	import ContactIcon from "../.../../../../../icons/mobileContact.svelte";
 	import WalletIcon from "../.../../../../../icons/mobileWallet.svelte";
 	import { createEventDispatcher } from "svelte";
+	import { slide } from "svelte/transition";
+	import AddVault from "../views/addVault.svelte";
 	const dispatch = createEventDispatcher();
 
 	export let activeSection = "home";
+
+	let vaultSelectorActive = false;
 
 	function handleSectionChange(section) {
 		activeSection = section;
@@ -25,14 +29,29 @@
 </script>
 
 <nav class="w-[360px] py-10 px-4" aria-label="Main Navigation">
-	<button
-		class="w-full text-[26px] text-osvauld-fieldText font-medium leading-6 bg-osvauld-frameblack rounded-xl border border-osvauld-defaultBorder px-4 py-3 flex justify-between items-center mb-[20px]"
-		aria-label="Switch Vault"
-		aria-controls="vaultSelector"
-		aria-expanded="false"
-		>All Vaults <span class="rotate-90"
-			><Arrow color="#F2F2F0" size="24" /></span
-		></button>
+	<div class=" relative">
+		<button
+			class="w-full text-[26px] text-osvauld-fieldText font-medium leading-6 bg-osvauld-frameblack rounded-xl border border-osvauld-defaultBorder px-4 py-3 flex justify-between items-center"
+			aria-label="Switch Vault"
+			aria-controls="vaultSelector"
+			aria-expanded="false"
+			on:click="{() => (vaultSelectorActive = !vaultSelectorActive)}"
+			>All Vaults <span
+				class="transition-transform duration-300 {vaultSelectorActive
+					? '-rotate-90'
+					: 'rotate-90'}"><Arrow color="#F2F2F0" size="24" /></span
+			></button>
+		{#if vaultSelectorActive}
+			<!-- <div
+				class="absolute w-full h-[100px] bg-green-400"
+				style="top: calc(100% + 10px)"
+				id="vaultSelector"
+				in:slide
+				out:slide>
+			</div> -->
+			<AddVault />
+		{/if}
+	</div>
 	<div
 		class="border-y border-osvauld-borderColor text-osvauld-fieldText flex flex-col my-6 py-1 gap-1">
 		<ul class="space-y-1 font-light text-base text-" role="list">
