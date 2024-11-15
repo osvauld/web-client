@@ -44,7 +44,7 @@
 			{currentFolder}
 		</h1>
 		{#if currentFolder !== "Home"}
-			<div class="gap-4 flex justify-between items-center">
+			<div class="gap-4 flex justify-between items-center ml-3">
 				<span><Menu /></span>
 				<button
 					class="bg-osvauld-frameblack text-osvauld-textPassive flex justify-center items-center py-2 px-3 text-sm rounded-md ml-4"

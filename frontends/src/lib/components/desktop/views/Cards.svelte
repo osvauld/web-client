@@ -1,14 +1,21 @@
 <script>
 	import Add from "../../../../icons/add.svelte";
+	import IndividualCard from "../ui/IndividualCard.svelte";
 	export let Icon;
 
-	const numberOfCards = 0;
+	const NUM_OF_CARDS = 100;
+	const cards = Array(NUM_OF_CARDS).fill(null);
 </script>
 
 <div
-	class=" text-white font-bold grow flex justify-center items-center px-16 pb-24">
-	{#if numberOfCards !== 0}
-		<span>many cards</span>
+	class=" text-white font-bold grow flex justify-center items-center px-16 pb-24 max-h-[80vh] overflow-y-scroll">
+	{#if NUM_OF_CARDS !== 0}
+		<div
+			class="px-0 py-6 w-full h-full text-osvauld-textActive flex flex-wrap content-start gap-6">
+			{#each cards as _}
+				<IndividualCard />
+			{/each}
+		</div>
 	{:else}
 		<div
 			class="p-32 w-full max-w-[1440px] min-w-[300px] flex flex-col lg:flex-row items-center justify-between bg-osvauld-cardshade rounded-[40px] text-osvauld-textActive">
