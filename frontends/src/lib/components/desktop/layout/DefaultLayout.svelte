@@ -6,7 +6,7 @@
 
 <div class="w-full h-full bg-osvauld-primaryBg flex flex-col overflow-hidden">
 	<HeaderSection />
-	<div class="grow flex">
+	<div class="grow flex overflow-hidden">
 		<NavigationPanel />
 		<ContentWrapper />
 	</div>

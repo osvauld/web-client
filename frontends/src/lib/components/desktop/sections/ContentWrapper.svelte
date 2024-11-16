@@ -36,8 +36,8 @@
 		: views[$currentView]);
 </script>
 
-<div class="grow flex flex-col">
-	<div class="h-28 py-10 px-16 flex items-center justify-between">
+<div class="flex-1 flex flex-col overflow-hidden">
+	<div class="h-28 py-10 px-16 flex items-center justify-between flex-shrink-0">
 		<h1
 			class="text-4xl font-light text-osvauld-sideListTextActive flex justify-between items-center gap-3">
 			<svelte:component this="{currentIcon}" color="#F2F2F0" size="44" />

@@ -4,7 +4,7 @@
 </script>
 
 <div
-	class="bg-osvauld-frameblack p-5 flex flex-col gap-5 w-[300px] h-[204px] overflow-hidden">
+	class="bg-osvauld-frameblack p-5 flex flex-col gap-5 min-w-[300px] w-[300px] h-[204px] overflow-hidden">
 	<div class="flex justify-between">
 		<span><Star /></span>
 		<span><Menu /></span>
