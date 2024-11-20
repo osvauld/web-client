@@ -9,7 +9,7 @@ pub async fn send_message(
     message: String,
     state: State<'_, Arc<P2PService>>,
 ) -> Result<CryptoResponse, String> {
-    state.send_message(message).await
+    state.send_chat_message(message).await
 }
 
 #[tauri::command]

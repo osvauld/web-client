@@ -1,4 +1,5 @@
 use crate::application::services::sync_service::SyncService;
+use crate::application::services::SyncPayload;
 use crate::domains::models::p2p::{ConnectionTicket, Message};
 use crate::types::CryptoResponse;
 use futures_lite::StreamExt;
@@ -6,19 +7,20 @@ use iroh::net::relay::RelayMode;
 use iroh::net::{Endpoint, NodeAddr};
 use iroh_net::endpoint::Connection;
 use iroh_net::endpoint::DirectAddrType;
-
 use iroh_net::endpoint::{RecvStream, SendStream};
-use log::{error, info};
+use log::{debug, error, info, warn};
+use std::net::Ipv6Addr;
+use std::net::SocketAddrV6;
 use std::sync::Arc;
 use tauri::AppHandle;
 use tauri::Emitter;
 use tokio::io::AsyncWriteExt;
 use tokio::sync::Mutex;
+use tokio::task;
 use tokio::time::{timeout, Duration};
 const ALPN_PROTOCOL: &[u8] = b"n0/osvauld/0";
-const CONNECTION_TIMEOUT: Duration = Duration::from_secs(15);
-const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(15);
-
+const CONNECTION_TIMEOUT: Duration = Duration::from_secs(30);
+const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(30);
 struct P2PState {
     endpoint: Arc<Endpoint>,
     active_connection: Arc<Mutex<Option<Arc<Connection>>>>,
@@ -44,15 +46,21 @@ impl P2PService {
             return Ok(());
         }
 
+        info!("Initializing P2P endpoint");
+
+        // Create IPv6 unspecified address with port 0
+        let bind_addr = SocketAddrV6::new(
+            Ipv6Addr::UNSPECIFIED,
+            0,
+            0, // flowinfo
+            0, // scope_id
+        );
+
         let endpoint = Endpoint::builder()
             .relay_mode(RelayMode::Default)
             .alpns(vec![ALPN_PROTOCOL.to_vec()])
             .discovery_n0()
-            .bind_addr_v4(
-                "0.0.0.0:0"
-                    .parse()
-                    .map_err(|e| format!("Address parse error: {}", e))?,
-            )
+            .bind_addr_v6(bind_addr)
             .bind()
             .await
             .map_err(|e| format!("Failed to bind endpoint: {}", e))?;
@@ -62,6 +70,7 @@ impl P2PService {
             active_connection: Arc::new(Mutex::new(None)),
         });
 
+        info!("P2P initialization successful");
         Ok(())
     }
 
@@ -176,7 +185,44 @@ impl P2PService {
                 "receiver"
             }
         );
+        if is_initiator {
+            self.start_sync().await?;
+        }
         Ok(())
+    }
+
+    async fn start_sync(&self) -> Result<(), String> {
+        info!("Starting sync process");
+        let connection = self.get_active_connection().await?;
+
+        // Send sync request
+        let (mut send, mut recv) = connection
+            .open_bi()
+            .await
+            .map_err(|e| format!("Failed to open bi-directional stream: {}", e))?;
+
+        let sync_request = Message::SyncRequest;
+        let serialized = serde_json::to_string(&sync_request)
+            .map_err(|e| format!("Serialization error: {}", e))?;
+
+        send.write_all(serialized.as_bytes())
+            .await
+            .map_err(|e| format!("Failed to send sync request: {}", e))?;
+        send.flush()
+            .await
+            .map_err(|e| format!("Failed to flush sync request: {}", e))?;
+        info!("Sync process started");
+        Ok(())
+    }
+
+    // Helper method to get active connection
+    async fn get_active_connection(&self) -> Result<Arc<Connection>, String> {
+        let state_guard = self.state.lock().await;
+        let state = state_guard.as_ref().ok_or("P2P not initialized")?;
+        let active_conn = state.active_connection.lock().await;
+        active_conn
+            .clone()
+            .ok_or_else(|| "No active connection".to_string())
     }
 
     async fn initiate_handshake(
@@ -241,57 +287,165 @@ impl P2PService {
         Ok(())
     }
 
+    async fn handle_sync_request(&self) -> Result<(), String> {
+        info!("Handling incoming sync request");
+        match self.sync_service.get_next_pending_sync().await {
+            Ok(Some(payload)) => {
+                info!(
+                    "Sending sync payload for resource: {}",
+                    payload.sync_record.resource_id
+                );
+                let message = Message::SyncResponse(payload);
+                self.send_message(serde_json::to_string(&message).map_err(|e| e.to_string())?)
+                    .await?;
+            }
+            Ok(None) => {
+                info!("No pending syncs, sending sync complete");
+                let message = Message::SyncComplete;
+                self.send_message(serde_json::to_string(&message).map_err(|e| e.to_string())?)
+                    .await?;
+            }
+            Err(e) => {
+                error!("Failed to get pending sync: {}", e);
+                return Err(e.to_string());
+            }
+        }
+        Ok(())
+    }
+
+    async fn handle_sync_ack(&self, sync_id: String) -> Result<(), String> {
+        info!("Received sync acknowledgment for ID: {}", sync_id);
+
+        // Update the sync status
+        if let Err(e) = self
+            .sync_service
+            .update_sync_status(&sync_id, "completed")
+            .await
+        {
+            error!("Failed to update sync status: {}", e);
+            return Err(e.to_string());
+        }
+        info!("Updated sync status to completed for ID: {}", sync_id);
+
+        // Send next pending sync
+        match self.sync_service.get_next_pending_sync().await {
+            Ok(Some(payload)) => {
+                info!(
+                    "Sending next sync payload for resource: {}",
+                    payload.sync_record.resource_id
+                );
+                let message = Message::SyncResponse(payload);
+                self.send_message(serde_json::to_string(&message).map_err(|e| e.to_string())?)
+                    .await?;
+            }
+            Ok(None) => {
+                info!("No more pending syncs, sending sync complete");
+                let message = Message::SyncComplete;
+                self.send_message(serde_json::to_string(&message).map_err(|e| e.to_string())?)
+                    .await?;
+            }
+            Err(e) => {
+                error!("Failed to get next pending sync: {}", e);
+                return Err(e.to_string());
+            }
+        }
+        Ok(())
+    }
+
+    async fn handle_sync_response(&self, payload: SyncPayload) -> Result<(), String> {
+        info!(
+            "Received sync payload for resource: {}",
+            payload.sync_record.resource_id
+        );
+
+        // Process the sync payload
+        if let Err(e) = self.sync_service.process_sync_payload(&payload).await {
+            error!("Failed to process sync payload: {}", e);
+            return Err(e.to_string());
+        }
+        info!("Processed sync payload successfully");
+
+        // Send acknowledgment
+        info!(
+            "Sending acknowledgment for sync ID: {}",
+            payload.sync_record.id
+        );
+        let message = Message::SyncAck(payload.sync_record.id);
+        self.send_message(serde_json::to_string(&message).map_err(|e| e.to_string())?)
+            .await?;
+
+        Ok(())
+    }
+
+    async fn handle_sync_complete(&self) -> Result<(), String> {
+        info!("Sync process completed");
+        self.app_handle
+            .emit("sync-complete", true)
+            .map_err(|e| e.to_string())?;
+        Ok(())
+    }
+
     async fn handle_messages(&self) {
         info!("Starting message listener");
         loop {
-            let connection = {
-                let state_guard = self.state.lock().await;
-                let state = state_guard.as_ref().unwrap();
-                let active_conn = state.active_connection.lock().await;
-                match &*active_conn {
-                    Some(conn) => Arc::clone(conn),
-                    None => {
-                        error!("No active connection");
-                        break;
-                    }
-                }
-            };
+            match self.get_active_connection().await {
+                Ok(connection) => {
+                    match connection.accept_bi().await {
+                        Ok((mut send, mut recv)) => {
+                            let mut buffer = vec![0u8; 1024];
+                            match recv.read(&mut buffer).await {
+                                Ok(Some(n)) if n > 0 => {
+                                    let message_str = String::from_utf8_lossy(&buffer[..n]);
+                                    match serde_json::from_str::<Message>(&message_str) {
+                                        Ok(message) => {
+                                            let result = match message {
+                                                Message::SyncRequest => {
+                                                    self.handle_sync_request().await
+                                                }
+                                                Message::SyncAck(sync_id) => {
+                                                    self.handle_sync_ack(sync_id).await
+                                                }
+                                                Message::SyncResponse(payload) => {
+                                                    self.handle_sync_response(payload).await
+                                                }
+                                                Message::SyncComplete => {
+                                                    self.handle_sync_complete().await
+                                                }
+                                                Message::Chat(_)
+                                                | Message::Ping
+                                                | Message::Pong => {
+                                                    if let Err(e) = self
+                                                        .app_handle
+                                                        .emit("message-received", message)
+                                                    {
+                                                        error!("Failed to emit message: {}", e);
+                                                    }
+                                                    Ok(())
+                                                }
+                                            };
 
-            match connection.accept_bi().await {
-                Ok((mut send, mut recv)) => {
-                    let mut buffer = vec![0u8; 1024];
-                    match recv.read(&mut buffer).await {
-                        Ok(Some(n)) if n > 0 => {
-                            let message_str = String::from_utf8_lossy(&buffer[..n]);
-                            match serde_json::from_str::<Message>(&message_str) {
-                                Ok(message) => {
-                                    if let Err(e) =
-                                        self.app_handle.emit("message-received", message)
-                                    {
-                                        error!("Failed to emit message: {}", e);
-                                    }
-                                    // Send acknowledgment
-                                    if let Err(e) = send.write_all(b"ok").await {
-                                        error!("Failed to send ack: {}", e);
-                                    }
-                                    if let Err(e) = send.flush().await {
-                                        error!("Failed to flush ack: {}", e);
+                                            if let Err(e) = result {
+                                                error!("Error handling message: {}", e);
+                                            }
+                                        }
+                                        Err(e) => error!("Failed to deserialize message: {}", e),
                                     }
                                 }
+                                Ok(_) => break, // Connection closed
                                 Err(e) => {
-                                    error!("Failed to deserialize message: {}", e);
+                                    error!("Error reading from connection: {}", e);
+                                    break;
                                 }
                             }
                         }
-                        Ok(_) => break, // Connection closed
                         Err(e) => {
-                            error!("Error reading from connection: {}", e);
+                            error!("Failed to accept bi-directional stream: {}", e);
                             break;
                         }
                     }
                 }
                 Err(e) => {
-                    error!("Failed to accept bi-directional stream: {}", e);
+                    error!("Failed to get active connection: {}", e);
                     break;
                 }
             }
@@ -299,10 +453,14 @@ impl P2PService {
         info!("Message listener stopped");
     }
 
+    pub async fn send_chat_message(&self, message: String) -> Result<CryptoResponse, String> {
+        let msg = Message::Chat(message);
+        let serialized = serde_json::to_string(&msg).map_err(|e| e.to_string())?;
+        self.send_message(serialized).await
+    }
     pub async fn send_message(&self, message: String) -> Result<CryptoResponse, String> {
         let state_guard = self.state.lock().await;
         let state = state_guard.as_ref().ok_or("P2P not initialized")?;
-
         let connection = {
             let active_conn = state.active_connection.lock().await;
             match &*active_conn {
@@ -316,10 +474,7 @@ impl P2PService {
             .await
             .map_err(|e| format!("Failed to open bi-directional stream: {}", e))?;
 
-        let msg = Message::Chat(message);
-        let serialized = serde_json::to_string(&msg).map_err(|e| e.to_string())?;
-
-        send.write_all(serialized.as_bytes())
+        send.write_all(message.as_bytes())
             .await
             .map_err(|e| e.to_string())?;
         send.flush().await.map_err(|e| e.to_string())?;

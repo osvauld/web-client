@@ -7,13 +7,13 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SyncPayload {
     pub sync_record: SyncRecord,
     pub data: SyncData,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(tag = "type")]
 pub enum SyncData {
     Folder(Folder),
@@ -42,7 +42,7 @@ impl SyncService {
     pub async fn get_next_pending_sync(&self) -> Result<Option<SyncPayload>, RepositoryError> {
         // Get the next pending sync record for target device 2
         let pending_records = self.sync_repository.get_pending_records("2").await?;
-
+        info!("Found {} pending records", pending_records.len());
         // Get the oldest pending record
         let sync_record = match pending_records.first() {
             Some(record) => record.clone(),
@@ -85,7 +85,71 @@ impl SyncService {
     }
 
     pub async fn process_sync_payload(&self, payload: &SyncPayload) -> Result<(), RepositoryError> {
-        log::info!("Processing sync payload: {:?}", payload);
+        log::info!(
+            "Processing sync payload for resource: {}",
+            payload.sync_record.resource_id
+        );
+
+        match &payload.data {
+            SyncData::Folder(folder) => {
+                log::info!("Processing folder sync: {}", folder.id);
+                match payload.sync_record.operation_type.as_str() {
+                    "create" => {
+                        log::info!("Creating folder: {}", folder.name);
+                        self.folder_repository.save(folder).await?;
+                    }
+                    "update" => {
+                        log::info!("Updating folder: {}", folder.name);
+                        self.folder_repository.save(folder).await?;
+                    }
+                    "delete" => {
+                        log::info!("Delete operation for folder: {}", folder.id);
+                        // TODO: Implement delete in folder repository
+                        // self.folder_repository.delete(&folder.id).await?;
+                    }
+                    op => {
+                        log::error!("Unknown folder operation: {}", op);
+                        return Err(RepositoryError::DatabaseError(format!(
+                            "Unknown operation type: {}",
+                            op
+                        )));
+                    }
+                }
+            }
+            SyncData::Credential(credential) => {
+                log::info!("Processing credential sync: {}", credential.id);
+                match payload.sync_record.operation_type.as_str() {
+                    "create" => {
+                        log::info!("Creating credential in folder: {}", credential.folder_id);
+                        self.credential_repository.save(credential).await?;
+                    }
+                    "update" => {
+                        log::info!("Updating credential: {}", credential.id);
+                        self.credential_repository.save(credential).await?;
+                    }
+                    "delete" => {
+                        log::info!("Delete operation for credential: {}", credential.id);
+                        // TODO: Implement delete in credential repository
+                        // self.credential_repository.delete(&credential.id).await?;
+                    }
+                    op => {
+                        log::error!("Unknown credential operation: {}", op);
+                        return Err(RepositoryError::DatabaseError(format!(
+                            "Unknown operation type: {}",
+                            op
+                        )));
+                    }
+                }
+            }
+        }
+
+        // Update the sync record status if needed
+        // self.sync_repository.update_status(
+        //     &payload.sync_record.id,
+        //     "processed"
+        // ).await?;
+
+        log::info!("Successfully processed sync payload");
         Ok(())
     }
 }
