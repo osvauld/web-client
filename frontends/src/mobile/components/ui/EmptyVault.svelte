@@ -1,6 +1,6 @@
 <script>
-	import Add from "../../../../../icons/add.svelte";
-	import EmptyPlaceholder from "../../../../../icons/mobileEmptyPlaceholder.svelte";
+	import Add from "../../../icons/add.svelte";
+	import EmptyPlaceholder from "../../../icons/mobileEmptyPlaceholder.svelte";
 </script>
 
 <div

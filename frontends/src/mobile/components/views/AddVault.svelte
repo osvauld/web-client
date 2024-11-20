@@ -1,9 +1,9 @@
 <script>
 	import { invoke } from "@tauri-apps/api/core";
 	import { slide } from "svelte/transition";
-	import Add from "../../../../../icons/add.svelte";
-	import RoundedInfo from "../../../../../icons/roundedInfo.svelte";
-	import RightArrow from "../../../../../icons/rightArrow.svelte";
+	import Add from "../../../icons/add.svelte";
+	import RoundedInfo from "../../../icons/roundedInfo.svelte";
+	import RightArrow from "../../../icons/rightArrow.svelte";
 	import {
 		vaultSwitchActive,
 		currentVault,
@@ -36,7 +36,7 @@
 	onMount(async () => {
 		try {
 			const resp = await invoke("handle_get_folders");
-			const updatedVaults = [...vaults, ...resp];
+			const updatedVaults = [{ id: "all", name: "All Vaults" }, ...resp];
 			vaults.set(updatedVaults);
 		} catch (e) {
 			console.log("Error received ===>", e);
@@ -48,7 +48,7 @@
 	class="absolute w-full h-auto bottom-0 border-t-[1px] border-mobile-textSecondary bg-mobile-bgPrimary rounded-t-2xl px-2 pt-2 pb-3 flex flex-col gap-2 text-lg"
 	in:slide
 	out:slide>
-	{#each vaults as vault (vault.id)}
+	{#each $vaults as vault (vault.id)}
 		{@const isActive = $currentVault === vault.name}
 		<button
 			on:click="{() => {

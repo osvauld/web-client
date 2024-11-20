@@ -1,13 +1,15 @@
 <script>
-	import MobileDownArrow from "../../../../../icons/mobileDownArrow.svelte";
+	import { onMount } from "svelte";
+	import MobileDownArrow from "../../../icons/mobileDownArrow.svelte";
 	import {
 		CATEGORIES,
 		credentialFieldsUpdater,
-	} from "../../../../../utils/mobileUtils";
+	} from "../../../utils/mobileUtils";
 
 	import {
 		selectedCredentialType,
 		categorySelection,
+		currentVault,
 	} from "../../store/mobile.ui.store";
 
 	let selectedCategory = CATEGORIES.find(
@@ -15,11 +17,21 @@
 	);
 
 	const directToHome = () => {
+		console.log(credentialFields);
 		selectedCredentialType.set("");
 		categorySelection.set(false);
 	};
 
-	let credentialFields = credentialFieldsUpdater(selectedCategory.name);
+	let credentialFields = [];
+	const addCredentialHandlerFunc = () => {
+		console.log("Add Credential....");
+		console.log(JSON.stringify(credentialFields));
+	};
+
+	onMount(() => {
+		credentialFields = credentialFieldsUpdater(selectedCategory.name);
+		console.log("mounted", credentialFields);
+	});
 </script>
 
 <nav
@@ -42,6 +54,7 @@
 		{#each credentialFields as field (field.fieldName)}
 			<input
 				type="text"
+				bind:value="{field.fieldValue}"
 				placeholder="{field.fieldName}"
 				class="w-full bg-mobile-bgPrimary border rounded-lg border-mobile-bgHighlight focus:border-mobile-borderActive focus:ring-0" />
 		{/each}
@@ -59,6 +72,7 @@
 	<button
 		class="px-10 py-2.5 text-mobile-textSecondary"
 		on:click="{directToHome}">Cancel</button>
-	<button class="px-10 py-2.5 bg-osvauld-carolinablue rounded-lg font-medium"
-		>Add Card</button>
+	<button
+		class="px-10 py-2.5 bg-osvauld-carolinablue rounded-lg font-medium"
+		on:click="{addCredentialHandlerFunc}">Add Card</button>
 </div>

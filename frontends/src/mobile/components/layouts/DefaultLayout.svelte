@@ -7,6 +7,9 @@
 	import { vaultSwitchActive } from "../../store/mobile.ui.store";
 
 	const NUM_CREDS = 0;
+	vaultSwitchActive.subscribe((value) => {
+		console.log(value);
+	});
 </script>
 
 <main

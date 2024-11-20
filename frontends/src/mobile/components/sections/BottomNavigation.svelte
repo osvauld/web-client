@@ -1,9 +1,9 @@
 <script lang="ts">
-	import LL from "../../../../../i18n/i18n-svelte";
-	import Profile from "../../../../../icons/profile.svelte";
-	import Add from "../../../../../icons/mobileAdd.svelte";
-	import PwdGen from "../../../../../icons/pwdGen.svelte";
-	import Home from "../../../../../icons/mobileHome.svelte";
+	import LL from "../../../i18n/i18n-svelte";
+	import Profile from "../../../icons/profile.svelte";
+	import Add from "../../../icons/mobileAdd.svelte";
+	import PwdGen from "../../../icons/pwdGen.svelte";
+	import Home from "../../../icons/mobileHome.svelte";
 	import { categorySelection, currentVault } from "../../store/mobile.ui.store";
 </script>
 

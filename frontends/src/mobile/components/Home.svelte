@@ -1,7 +1,7 @@
 <script>
 	import { invoke } from "@tauri-apps/api/core";
-	import { setLocale } from "../../../../i18n/i18n-svelte";
-	import { loadLocaleAsync } from "../../../../i18n/i18n-util.async";
+	import { setLocale } from "../../i18n/i18n-svelte";
+	import { loadLocaleAsync } from "../../i18n/i18n-util.async";
 	import { onMount } from "svelte";
 
 	import DefaultLayout from "./layouts/DefaultLayout.svelte";

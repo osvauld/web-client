@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Lens from "../../../../../icons/lens.svelte";
-	import Options from "../../../../../icons/options.svelte";
-	import DownArrow from "../../../../../icons/mobileDownArrow.svelte";
-	import LL from "../../../../../i18n/i18n-svelte";
+	import Lens from "../../../icons/lens.svelte";
+	import Options from "../../../icons/options.svelte";
+	import DownArrow from "../../../icons/mobileDownArrow.svelte";
+	import LL from "../../../i18n/i18n-svelte";
 	import { vaultSwitchActive, currentVault } from "../../store/mobile.ui.store";
 </script>
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { invoke } from "@tauri-apps/api/core";
 	import { onMount } from "svelte";
-	import Home from "../lib/components/mobile/components/Home.svelte";
+	import Home from "./components/Home.svelte";
 	import Welcome from "../lib/components/popup/Welcome.svelte";
 	import { Logo } from "../lib/components/dashboard/icons";
 	import Signup from "../lib/components/popup/Signup.svelte";
