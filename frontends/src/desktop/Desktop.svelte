@@ -39,6 +39,7 @@
 
 	onMount(async () => {
 		try {
+			await invoke("start_p2p_listener");
 			await setupEventListeners();
 			connectionTicket = await invoke("get_ticket");
 			status = "Ready to connect. Share the ticket with mobile device.";
