@@ -10,5 +10,4 @@
 	<TopNavBar />
 	<Categories />
 	<BottomNavigation />
-	<AddVault />
 </main>

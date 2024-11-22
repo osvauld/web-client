@@ -1,0 +1,8 @@
+import { writable } from "svelte/store";
+import { Folder } from "../../lib/dtos/folder.dto";
+
+export let currentVault = writable<Folder>({ id: "all", name: "all" });
+export let vaultSwitchActive = writable(false);
+export let selectedCredentialType = writable("");
+export let categorySelection = writable(false);
+export let vaults = writable([{ id: "all", name: "All Vaults" }]);

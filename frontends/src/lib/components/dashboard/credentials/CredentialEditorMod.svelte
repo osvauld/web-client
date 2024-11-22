@@ -2,7 +2,7 @@
 	import { onMount, createEventDispatcher } from "svelte";
 	import { setCredentialStore } from "../../../store/storeHelper";
 
-	import { addCredentialHandler } from "./credentialTypes/addCredentialHelper";
+	import { addCredentialHandler } from "../../../../utils/addCredentialHelper";
 	import { updateCredentialHandler } from "./credentialTypes/updateCredentialHelper";
 	import { selectedFolder } from "../store";
 	import { Folder } from "../../../dtos/folder.dto";

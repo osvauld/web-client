@@ -1,8 +1,8 @@
 <script>
-	import CreditCard from "../../../../../icons/creditCard.svelte";
+	import CreditCard from "../../../icons/creditCard.svelte";
 	export let NUM_CREDS;
 	const testArray = Array(NUM_CREDS).fill(null);
-	import LL from "../../../../../i18n/i18n-svelte";
+	import LL from "../../../i18n/i18n-svelte";
 </script>
 
 <ul

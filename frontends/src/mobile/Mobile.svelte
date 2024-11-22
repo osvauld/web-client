@@ -1,67 +1,69 @@
-<script>
+<script lang="ts">
 	import { invoke } from "@tauri-apps/api/core";
-	import { setLocale } from "../i18n/i18n-svelte";
-	import { loadLocaleAsync } from "../i18n/i18n-util.async";
 	import { onMount } from "svelte";
+	import Home from "./components/Home.svelte";
+	import Welcome from "../lib/components/popup/Welcome.svelte";
+	import { Logo } from "../lib/components/dashboard/icons";
+	import Signup from "../lib/components/popup/Signup.svelte";
+	import Loader from "../lib/components/dashboard/components/Loader.svelte";
+	import { sendMessage } from "../lib/components/dashboard/helper";
 
-	import DefaultLayout from "../lib/components/mobile/components/layouts/DefaultLayout.svelte";
-	import CredentialLayout from "../lib/components/mobile/components/layouts/CredentialLayout.svelte";
-	import CategoryLayout from "../lib/components/mobile/components/layouts/CategoryLayout.svelte";
-	import {
-		selectedCredentialType,
-		categorySelection,
-	} from "../lib/components/mobile/store/mobile.ui.store";
-
-	const SUPPORTED_LANGUAGES = [
-		"en",
-		"de",
-		"ar",
-		"fr",
-		"hi",
-		"it",
-		"ja",
-		"ko",
-		"nl",
-		"pl",
-		"ru",
-		"tr",
-		"zh",
-	];
-
-	$: currentLayout = $selectedCredentialType
-		? "credential"
-		: $categorySelection
-			? "category"
-			: "default";
-
-	async function initializeLanguage() {
-		try {
-			const locale = await invoke("get_system_locale");
-			const deviceLanguage = String(locale).split(/[-_]/)[0].toLowerCase();
-			const languageToUse = SUPPORTED_LANGUAGES.includes(deviceLanguage)
-				? deviceLanguage
-				: "en";
-			// const languageToUse = "ar";
-			await loadLocaleAsync(languageToUse);
-			setLocale(languageToUse);
-		} catch (error) {
-			console.error("Error detecting system language:", error);
-			await loadLocaleAsync("en");
-			setLocale("en");
+	let loggedIn = true;
+	let isLoaderActive = false;
+	let isSignedUp = false;
+	onMount(async () => {
+		isLoaderActive = true;
+		const response = await invoke("check_signup_status");
+		isSignedUp = response.isSignedUp;
+		const checkPvtLoad = await invoke("check_private_key_loaded");
+		if (checkPvtLoad) {
+			loggedIn = true;
+		} else {
+			loggedIn = false;
 		}
-	}
-
-	onMount(() => {
-		initializeLanguage();
+		isLoaderActive = false;
+		// isSignedUp.set(false);
 	});
+
+	const handleSignUp = async () => {
+		try {
+			await Promise.all([
+				sendMessage("addFolder", {
+					name: "Personal",
+					description: "",
+				}),
+				sendMessage("addFolder", {
+					name: "Work",
+					description: "",
+				}),
+			]);
+		} catch (e) {
+			console.log("error detected", e);
+		}
+
+		isSignedUp = true;
+	};
+
+	const checkAuth = (event: CustomEvent) => {
+		loggedIn = event.detail;
+	};
 </script>
 
-{#key currentLayout}
-	{#if currentLayout === "credential"}
-		<CredentialLayout />
-	{:else if currentLayout === "category"}
-		<CategoryLayout />
+<main
+	class="w-screen h-screen p-2 pt-3 flex flex-col !font-sans {isSignedUp &&
+	!loggedIn
+		? 'justify-center'
+		: 'justify-start'} items-center bg-osvauld-frameblack">
+	{#if isLoaderActive}
+		<Loader />
+	{:else if !isSignedUp}
+		<Signup on:signedUp="{handleSignUp}" />
+	{:else if loggedIn}
+		<Home />
 	{:else}
-		<DefaultLayout />
+		<div class="mb-12 flex justify-center items-center">
+			<Logo />
+		</div>
+		<Welcome on:authenticated="{checkAuth}" />
 	{/if}
-{/key}
+</main>

@@ -1,17 +1,16 @@
 <script>
 	import { slide } from "svelte/transition";
-	import Add from "../../../../../icons/add.svelte";
-	import RoundedInfo from "../../../../../icons/roundedInfo.svelte";
-	import RightArrow from "../../../../../icons/rightArrow.svelte";
-	import { vaultSwitchActive, currentVault } from "../../store/mobile.ui.store";
-	import { sendMessage } from "../../../dashboard/helper";
-	import { onMount, onDestroy } from "svelte";
+	import Add from "../../../icons/add.svelte";
+	import RoundedInfo from "../../../icons/roundedInfo.svelte";
+	import RightArrow from "../../../icons/rightArrow.svelte";
+	import {
+		vaultSwitchActive,
+		currentVault,
+		vaults,
+	} from "../../store/mobile.ui.store";
+	import { onMount } from "svelte";
+	import { sendMessage } from "../../../lib/components/dashboard/helper";
 
-	const VAULTS = [
-		{ id: "all", name: "All Vaults", count: 54 },
-		{ id: "personal", name: "Personal", count: 4 },
-		{ id: "work", name: "Work", count: 50 },
-	];
 	let newVaultInputActive = false;
 	let newVaultName = "";
 
@@ -19,15 +18,30 @@
 		node.focus();
 	};
 
-	const handleFolderCreation = () => {
-		// sendMessage("addFolder", { name: newVaultName });
-		newVaultName = "";
-		newVaultInputActive = false;
+	const handleFolderCreation = async () => {
+		try {
+			await sendMessage("addFolder", {
+				name: newVaultName,
+				description: "",
+			});
+		} catch (e) {
+			console.log("Error received", e);
+		} finally {
+			currentVault.set(newVaultName);
+			vaultSwitchActive.set(false);
+			newVaultName = "";
+			newVaultInputActive = false;
+		}
 	};
 
 	onMount(async () => {
-		// const resp = await sendMessage("getFolder");
-		// console.log("resp ============>", resp);
+		try {
+			const resp = await sendMessage("getFolder");
+			const updatedVaults = [{ id: "all", name: "All Vaults" }, ...resp];
+			vaults.set(updatedVaults);
+		} catch (e) {
+			console.log("Error received ===>", e);
+		}
 	});
 </script>
 
@@ -35,19 +49,19 @@
 	class="absolute w-full h-auto bottom-0 border-t-[1px] border-mobile-textSecondary bg-mobile-bgPrimary rounded-t-2xl px-2 pt-2 pb-3 flex flex-col gap-2 text-lg"
 	in:slide
 	out:slide>
-	{#each VAULTS as vault (vault.id)}
-		{@const isActive = $currentVault === vault.id}
+	{#each $vaults as vault (vault.id)}
+		{@const isActive = $currentVault.name === vault.name}
 		<button
 			on:click="{() => {
 				vaultSwitchActive.set(false);
 				newVaultInputActive = false;
-				currentVault.set(vault.id);
+				currentVault.set(vault);
 			}}"
 			class="h-[48px] p-4 text-mobile-textPrimary flex items-center rounded-lg"
 			class:bg-mobile-bgLight="{isActive}"
 			class:text-mobile-textTertiary="{isActive}">
 			<span><RoundedInfo color="{isActive ? '#F2F2F0' : '#85889C'}" /></span>
-			<span class="grow text-left pl-2">{vault.name}</span>
+			<span class="grow text-left pl-2 capitalize">{vault.name}</span>
 			<span><RightArrow color="{isActive ? '#F2F2F0' : '#85889C'}" /></span>
 		</button>
 	{/each}
@@ -70,7 +84,7 @@
 				<button
 					type="submit"
 					class="h-[48px] flex justify-center items-center gap-1 rounded-lg bg-mobile-highlightBlue text-mobile-bgPrimary font-medium text-lg mt-6"
-					on:click="{() => vaultSwitchActive.set(false)}"
+					on:click="{handleFolderCreation}"
 					>Create New Vault <Add color="#000" /></button>
 			</div>
 		</div>
@@ -78,7 +92,6 @@
 		<button
 			on:click="{() => (newVaultInputActive = true)}"
 			class="h-[48px] flex justify-center items-center gap-1 rounded-lg border-2 border-mobile-bgHighlight p-4 active:bg-mobile-bgLight text-mobile-textActive"
-			on:click="{handleFolderCreation}"
 			>Create New Vault <Add color="#85889C" /></button>
 	{/if}
 </div>
