@@ -1,8 +1,8 @@
-import { sendMessage, getDomain } from "../../helper";
+import { sendMessage, getDomain } from "../lib/components/dashboard/helper";
 import {
 	CredentialFieldComponentProps,
 	Field,
-} from "../../dtos";
+} from "../lib/components/dashboard/dtos";
 
 
 const totpValidator = (secretKey: string): boolean => {
@@ -69,7 +69,7 @@ export const addCredentialHandler = async (
 	credentialData: any,
 	folderId: string,
 ) => {
-	const { usersToShare, credentialFields, name, description, credentialType } =
+	const { credentialFields, name, description, credentialType } =
 		credentialData;
 
 	const fieldValidationResponse: { success: boolean; message: string } =
@@ -139,6 +139,10 @@ export const addCredentialHandler = async (
 		folderId: folderId,
 		credentialType: credentialType,
 	});
+	const responseJson = await sendMessage("getCredentialsForFolder", { folderId });
+
+
+	console.log("getcredentialsForFolder==>>>>>", JSON.stringify(responseJson));
 	return {
 		success: true,
 		message: "Credential added successfully",

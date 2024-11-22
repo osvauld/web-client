@@ -39,7 +39,6 @@ pub fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(
             tauri_plugin_log::Builder::new()
-                .level(LevelFilter::Info)
                 .filter(|metadata| {
                     !metadata.target().contains("tracing::span")
                         && !metadata.target().contains("iroh_net::magicsock")
@@ -50,7 +49,6 @@ pub fn run() {
         )
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
-            log::info!("Setting up Tauri app");
             let handle = app.handle();
             let app_dir = app.path().app_data_dir().unwrap();
             let db_path = app_dir.join("sqlite1.db").to_str().unwrap().to_string();

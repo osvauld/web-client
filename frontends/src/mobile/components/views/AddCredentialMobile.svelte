@@ -12,9 +12,8 @@
 		currentVault,
 	} from "../../store/mobile.ui.store";
 
-	let selectedCategory = CATEGORIES.find(
-		(item) => item.id === $selectedCredentialType,
-	);
+	import { addCredentialHandler } from "../../../utils/addCredentialHelper";
+	let selectedCategory = {};
 
 	const directToHome = () => {
 		console.log(credentialFields);
@@ -23,12 +22,24 @@
 	};
 
 	let credentialFields = [];
-	const addCredentialHandlerFunc = () => {
+	const addCredentialHandlerFunc = async () => {
 		console.log("Add Credential....");
 		console.log(JSON.stringify(credentialFields));
+		await addCredentialHandler(
+			{
+				name: "test",
+				description: "test",
+				credentialFields,
+				credentialType: selectedCategory.name,
+			},
+			$currentVault.id,
+		);
 	};
 
 	onMount(() => {
+		selectedCategory = CATEGORIES.find(
+			(item) => item.id === $selectedCredentialType,
+		);
 		credentialFields = credentialFieldsUpdater(selectedCategory.name);
 		console.log("mounted", credentialFields);
 	});

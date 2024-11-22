@@ -11,7 +11,7 @@
 	<button
 		class="text-2xl text-mobile-textPrimary font-semibold flex items-center gap-2 capitalize"
 		on:click="{() => vaultSwitchActive.set(!$vaultSwitchActive)}">
-		{$currentVault === "all" ? "All Vaults" : $currentVault}
+		{$currentVault.id === "all" ? "All Vaults" : $currentVault.name}
 		<span><DownArrow color="#85889C" /></span>
 	</button>
 	<span><Lens color="#85889C" size="24" /></span>

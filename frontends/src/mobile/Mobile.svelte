@@ -6,6 +6,7 @@
 	import { Logo } from "../lib/components/dashboard/icons";
 	import Signup from "../lib/components/popup/Signup.svelte";
 	import Loader from "../lib/components/dashboard/components/Loader.svelte";
+	import { sendMessage } from "../lib/components/dashboard/helper";
 
 	let loggedIn = true;
 	let isLoaderActive = false;
@@ -27,11 +28,13 @@
 	const handleSignUp = async () => {
 		try {
 			await Promise.all([
-				invoke("handle_add_folder", {
-					input: { name: "Personal", description: "" },
+				sendMessage("addFolder", {
+					name: "Personal",
+					description: "",
 				}),
-				invoke("handle_add_folder", {
-					input: { name: "Work", description: "" },
+				sendMessage("addFolder", {
+					name: "Work",
+					description: "",
 				}),
 			]);
 		} catch (e) {

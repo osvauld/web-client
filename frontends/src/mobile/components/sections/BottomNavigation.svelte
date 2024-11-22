@@ -5,6 +5,7 @@
 	import PwdGen from "../../../icons/pwdGen.svelte";
 	import Home from "../../../icons/mobileHome.svelte";
 	import { categorySelection, currentVault } from "../../store/mobile.ui.store";
+	import { allUsersSelected } from "../../../lib/store/ui.store";
 </script>
 
 <nav
@@ -12,7 +13,7 @@
 	<button
 		class=" flex-1 flex justify-center items-center flex-col"
 		on:click="{() => {
-			currentVault.set('all');
+			currentVault.set({ id: 'all', name: 'All' });
 			categorySelection.set(false);
 		}}">
 		<span class="flex justify-center items-center"
