@@ -9,6 +9,7 @@ pub enum Message {
     SyncResponse(SyncPayload),
     SyncAck(String),
     SyncComplete,
+    FileTransfer { name: String, data: Vec<u8> },
 }
 
 #[derive(Serialize, Deserialize)]
