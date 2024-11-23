@@ -2,7 +2,7 @@
 	import { invoke } from "@tauri-apps/api/core";
 	import { listen } from "@tauri-apps/api/event";
 	import { onMount, onDestroy } from "svelte";
-
+	import { sendMessage } from "../lib/components/dashboard/helper";
 	let connectionTicket = "";
 	let status = "Initializing...";
 	let error = "";
@@ -42,6 +42,10 @@
 			await invoke("start_p2p_listener");
 			await setupEventListeners();
 			connectionTicket = await invoke("get_ticket");
+			const certificate = await sendMessage("exportCertificate", {
+				passphrase: "test",
+			});
+			console.log("Certificate:", certificate);
 			status = "Ready to connect. Share the ticket with mobile device.";
 		} catch (err) {
 			error = err.toString();
@@ -69,7 +73,7 @@
 		}
 	}
 
-	async function sendMessage() {
+	async function sendMessageChat() {
 		if (!messageInput.trim()) return;
 
 		try {
@@ -85,7 +89,7 @@
 	function handleKeyPress(event: KeyboardEvent) {
 		if (event.key === "Enter" && !event.shiftKey) {
 			event.preventDefault();
-			sendMessage();
+			sendMessageChat();
 		}
 	}
 </script>
@@ -157,7 +161,7 @@
 					on:keypress="{handleKeyPress}"></textarea>
 				<button
 					class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors disabled:bg-gray-400"
-					on:click="{sendMessage}"
+					on:click="{sendMessageChat}"
 					disabled="{!messageInput.trim()}">
 					Send
 				</button>

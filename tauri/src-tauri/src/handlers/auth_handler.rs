@@ -1,8 +1,7 @@
 // src/handlers/auth_handler.rs
 use crate::application::services::AuthService;
 use crate::types::{
-    CryptoResponse, HashAndSignInput, ImportCertificateInput, LoadPvtKeyInput, PasswordChangeInput,
-    SavePassphraseInput, SignChallengeInput,
+    CryptoResponse, ExportedCertificate, HashAndSignInput, ImportCertificateInput, LoadPvtKeyInput, PasswordChangeInput, SavePassphraseInput, SignChallengeInput
 };
 use std::sync::Arc;
 use tauri::{AppHandle, State};
@@ -10,7 +9,7 @@ use tauri_plugin_store::StoreExt;
 
 #[tauri::command]
 pub async fn check_signup_status(app_handle: AppHandle) -> Result<CryptoResponse, String> {
-    let store = app_handle.store("my_app_store9.bin").unwrap();
+    let store = app_handle.store("my_app_store10.bin").unwrap();
     let is_signed_up_result = store.get("certificate").is_some();
     Ok(CryptoResponse::IsSignedUp {
         isSignedUp: is_signed_up_result,
@@ -88,10 +87,10 @@ pub async fn handle_import_certificate(
 
 #[tauri::command]
 pub async fn handle_export_certificate(
-    passphrase: String,
+    input: ExportedCertificate,
     auth_service: State<'_, Arc<AuthService>>,
 ) -> Result<CryptoResponse, String> {
-    let exported_cert = auth_service.export_certificate(passphrase).await?;
+    let exported_cert = auth_service.export_certificate(input.passphrase).await?;
     Ok(CryptoResponse::ExportedCertificate(exported_cert))
 }
 

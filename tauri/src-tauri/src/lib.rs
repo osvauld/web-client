@@ -45,6 +45,8 @@ pub fn run() {
                         && !metadata.target().contains("iroh_net::magicsock")
                         && !metadata.target().contains("iroh_quinn_udp")
                         && !metadata.target().contains("iroh_net::relay")
+                        && !metadata.target().contains("iroh_net::relay")
+                        && !metadata.target().contains("iroh_quinn_proto::connection")
                 })
                 .build(),
         )

@@ -75,7 +75,6 @@
 		<input
 			class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-osvauld-iconblack focus:ring-0 active:outline-none focus:ring-offset-0"
 			type="{showReenteredPassword ? 'text' : 'password'}"
-			disabled="{!isPassphraseAcceptable}"
 			id="passphrase"
 			on:input="{handleConfirmationInputChange}" />
 
