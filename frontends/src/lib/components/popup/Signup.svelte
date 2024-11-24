@@ -4,7 +4,7 @@
 	import { createEventDispatcher } from "svelte";
 
 	let challenge = "";
-	let importPvtKeyFlag = false;
+	let importPvtKeyFlag = true;
 	const dispatch = createEventDispatcher();
 
 	const handleRecovery = (e: any) => {

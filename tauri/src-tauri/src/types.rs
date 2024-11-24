@@ -70,6 +70,11 @@ pub struct ImportCertificateInput {
 }
 
 #[derive(Deserialize)]
+pub struct ExportedCertificate {
+    pub passphrase: String,
+}
+
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 
 pub struct PasswordChangeInput {

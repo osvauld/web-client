@@ -5,6 +5,7 @@ use crate::types::CryptoResponse;
 use futures_lite::StreamExt;
 use iroh::net::relay::RelayMode;
 use iroh::net::{Endpoint, NodeAddr};
+use iroh_blobs::store::mem::Store;
 use iroh_net::endpoint::Connection;
 use iroh_net::endpoint::DirectAddrType;
 use iroh_net::endpoint::{RecvStream, SendStream};
@@ -14,9 +15,9 @@ use std::net::SocketAddrV6;
 use std::sync::Arc;
 use tauri::AppHandle;
 use tauri::Emitter;
+use tauri::Manager;
 use tokio::io::AsyncWriteExt;
 use tokio::sync::Mutex;
-use tokio::task;
 use tokio::time::{timeout, Duration};
 const ALPN_PROTOCOL: &[u8] = b"n0/osvauld/0";
 const CONNECTION_TIMEOUT: Duration = Duration::from_secs(30);
@@ -188,6 +189,13 @@ impl P2PService {
         if is_initiator {
             self.start_sync().await?;
         }
+        //  else {
+        //     let app_data_dir = self.app_handle.path().app_data_dir().unwrap();
+        //     let test_file_path = app_data_dir.join("test.txt");
+        //     self.send_file(test_file_path.to_string_lossy().into_owned())
+        //         .await?;
+        // }
+
         Ok(())
     }
 
@@ -405,6 +413,10 @@ impl P2PService {
                                                 Message::SyncAck(sync_id) => {
                                                     self.handle_sync_ack(sync_id).await
                                                 }
+
+                                                Message::FileTransfer { name, data } => {
+                                                    self.handle_file_receive(name, data).await
+                                                }
                                                 Message::SyncResponse(payload) => {
                                                     self.handle_sync_response(payload).await
                                                 }
@@ -452,7 +464,116 @@ impl P2PService {
         }
         info!("Message listener stopped");
     }
+    pub async fn send_file(&self, file_path: String) -> Result<(), String> {
+        info!("----------- Starting File Transfer Process -----------");
+        info!("Input file path: {}", file_path);
 
+        let path = std::path::Path::new(&file_path);
+        info!("Checking if file exists at: {}", path.display());
+        if !path.exists() {
+            let err = format!("File does not exist at path: {}", path.display());
+            error!("{}", err);
+            return Err(err);
+        }
+
+        let file_name = match path.file_name() {
+            Some(name) => {
+                let name_str = name.to_string_lossy().into_owned();
+                info!("Successfully extracted file name: {}", name_str);
+                name_str
+            }
+            None => {
+                let err = format!("Could not extract file name from path: {}", file_path);
+                error!("{}", err);
+                return Err(err);
+            }
+        };
+
+        info!("Attempting to read file contents from: {}", file_path);
+        let file_data = match tokio::fs::read(&file_path).await {
+            Ok(data) => {
+                info!("Successfully read file. Size: {} bytes", data.len());
+                info!(
+                    "First few bytes (up to 10): {:?}",
+                    &data.iter().take(10).collect::<Vec<_>>()
+                );
+                data
+            }
+            Err(e) => {
+                let err = format!("Failed to read file contents: {}", e);
+                error!("{}", err);
+                return Err(err);
+            }
+        };
+
+        info!(
+            "Creating FileTransfer message with name: {} and data size: {}",
+            file_name,
+            file_data.len()
+        );
+        let message = Message::FileTransfer {
+            name: file_name.clone(),
+            data: file_data.clone(),
+        };
+
+        info!("Attempting to serialize FileTransfer message");
+        let serialized = match serde_json::to_string(&message) {
+            Ok(json) => {
+                info!(
+                    "Successfully serialized message. JSON size: {} bytes",
+                    json.len()
+                );
+                json
+            }
+            Err(e) => {
+                let err = format!("Failed to serialize FileTransfer message: {}", e);
+                error!("{}", err);
+                return Err(err);
+            }
+        };
+
+        info!("Attempting to send serialized message");
+        match self.send_message(serialized).await {
+            Ok(_) => {
+                info!("----------- File Transfer Complete -----------");
+                info!("Successfully sent file: {}", file_name);
+                info!("Total bytes transferred: {}", file_data.len());
+                Ok(())
+            }
+            Err(e) => {
+                let err = format!("Failed to send message through connection: {}", e);
+                error!("----------- File Transfer Failed -----------");
+                error!("{}", err);
+                Err(err)
+            }
+        }
+    }
+
+    async fn handle_file_receive(&self, name: String, data: Vec<u8>) -> Result<(), String> {
+        // Get app data directory and create downloads folder within it
+        let app_data_dir = self.app_handle.path().app_data_dir().unwrap();
+        let downloads_dir = app_data_dir.join("downloads");
+
+        // Create downloads directory
+        tokio::fs::create_dir_all(&downloads_dir)
+            .await
+            .map_err(|e| format!("Failed to create downloads directory: {}", e))?;
+
+        // Write file to downloads directory
+        let file_path = downloads_dir.join(&name);
+        tokio::fs::write(&file_path, data)
+            .await
+            .map_err(|e| format!("Failed to write file: {}", e))?;
+
+        info!("File saved to: {}", file_path.display());
+
+        // Emit event to notify UI
+        if let Err(e) = self.app_handle.emit("file-received", name) {
+            error!("Failed to emit file received event: {}", e);
+        }
+
+        Ok(())
+    }
     pub async fn send_chat_message(&self, message: String) -> Result<CryptoResponse, String> {
         let msg = Message::Chat(message);
         let serialized = serde_json::to_string(&msg).map_err(|e| e.to_string())?;

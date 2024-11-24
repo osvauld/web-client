@@ -13,9 +13,8 @@
 
 	const handleSubmit = async (e: any) => {
 		const passphrase = e.detail.passphrase;
-		const { certificate, baseUrl } = JSON.parse(recoveryData);
 
-		await StorageService.setBaseUrl(baseUrl);
+		const certificate = recoveryData;
 		await sendMessage("importPvtKey", {
 			passphrase,
 			certificate,

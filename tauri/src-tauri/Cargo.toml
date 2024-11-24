@@ -5,7 +5,15 @@ description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[profile.dev]
+incremental = true # Compile your binary in smaller steps.
+[profile.release]
+codegen-units = 1 # Allows LLVM to perform better optimization.
+lto = true        # Enables link-time-optimizations.
+opt-level = "s"   # Prioritizes small binary size. Use `3` if you prefer speed.
+panic = "abort"   # Higher performance by disabling panic handlers.
+strip = true      # Ensures debug symbols are removed.
 
 [lib]
 name = "osvauld_lib"
@@ -50,3 +58,4 @@ chrono = "0.4.38"
 async-trait = "0.1.83"
 thiserror = "2.0.0"
 iroh-quinn = "0.12.0"
+iroh-blobs = "0.28.1"
