@@ -47,6 +47,7 @@ pub fn run() {
                         && !metadata.target().contains("iroh_net::relay")
                         && !metadata.target().contains("iroh_net::relay")
                         && !metadata.target().contains("iroh_quinn_proto::connection")
+                        && !metadata.target().contains("iroh_net::netcheck")
                 })
                 .build(),
         )
