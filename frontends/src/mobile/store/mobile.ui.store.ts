@@ -6,3 +6,4 @@ export let vaultSwitchActive = writable(false);
 export let selectedCredentialType = writable("");
 export let categorySelection = writable(false);
 export let vaults = writable([{ id: "all", name: "All Vaults" }]);
+export let profileSelected = writable(false);

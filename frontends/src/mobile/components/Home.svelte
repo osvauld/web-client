@@ -7,6 +7,7 @@
 	import DefaultLayout from "./layouts/DefaultLayout.svelte";
 	import CredentialLayout from "./layouts/CredentialLayout.svelte";
 	import CategoryLayout from "./layouts/CategoryLayout.svelte";
+	import ProfileLayout from "./layouts/ProfileLayout.svelte";
 	import {
 		selectedCredentialType,
 		categorySelection,
