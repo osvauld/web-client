@@ -188,12 +188,13 @@ impl P2PService {
         );
         if is_initiator {
             self.start_sync().await?;
-        } else {
-            let app_data_dir = self.app_handle.path().app_data_dir().unwrap();
-            let test_file_path = app_data_dir.join("test.txt");
-            self.send_file(test_file_path.to_string_lossy().into_owned())
-                .await?;
         }
+        //  else {
+        //     let app_data_dir = self.app_handle.path().app_data_dir().unwrap();
+        //     let test_file_path = app_data_dir.join("test.txt");
+        //     self.send_file(test_file_path.to_string_lossy().into_owned())
+        //         .await?;
+        // }
 
         Ok(())
     }
