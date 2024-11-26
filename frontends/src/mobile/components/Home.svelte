@@ -8,9 +8,12 @@
 	import CredentialLayout from "./layouts/CredentialLayout.svelte";
 	import CategoryLayout from "./layouts/CategoryLayout.svelte";
 	import ProfileLayout from "./layouts/ProfileLayout.svelte";
+	import BottomNavigation from "./sections/BottomNavigation.svelte";
 	import {
 		selectedCredentialType,
 		categorySelection,
+		currentLayout,
+		bottomNavActive,
 	} from "../store/mobile.ui.store";
 
 	const SUPPORTED_LANGUAGES = [
@@ -29,11 +32,11 @@
 		"zh",
 	];
 
-	$: currentLayout = $selectedCredentialType
-		? "credential"
-		: $categorySelection
-			? "category"
-			: "default";
+	// $: currentLayout = $selectedCredentialType
+	// 	? "credential"
+	// 	: $categorySelection
+	// 		? "category"
+	// 		: "default";
 
 	async function initializeLanguage() {
 		try {
@@ -57,12 +60,16 @@
 	});
 </script>
 
-{#key currentLayout}
-	{#if currentLayout === "credential"}
-		<CredentialLayout />
-	{:else if currentLayout === "category"}
-		<CategoryLayout />
-	{:else}
-		<DefaultLayout />
-	{/if}
-{/key}
+{#if $currentLayout === "credential"}
+	<CredentialLayout />
+{:else if $currentLayout === "category"}
+	<CategoryLayout />
+{:else if $currentLayout === "profile"}
+	<ProfileLayout />
+{:else if $currentLayout === "home"}
+	<DefaultLayout />
+{/if}
+
+{#if $bottomNavActive}
+	<BottomNavigation />
+{/if}

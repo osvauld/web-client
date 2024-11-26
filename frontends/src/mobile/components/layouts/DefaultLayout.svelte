@@ -1,6 +1,5 @@
 <script lang="ts">
 	import TopNavBar from "../sections/TopNavBar.svelte";
-	import BottomNavigation from "../sections/BottomNavigation.svelte";
 	import RecentsList from "../views/RecentsList.svelte";
 	import AddVault from "../views/AddVault.svelte";
 	import EmptyVault from "../ui/EmptyVault.svelte";
@@ -20,7 +19,6 @@
 	{:else}
 		<RecentsList {NUM_CREDS} />
 	{/if}
-	<BottomNavigation />
 	{#if $vaultSwitchActive}
 		<AddVault />
 	{/if}

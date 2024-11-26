@@ -3,14 +3,25 @@
 	import Options from "../../../icons/options.svelte";
 	import DownArrow from "../../../icons/mobileDownArrow.svelte";
 	import LL from "../../../i18n/i18n-svelte";
-	import { vaultSwitchActive, currentVault } from "../../store/mobile.ui.store";
+	import {
+		vaultSwitchActive,
+		currentVault,
+		bottomNavActive,
+	} from "../../store/mobile.ui.store";
+
+	const handleVaultSwitch = () => {
+		if ($vaultSwitchActive) {
+			bottomNavActive.set(true);
+		}
+		vaultSwitchActive.set(!$vaultSwitchActive);
+	};
 </script>
 
 <div class="fixed w-full top-0 h-[48px] flex justify-between items-center px-4">
 	<span><Options color="#85889C" /></span>
 	<button
 		class="text-2xl text-mobile-textPrimary font-semibold flex items-center gap-2 capitalize"
-		on:click="{() => vaultSwitchActive.set(!$vaultSwitchActive)}">
+		on:click="{handleVaultSwitch}">
 		{$currentVault.id === "all" ? "All Vaults" : $currentVault.name}
 		<span><DownArrow color="#85889C" /></span>
 	</button>
