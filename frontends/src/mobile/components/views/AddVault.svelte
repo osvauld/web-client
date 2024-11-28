@@ -12,7 +12,7 @@
 	import { onMount } from "svelte";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 
-	let newVaultInputActive = false;
+	let newVaultInputActive = true;
 	let newVaultName = "";
 
 	const autofocus = (node) => {
@@ -41,6 +41,7 @@
 
 	onMount(async () => {
 		try {
+			console.log("addVault mounted");
 			const resp = await sendMessage("getFolder");
 			const updatedVaults = [{ id: "all", name: "All Vaults" }, ...resp];
 			vaults.set(updatedVaults);

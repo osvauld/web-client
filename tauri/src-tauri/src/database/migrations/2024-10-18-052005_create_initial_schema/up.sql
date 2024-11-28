@@ -48,8 +48,6 @@ CREATE TABLE sync_records (
     status TEXT NOT NULL CHECK (status IN ('pending', 'completed', 'failed')),
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (source_device_id) REFERENCES devices(id) ON DELETE CASCADE,
-    FOREIGN KEY (target_device_id) REFERENCES devices(id) ON DELETE CASCADE,
     FOREIGN KEY (folder_id) REFERENCES folders(id) ON DELETE CASCADE,
     FOREIGN KEY (credential_id) REFERENCES credentials(id) ON DELETE CASCADE
 );

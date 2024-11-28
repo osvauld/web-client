@@ -38,6 +38,7 @@
 			},
 			$currentVault.id,
 		);
+		directToHome();
 	};
 
 	onMount(() => {
@@ -45,6 +46,7 @@
 			(item) => item.id === $selectedCredentialType,
 		);
 		credentialFields = credentialFieldsUpdater(selectedCategory.name);
+		bottomNavActive.set(false);
 	});
 </script>
 

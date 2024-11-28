@@ -13,6 +13,7 @@
 		if ($vaultSwitchActive) {
 			bottomNavActive.set(true);
 		}
+		console.log($vaultSwitchActive, "tEST");
 		vaultSwitchActive.set(!$vaultSwitchActive);
 	};
 </script>

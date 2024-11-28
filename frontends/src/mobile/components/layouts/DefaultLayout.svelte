@@ -5,7 +5,7 @@
 	import EmptyVault from "../ui/EmptyVault.svelte";
 	import { vaultSwitchActive } from "../../store/mobile.ui.store";
 
-	const NUM_CREDS = 0;
+	const NUM_CREDS = 1;
 	vaultSwitchActive.subscribe((value) => {
 		console.log(value);
 	});
@@ -14,11 +14,9 @@
 <main
 	class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
 	<TopNavBar />
-	{#if NUM_CREDS === 0}
-		<EmptyVault />
-	{:else}
-		<RecentsList {NUM_CREDS} />
-	{/if}
+
+	<RecentsList />
+
 	{#if $vaultSwitchActive}
 		<AddVault />
 	{/if}

@@ -38,4 +38,26 @@ impl SyncRecord {
             updated_at: now,
         }
     }
+
+    pub fn new_credential_sync(
+        credential_id: String,
+        operation_type: String,
+        source_device_id: String,
+        target_device_id: String,
+    ) -> Self {
+        let now = Utc::now().format("%Y-%m-%d %H:%M:%S%.3f").to_string();
+        Self {
+            id: Uuid::new_v4().to_string(),
+            resource_id: credential_id.clone(),
+            resource_type: "credential".to_string(),
+            operation_type,
+            source_device_id,
+            target_device_id,
+            status: "pending".to_string(),
+            folder_id: None,
+            credential_id: Some(credential_id),
+            created_at: now.clone(),
+            updated_at: now,
+        }
+    }
 }
