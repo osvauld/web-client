@@ -13,20 +13,22 @@
 			const responseJson = await sendMessage("getCredentialsForFolder", {
 				folderId: vaultId,
 			});
-			notes = responseJson.map((note) => {
-				const nameField = note.data.credentialFields.find(
-					(field) => field.fieldName === "Name",
-				);
-				const noteField = note.data.credentialFields.find(
-					(field) => field.fieldName === "Note",
-				);
-				return {
-					id: note.id,
-					title: nameField?.fieldValue || note.data.name,
-					content: noteField?.fieldValue || note.data.description,
-					date: new Date().toLocaleDateString(),
-				};
-			});
+			notes = responseJson
+				.map((note) => {
+					const nameField = note.data.credentialFields.find(
+						(field) => field.fieldName === "Name",
+					);
+					const noteField = note.data.credentialFields.find(
+						(field) => field.fieldName === "Note",
+					);
+					return {
+						id: note.id,
+						title: nameField?.fieldValue || note.data.name,
+						content: noteField?.fieldValue || note.data.description,
+						date: new Date().toLocaleDateString(),
+					};
+				})
+				.reverse();
 		} catch (error) {
 			console.error("Error fetching notes:", error);
 			notes = [];
