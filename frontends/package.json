@@ -45,6 +45,7 @@
 		"webextension-polyfill": "^0.10.0"
 	},
 	"dependencies": {
+		"@castlenine/svelte-qrcode": "^2.3.0",
 		"@tauri-apps/api": "^2.0.0-rc.5",
 		"@tauri-apps/plugin-clipboard-manager": "^2.0.0-rc.2",
 		"@tauri-apps/plugin-store": "^2.0.0",
