@@ -73,15 +73,12 @@
 				windowed: false,
 				formats: [Format.QRCode],
 			});
-			console.log("result", JSON.stringify(result.content));
-			if (result) {
+			if (result && result.content) {
 				ticket = JSON.parse(result.content);
-				console.log(ticket);
 				status = "QR code scanned successfully";
 			}
 		} catch (err) {
 			error = "Failed to scan QR code: " + err.toString();
-			console.log("failure===>>", JSON.stringify(err), err.toString());
 			status = "Scan failed";
 		} finally {
 			scanning = false;
