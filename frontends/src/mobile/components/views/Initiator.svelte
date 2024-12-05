@@ -69,10 +69,10 @@
 			status = "Scanning QR code...";
 
 			const result = await scan({
-				windowed: true,
+				windowed: false,
 				formats: [Format.QRCode],
 			});
-
+			console.log("result", result);
 			if (result) {
 				ticket = result;
 				status = "QR code scanned successfully";
