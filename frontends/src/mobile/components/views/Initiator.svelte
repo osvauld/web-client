@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { invoke } from "@tauri-apps/api/core";
-	import { scan, Format } from "@tauri-apps/plugin-barcode-scanner";
+	import {
+		scan,
+		Format,
+		requestPermissions,
+	} from "@tauri-apps/plugin-barcode-scanner";
 	import { onMount, onDestroy } from "svelte";
 	import { listen } from "@tauri-apps/api/event";
 
@@ -59,6 +63,7 @@
 
 	async function scanQRCode() {
 		try {
+			await requestPermissions();
 			scanning = true;
 			error = "";
 			status = "Scanning QR code...";
