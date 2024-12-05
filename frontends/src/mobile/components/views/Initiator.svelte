@@ -35,6 +35,7 @@
 	});
 
 	async function connect() {
+		console.log(ticket);
 		if (!ticket.trim()) {
 			error = "Please enter a connection ticket";
 			return;
@@ -72,9 +73,10 @@
 				windowed: false,
 				formats: [Format.QRCode],
 			});
-			console.log("result", result);
+			console.log("result", JSON.stringify(result.content));
 			if (result) {
-				ticket = result;
+				ticket = JSON.parse(result.content);
+				console.log(ticket);
 				status = "QR code scanned successfully";
 			}
 		} catch (err) {
