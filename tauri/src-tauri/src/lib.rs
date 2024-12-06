@@ -36,7 +36,12 @@ use tokio::runtime::Runtime;
 use tokio::sync::Mutex;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let builder = tauri::Builder::default();
+
+    #[cfg(any(target_os = "android", target_os = "ios"))]
+    let builder = builder.plugin(tauri_plugin_barcode_scanner::init());
+
+    builder
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(
@@ -56,7 +61,7 @@ pub fn run() {
         .setup(|app| {
             let handle = app.handle();
             let app_dir = app.path().app_data_dir().unwrap();
-            let db_path = app_dir.join("sqlite9.db").to_str().unwrap().to_string();
+            let db_path = app_dir.join("sqlite10.db").to_str().unwrap().to_string();
             // Create a new Tokio runtime
             let rt = Arc::new(Runtime::new().expect("Failed to create Tokio runtime"));
 

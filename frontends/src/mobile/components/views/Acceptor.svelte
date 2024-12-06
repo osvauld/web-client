@@ -1,4 +1,5 @@
 <script lang="ts">
+	import QRCode from "@castlenine/svelte-qrcode";
 	import { invoke } from "@tauri-apps/api/core";
 	import { listen } from "@tauri-apps/api/event";
 	import { onMount, onDestroy } from "svelte";
@@ -69,10 +70,10 @@
 
 		<div class="flex flex-col gap-3">
 			{#if connectionTicket}
-				<div
-					class="bg-mobile-bgPrimary p-3 rounded-lg break-all font-mono text-mobile-textPrimary">
-					{connectionTicket}
+				<div class="mx-auto">
+					<QRCode data="{JSON.stringify(connectionTicket)}" />
 				</div>
+
 				<button
 					on:click="{copyTicket}"
 					class="w-full bg-osvauld-carolinablue text-mobile-bgPrimary rounded-lg py-3 font-medium">
