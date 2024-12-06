@@ -21,12 +21,14 @@
 		isLoaderActive = true;
 		const pubkey = await sendMessage("getPubKey", { passphrase });
 		dispatch("authenticated", true);
-
 		isLoaderActive = false;
 	}
 	const onInput = (event: any) => {
 		passphrase = event.target.value;
 	};
+	function autofocus(node: any) {
+		node.focus();
+	}
 </script>
 
 <div
@@ -42,8 +44,8 @@
 				class="text-white bg-osvauld-frameblack border-0 tracking-wider font-normal border-transparent focus:border-transparent focus:ring-0 focus:border-osvauld-activeBorder"
 				{type}
 				id="passphrase"
-				autofocus
 				autocomplete="off"
+				use:autofocus
 				on:input="{onInput}" />
 			<button
 				type="button"

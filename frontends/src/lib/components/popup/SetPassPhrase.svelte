@@ -44,6 +44,11 @@
 					username,
 				});
 
+				// Before loader gone, lets create One folder ?
+				await sendMessage("addFolder", {
+					name: "Default",
+					description: "",
+				});
 				isLoaderActive = false;
 				const pubkey = await sendMessage("getPubKey", { passphrase });
 
