@@ -29,8 +29,7 @@
 
 	let credentialFields = [];
 	const addCredentialHandlerFunc = async () => {
-		console.log("Add Credential....");
-		console.log(JSON.stringify(credentialFields));
+		console.log("Add Credential....", JSON.stringify(credentialFields));
 		await addCredentialHandler(
 			{
 				name: "test",
@@ -48,11 +47,10 @@
 		selectedCategory = CATEGORIES.find(
 			(item) => item.id === $selectedCredentialType,
 		);
-
 		const defaultVault = $vaults.find((vault) => vault.name === "Default");
 
 		defaultVaultId = defaultVault?.id;
-		console.log("Default Vualt Id ==>", defaultVaultId);
+		console.log("Default Vault Id ==>", defaultVaultId);
 		credentialFields = credentialFieldsUpdater(selectedCategory.name);
 		bottomNavActive.set(false);
 	});
