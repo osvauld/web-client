@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { CATEGORIES } from "../../../utils/mobileUtils";
 	import LL from "../../../i18n/i18n-svelte";
-	import { selectedCredentialType } from "../../store/mobile.ui.store";
+	import {
+		currentLayout,
+		selectedCredentialType,
+	} from "../../store/mobile.ui.store";
+	const handleClick = (categoryId: string) => {
+		selectedCredentialType.set(categoryId);
+		currentLayout.set("credential");
+	};
 </script>
 
 <button
@@ -14,7 +21,7 @@
 		<button
 			class="relative border border-mobile-bgHighlight bg-mobile-bgSeconary rounded-lg px-3 py-2.5 h-[90px]
                active:bg-mobile-bgHighlight/10 transition-colors touch-manipulation"
-			on:click="{() => selectedCredentialType.set(category.id)}">
+			on:click="{() => handleClick(category.id)}">
 			<div class="flex flex-col h-full items-center justify-center gap-2">
 				{#if category.icon}
 					<span class="flex justify-center items-center">

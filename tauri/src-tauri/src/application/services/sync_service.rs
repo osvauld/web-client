@@ -63,6 +63,7 @@ impl SyncService {
                     .credential_repository
                     .find_by_id(&sync_record.resource_id)
                     .await?;
+                log::info!("found credential {:?}", credential);
                 SyncData::Credential(credential)
             }
             _ => {
@@ -87,7 +88,7 @@ impl SyncService {
     pub async fn process_sync_payload(&self, payload: &SyncPayload) -> Result<(), RepositoryError> {
         log::info!(
             "Processing sync payload for resource: {}",
-            payload.sync_record.resource_id
+            payload.sync_record.resource_type
         );
 
         match &payload.data {

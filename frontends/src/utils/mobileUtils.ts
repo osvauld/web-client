@@ -80,7 +80,7 @@ export const credentialFieldsUpdater = (type: string) => {
 				{ fieldName: "PIN", fieldValue: "", sensitive: true },
 			];
 		case "Note":
-			return [{ fieldName: "Note1", fieldValue: "", sensitive: false }];
+			return [{ fieldName: "Name", fieldValue: "", sensitive: false }, { fieldName: "Note", fieldValue: "", sensitive: false },];
 		case "Bank Account":
 			return [
 				{ fieldName: "Account Holder", fieldValue: "", sensitive: false },

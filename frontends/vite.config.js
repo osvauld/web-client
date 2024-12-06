@@ -37,6 +37,9 @@ const createConfig = ({ mode, platform }) => {
 				compilerOptions: {
 					dev: isDev,
 				},
+				hot: isDev && {
+					preserveState: true,
+				},
 			}),
 		],
 
@@ -45,11 +48,11 @@ const createConfig = ({ mode, platform }) => {
 				"*": path.resolve(__dirname, "src/*"),
 				...(isTauri
 					? {
-							"webextension-polyfill": path.resolve(
-								__dirname,
-								"src/utils/browserMock.ts",
-							),
-						}
+						"webextension-polyfill": path.resolve(
+							__dirname,
+							"src/utils/browserMock.ts",
+						),
+					}
 					: {}),
 			},
 		},
@@ -76,6 +79,16 @@ const createConfig = ({ mode, platform }) => {
 			strictPort: true,
 			port: isTauri ? (isMobile ? 1420 : 1421) : 1421,
 			host: process.env.TAURI_DEV_HOST || "0.0.0.0",
+			hmr: {
+				protocol: 'ws',
+				host: process.env.TAURI_DEV_HOST || '0.0.0.0',
+				port: 1420,
+				clientPort: 1420,
+			},
+			watch: {
+				usePolling: true,
+				interval: 1000,
+			}
 		},
 	};
 };

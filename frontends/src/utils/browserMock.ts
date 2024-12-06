@@ -5,7 +5,7 @@ const tauriBrowser = {
 	storage: {
 		local: {
 			get: async (key) => {
-				const store = await Store.load('my_app_store10.bin');
+				const store = await Store.load('my_app_store12.bin');
 				// console.log("Tauri: Getting", key);
 				try {
 					const value = await store.get(key);
@@ -25,7 +25,7 @@ const tauriBrowser = {
 				}
 			},
 			set: async (data) => {
-				const store = await Store.load('my_app_store10.bin');
+				const store = await Store.load('my_app_store12.bin');
 				// console.log("Tauri: Setting", data);
 				try {
 					const key = Object.keys(data)[0];

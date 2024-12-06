@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { slide } from "svelte/transition";
 	import Add from "../../../icons/add.svelte";
 	import RoundedInfo from "../../../icons/roundedInfo.svelte";
@@ -7,11 +7,12 @@
 		vaultSwitchActive,
 		currentVault,
 		vaults,
+		bottomNavActive,
 	} from "../../store/mobile.ui.store";
 	import { onMount } from "svelte";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 
-	let newVaultInputActive = false;
+	let newVaultInputActive = true;
 	let newVaultName = "";
 
 	const autofocus = (node) => {
@@ -19,23 +20,28 @@
 	};
 
 	const handleFolderCreation = async () => {
-		try {
-			await sendMessage("addFolder", {
-				name: newVaultName,
-				description: "",
-			});
-		} catch (e) {
-			console.log("Error received", e);
-		} finally {
-			currentVault.set(newVaultName);
-			vaultSwitchActive.set(false);
-			newVaultName = "";
-			newVaultInputActive = false;
-		}
+		await sendMessage("addFolder", {
+			name: newVaultName,
+			description: "",
+		});
+		bottomNavActive.set(true);
+		// todo: change this to the newly created vault (be)
+		currentVault.set(newVaultName);
+		vaultSwitchActive.set(false);
+		newVaultName = "";
+		newVaultInputActive = false;
+	};
+
+	const selectVault = (vault) => {
+		vaultSwitchActive.set(false);
+		newVaultInputActive = false;
+		currentVault.set(vault);
+		bottomNavActive.set(true);
 	};
 
 	onMount(async () => {
 		try {
+			console.log("addVault mounted");
 			const resp = await sendMessage("getFolder");
 			const updatedVaults = [{ id: "all", name: "All Vaults" }, ...resp];
 			vaults.set(updatedVaults);
@@ -52,11 +58,7 @@
 	{#each $vaults as vault (vault.id)}
 		{@const isActive = $currentVault.name === vault.name}
 		<button
-			on:click="{() => {
-				vaultSwitchActive.set(false);
-				newVaultInputActive = false;
-				currentVault.set(vault);
-			}}"
+			on:click="{() => selectVault(vault)}"
 			class="h-[48px] p-4 text-mobile-textPrimary flex items-center rounded-lg"
 			class:bg-mobile-bgLight="{isActive}"
 			class:text-mobile-textTertiary="{isActive}">

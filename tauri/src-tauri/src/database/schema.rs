@@ -65,10 +65,4 @@ diesel::joinable!(credentials -> folders (folder_id));
 diesel::joinable!(sync_records -> credentials (credential_id));
 diesel::joinable!(sync_records -> folders (folder_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    credentials,
-    devices,
-    folders,
-    sync_records,
-    users,
-);
+diesel::allow_tables_to_appear_in_same_query!(credentials, devices, folders, sync_records, users,);

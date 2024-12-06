@@ -1,3 +1,4 @@
+use domains::models::p2p;
 use log::{error, info};
 use tauri::Manager;
 pub mod application;
@@ -35,7 +36,12 @@ use tokio::runtime::Runtime;
 use tokio::sync::Mutex;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let builder = tauri::Builder::default();
+
+    #[cfg(any(target_os = "android", target_os = "ios"))]
+    let builder = builder.plugin(tauri_plugin_barcode_scanner::init());
+
+    builder
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(
@@ -55,7 +61,7 @@ pub fn run() {
         .setup(|app| {
             let handle = app.handle();
             let app_dir = app.path().app_data_dir().unwrap();
-            let db_path = app_dir.join("sqlite1.db").to_str().unwrap().to_string();
+            let db_path = app_dir.join("sqlite10.db").to_str().unwrap().to_string();
             // Create a new Tokio runtime
             let rt = Arc::new(Runtime::new().expect("Failed to create Tokio runtime"));
 
@@ -87,20 +93,20 @@ pub fn run() {
                     let crypto_utils = Arc::new(Mutex::new(CryptoUtils::new()));
                     let auth_service =
                         Arc::new(AuthService::new(auth_repository, crypto_utils.clone()));
-                    let credential_service = Arc::new(CredentialService::new(
-                        credential_repo.clone(),
-                        crypto_utils,
-                    ));
-
-                    // Initialize sync service with cloned repositories
                     let sync_service = Arc::new(SyncService::new(
                         sync_repo.clone(),
                         folder_repo.clone(),
                         credential_repo.clone(),
                     ));
-
                     let p2p_service =
                         Arc::new(P2PService::new(handle.clone(), sync_service.clone()));
+                    let credential_service = Arc::new(CredentialService::new(
+                        credential_repo.clone(),
+                        crypto_utils,
+                        sync_repo.clone(),
+                        p2p_service.clone(),
+                    ));
+
                     // Manage all services
                     app.manage(folder_service);
                     app.manage(auth_service);

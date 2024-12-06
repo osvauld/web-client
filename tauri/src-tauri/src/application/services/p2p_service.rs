@@ -199,7 +199,7 @@ impl P2PService {
         Ok(())
     }
 
-    async fn start_sync(&self) -> Result<(), String> {
+    pub async fn start_sync(&self) -> Result<(), String> {
         info!("Starting sync process");
         let connection = self.get_active_connection().await?;
 
@@ -295,7 +295,7 @@ impl P2PService {
         Ok(())
     }
 
-    async fn handle_sync_request(&self) -> Result<(), String> {
+    pub async fn handle_sync_request(&self) -> Result<(), String> {
         info!("Handling incoming sync request");
         match self.sync_service.get_next_pending_sync().await {
             Ok(Some(payload)) => {
@@ -371,7 +371,11 @@ impl P2PService {
             error!("Failed to process sync payload: {}", e);
             return Err(e.to_string());
         }
+
         info!("Processed sync payload successfully");
+        self.app_handle
+            .emit("sync-completed", true)
+            .map_err(|e| e.to_string())?;
 
         // Send acknowledgment
         info!(
@@ -400,53 +404,84 @@ impl P2PService {
                 Ok(connection) => {
                     match connection.accept_bi().await {
                         Ok((mut send, mut recv)) => {
-                            let mut buffer = vec![0u8; 1024];
-                            match recv.read(&mut buffer).await {
-                                Ok(Some(n)) if n > 0 => {
-                                    let message_str = String::from_utf8_lossy(&buffer[..n]);
-                                    match serde_json::from_str::<Message>(&message_str) {
-                                        Ok(message) => {
-                                            let result = match message {
-                                                Message::SyncRequest => {
-                                                    self.handle_sync_request().await
-                                                }
-                                                Message::SyncAck(sync_id) => {
-                                                    self.handle_sync_ack(sync_id).await
-                                                }
+                            // Use a dynamic buffer that can grow as needed
+                            let mut buffer = Vec::new();
+                            let mut temp_buffer = vec![0u8; 8192]; // Larger temp buffer for reading chunks
 
-                                                Message::FileTransfer { name, data } => {
-                                                    self.handle_file_receive(name, data).await
-                                                }
-                                                Message::SyncResponse(payload) => {
-                                                    self.handle_sync_response(payload).await
-                                                }
-                                                Message::SyncComplete => {
-                                                    self.handle_sync_complete().await
-                                                }
-                                                Message::Chat(_)
-                                                | Message::Ping
-                                                | Message::Pong => {
-                                                    if let Err(e) = self
-                                                        .app_handle
-                                                        .emit("message-received", message)
-                                                    {
-                                                        error!("Failed to emit message: {}", e);
+                            // Read the entire message
+                            loop {
+                                match recv.read(&mut temp_buffer).await {
+                                    Ok(Some(n)) if n > 0 => {
+                                        buffer.extend_from_slice(&temp_buffer[..n]);
+
+                                        // Try to parse what we have so far
+                                        if let Ok(message_str) = String::from_utf8(buffer.clone()) {
+                                            match serde_json::from_str::<Message>(&message_str) {
+                                                Ok(message) => {
+                                                    info!("Successfully deserialized message");
+                                                    let result = match &message {
+                                                        Message::SyncRequest => {
+                                                            self.handle_sync_request().await
+                                                        }
+                                                        Message::SyncAck(sync_id) => {
+                                                            self.handle_sync_ack(sync_id.clone())
+                                                                .await
+                                                        }
+                                                        Message::SyncResponse(payload) => {
+                                                            info!(
+                                                                "Received sync payload: {:?}",
+                                                                payload
+                                                            );
+                                                            self.handle_sync_response(
+                                                                payload.clone(),
+                                                            )
+                                                            .await
+                                                        }
+                                                        Message::SyncComplete => {
+                                                            self.handle_sync_complete().await
+                                                        }
+                                                        Message::Chat(_)
+                                                        | Message::Ping
+                                                        | Message::Pong => {
+                                                            if let Err(e) = self
+                                                                .app_handle
+                                                                .emit("message-received", message)
+                                                            {
+                                                                error!(
+                                                                    "Failed to emit message: {}",
+                                                                    e
+                                                                );
+                                                            }
+                                                            Ok(())
+                                                        }
+                                                        _ => Ok(()),
+                                                    };
+
+                                                    if let Err(e) = result {
+                                                        error!("Error handling message: {}", e);
                                                     }
-                                                    Ok(())
+                                                    break;
                                                 }
-                                            };
-
-                                            if let Err(e) = result {
-                                                error!("Error handling message: {}", e);
+                                                Err(e) if e.is_eof() => {
+                                                    // Need more data, continue reading
+                                                    continue;
+                                                }
+                                                Err(e) => {
+                                                    error!("Failed to deserialize message: {}", e);
+                                                    break;
+                                                }
                                             }
                                         }
-                                        Err(e) => error!("Failed to deserialize message: {}", e),
                                     }
-                                }
-                                Ok(_) => break, // Connection closed
-                                Err(e) => {
-                                    error!("Error reading from connection: {}", e);
-                                    break;
+                                    Ok(Some(_)) => continue, // Got some data, but need more
+                                    Ok(None) => {
+                                        info!("Connection closed by peer");
+                                        break;
+                                    }
+                                    Err(e) => {
+                                        error!("Error reading from connection: {}", e);
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -464,6 +499,7 @@ impl P2PService {
         }
         info!("Message listener stopped");
     }
+
     pub async fn send_file(&self, file_path: String) -> Result<(), String> {
         info!("----------- Starting File Transfer Process -----------");
         info!("Input file path: {}", file_path);
@@ -579,7 +615,8 @@ impl P2PService {
         let serialized = serde_json::to_string(&msg).map_err(|e| e.to_string())?;
         self.send_message(serialized).await
     }
-    pub async fn send_message(&self, message: String) -> Result<CryptoResponse, String> {
+
+    async fn send_message(&self, message: String) -> Result<CryptoResponse, String> {
         let state_guard = self.state.lock().await;
         let state = state_guard.as_ref().ok_or("P2P not initialized")?;
         let connection = {
@@ -595,10 +632,18 @@ impl P2PService {
             .await
             .map_err(|e| format!("Failed to open bi-directional stream: {}", e))?;
 
-        send.write_all(message.as_bytes())
-            .await
-            .map_err(|e| e.to_string())?;
-        send.flush().await.map_err(|e| e.to_string())?;
+        // Write the message in chunks to handle large payloads
+        const CHUNK_SIZE: usize = 8192;
+        let bytes = message.as_bytes();
+
+        for chunk in bytes.chunks(CHUNK_SIZE) {
+            send.write_all(chunk)
+                .await
+                .map_err(|e| format!("Failed to write chunk: {}", e))?;
+        }
+
+        send.finish()
+            .map_err(|e| format!("Failed to finish sending: {}", e))?;
 
         Ok(CryptoResponse::Success)
     }

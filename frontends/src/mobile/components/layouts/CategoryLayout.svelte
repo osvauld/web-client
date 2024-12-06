@@ -1,6 +1,5 @@
 <script lang="ts">
 	import TopNavBar from "../sections/TopNavBar.svelte";
-	import BottomNavigation from "../sections/BottomNavigation.svelte";
 	import AddVault from "../views/AddVault.svelte";
 	import Categories from "../views/Categories.svelte";
 </script>
@@ -9,5 +8,4 @@
 	class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
 	<TopNavBar />
 	<Categories />
-	<BottomNavigation />
 </main>

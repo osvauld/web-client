@@ -8,6 +8,7 @@ frontends/mobile/index.css
 frontends/src/mobile/mobile
 frontends/mobile/index.js
 frontends/mobile/index.js.map
+frontends/desktop/assets/*
 .DS_Store
 *.map
 /target

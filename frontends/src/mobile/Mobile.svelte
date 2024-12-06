@@ -26,20 +26,20 @@
 	});
 
 	const handleSignUp = async () => {
-		try {
-			await Promise.all([
-				sendMessage("addFolder", {
-					name: "Personal",
-					description: "",
-				}),
-				sendMessage("addFolder", {
-					name: "Work",
-					description: "",
-				}),
-			]);
-		} catch (e) {
-			console.log("error detected", e);
-		}
+		// try {
+		// 	await Promise.all([
+		// 		sendMessage("addFolder", {
+		// 			name: "Personal",
+		// 			description: "",
+		// 		}),
+		// 		sendMessage("addFolder", {
+		// 			name: "Work",
+		// 			description: "",
+		// 		}),
+		// 	]);
+		// } catch (e) {
+		// 	console.log("error detected", e);
+		// }
 
 		isSignedUp = true;
 	};

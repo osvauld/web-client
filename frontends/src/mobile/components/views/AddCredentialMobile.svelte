@@ -10,15 +10,19 @@
 		selectedCredentialType,
 		categorySelection,
 		currentVault,
+		currentLayout,
+		bottomNavActive,
 	} from "../../store/mobile.ui.store";
 
 	import { addCredentialHandler } from "../../../utils/addCredentialHelper";
 	let selectedCategory = {};
 
 	const directToHome = () => {
-		console.log(credentialFields);
 		selectedCredentialType.set("");
 		categorySelection.set(false);
+		currentLayout.set("home");
+		bottomNavActive.set(true);
+		console.log("test");
 	};
 
 	let credentialFields = [];
@@ -34,6 +38,7 @@
 			},
 			$currentVault.id,
 		);
+		directToHome();
 	};
 
 	onMount(() => {
@@ -41,7 +46,7 @@
 			(item) => item.id === $selectedCredentialType,
 		);
 		credentialFields = credentialFieldsUpdater(selectedCategory.name);
-		console.log("mounted", credentialFields);
+		bottomNavActive.set(false);
 	});
 </script>
 
