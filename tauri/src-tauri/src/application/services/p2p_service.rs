@@ -3,12 +3,12 @@ use crate::application::services::SyncPayload;
 use crate::domains::models::p2p::{ConnectionTicket, Message};
 use crate::types::CryptoResponse;
 use futures_lite::StreamExt;
-use iroh::net::relay::RelayMode;
-use iroh::net::{Endpoint, NodeAddr};
+use iroh::endpoint::Connection;
+use iroh::{
+    endpoint::{DirectAddrType, RecvStream, SendStream},
+    Endpoint, NodeAddr, RelayMode,
+};
 use iroh_blobs::store::mem::Store;
-use iroh_net::endpoint::Connection;
-use iroh_net::endpoint::DirectAddrType;
-use iroh_net::endpoint::{RecvStream, SendStream};
 use log::{debug, error, info, warn};
 use std::net::Ipv6Addr;
 use std::net::SocketAddrV6;
@@ -19,6 +19,7 @@ use tauri::Manager;
 use tokio::io::AsyncWriteExt;
 use tokio::sync::Mutex;
 use tokio::time::{timeout, Duration};
+
 const ALPN_PROTOCOL: &[u8] = b"n0/osvauld/0";
 const CONNECTION_TIMEOUT: Duration = Duration::from_secs(30);
 const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(30);
@@ -107,6 +108,7 @@ impl P2PService {
                                     match self_clone.perform_handshake(&conn, false).await {
                                         Ok(()) => {
                                             info!("Handshake completed successfully");
+
                                             let mut active_conn = active_connection.lock().await;
                                             *active_conn = Some(Arc::new(conn));
                                             app_handle.emit("sync-complete", true).unwrap_or_else(
