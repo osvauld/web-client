@@ -3,35 +3,38 @@
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 	import { currentVault } from "../../store/mobile.ui.store";
 	import { listen, UnlistenFn } from "@tauri-apps/api/event";
+	import RegretFace from "../../../icons/regretFace.svelte";
+	import MobileKey from "../../../icons/mobileKey.svelte";
 
-	let notes: any[] = [];
+	let credentials: any[] = [];
 	let unlisten: UnlistenFn;
 
 	// This async function handles fetching and processing notes
 	async function fetchNotes(vaultId: string) {
 		try {
-			const responseJson = await sendMessage("getCredentialsForFolder", {
+			credentials = await sendMessage("getCredentialsForFolder", {
 				folderId: vaultId,
 			});
-			notes = responseJson
-				.map((note) => {
-					const nameField = note.data.credentialFields.find(
-						(field) => field.fieldName === "Name",
-					);
-					const noteField = note.data.credentialFields.find(
-						(field) => field.fieldName === "Note",
-					);
-					return {
-						id: note.id,
-						title: nameField?.fieldValue || note.data.name,
-						content: noteField?.fieldValue || note.data.description,
-						date: new Date().toLocaleDateString(),
-					};
-				})
-				.reverse();
+			console.log("Credentials In recentsList ===>", credentials);
+
+			// 	.map((note) => {
+			// 		const nameField = note.data.credentialFields.find(
+			// 			(field) => field.fieldName === "Name",
+			// 		);
+			// 		const noteField = note.data.credentialFields.find(
+			// 			(field) => field.fieldName === "Note",
+			// 		);
+			// 		return {
+			// 			id: note.id,
+			// 			title: nameField?.fieldValue || note.data.name,
+			// 			content: noteField?.fieldValue || note.data.description,
+			// 			date: new Date().toLocaleDateString(),
+			// 		};
+			// 	})
+			// 	.reverse();
 		} catch (error) {
 			console.error("Error fetching notes:", error);
-			notes = [];
+			credentials = [];
 		}
 	}
 
@@ -70,22 +73,42 @@
 	});
 </script>
 
-<div class="grid grid-cols-1 gap-3 p-4">
-	{#each notes as note (note.id)}
-		<div
-			class="border border-mobile-bgHighlight bg-mobile-bgSeconary rounded-lg p-3 h-[180px] flex flex-col overflow-hidden">
-			<div class="flex justify-between items-center mb-2">
-				<h3 class="text-mobile-textPrimary text-base font-medium truncate">
-					{note.title}
-				</h3>
-				<span class="text-xs text-mobile-textSecondary flex-shrink-0 ml-2">
-					{note.date}
-				</span>
-			</div>
-			<p
-				class="text-sm text-mobile-textSecondary grow overflow-y-auto scrollbar-thin scrollbar-thumb-mobile-bgHighlight scrollbar-track-transparent">
-				{note.content}
-			</p>
+{#if credentials.length === 0}
+	<div
+		class="w-full h-full flex justify-center items-center text-mobile-textPrimary text-base font-light">
+		<div class="flex flex-col justify-center items-center gap-4">
+			<span>
+				<RegretFace size="{64}" />
+			</span>
+			<span> Unable to find associated credentials </span>
 		</div>
-	{/each}
-</div>
+	</div>
+{:else}
+	<div class="grid grid-cols-1 gap-3 p-4">
+		{#each credentials as credential}
+			<!-- <div
+				class="border border-mobile-bgHighlight bg-mobile-bgSeconary rounded-lg p-3 h-[80px] flex flex-col overflow-hidden">
+				<div class="flex justify-between items-center mb-2">
+					<h3 class="text-mobile-textPrimary text-base font-medium truncate">
+						{note.title}
+					</h3>
+					<span class="text-xs text-mobile-textSecondary flex-shrink-0 ml-2">
+						{note.date}
+					</span>
+				</div>
+				<p
+					class="text-sm text-mobile-textSecondary grow overflow-y-auto scrollbar-thin scrollbar-thumb-mobile-bgHighlight scrollbar-track-transparent">
+					{note.content}
+				</p>
+			</div> -->
+			<div
+				class=" p-3 bg-mobile-bgSeconary rounded-lg text-mobile-textPrimary font-normal flex justify-start gap-3">
+				<span class="flex justify-center items-center"><MobileKey /></span>
+				<div class="flex flex-col">
+					<h3>Name</h3>
+					<span class="text-base">{credential.id} </span>
+				</div>
+			</div>
+		{/each}
+	</div>
+{/if}
