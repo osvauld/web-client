@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from "svelte";
 	import MobileDownArrow from "../../../icons/mobileDownArrow.svelte";
 	import {
@@ -12,10 +12,12 @@
 		currentVault,
 		currentLayout,
 		bottomNavActive,
+		vaults,
 	} from "../../store/mobile.ui.store";
 
 	import { addCredentialHandler } from "../../../utils/addCredentialHelper";
 	let selectedCategory = {};
+	let defaultVaultId;
 
 	const directToHome = () => {
 		selectedCredentialType.set("");
@@ -36,7 +38,8 @@
 				credentialFields,
 				credentialType: selectedCategory.name,
 			},
-			$currentVault.id,
+			// if current vault.id is "all", get id of Default Folder and replace it here, that way, if user tries to add a credential from Default/All Vaults view, It goes somewhere (Default folder)
+			$currentVault.id === "all" ? defaultVaultId : $currentVault.id,
 		);
 		directToHome();
 	};
@@ -45,6 +48,11 @@
 		selectedCategory = CATEGORIES.find(
 			(item) => item.id === $selectedCredentialType,
 		);
+
+		const defaultVault = $vaults.find((vault) => vault.name === "Default");
+
+		defaultVaultId = defaultVault?.id;
+		console.log("Default Vualt Id ==>", defaultVaultId);
 		credentialFields = credentialFieldsUpdater(selectedCategory.name);
 		bottomNavActive.set(false);
 	});
