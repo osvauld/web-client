@@ -21,25 +21,34 @@ impl TauriStoreAuthRepository {
 
 #[async_trait]
 impl AuthRepository for TauriStoreAuthRepository {
-    async fn store_certificate(&self, certificate: &Certificate) -> Result<(), RepositoryError> {
+    async fn store_certificate(
+        &self,
+        certificate: &Certificate,
+        certificate_key: String,
+        salt_key: String,
+    ) -> Result<(), RepositoryError> {
         let store = self.get_store().await;
-        store.set("certificate", certificate.private_key.clone());
-        store.set("salt", certificate.salt.clone());
+        store.set(certificate_key, certificate.private_key.clone());
+        store.set(salt_key, certificate.salt.clone());
         store
             .save()
             .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
         Ok(())
     }
 
-    async fn get_certificate(&self) -> Result<Certificate, RepositoryError> {
+    async fn get_certificate(
+        &self,
+        certificate_key: String,
+        salt_key: String,
+    ) -> Result<Certificate, RepositoryError> {
         let store = self.get_store().await;
         let private_key = store
-            .get("certificate")
+            .get(certificate_key)
             .and_then(|v| v.as_str().map(String::from))
             .ok_or(RepositoryError::NotFound)?;
 
         let salt = store
-            .get("salt")
+            .get(salt_key)
             .and_then(|v| v.as_str().map(String::from))
             .ok_or(RepositoryError::NotFound)?;
 

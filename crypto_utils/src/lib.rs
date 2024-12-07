@@ -4,8 +4,9 @@ pub mod types;
 
 use crate::crypto_core::{
     decrypt_certificate, decrypt_text_pgp, decrypt_with_aes, encrypt_certificate, encrypt_text_pgp,
-    encrypt_with_aes, generate_aes_key, generate_certificate, get_public_key_armored,
-    get_recipient, get_salt_arr, get_signing_keypair, hash_text_sha512, sign_message,
+    encrypt_with_aes, generate_aes_key, generate_certificate, generate_key_id,
+    get_public_key_armored, get_recipient, get_salt_arr, get_signing_keypair, hash_text_sha512,
+    sign_message,
 };
 use crate::errors::CryptoUtilsError;
 pub use crate::types::{
@@ -253,6 +254,10 @@ impl CryptoUtils {
             encrypted_data,
             encrypted_key,
         })
+    }
+
+    pub fn get_key_id(&self, public_key: &str) -> Result<String, Box<dyn Error>> {
+        generate_key_id(public_key)
     }
 }
 

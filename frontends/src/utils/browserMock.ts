@@ -58,7 +58,7 @@ const tauriBrowser = {
 				// Map actions to their specific handlers
 				const handlerMap = {
 					'isSignedUp': () => invoke('check_signup_status'),
-					'savePassphrase': (data) => invoke('handle_save_passphrase', { input: data }),
+					'savePassphrase': (data) => invoke('handle_sign_up', { input: data }),
 					'checkPvtLoaded': () => invoke('check_private_key_loaded'),
 					'getPubKey': (data) => invoke('handle_get_public_key', { input: data }),
 					'signChallenge': (data) => invoke('handle_sign_challenge', { input: data }),

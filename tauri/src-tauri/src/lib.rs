@@ -15,7 +15,7 @@ use crate::application::services::SyncService;
 use crate::handlers::auth_handler::{
     check_private_key_loaded, check_signup_status, handle_change_passphrase,
     handle_export_certificate, handle_get_public_key, handle_hash_and_sign,
-    handle_import_certificate, handle_save_passphrase, handle_sign_challenge,
+    handle_import_certificate, handle_sign_challenge, handle_sign_up,
 };
 use crate::handlers::credential_handler::{
     handle_add_credential, handle_get_credentials_for_folder,
@@ -25,8 +25,8 @@ use crate::handlers::p2p_handlers::{
     connect_with_ticket, get_system_locale, get_ticket, send_message, start_p2p_listener,
 };
 use crate::persistence::repositories::{
-    SqliteCredentialRepository, SqliteFolderRepository, SqliteSyncRepository,
-    TauriStoreAuthRepository,
+    SqliteCredentialRepository, SqliteDeviceRepository, SqliteFolderRepository,
+    SqliteSyncRepository, TauriStoreAuthRepository,
 };
 use crypto_utils::CryptoUtils;
 use log::LevelFilter;
@@ -82,7 +82,7 @@ pub fn run() {
                     let sync_repo = Arc::new(SqliteSyncRepository::new(connection.clone()));
                     let credential_repo =
                         Arc::new(SqliteCredentialRepository::new(connection.clone()));
-
+                    let device_repo = Arc::new(SqliteDeviceRepository::new(connection.clone()));
                     // Initialize folder service with cloned repositories
                     let folder_service = Arc::new(FolderService::new(
                         folder_repo.clone(),
@@ -92,8 +92,11 @@ pub fn run() {
 
                     let auth_repository = Arc::new(TauriStoreAuthRepository::new(handle.clone()));
                     let crypto_utils = Arc::new(Mutex::new(CryptoUtils::new()));
-                    let auth_service =
-                        Arc::new(AuthService::new(auth_repository, crypto_utils.clone()));
+                    let auth_service = Arc::new(AuthService::new(
+                        auth_repository,
+                        crypto_utils.clone(),
+                        device_repo,
+                    ));
                     let sync_service = Arc::new(SyncService::new(
                         sync_repo.clone(),
                         folder_repo.clone(),
@@ -135,7 +138,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_system_locale,
             check_signup_status,
-            handle_save_passphrase,
+            handle_sign_up,
             check_private_key_loaded,
             handle_get_public_key,
             handle_sign_challenge,

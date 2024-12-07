@@ -18,13 +18,13 @@ pub async fn check_signup_status(app_handle: AppHandle) -> Result<CryptoResponse
 }
 
 #[tauri::command]
-pub async fn handle_save_passphrase(
+pub async fn handle_sign_up(
     input: SavePassphraseInput,
     app_handle: AppHandle,
     auth_service: State<'_, Arc<AuthService>>,
 ) -> Result<CryptoResponse, String> {
     let (user, signature) = auth_service
-        .save_passphrase(&input.username, &input.passphrase, &input.challenge)
+        .handle_sign_up(&input.username, &input.passphrase, &input.challenge)
         .await?;
 
     Ok(CryptoResponse::SavePassphrase {

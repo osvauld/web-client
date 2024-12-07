@@ -1,5 +1,6 @@
 use crate::domains::models::{
-    auth::Certificate, credential::Credential, folder::Folder, sync_record::SyncRecord,
+    auth::Certificate, credential::Credential, device::Device, folder::Folder,
+    sync_record::SyncRecord,
 };
 use async_trait::async_trait;
 use thiserror::Error;
@@ -31,8 +32,17 @@ pub trait SyncRepository: Send + Sync {
 
 #[async_trait]
 pub trait AuthRepository: Send + Sync {
-    async fn store_certificate(&self, certificate: &Certificate) -> Result<(), RepositoryError>;
-    async fn get_certificate(&self) -> Result<Certificate, RepositoryError>;
+    async fn store_certificate(
+        &self,
+        certificate: &Certificate,
+        certificate_key: String,
+        salt_key: String,
+    ) -> Result<(), RepositoryError>;
+    async fn get_certificate(
+        &self,
+        certificate_key: String,
+        salt_key: String,
+    ) -> Result<Certificate, RepositoryError>;
     async fn is_signed_up(&self) -> Result<bool, RepositoryError>;
 }
 
@@ -41,4 +51,12 @@ pub trait CredentialRepository: Send + Sync {
     async fn save(&self, credential: &Credential) -> Result<(), RepositoryError>;
     async fn find_by_folder(&self, folder_id: &str) -> Result<Vec<Credential>, RepositoryError>;
     async fn find_by_id(&self, id: &str) -> Result<Credential, RepositoryError>;
+}
+
+#[async_trait]
+
+pub trait DeviceRepository: Send + Sync {
+    async fn save(&self, id: &str, device_key: &str) -> Result<(), RepositoryError>;
+    async fn find_by_id(&self, device_id: &str) -> Result<String, RepositoryError>;
+    async fn get_all_devices(&self) -> Result<Vec<Device>, RepositoryError>;
 }

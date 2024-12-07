@@ -361,3 +361,8 @@ pub fn decrypt_with_aes(key_bytes: &[u8], encoded: &str) -> Result<String, AesEr
 
     String::from_utf8(plaintext).map_err(|e| AesError::Utf8ConversionError(e.to_string()))
 }
+
+pub fn generate_key_id(public_key: &str) -> Result<String, Box<dyn Error>> {
+    let cert = Cert::from_bytes(public_key.as_bytes())?;
+    Ok(cert.fingerprint().to_hex().to_lowercase())
+}

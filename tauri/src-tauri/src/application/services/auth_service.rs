@@ -1,5 +1,6 @@
 use crate::domains::models::auth::{Certificate, User};
-use crate::domains::repositories::{AuthRepository, RepositoryError};
+use crate::domains::models::device;
+use crate::domains::repositories::{AuthRepository, DeviceRepository, RepositoryError};
 use crypto_utils::CryptoUtils;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -7,43 +8,78 @@ use tokio::sync::Mutex;
 pub struct AuthService {
     auth_repository: Arc<dyn AuthRepository>,
     crypto_utils: Arc<Mutex<CryptoUtils>>,
+    device_repository: Arc<dyn DeviceRepository>,
 }
 
 impl AuthService {
     pub fn new(
         auth_repository: Arc<dyn AuthRepository>,
         crypto_utils: Arc<Mutex<CryptoUtils>>,
+        device_repository: Arc<dyn DeviceRepository>,
     ) -> Self {
         Self {
             auth_repository,
             crypto_utils,
+            device_repository,
         }
     }
 
-    pub async fn save_passphrase(
+    pub async fn handle_sign_up(
         &self,
         username: &str,
         passphrase: &str,
         challenge: &str,
     ) -> Result<(User, String), String> {
-        let key_pair = {
+        let primary_key = {
             let crypto = self.crypto_utils.lock().await;
             crypto
                 .generate_keys(passphrase, username)
                 .map_err(|e| e.to_string())?
         };
 
-        let certificate = Certificate {
-            private_key: key_pair.private_key.clone(),
-            public_key: key_pair.public_key.clone(),
-            salt: key_pair.salt.clone(),
+        let (device_key, device_id) = {
+            let crypto = self.crypto_utils.lock().await;
+            let keys = crypto
+                .generate_keys(passphrase, username)
+                .map_err(|e| e.to_string())?;
+            let id = crypto
+                .get_key_id(&keys.public_key)
+                .map_err(|e| e.to_string())?;
+            (keys, id)
+        };
+        let device_certificate = Certificate {
+            private_key: device_key.private_key.clone(),
+            public_key: device_key.public_key.clone(),
+            salt: device_key.salt.clone(),
         };
 
-        self.auth_repository
-            .store_certificate(&certificate)
+        let certificate = Certificate {
+            private_key: primary_key.private_key.clone(),
+            public_key: primary_key.public_key.clone(),
+            salt: primary_key.salt.clone(),
+        };
+
+        self.device_repository
+            .save(&device_id, &device_key.public_key)
             .await
             .map_err(|e| e.to_string())?;
 
+        self.auth_repository
+            .store_certificate(
+                &certificate,
+                "primary_key".to_string(),
+                "primary_key_salt".to_string(),
+            )
+            .await
+            .map_err(|e| e.to_string())?;
+        self.auth_repository
+            .store_certificate(
+                &device_certificate,
+                "device_key".to_string(),
+                "device_key_salt".to_string(),
+            )
+            .await
+            .map_err(|e| e.to_string())?;
         let signature = {
             let crypto = self.crypto_utils.lock().await;
             crypto.sign_message(challenge).map_err(|e| e.to_string())?
@@ -61,7 +97,7 @@ impl AuthService {
     pub async fn load_certificate(&self, passphrase: &str) -> Result<String, String> {
         let certificate = self
             .auth_repository
-            .get_certificate()
+            .get_certificate("primary_key".to_string(), "primary_key_salt".to_string())
             .await
             .map_err(|e| e.to_string())?;
 
@@ -130,7 +166,11 @@ impl AuthService {
         };
 
         self.auth_repository
-            .store_certificate(&certificate)
+            .store_certificate(
+                &certificate,
+                "primary_key".to_string(),
+                "primary_key_salt".to_string(),
+            )
             .await
             .map_err(|e| e.to_string())?;
 
@@ -140,7 +180,7 @@ impl AuthService {
     pub async fn export_certificate(&self, passphrase: String) -> Result<String, String> {
         let certificate = self
             .auth_repository
-            .get_certificate()
+            .get_certificate("primary_key".to_string(), "primary_key_salt".to_string())
             .await
             .map_err(|e| e.to_string())?;
 
@@ -157,7 +197,7 @@ impl AuthService {
     ) -> Result<Certificate, String> {
         let certificate = self
             .auth_repository
-            .get_certificate()
+            .get_certificate("primary_key".to_string(), "primary_key_salt".to_string())
             .await
             .map_err(|e| e.to_string())?;
 
@@ -180,7 +220,11 @@ impl AuthService {
         };
 
         self.auth_repository
-            .store_certificate(&new_certificate)
+            .store_certificate(
+                &new_certificate,
+                "primary_key".to_string(),
+                "primary_key_salt".to_string(),
+            )
             .await
             .map_err(|e| e.to_string())?;
 
