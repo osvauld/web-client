@@ -37,6 +37,7 @@
 			status = "Ready to connect. Share the ticket with mobile device.";
 		} catch (err) {
 			error = err.toString();
+			console.error(err);
 			status = "Failed to initialize";
 		}
 	});

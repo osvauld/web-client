@@ -10,6 +10,7 @@ mod types;
 use crate::application::services::AuthService;
 use crate::application::services::CredentialService;
 use crate::application::services::FolderService;
+use crate::application::services::LibP2PService;
 use crate::application::services::P2PService;
 use crate::application::services::SyncService;
 use crate::handlers::auth_handler::{
@@ -102,6 +103,7 @@ pub fn run() {
                         folder_repo.clone(),
                         credential_repo.clone(),
                     ));
+                    let lib_p2p_service = Arc::new(LibP2PService::new(handle.clone()));
                     let p2p_service =
                         Arc::new(P2PService::new(handle.clone(), sync_service.clone()));
                     let credential_service = Arc::new(CredentialService::new(
@@ -117,6 +119,7 @@ pub fn run() {
                     app.manage(credential_service);
                     app.manage(sync_service);
                     app.manage(p2p_service.clone());
+                    app.manage(lib_p2p_service);
                 }
                 Err(e) => {
                     error!("Failed to set up database: {}", e);

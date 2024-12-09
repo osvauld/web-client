@@ -14,6 +14,7 @@
 	onMount(async () => {
 		isLoaderActive = true;
 		const response = await invoke("check_signup_status");
+		console.log(response, "signup status");
 		isSignedUp = response.isSignedUp;
 		const checkPvtLoad = await invoke("check_private_key_loaded");
 		if (checkPvtLoad) {
