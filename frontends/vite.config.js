@@ -14,7 +14,7 @@ const createConfig = ({ mode, platform }) => {
 	const isExtension = platform === "extension";
 	const isDev = mode === "development";
 	const isMobile = process.env.TAURI_ENV_PLATFORM === "mobile";
-
+	const hmrPort = isMobile ? 1420 : 1421;
 	// Determine root directory based on platform and environment
 	let root = "src/extension";
 	if (isTauri) {
@@ -82,8 +82,8 @@ const createConfig = ({ mode, platform }) => {
 			hmr: {
 				protocol: 'ws',
 				host: process.env.TAURI_DEV_HOST || '0.0.0.0',
-				port: 1420,
-				clientPort: 1420,
+				port: hmrPort,
+				clientPort: hmrPort,
 			},
 			watch: {
 				usePolling: true,

@@ -27,13 +27,13 @@
 
 	onMount(async () => {
 		try {
-			await invoke("start_p2p_listener");
-			await setupEventListeners();
-			connectionTicket = await invoke("get_ticket");
-			console.log(
-				connectionTicket,
-				"++++++++++++++++++++++++++++++++++++++++++++++++++++++",
-			);
+			// await invoke("start_p2p_listener");
+			// await setupEventListeners();
+			// connectionTicket = await invoke("get_ticket");
+			// console.log(
+			// 	connectionTicket,
+			// 	"++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+			// );
 			status = "Ready to connect. Share the ticket with mobile device.";
 		} catch (err) {
 			error = err.toString();

@@ -5,10 +5,14 @@ use libp2p::{
     swarm::{NetworkBehaviour, SwarmEvent},
     tcp, yamux, Multiaddr, PeerId, SwarmBuilder,
 };
+use log::info;
+use std::result::Result::Ok;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::{error::Error, time::Duration};
 use tauri::{AppHandle, Emitter};
+use tokio::sync::mpsc;
+use tokio::sync::oneshot;
 use tokio::sync::Mutex;
 
 // Define the core behavior for our P2P network
@@ -18,137 +22,199 @@ struct BasicBehaviour {
     ping: ping::Behaviour,
 }
 
+#[derive(Debug)]
+enum SwarmCommand {
+    // Include a response channel with each command
+    Dial {
+        addr: Multiaddr,
+        response_sender: oneshot::Sender<Result<(), Box<dyn Error + Send + 'static>>>,
+    },
+}
+
 pub struct LibP2PService {
     app_handle: AppHandle,
     swarm: Arc<Mutex<Option<libp2p::Swarm<BasicBehaviour>>>>,
     is_ready: Arc<AtomicBool>,
     listening_addresses: Arc<Mutex<Vec<String>>>,
+    command_sender: mpsc::Sender<SwarmCommand>,
+    command_receiver: Arc<Mutex<mpsc::Receiver<SwarmCommand>>>,
 }
 
 impl LibP2PService {
     pub fn new(app_handle: AppHandle) -> Self {
+        let (sender, receiver) = mpsc::channel(32);
         Self {
             app_handle,
             swarm: Arc::new(Mutex::new(None)),
             is_ready: Arc::new(AtomicBool::new(false)),
             listening_addresses: Arc::new(Mutex::new(Vec::new())),
+            command_sender: sender,
+            command_receiver: Arc::new(Mutex::new(receiver)),
         }
     }
 
-    pub async fn start_listening(&self) -> Result<(), Box<dyn Error>> {
-        self.initialize().await?;
-
-        {
-            let mut swarm_lock = self.swarm.lock().await;
-            let swarm = swarm_lock.as_mut().ok_or("Swarm not initialized")?;
-            swarm.listen_on("/ip4/0.0.0.0/tcp/0".parse()?)?;
-        }
-
-        let app_handle = self.app_handle.clone();
-        let swarm_clone = self.swarm.clone();
-        let is_ready = self.is_ready.clone();
-        let addresses = self.listening_addresses.clone();
-        tokio::spawn(async move {
-            loop {
-                // Get the next event, properly handling the Option type
-                let event = {
-                    let mut swarm_lock = swarm_clone.lock().await;
-                    match swarm_lock.as_mut() {
-                        Some(swarm) => swarm.next().await,
-                        None => break, // Exit the loop if swarm is None
-                    }
-                };
-
-                // Process the event if we have one
-                match event {
-                    Some(SwarmEvent::NewListenAddr { address, .. }) => {
-                        println!("Listening on {:?}", address);
-                        is_ready.store(true, Ordering::SeqCst);
-                        let mut addr_lock = addresses.lock().await;
-                        addr_lock.push(address.to_string());
-                        let _ = app_handle.emit("listening-address", address.to_string());
-                    }
-                    Some(SwarmEvent::ConnectionEstablished { peer_id, .. }) => {
-                        println!("Connection established with: {}", peer_id);
-                        let _ = app_handle.emit("peer-connected", peer_id.to_string());
-                    }
-                    Some(SwarmEvent::ConnectionClosed { peer_id, .. }) => {
-                        println!("Connection closed with: {}", peer_id);
-                        let _ = app_handle.emit("peer-disconnected", peer_id.to_string());
-                    }
-                    Some(SwarmEvent::Behaviour(event)) => match event {
-                        BasicBehaviourEvent::Ping(ping::Event {
-                            peer,
-                            connection: _,
-                            result,
-                        }) => match result {
-                            Ok(duration) => {
-                                println!("Ping success from {}: {}ms", peer, duration.as_millis());
-                            }
-                            Err(err) => {
-                                println!("Ping error with {}: {}", peer, err);
-                            }
-                        },
-                    },
-                    Some(_) => {}  // Handle other events
-                    None => break, // Exit if we get None from swarm.next()
-                }
-            }
-        });
-
-        // Wait for the swarm to be ready
-        while !self.is_ready.load(Ordering::SeqCst) {
-            tokio::task::yield_now().await;
-        }
-
-        Ok(())
-    }
-    // Initialize the P2P service
     pub async fn initialize(&self) -> Result<(), Box<dyn Error>> {
         let mut swarm_lock = self.swarm.lock().await;
+
+        // If already initialized, just return
         if swarm_lock.is_some() {
             return Ok(());
         }
 
-        // Create a new swarm with a newly generated identity
+        println!("Creating new swarm...");
         let swarm = libp2p::SwarmBuilder::with_new_identity()
-            // Use Tokio as the executor
             .with_tokio()
-            // Configure TCP transport with noise encryption and yamux multiplexing
             .with_tcp(
                 tcp::Config::default(),
                 noise::Config::new,
                 yamux::Config::default,
             )?
-            // Add the ping behavior
             .with_behaviour(|_| BasicBehaviour {
                 ping: ping::Behaviour::default(),
             })?
-            // Set the connection timeout
             .with_swarm_config(|cfg| cfg.with_idle_connection_timeout(Duration::from_secs(60)))
             .build();
 
-        // Store the local peer ID for logging
-        let peer_id = *swarm.local_peer_id();
-        println!("Local peer id: {peer_id}");
-
+        println!("Local peer id: {}", swarm.local_peer_id());
         *swarm_lock = Some(swarm);
+
         Ok(())
     }
 
-    // Start listening for incoming connections
+    async fn handle_swarm_events(&self) -> Result<(), Box<dyn Error>> {
+        loop {
+            let event = {
+                let mut swarm_lock = self.swarm.lock().await;
+                println!("Got swarm lock in event loop");
 
-    // Connect to a peer using their multiaddress
-    pub async fn connect_to_peer(&self, addr: String) -> Result<(), Box<dyn Error>> {
+                match swarm_lock.as_mut() {
+                    Some(swarm) => {
+                        let mut receiver = self.command_receiver.lock().await;
+                        println!("Got command receiver lock");
+
+                        tokio::select! {
+                            event = swarm.next() => {
+                                println!("Got swarm event: {:?}", event);
+                                event
+                            },
+                            command = receiver.recv() => {
+                                println!("Received command: {:?}", command);
+                                match command {
+                                    Some(SwarmCommand::Dial { addr, response_sender }) => {
+                                        println!("Processing dial command for address: {:?}", addr);
+                                        let result = match swarm.dial(addr.clone()) {
+                                            Ok(()) => {
+                                                println!("Dial successful");
+                                                Ok(())
+                                            },
+                                            Err(e) => {
+                                                println!("Dial failed: {}", e);
+                                                Err(Box::new(e) as Box<dyn Error + Send + 'static>)
+                                            },
+                                        };
+                                        if let Err(e) = response_sender.send(result) {
+                                            println!("Failed to send dial result: {:?}", e);
+                                        }
+                                    },
+                                    None => {
+                                        println!("Command channel closed");
+                                        break Ok(());
+                                    }
+                                }
+                                continue;
+                            }
+                        }
+                    }
+                    None => {
+                        println!("Swarm is None in event loop");
+                        break Ok(());
+                    }
+                }
+            };
+
+            // Handle network events as before
+            match event {
+                Some(SwarmEvent::NewListenAddr { address, .. }) => {
+                    println!("New listen address: {:?}", address);
+                    let swarm_lock = self.swarm.lock().await;
+                    if let Some(swarm) = swarm_lock.as_ref() {
+                        let mut full_addr = address.clone();
+                        full_addr.push(Protocol::P2p((*swarm.local_peer_id()).into()));
+
+                        println!("Full address with peer ID: {:?}", full_addr);
+                        let mut addr_lock = self.listening_addresses.lock().await;
+                        addr_lock.push(full_addr.to_string());
+                        let _ = self
+                            .app_handle
+                            .emit("listening-address", full_addr.to_string());
+                    }
+
+                    if !self.is_ready.load(Ordering::SeqCst) {
+                        self.is_ready.store(true, Ordering::SeqCst);
+                    }
+                }
+
+                Some(SwarmEvent::ConnectionEstablished { peer_id, .. }) => {
+                    println!("Connected to peer: {:?}", peer_id);
+                    let _ = self.app_handle.emit("peer-connected", peer_id.to_string());
+                }
+
+                Some(SwarmEvent::ConnectionClosed { peer_id, .. }) => {
+                    println!("Disconnected from peer: {:?}", peer_id);
+                    let _ = self
+                        .app_handle
+                        .emit("peer-disconnected", peer_id.to_string());
+                }
+
+                Some(SwarmEvent::Behaviour(BasicBehaviourEvent::Ping(ping::Event {
+                    peer,
+                    result,
+                    ..
+                }))) => match result {
+                    Ok(duration) => println!("Ping to {:?} took {:?}", peer, duration),
+                    Err(err) => println!("Ping to {:?} failed: {:?}", peer, err),
+                },
+
+                Some(event) => println!("Other event: {:?}", event),
+                None => break Ok(()),
+            }
+        }
+    }
+
+    pub async fn start_listening(&self) -> Result<(), Box<dyn Error>> {
+        // First potential issue: We check ready state before initialization
+        if self.is_ready.load(Ordering::SeqCst) {
+            return Ok(());
+        }
+
+        // Let's add logging here
+        println!("Starting listening process...");
+
+        self.initialize().await?;
+        println!("Initialization complete. Swarm created.");
+
         let mut swarm_lock = self.swarm.lock().await;
+        println!("Acquired swarm lock");
+
         let swarm = swarm_lock.as_mut().ok_or("Swarm not initialized")?;
+        println!("Got mutable reference to swarm");
 
-        // Parse the multiaddress
-        let remote: Multiaddr = addr.parse()?;
+        // Start listening on all interfaces with a random port
+        match swarm.listen_on("/ip4/0.0.0.0/tcp/0".parse()?) {
+            Ok(_) => println!("Successfully started listening on all interfaces"),
+            Err(e) => println!("Failed to start listening: {}", e),
+        }
 
-        // Attempt to dial the remote peer
-        swarm.dial(remote.clone())?;
-        println!("Dialing peer at: {}", remote);
+        // Important: Drop the lock before entering the event loop
+        println!("Dropping swarm lock before event handling");
+        drop(swarm_lock);
+
+        // Let's add logging in the event handling loop
+        println!("Starting event handling loop");
+        match self.handle_swarm_events().await {
+            Ok(_) => println!("Event loop completed successfully"),
+            Err(e) => println!("Event loop error: {}", e),
+        }
 
         Ok(())
     }
@@ -158,10 +224,46 @@ impl LibP2PService {
         }
 
         let addresses = self.listening_addresses.lock().await;
+
         if addresses.is_empty() {
             return Err("No listening addresses available".into());
         }
 
         Ok(addresses.clone())
+    }
+
+    pub async fn connect_to_peer(&self, addr: String) -> Result<(), Box<dyn Error>> {
+        info!("Attempting to connect to: {}", addr);
+        let remote: Multiaddr = addr.parse()?;
+        if !self.is_ready.load(Ordering::SeqCst) {
+            info!("Initializing P2P service...");
+            self.initialize().await?;
+            self.start_listening().await?;
+        }
+
+        // Create a one-shot channel for receiving the connection result
+        let (response_sender, response_receiver) = oneshot::channel();
+
+        // Send the dial command along with the response channel
+        self.command_sender
+            .send(SwarmCommand::Dial {
+                addr: remote,
+                response_sender,
+            })
+            .await
+            .map_err(|e| Box::new(e) as Box<dyn Error>)?;
+
+        // Handle the response with proper error conversion
+        match response_receiver.await {
+            Ok(Ok(())) => Ok(()),
+            Ok(Err(e)) => Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                e.to_string(),
+            )) as Box<dyn Error>),
+            Err(e) => Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                e.to_string(),
+            )) as Box<dyn Error>),
+        }
     }
 }
