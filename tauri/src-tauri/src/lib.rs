@@ -75,6 +75,7 @@ pub fn run() {
                     .map_err(|e| format!("Failed to initialize database: {}", e))
             });
 
+            app.manage(rt);
             match db_connection {
                 Ok(connection) => {
                     app.manage(connection.clone());
@@ -128,7 +129,6 @@ pub fn run() {
             }
 
             // Manage the runtime
-            app.manage(rt);
 
             #[cfg(debug_assertions)]
             {
@@ -136,6 +136,7 @@ pub fn run() {
                 window.open_devtools();
                 window.close_devtools();
             }
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![

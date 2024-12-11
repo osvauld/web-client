@@ -31,7 +31,7 @@
 			await setupEventListeners();
 			connectionTicket = await invoke("get_ticket");
 			console.log(
-				connectionTicket.data[1],
+				connectionTicket,
 				"++++++++++++++++++++++++++++++++++++++++++++++++++++++",
 			);
 			status = "Ready to connect. Share the ticket with mobile device.";
