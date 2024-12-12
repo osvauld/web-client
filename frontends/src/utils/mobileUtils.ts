@@ -10,16 +10,16 @@ import MobileContact from "../icons/mobileContact.svelte";
 import MobileWallet from "../icons/mobileWallet.svelte";
 
 export const CATEGORIES = [
-	{ id: "logins", name: "Login", icon: LoginIcon },
-	{ id: "pins", name: "PIN", icon: KeyIcon },
-	{ id: "creditdebitcards", name: "Credit/DebitCard", icon: CreditCard },
-	{ id: "notes", name: "Note", icon: MobileNote },
-	{ id: "contacts", name: "Contact", icon: MobileContact },
-	{ id: "bankaccounts", name: "Bank Account", icon: MobileBank },
-	{ id: "digitalwallets", name: "Digital Wallet", icon: MobileWallet },
-	{ id: "sshkeys", name: "SSH Key", icon: MobileOldKey },
-	{ id: "apicredentials", name: "API Key", icon: MobileApiIcon },
-	{ id: "databases", name: "Database", icon: MobileDatabase },
+	{ id: "logins", type: "Login", icon: LoginIcon },
+	{ id: "pins", type: "PIN", icon: KeyIcon },
+	{ id: "creditdebitcards", type: "Credit/DebitCard", icon: CreditCard },
+	{ id: "notes", type: "Note", icon: MobileNote },
+	{ id: "contacts", type: "Contact", icon: MobileContact },
+	{ id: "bankaccounts", type: "Bank Account", icon: MobileBank },
+	{ id: "digitalwallets", type: "Digital Wallet", icon: MobileWallet },
+	{ id: "sshkeys", type: "SSH Key", icon: MobileOldKey },
+	{ id: "apicredentials", type: "API Key", icon: MobileApiIcon },
+	{ id: "databases", type: "Database", icon: MobileDatabase },
 ];
 
 export const THEMES = {
@@ -33,8 +33,8 @@ export const credentialFieldsUpdater = (type: string) => {
 		case "Login":
 			return [
 				{ fieldName: "Username", fieldValue: "", sensitive: false },
-				{ fieldName: "Password", fieldValue: "", sensitive: true },
 				{ fieldName: "URL", fieldValue: "https://", sensitive: false },
+				{ fieldName: "Password", fieldValue: "", sensitive: true },
 				{ fieldName: "TOTP", fieldValue: "", sensitive: true },
 			];
 		case "Credit/DebitCard":
@@ -80,13 +80,16 @@ export const credentialFieldsUpdater = (type: string) => {
 				{ fieldName: "PIN", fieldValue: "", sensitive: true },
 			];
 		case "Note":
-			return [{ fieldName: "Name", fieldValue: "", sensitive: false }, { fieldName: "Note", fieldValue: "", sensitive: false },];
+			return [
+				{ fieldName: "Name", fieldValue: "", sensitive: false },
+				{ fieldName: "Note", fieldValue: "", sensitive: false },
+			];
 		case "Bank Account":
 			return [
+				{ fieldName: "Bank Name", fieldValue: "", sensitive: false },
 				{ fieldName: "Account Holder", fieldValue: "", sensitive: false },
 				{ fieldName: "Account Number", fieldValue: "", sensitive: true },
 				{ fieldName: "Routing Number", fieldValue: "", sensitive: true },
-				{ fieldName: "Bank Name", fieldValue: "", sensitive: false },
 				{ fieldName: "Account Type", fieldValue: "", sensitive: false },
 			];
 		case "Social Media":
@@ -107,5 +110,78 @@ export const credentialFieldsUpdater = (type: string) => {
 			];
 		default:
 			return [];
+	}
+};
+
+export const renderRelevantHeading = (
+	credentialFields,
+	credentialType,
+	credentialId,
+) => {
+	let relevantCredentialName;
+	switch (credentialType) {
+		case "Login":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "Username")
+					?.fieldValue || credentialId;
+			return relevantCredentialName;
+		case "Note":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "Name")
+					?.fieldValue || credentialId;
+			return relevantCredentialName;
+		case "Contact":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "Name")
+					?.fieldValue ||
+				credentialFields.find((item) => item.fieldName === "Email")
+					?.fieldValue ||
+				credentialId;
+			return relevantCredentialName;
+		case "PIN":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "PIN Name")
+					?.fieldValue || credentialId;
+			return relevantCredentialName;
+
+		case "Credit/DebitCard":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "Bank/Issuer")
+					?.fieldValue || credentialId;
+			return relevantCredentialName;
+
+		case "Digital Wallet":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "Wallet Name")
+					?.fieldValue || credentialId;
+			return relevantCredentialName;
+
+		case "SSH Key":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "Key Name")
+					?.fieldValue || credentialId;
+			return relevantCredentialName;
+		case "Database":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "Database Name")
+					?.fieldValue || credentialId;
+			return relevantCredentialName;
+		case "Bank Account":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "Bank Name")
+					?.fieldValue || credentialId;
+			return relevantCredentialName;
+		case "Social Media":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "Profile URL")
+					?.fieldValue || credentialId;
+			return relevantCredentialName;
+		case "API Key":
+			relevantCredentialName =
+				credentialFields.find((item) => item.fieldName === "API Name")
+					?.fieldValue || credentialId;
+			return relevantCredentialName;
+		default:
+			return credentialId;
 	}
 };

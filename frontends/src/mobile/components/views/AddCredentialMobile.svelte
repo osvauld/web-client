@@ -35,7 +35,7 @@
 				name: "test",
 				description: "test",
 				credentialFields,
-				credentialType: selectedCategory.name,
+				credentialType: selectedCategory.type,
 			},
 			// if current vault.id is "all", get id of Default Folder and replace it here, that way, if user tries to add a credential from Default/All Vaults view, It goes somewhere (Default folder)
 			$currentVault.id === "all" ? defaultVaultId : $currentVault.id,
@@ -51,7 +51,7 @@
 
 		defaultVaultId = defaultVault?.id;
 		console.log("Default Vault Id ==>", defaultVaultId);
-		credentialFields = credentialFieldsUpdater(selectedCategory.name);
+		credentialFields = credentialFieldsUpdater(selectedCategory.type);
 		bottomNavActive.set(false);
 	});
 </script>
@@ -65,12 +65,12 @@
 	</button>
 	<svelte:component this="{selectedCategory.icon}" color="#85889C" />
 	<h1 class="text-mobile-textPrimary text-2xl font-medium">
-		{selectedCategory?.name}
+		{selectedCategory?.type}
 	</h1>
 </nav>
 
 <div class="grow p-4 text-mobile-textPrimary">
-	<span>Enter your {selectedCategory?.name} details</span>
+	<span>Enter your {selectedCategory?.type} details</span>
 	<div
 		class="max-h-full overflow-y-auto scrollbar-thin flex flex-col gap-4 mt-2">
 		{#each credentialFields as field (field.fieldName)}
