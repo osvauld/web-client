@@ -15,6 +15,17 @@ const createConfig = ({ mode, platform }) => {
 	const isDev = mode === "development";
 	const isMobile = process.env.TAURI_ENV_PLATFORM === "mobile";
 	const hmrPort = isMobile ? 1420 : 1421;
+	const serverPort = isMobile ? 1420 : 1421;
+
+	// Log configuration for debugging
+	console.log('Server Configuration:', {
+		isMobile,
+		serverPort,
+		platform,
+		mode,
+		tauri: isTauri
+	});
+
 	// Determine root directory based on platform and environment
 	let root = "src/extension";
 	if (isTauri) {
@@ -74,22 +85,41 @@ const createConfig = ({ mode, platform }) => {
 			outDir: isTauri ? (isMobile ? "mobile" : "desktop") : "public/build",
 			emptyOutDir: true,
 		},
-
 		server: {
 			strictPort: true,
-			port: isTauri ? (isMobile ? 1420 : 1421) : 1421,
-			host: process.env.TAURI_DEV_HOST || "0.0.0.0",
+			port: serverPort,
+			// Using a simpler configuration that ensures IPv4 binding
+			host: '0.0.0.0',
+			// Remove the object configuration as it's not working as intended
 			hmr: {
 				protocol: 'ws',
-				host: process.env.TAURI_DEV_HOST || '0.0.0.0',
-				port: hmrPort,
-				clientPort: hmrPort,
+				host: '0.0.0.0',
+				port: serverPort,
+				clientPort: serverPort,
+				// Add specific transport configuration for WebSocket
+				transport: {
+					kind: 'tcp',
+					options: {
+						host: '0.0.0.0'
+					}
+				}
 			},
+			// Make sure preview also uses IPv4
+			preview: {
+				port: serverPort,
+				host: '0.0.0.0'
+			},
+			// Keep the existing watch and CORS configurations
 			watch: {
 				usePolling: true,
 				interval: 1000,
+			},
+			cors: true,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
 			}
-		},
+		}
+
 	};
 };
 

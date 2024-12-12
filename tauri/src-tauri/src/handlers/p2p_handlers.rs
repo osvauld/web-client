@@ -1,8 +1,8 @@
 use crate::application::services::LibP2PService;
 use crate::application::services::P2PService;
 use crate::types::CryptoResponse;
+use anyhow::Result;
 use serde::Serialize;
-use std::error::Error;
 use std::sync::Arc;
 use sys_locale::get_locale;
 use tauri::State;
@@ -12,42 +12,29 @@ pub struct CommandResponse<T> {
     error: Option<String>,
 }
 
-// Updated to accept Send + Sync error type
-fn into_response<T: Serialize>(
-    result: Result<T, Box<dyn Error + Send + Sync>>,
-) -> CommandResponse<T> {
-    match result {
-        Ok(data) => CommandResponse {
-            data: Some(data),
-            error: None,
-        },
-        Err(err) => CommandResponse {
-            data: None,
-            error: Some(err.to_string()),
-        },
-    }
-}
-
 #[tauri::command]
-pub async fn get_ticket(
-    state: State<'_, Arc<LibP2PService>>,
-) -> Result<CommandResponse<Vec<String>>, String> {
-    Ok(into_response(state.get_listening_addresses().await))
+pub async fn get_ticket(state: State<'_, Arc<LibP2PService>>) -> Result<Vec<String>, String> {
+    // Using String as the error type
+    state
+        .get_listening_addresses()
+        .await
+        .map_err(|e| e.to_string()) // Convert anyhow::Error to String
 }
 
 #[tauri::command]
 pub async fn connect_with_ticket(
     ticket: String,
     state: State<'_, Arc<LibP2PService>>,
-) -> Result<CommandResponse<()>, String> {
-    Ok(into_response(state.connect_to_peer(ticket).await))
+) -> Result<(), String> {
+    state
+        .connect_to_peer(ticket)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-pub async fn start_p2p_listener(
-    state: State<'_, Arc<LibP2PService>>,
-) -> Result<CommandResponse<()>, String> {
-    Ok(into_response(state.start_listening().await))
+pub async fn start_p2p_listener(state: State<'_, Arc<LibP2PService>>) -> Result<(), String> {
+    state.start_listening().await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]

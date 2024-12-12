@@ -66,6 +66,10 @@ libp2p = { version = "0.54.1", features = [
     "ping",
     "tcp",
     "yamux",
+    "dcutr",
+    "relay",
+    "identify",
+    "dns",
 ] }
 
 [target.'cfg(any(target_os = "android", target_os = "ios"))'.dependencies]
