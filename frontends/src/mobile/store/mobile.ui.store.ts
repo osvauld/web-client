@@ -8,4 +8,6 @@ export let categorySelection = writable(false);
 export let vaults = writable([{ id: "all", name: "All Vaults" }]);
 
 export let currentLayout = writable("home");
+export let credentialLayoutType = writable("addition");
+export let credentialDataCached = writable({});
 export let bottomNavActive = writable(true);
