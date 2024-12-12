@@ -69,8 +69,9 @@
 	{/each}
 
 	{#if newVaultInputActive}
-		<div
+		<form
 			class="h-[250px] rounded-[20px] border border-mobile-bgLight px-3 pt-3 pb-4 text-mobile-textPrimary flex flex-col gap-3"
+			on:submit|preventDefault="{handleFolderCreation}"
 			in:slide
 			out:slide>
 			<span class="text-lg text-center">New Vault</span>
@@ -86,12 +87,12 @@
 				<button
 					type="submit"
 					class="h-[48px] flex justify-center items-center gap-1 rounded-lg bg-mobile-highlightBlue text-mobile-bgPrimary font-medium text-lg mt-6"
-					on:click="{handleFolderCreation}"
 					>Create New Vault <Add color="#000" /></button>
 			</div>
-		</div>
+		</form>
 	{:else}
 		<button
+			type="submit"
 			on:click="{() => (newVaultInputActive = true)}"
 			class="h-[48px] flex justify-center items-center gap-1 rounded-lg border-2 border-mobile-bgHighlight p-4 active:bg-mobile-bgLight text-mobile-textActive"
 			>Create New Vault <Add color="#85889C" /></button>

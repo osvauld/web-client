@@ -25,7 +25,7 @@
 			<div class="flex flex-col h-full items-center justify-center gap-2">
 				{#if category.icon}
 					<span class="flex justify-center items-center">
-						<svelte:component this="{category.icon}" />
+						<svelte:component this="{category.icon}" color="{'#BFC0CC'}" />
 					</span>
 				{/if}
 				<span class="text-center text-sm leading-tight"

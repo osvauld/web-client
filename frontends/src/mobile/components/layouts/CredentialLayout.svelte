@@ -1,8 +1,18 @@
 <script lang="ts">
 	import AddCredential from "../views/AddCredentialMobile.svelte";
+	import {
+		currentLayout,
+		credentialLayoutType,
+	} from "../../store/mobile.ui.store";
+	import ViewCredential from "../views/ViewCredentialMobile.svelte";
+	import Acceptor from "../views/Acceptor.svelte";
 </script>
 
 <main
 	class="w-screen h-screen bg-mobile-bgPrimary flex flex-col overflow-hidden p-3">
-	<AddCredential />
+	{#if $credentialLayoutType === "addition"}
+		<AddCredential />
+	{:else if $credentialLayoutType === "view"}
+		<ViewCredential />
+	{/if}
 </main>

@@ -68,7 +68,7 @@ export const addCredentialHandler = async (
 	credentialData: any,
 	folderId: string,
 ) => {
-	const { credentialFields, name, description, credentialType } =
+	const { credentialFields, name, description, credentialType, vault } =
 		credentialData;
 
 	const fieldValidationResponse: { success: boolean; message: string } =
@@ -128,7 +128,8 @@ export const addCredentialHandler = async (
 	const credentialPayload = JSON.stringify({
 		name: name,
 		description,
-		credentialType: credentialType,
+		credentialType,
+		vault,
 		credentialFields: addCredentialFields,
 	});
 
