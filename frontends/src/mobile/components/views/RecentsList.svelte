@@ -5,6 +5,10 @@
 	import { listen, UnlistenFn } from "@tauri-apps/api/event";
 	import RegretFace from "../../../icons/regretFace.svelte";
 	import MobileKey from "../../../icons/mobileKey.svelte";
+	import {
+		CATEGORIES,
+		renderRelevantHeading,
+	} from "../../../utils/mobileUtils";
 
 	let credentials: any[] = [];
 	let unlisten: UnlistenFn;
@@ -86,6 +90,10 @@
 {:else}
 	<div class="grid grid-cols-1 gap-3 p-4">
 		{#each credentials as credential}
+			{@const credentialType = credential.data.credentialType}
+			{@const categoryInfo = CATEGORIES.find(
+				(item) => item.type === credentialType,
+			)}
 			<!-- <div
 				class="border border-mobile-bgHighlight bg-mobile-bgSeconary rounded-lg p-3 h-[80px] flex flex-col overflow-hidden">
 				<div class="flex justify-between items-center mb-2">
@@ -103,10 +111,20 @@
 			</div> -->
 			<div
 				class=" p-3 bg-mobile-bgSeconary rounded-lg text-mobile-textPrimary font-normal flex justify-start gap-3">
-				<span class="flex justify-center items-center"><MobileKey /></span>
+				<span class="flex justify-center items-center">
+					<!-- <MobileKey /> -->
+					<svelte:component this="{categoryInfo.icon}" />
+				</span>
 				<div class="flex flex-col">
-					<h3>Name</h3>
-					<span class="text-base">{credential.id} </span>
+					<h3>
+						{renderRelevantHeading(
+							credential.data.credentialFields,
+							credentialType,
+							credential.id,
+						)}
+					</h3>
+					<!-- <span class="text-base">{credential.id} </span> -->
+					<span class="text-base">{credentialType} </span>
 				</div>
 			</div>
 		{/each}
