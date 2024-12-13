@@ -8,12 +8,12 @@
 	import {
 		currentLayout,
 		credentialLayoutType,
-		credentialDataCached,
+		selectedCredential,
 	} from "../../store/mobile.ui.store";
 	import {
 		CATEGORIES,
 		renderRelevantHeading,
-	} from "../../../utils/mobileUtils";
+	} from "../../../utils/CredentialUtils";
 
 	let credentials: any[] = [];
 	let loading = false;
@@ -95,7 +95,7 @@
 			<button
 				class="p-3 bg-mobile-bgSeconary rounded-xl font-normal flex justify-start items-center gap-3"
 				on:click="{() => {
-					credentialDataCached.set(credential);
+					selectedCredential.set(credential);
 					credentialLayoutType.set('view');
 					currentLayout.set('credential');
 				}}">

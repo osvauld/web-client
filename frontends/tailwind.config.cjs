@@ -116,6 +116,8 @@ module.exports = {
 					highlightBlue: "#89B4FA",
 					navBlue: "#010109",
 					textActive: "#A3A4B5",
+					textlabel: "#373946",
+					textField: "#DCDDE4",
 				},
 			},
 			fontFamily: {
