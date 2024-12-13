@@ -146,7 +146,22 @@
 	</div>
 {:else if !isRecents}
 	<div
-		class="grow flex justify-center items-center text-xl text-mobile-textPrimary">
-		Categories
+		class="my-3 text-base grid grid-cols-2 gap-3 p-3 text-mobile-textPrimary">
+		{#each CATEGORIES as category (category.id)}
+			<button
+				class="border border-mobile-bgHighlight bg-mobile-bgSeconary rounded-lg px-3 py-2.5 h-[90px]
+					   active:bg-mobile-bgHighlight/10 transition-colors touch-manipulation">
+				<div class="flex flex-col h-full items-start justify-center gap-1 p-3">
+					{#if category.icon}
+						<span class="flex justify-center items-center">
+							<svelte:component this="{category.icon}" color="{'#BFC0CC'}" />
+						</span>
+					{/if}
+					<span class="text-center text-base leading-tight"
+						>{category.type}</span>
+					<span class="text-xs">0 items</span>
+				</div>
+			</button>
+		{/each}
 	</div>
 {/if}
