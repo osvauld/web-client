@@ -1,37 +1,33 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { scale } from "svelte/transition";
-	import MobileDownArrow from "../../../icons/mobileDownArrow.svelte";
+	import MobileLeftArrow from "../../../icons/mobileLeftArrow.svelte";
 	import Tick from "../../../icons/tick.svelte";
 	import CopyIcon from "../../../icons/copyIcon.svelte";
 	import More from "../../../icons/more.svelte";
-	import Share from "../../../icons/share.svelte";
+	import Share from "../../../icons/FolderShare.svelte";
 	import Edit from "../../../icons/editIcon.svelte";
-
-	import {
-		CATEGORIES,
-		credentialFieldsUpdater,
-	} from "../../../utils/mobileUtils";
+	import Bin from "../../../icons/binIcon.svelte";
 
 	import {
 		currentLayout,
 		bottomNavActive,
-		credentialDataCached,
+		selectedCredential,
 		credentialLayoutType,
+		currentVault,
 	} from "../../store/mobile.ui.store";
 
-	import { addCredentialHandler } from "../../../utils/addCredentialHelper";
 	import { writeToClipboard } from "../../../lib/components/dashboard/helper";
 	import MobileHome from "../../../icons/mobileHome.svelte";
+	import Star from "../../../icons/star.svelte";
 
-	let credentialFields = [];
 	let copied = false;
 	let copiedItemIndex;
 
 	const directToHome = () => {
 		currentLayout.set("home");
 		bottomNavActive.set(true);
-		credentialDataCached.set({});
+		selectedCredential.set({});
 		credentialLayoutType.set("addition");
 	};
 
@@ -47,57 +43,83 @@
 
 	onMount(() => {
 		bottomNavActive.set(false);
-		console.log("credentialDataCached =>", $credentialDataCached);
+		console.log("selectedCredential =>", $selectedCredential);
 	});
 </script>
 
-<nav class="w-full h-[48px] pr-3 flex items-center gap-1 flex-shrink-0">
-	<button on:click="{directToHome}" class="p-2 pr-1">
-		<span class="inline-block rotate-90">
-			<MobileDownArrow />
-		</span>
+<nav class="w-full h-[48px] px-3 flex items-center gap-2 flex-shrink-0">
+	<button
+		on:click="{directToHome}"
+		class="p-2.5 rounded-lg bg-mobile-bgSeconary">
+		<MobileLeftArrow />
 	</button>
-	<span class="ml-auto"><Edit /></span>
-	<span class="mx-2"><Share /></span>
-	<span><More /></span>
+	<span class="ml-auto p-2.5 rounded-lg bg-mobile-bgSeconary"
+		><Edit size="{24}" /></span>
+	<span class="p-2.5 rounded-lg bg-mobile-bgSeconary"><Share /></span>
+	<span class="p-2.5 rounded-lg bg-mobile-bgSeconary"><Star /></span>
+	<span class="p-2.5 rounded-lg bg-mobile-bgSeconary"
+		><More color="#85889C" /></span>
 </nav>
-<div class="text-mobile-textPrimary text-2xl font-medium flex flex-col pl-4">
-	<span>{$credentialDataCached.data.credentialType}</span>
-	<div class="flex text-sm font-light gap-1 items-center">
-		<span><MobileHome size="{14}" /></span>
-		{$credentialDataCached.data.vault}
+<div
+	class="text-mobile-textPrimary text-2xl font-medium flex flex-col pl-4 py-3">
+	<span class="text-mobile-textTertiary"
+		>{$selectedCredential.data.credentialType}</span>
+	<div class="flex text-sm font-light gap-1 items-center tracking-wider">
+		<span><MobileHome size="{14}" color="{'#85889C'}" /></span>
+		{$currentVault.name}
 	</div>
 </div>
 
-<div class="grow flex p-4 text-mobile-textPrimary">
-	<div
-		class="max-h-full grow overflow-y-auto scrollbar-thin flex flex-col gap-2 mt-2">
-		{#each $credentialDataCached.data.credentialFields as field, index (field.fieldName)}
-			{#if field.fieldValue.trim().length !== 0}
-				<div>{field.fieldName}</div>
-				<div class="flex gap-2">
-					<div class="bg-mobile-bgSeconary rounded-lg py-2.5 px-4 flex-1">
-						<div>{field.fieldValue}</div>
-					</div>
-					<button
-						class="bg-mobile-bgSeconary rounded-lg p-3"
-						on:click|preventDefault|stopPropagation="{() =>
-							copyToClipboard(field.fieldValue, index)}">
-						{#if copied && copiedItemIndex === index}
-							<span in:scale>
-								<Tick />
-							</span>
-						{:else}
-							<CopyIcon color="{'#4D4F60'}" />
-						{/if}
-					</button>
+<div
+	class="grow p-4 text-mobile-textPrimary overflow-y-auto scrollbar-thin flex flex-col gap-2 mt-2">
+	{#each $selectedCredential.data.credentialFields as field, index (field.fieldName)}
+		{#if field.fieldValue.trim().length !== 0}
+			<span class="text-mobile-textlabel text-sm">{field.fieldName}</span>
+			<div class="flex gap-2">
+				<div
+					class="bg-mobile-bgSeconary rounded-lg py-2.5 px-4 flex-1 max-w-full truncate">
+					<span class=" text-mobile-textField text-base"
+						>{field.fieldValue}</span>
 				</div>
-			{/if}
-		{/each}
+				<button
+					class="bg-mobile-bgSeconary rounded-lg p-3"
+					on:click|preventDefault|stopPropagation="{() =>
+						copyToClipboard(field.fieldValue, index)}">
+					{#if copied && copiedItemIndex === index}
+						<span in:scale>
+							<Tick />
+						</span>
+					{:else}
+						<CopyIcon color="{'#85889C'}" />
+					{/if}
+				</button>
+			</div>
+		{/if}
+	{/each}
 
-		<hr class="h-px bg-mobile-bgHighlight mt-auto" />
-		<div class="bg-mobile-bgSeconary rounded-lg h-[100px] p-3">
-			Created at {new Date().getTime()}
-		</div>
+	<hr class="border border-mobile-bgSeconary my-3" />
+	<div
+		class="bg-mobile-bgSeconary rounded-lg h-[65px] p-3 text-mobile-textPrimary text-sm">
+		Created at : <br />
+		<span class="text-xs"
+			>{new Date().toLocaleTimeString() +
+				"," +
+				new Date().toLocaleDateString()}</span>
+	</div>
+	<hr class="border border-mobile-bgSeconary my-3" />
+	<div class="flex flex-col gap-3">
+		<span class="px-5 py-2.5 flex justify-start items-center">
+			<Star />
+			<span class="ml-2">Add to favourites</span></span>
+		<span class="px-5 py-2.5 flex justify-start items-center">
+			<Edit />
+			<span class="ml-2">Edit secret</span></span>
+		<span class="px-5 py-2.5 flex justify-start items-center">
+			<Share />
+			<span class="ml-2">Share now</span></span>
+		<span
+			class="text-osvauld-dangerRed px-5 py-2.5 flex justify-start items-center">
+			<Bin color="#FF6A6A" />
+			<span class="ml-2">Delete</span></span>
 	</div>
 </div>

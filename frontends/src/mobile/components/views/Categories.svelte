@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CATEGORIES } from "../../../utils/mobileUtils";
+	import { CATEGORIES } from "../../../utils/CredentialUtils";
 	import LL from "../../../i18n/i18n-svelte";
 	import {
 		currentLayout,

@@ -8,11 +8,11 @@
 	import Acceptor from "../views/Acceptor.svelte";
 </script>
 
-<main
-	class="w-screen h-screen bg-mobile-bgPrimary flex flex-col overflow-hidden p-3">
+<div
+	class="w-full h-full bg-mobile-bgPrimary flex flex-col overflow-hidden p-3">
 	{#if $credentialLayoutType === "addition"}
 		<AddCredential />
 	{:else if $credentialLayoutType === "view"}
 		<ViewCredential />
 	{/if}
-</main>
+</div>
