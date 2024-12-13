@@ -5620,12 +5620,14 @@ dependencies = [
 
 [[package]]
 name = "quic-rpc"
-version = "0.17.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64ae09230350898e9a243a7a4a5fdde934edfb6b010e6a9cfb4136f79b54dbbb"
+checksum = "1d8431b2e7c22929347b61a354d4936d71fe7ab1e6b0475dc50e98276970dfec"
 dependencies = [
  "anyhow",
+ "bincode",
  "derive_more 1.0.0",
+ "educe",
  "flume",
  "futures-lite 2.5.0",
  "futures-sink",
@@ -5642,9 +5644,9 @@ dependencies = [
 
 [[package]]
 name = "quic-rpc-derive"
-version = "0.17.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44bb53e37914f7e7c6670dc2c834b9299110620cded49e783e78e9d8baf80128"
+checksum = "403bc8506c847468e00170dbbbfe2c54d13b090031bcbe474cd3faea021cbd9f"
 dependencies = [
  "proc-macro2",
  "quic-rpc",
