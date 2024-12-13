@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CATEGORIES } from "../../../utils/mobileUtils";
+	import { CATEGORIES } from "../../../utils/CredentialUtils";
 	import LL from "../../../i18n/i18n-svelte";
 	import {
 		currentLayout,
@@ -25,7 +25,7 @@
 			<div class="flex flex-col h-full items-center justify-center gap-2">
 				{#if category.icon}
 					<span class="flex justify-center items-center">
-						<svelte:component this="{category.icon}" color="#85889C" />
+						<svelte:component this="{category.icon}" color="{'#BFC0CC'}" />
 					</span>
 				{/if}
 				<span class="text-center text-sm leading-tight"

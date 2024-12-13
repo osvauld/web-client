@@ -111,10 +111,13 @@ module.exports = {
 					textPrimary: "#85889C",
 					textSecondary: "#4D4F60",
 					textTertiary: "#F2F2F0",
+					textbright: "#BFC0CC",
 					iconPrimary: "#5B5D6D",
 					highlightBlue: "#89B4FA",
 					navBlue: "#010109",
 					textActive: "#A3A4B5",
+					textlabel: "#373946",
+					textField: "#DCDDE4",
 				},
 			},
 			fontFamily: {

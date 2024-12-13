@@ -4,7 +4,6 @@ import {
 	Field,
 } from "../lib/components/dashboard/dtos";
 
-
 const totpValidator = (secretKey: string): boolean => {
 	// Base32 encoded TOTP secrets typically range in size, allowing for flexibility
 	if (secretKey.length < 10 || secretKey.length > 64) {
@@ -126,27 +125,25 @@ export const addCredentialHandler = async (
 		}
 	}
 
-
 	const credentialPayload = JSON.stringify({
 		name: name,
 		description,
+		credentialType,
 		credentialFields: addCredentialFields,
-	})
-
+	});
 
 	const response = await sendMessage("addCredential", {
 		credentialPayload,
 		folderId: folderId,
 		credentialType: credentialType,
 	});
-	const responseJson = await sendMessage("getCredentialsForFolder", { folderId });
-
+	const responseJson = await sendMessage("getCredentialsForFolder", {
+		folderId,
+	});
 
 	console.log("getcredentialsForFolder==>>>>>", JSON.stringify(responseJson));
 	return {
 		success: true,
 		message: "Credential added successfully",
-	}
-
-
+	};
 };

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import TopNavBar from "../sections/TopNavBar.svelte";
-	import AddVault from "../views/AddVault.svelte";
+	import AddVault from "../views/VaultManager.svelte";
 	import Categories from "../views/Categories.svelte";
 </script>
 
