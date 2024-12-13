@@ -17,6 +17,7 @@
 
 	let credentials: any[] = [];
 	let loading = false;
+	let isRecents = true;
 	let unlisten: UnlistenFn;
 
 	// This async function handles fetching and processing notes
@@ -68,6 +69,24 @@
 	});
 </script>
 
+<div class="w-full h-[40px] flex justify-between items-center px-4">
+	<div class="w-full flex border-b border-mobile-bgHighlight">
+		<button
+			class="flex-1 h-[48px] text-center {isRecents
+				? 'text-mobile-textActive border-b-2 border-osvauld-carolinablue'
+				: 'text-mobile-textSecondary'}"
+			on:click="{() => (isRecents = !isRecents)}">
+			Recents
+		</button>
+		<button
+			class="flex-1 h-[48px] text-center {!isRecents
+				? 'text-mobile-textActive border-b-2 border-osvauld-carolinablue'
+				: 'text-mobile-textSecondary'}"
+			on:click="{() => (isRecents = !isRecents)}">
+			Categories
+		</button>
+	</div>
+</div>
 {#if loading}
 	<div
 		class="w-full h-full flex justify-center items-center text-mobile-textPrimary text-base font-light">
@@ -85,7 +104,7 @@
 			<span> Unable to find associated credentials </span>
 		</div>
 	</div>
-{:else}
+{:else if isRecents}
 	<div class="grid grid-cols-1 gap-3 p-4 overflow-y-scroll overflow-x-hidden">
 		{#each credentials as credential}
 			{@const credentialType = credential.data.credentialType}
@@ -124,5 +143,10 @@
 				</button>
 			</button>
 		{/each}
+	</div>
+{:else if !isRecents}
+	<div
+		class="grow flex justify-center items-center text-xl text-mobile-textPrimary">
+		Categories
 	</div>
 {/if}
