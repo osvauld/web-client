@@ -8,6 +8,8 @@
 	import Share from "../../../icons/FolderShare.svelte";
 	import Edit from "../../../icons/editIcon.svelte";
 	import Bin from "../../../icons/binIcon.svelte";
+	import MobileHome from "../../../icons/mobileHome.svelte";
+	import Star from "../../../icons/star.svelte";
 
 	import {
 		currentLayout,
@@ -18,8 +20,6 @@
 	} from "../../store/mobile.ui.store";
 
 	import { writeToClipboard } from "../../../lib/components/dashboard/helper";
-	import MobileHome from "../../../icons/mobileHome.svelte";
-	import Star from "../../../icons/star.svelte";
 
 	let copied = false;
 	let copiedItemIndex;

@@ -11,3 +11,4 @@ export let currentLayout = writable("home");
 export let credentialLayoutType = writable("addition");
 export let selectedCredential = writable({});
 export let bottomNavActive = writable(true);
+export let credentialListWithType = writable("");
