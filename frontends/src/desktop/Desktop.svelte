@@ -10,8 +10,8 @@
 	let unlistenHandlers: (() => void)[] = [];
 
 	async function setupEventListeners() {
-		const unlisten1 = await listen("peer-connected", () => {
-			status = "Mobile device trying to connect...";
+		const unlisten1 = await listen("connection-ready", (data) => {
+			console.log(data.payload);
 		});
 
 		const unlisten2 = await listen("sync-complete", () => {
@@ -27,16 +27,13 @@
 
 	onMount(async () => {
 		try {
-			await invoke("start_p2p_listener");
+			const response = await invoke("start_p2p_listener");
+			console.log(response);
 			await setupEventListeners();
-			connectionTicket = await invoke("get_ticket");
-			console.log(
-				connectionTicket,
-				"++++++++++++++++++++++++++++++++++++++++++++++++++++++",
-			);
 			status = "Ready to connect. Share the ticket with mobile device.";
 		} catch (err) {
 			error = err.toString();
+			console.log("failed to initialize", err);
 			console.error(err);
 			status = "Failed to initialize";
 		}

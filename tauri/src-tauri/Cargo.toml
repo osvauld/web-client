@@ -71,6 +71,8 @@ libp2p = { version = "0.54.1", features = [
     "identify",
     "dns",
 ] }
+futures = "0.3.31"
+futures-timer = "3.0.3"
 
 [target.'cfg(any(target_os = "android", target_os = "ios"))'.dependencies]
 tauri-plugin-barcode-scanner = "2.0.0-rc"
