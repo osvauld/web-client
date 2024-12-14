@@ -2,7 +2,9 @@ use futures::{executor::block_on, future::FutureExt, stream::StreamExt};
 use futures_timer;
 use libp2p::{
     core::multiaddr::{Multiaddr, Protocol},
-    dcutr, identify, identity, noise, ping, relay,
+    dcutr,
+    dns::{ResolverConfig, ResolverOpts},
+    identify, identity, noise, ping, relay,
     swarm::{NetworkBehaviour, SwarmEvent},
     tcp, yamux, PeerId,
 };
@@ -41,6 +43,7 @@ pub async fn handle_p2p_connection(
             yamux::Config::default,
         )?
         .with_quic()
+        .with_dns_config(ResolverConfig::google(), ResolverOpts::default())
         .with_relay_client(noise::Config::new, yamux::Config::default)?
         .with_behaviour(|keypair, relay_behaviour| Behaviour {
             relay_client: relay_behaviour,
@@ -51,7 +54,6 @@ pub async fn handle_p2p_connection(
             )),
             dcutr: dcutr::Behaviour::new(keypair.public().to_peer_id()),
         })?
-        .with_swarm_config(|c| c.with_idle_connection_timeout(Duration::from_secs(60)))
         .build();
     // Initial listening setup, exactly matching example
     swarm
@@ -111,7 +113,6 @@ pub async fn handle_p2p_connection(
         }
     }
 
-    // Handle specific mode, exactly like example
     if mode {
         info!("Dialing relay with circuit address");
         let addr: PeerId = circuit_address.unwrap().parse()?;
@@ -167,7 +168,10 @@ pub async fn handle_p2p_connection(
             SwarmEvent::ConnectionEstablished {
                 peer_id, endpoint, ..
             } => {
-                info!("Established connection with {}", peer_id);
+                info!(
+                    "Established connection with {}______________________________________________",
+                    peer_id
+                );
             }
             SwarmEvent::OutgoingConnectionError { peer_id, error, .. } => {
                 info!("Failed to connect to {:?}: {}", peer_id, error);
