@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import MobileLeftArrow from "../../../icons/mobileLeftArrow.svelte";
 	import MobileHome from "../../../icons/mobileHome.svelte";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";

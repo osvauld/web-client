@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Menu from "../../../icons/Menu.svelte";
 	import {
 		currentLayout,

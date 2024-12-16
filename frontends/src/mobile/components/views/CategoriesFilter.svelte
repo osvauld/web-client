@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from "svelte";
 	import { CATEGORIES } from "../../../utils/CredentialUtils";
 	import { credentialListWithType } from "../../store/mobile.ui.store";
