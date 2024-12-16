@@ -84,7 +84,7 @@ pub async fn handle_p2p_connection(
     });
     // Connect to relay and wait for identification, exactly like example
     let relay_addr: Multiaddr =
-        "/ip4/40.90.176.32/tcp/2700/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
+        "/ip4/40.90.176.32/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
             .parse()?;
     swarm.dial(relay_addr.clone())?;
 
