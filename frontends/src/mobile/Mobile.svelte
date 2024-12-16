@@ -50,10 +50,10 @@
 </script>
 
 <main
-	class="w-screen h-screen p-2 pt-3 flex flex-col !font-sans {isSignedUp &&
+	class="w-screen h-screen p-2 pt-3 bg-mobile-bgPrimary flex flex-col !font-sans {isSignedUp &&
 	!loggedIn
 		? 'justify-center'
-		: 'justify-start'} items-center bg-osvauld-frameblack">
+		: 'justify-start'} items-center">
 	{#if isLoaderActive}
 		<Loader />
 	{:else if !isSignedUp}

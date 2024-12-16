@@ -2,10 +2,15 @@
 	import { onMount } from "svelte";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 	import TopNavBar from "../sections/TopNavBar.svelte";
-	import RecentsList from "../views/RecentsList.svelte";
+	import RecentsAndCategories from "../views/RecentsAndCategories.svelte";
 	import VaultManager from "../views/VaultManager.svelte";
 	import EmptyVault from "../ui/EmptyVault.svelte";
-	import { vaultSwitchActive, vaults } from "../../store/mobile.ui.store";
+	import {
+		credentialListWithType,
+		vaultSwitchActive,
+		vaults,
+	} from "../../store/mobile.ui.store";
+	import FilteredCredentialListComponent from "../views/FilteredCredentialListComponent.svelte";
 
 	const NUM_CREDS = 1;
 	// vaultSwitchActive.subscribe((value) => {
@@ -26,7 +31,11 @@
 <main
 	class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
 	<TopNavBar />
-	<RecentsList />
+	{#if $credentialListWithType}
+		<FilteredCredentialListComponent />
+	{:else}
+		<RecentsAndCategories />
+	{/if}
 	{#if $vaultSwitchActive}
 		<VaultManager />
 	{/if}
