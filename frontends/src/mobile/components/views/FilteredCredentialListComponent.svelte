@@ -7,21 +7,26 @@
 		currentVault,
 		credentialListWithType,
 	} from "../../store/mobile.ui.store";
+	import { onMount } from "svelte";
 
-	function fetchCredentials() {
-		return sendMessage("getCredentialsForFolder", {
+	let credentials = [];
+
+	const fetchCredentials = async () => {
+		credentials = await sendMessage("getCredentialsForFolder", {
 			folderId: $currentVault.id,
 		});
-	}
+	};
 
-	function goBack() {
+	const goBack = () => {
 		credentialListWithType.set("");
-	}
+	};
+
+	onMount(() => {
+		fetchCredentials();
+	});
 </script>
 
-{#await fetchCredentials()}
-	<p class="text-mobile-iconPrimary">waiting for the promise to resolve...</p>
-{:then credentials}
+{#if credentials.length !== 0}
 	<nav class="w-full h-[48px] px-3 flex items-center gap-2 flex-shrink-0">
 		<button on:click="{goBack}" class="p-2.5 rounded-lg bg-mobile-bgSeconary">
 			<MobileLeftArrow />
@@ -37,6 +42,4 @@
 	</div>
 
 	<CredentialList {credentials} />
-{:catch error}
-	<p class="text-macchiato-red">Something went wrong: {error.message}</p>
-{/await}
+{/if}
