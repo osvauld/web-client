@@ -14,34 +14,29 @@
 	let unlisten: UnlistenFn;
 
 	// This async function handles fetching and processing notes
-	async function fetchCredentials(vaultId: string) {
+	const fetchCredentials = async (vaultId: string) => {
 		try {
-			const t0 = performance.now();
 			credentials = await sendMessage("getCredentialsForFolder", {
 				folderId: vaultId,
 			});
 			credentialsLoaded = true;
-			const t1 = performance.now();
-			console.log(`Call to getCredentialsForFolder took ${t1 - t0}`);
 		} catch (error) {
-			console.error("Error fetching notes:", error);
 			credentials = [];
 		}
-	}
+	};
 
 	// Setup event listener for sync-complete
-	async function setupSyncListener() {
+	const setupSyncListener = async () => {
 		try {
 			unlisten = await listen("sync-completed", (event) => {
 				if (event.payload === true && $currentVault?.id) {
-					console.log("Sync completed, refreshing notes...");
 					fetchCredentials($currentVault.id);
 				}
 			});
 		} catch (error) {
 			console.error("Error setting up sync listener:", error);
 		}
-	}
+	};
 
 	// Watch for vault changes
 	$: if ($currentVault?.id) {
@@ -70,31 +65,35 @@
 			class="flex-1 h-[48px] text-center {isRecents
 				? 'text-osvauld-carolinablue border-b-2 border-osvauld-carolinablue'
 				: 'text-mobile-textSecondary'}"
-			on:click="{() => (isRecents = !isRecents)}">
+			on:click="{() => (isRecents = true)}">
 			Recents
 		</button>
 		<button
 			class="flex-1 h-[48px] text-center {!isRecents
 				? 'text-osvauld-carolinablue border-b-2 border-osvauld-carolinablue'
 				: 'text-mobile-textSecondary'}"
-			on:click="{() => (isRecents = !isRecents)}">
+			on:click="{() => (isRecents = false)}">
 			Categories
 		</button>
 	</div>
 </div>
 
-{#if credentials.length === 0 && credentialsLoaded}
+{#if !credentialsLoaded}
+	<div class="w-full h-full flex justify-center items-center">
+		<span>Loading...</span>
+	</div>
+{:else if credentials.length === 0}
 	<div
 		class="w-full h-full flex justify-center items-center text-mobile-textPrimary text-base font-light">
 		<div class="flex flex-col justify-center items-center gap-4">
 			<span>
 				<RegretFace size="{64}" />
 			</span>
-			<span> Unable to find associated credentials </span>
+			<span>Unable to find associated credentials</span>
 		</div>
 	</div>
 {:else if isRecents}
 	<CredentialList {credentials} />
-{:else if !isRecents}
+{:else}
 	<CategoriesFilter {credentials} />
 {/if}

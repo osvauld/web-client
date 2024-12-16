@@ -1,19 +1,22 @@
 <script>
+	import { onMount } from "svelte";
 	import { CATEGORIES } from "../../../utils/CredentialUtils";
 	import { credentialListWithType } from "../../store/mobile.ui.store";
 	export let credentials = [];
 
 	let credentialTypeCount = {};
 
-	credentials.forEach((credential) => {
-		const type = credential.data.credentialType;
-		credentialTypeCount[type] ??= 0;
-		credentialTypeCount[type] += 1;
-	});
-
-	function showFilteredCredentialList(credentialType) {
+	const showFilteredCredentialList = (credentialType) => {
 		credentialListWithType.set(credentialType);
-	}
+	};
+
+	onMount(() => {
+		credentials.forEach((credential) => {
+			const type = credential.data.credentialType;
+			credentialTypeCount[type] ??= 0;
+			credentialTypeCount[type] += 1;
+		});
+	});
 </script>
 
 <div class="my-3 text-base grid grid-cols-2 gap-3 p-3 text-mobile-textPrimary">
