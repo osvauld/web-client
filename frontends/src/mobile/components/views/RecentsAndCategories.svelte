@@ -7,7 +7,7 @@
 	import CategoriesFilter from "./CategoriesFilter.svelte";
 	import CredentialList from "./CredentialList.svelte";
 
-	let credentials: any[] = [];
+	let credentials = [];
 	let isRecents = true;
 	let credentialsLoaded = false;
 
@@ -19,6 +19,7 @@
 			credentials = await sendMessage("getCredentialsForFolder", {
 				folderId: vaultId,
 			});
+
 			credentialsLoaded = true;
 		} catch (error) {
 			credentials = [];
@@ -45,9 +46,9 @@
 
 	// Initial setup on mount
 	onMount(() => {
-		if ($currentVault?.id) {
-			fetchCredentials($currentVault.id);
-		}
+		// if ($currentVault?.id) {
+		// 	fetchCredentials($currentVault.id);
+		// }
 		setupSyncListener();
 	});
 

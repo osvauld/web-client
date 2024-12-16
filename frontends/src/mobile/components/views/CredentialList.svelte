@@ -15,7 +15,7 @@
 
 	//Credentials can be unfiltered or filtered as per selection from the categories
 
-	let updatedCredentials = $credentialListWithType
+	$: updatedCredentials = $credentialListWithType
 		? credentials.filter(
 				(credential) =>
 					credential.data.credentialType === $credentialListWithType,

@@ -15,7 +15,6 @@
 	import MultipleUsers from "../../../icons/multipleUsers.svelte";
 
 	const handleClick = (route) => {
-		console.log(route);
 		currentLayout.set(route);
 		if (route === "credential ") categorySelection.set(!$categorySelection);
 		else if (route === "home") {
@@ -28,7 +27,7 @@
 		if ($vaultSwitchActive) {
 			bottomNavActive.set(true);
 		}
-		// console.log($vaultSwitchActive, "tEST");
+
 		vaultSwitchActive.set(!$vaultSwitchActive);
 	};
 </script>
@@ -40,7 +39,10 @@
 		on:click="{handleVaultManger}">
 		<span class="flex justify-center items-center"
 			><Home color="#5B5D6D" /></span>
-		<span>All Vaults</span>
+		<span
+			>{$currentVault.id === "all"
+				? "All Vaults"
+				: `${$currentVault.name}`}</span>
 	</button>
 	<button
 		class=" flex-1 flex justify-center items-center flex-col"
