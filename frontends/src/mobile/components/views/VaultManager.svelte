@@ -8,6 +8,9 @@
 		currentVault,
 		vaults,
 		bottomNavActive,
+		credentialListWithType,
+		selectedCredential,
+		currentLayout,
 	} from "../../store/mobile.ui.store";
 	import { onMount } from "svelte";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
@@ -37,11 +40,17 @@
 		newVaultInputActive = false;
 		currentVault.set(vault);
 		bottomNavActive.set(true);
+		credentialListWithType.set("");
+		selectedCredential.set({});
+		currentLayout.set("home");
+	};
+
+	const goBack = () => {
+		vaultSwitchActive.set(false);
 	};
 
 	onMount(async () => {
 		try {
-			console.log("Vault manager mounted");
 			const resp = await sendMessage("getFolder");
 			const updatedVaults = [{ id: "all", name: "All Vaults" }, ...resp];
 			vaults.set(updatedVaults);
@@ -51,10 +60,18 @@
 	});
 </script>
 
+<button
+	class="fixed top-0 left-0 w-full h-full bg-osvauld-backgroundBlur backdrop-blur-[0.1px]"
+	on:click|stopPropagation|preventDefault="{goBack}"
+	type="button"
+	role="dialog"
+	aria-hidden="true"
+	aria-label="Close overlay">
+</button>
 <div
 	class="absolute w-full h-auto bottom-0 border-t-[1px] border-mobile-textSecondary bg-mobile-bgPrimary rounded-t-2xl px-2 pt-2 pb-16 flex flex-col gap-2 text-lg"
 	in:slide
-	out:slide>
+	on:click|preventDefault|stopPropagation>
 	{#each $vaults as vault (vault.id)}
 		{@const isActive = $currentVault.name === vault.name}
 		<button
