@@ -29,7 +29,7 @@
 </script>
 
 <main
-	class="w-screen h-screen bg-mobile-bgPrimary flex flex-col relative pt-[48px] pb-[60px] overflow-hidden">
+	class="w-screen h-screen relative bg-mobile-bgPrimary flex flex-col pb-[60px] overflow-hidden">
 	<TopNavBar />
 	{#if $credentialListWithType}
 		<FilteredCredentialListComponent />
