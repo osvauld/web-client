@@ -8,18 +8,21 @@
 	import CredentialList from "./CredentialList.svelte";
 
 	let credentials: any[] = [];
-	let loading = false;
 	let isRecents = true;
+	let credentialsLoaded = false;
+
 	let unlisten: UnlistenFn;
 
 	// This async function handles fetching and processing notes
 	async function fetchCredentials(vaultId: string) {
-		loading = true;
 		try {
+			const t0 = performance.now();
 			credentials = await sendMessage("getCredentialsForFolder", {
 				folderId: vaultId,
 			});
-			loading = false;
+			credentialsLoaded = true;
+			const t1 = performance.now();
+			console.log(`Call to getCredentialsForFolder took ${t1 - t0}`);
 		} catch (error) {
 			console.error("Error fetching notes:", error);
 			credentials = [];
@@ -79,14 +82,8 @@
 		</button>
 	</div>
 </div>
-{#if loading}
-	<div
-		class="w-full h-full flex justify-center items-center text-mobile-textPrimary text-base font-light">
-		<div class="flex flex-col justify-center items-center gap-4">
-			<span class="">Loading</span>
-		</div>
-	</div>
-{:else if credentials.length === 0}
+
+{#if credentials.length === 0 && credentialsLoaded}
 	<div
 		class="w-full h-full flex justify-center items-center text-mobile-textPrimary text-base font-light">
 		<div class="flex flex-col justify-center items-center gap-4">
