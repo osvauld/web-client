@@ -1,7 +1,7 @@
 <script>
 	import Arrow from "../../../icons/rightArrow.svelte";
 	import Home from "../../../icons/mobileHome.svelte";
-	import Star from "../../../icons/starIcon.svelte";
+	import Star from "../../../icons/star.svelte";
 	import Folder from "../../../icons/folderIcon.svelte";
 	import CreditCard from "../../../icons/creditCard.svelte";
 	import KeyIcon from "../../../icons/mobileKey.svelte";
