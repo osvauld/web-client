@@ -21,6 +21,7 @@
 	import { setFolderStore } from "../lib/store/storeHelper";
 	import PasswordPromptModal from "../lib/components/dashboard/components/PasswordPromptModal.svelte";
 	import { LocalStorageService } from "../utils/storageHelper";
+	import DefaultLayout from "./components/layout/DefaultLayout.svelte";
 
 	let showWelcome = false;
 	let signedUp = false;
@@ -75,7 +76,8 @@
 			<Welcome on:authenticated="{handleAuthenticated}" />
 		</div>
 	{:else}
-		<div class="flex h-full">
+		<DefaultLayout />
+		<!-- <div class="flex h-full">
 			<div
 				class="w-1/5 h-full scrollbar-thin overflow-y-hidden overflow-x-hidden relative z-10">
 				<LeftContainer />
@@ -101,10 +103,11 @@
 		{/if}
 
 		{#if $toastStore.show}
-			<!-- {#if true} -->
+			 {#if true}
 			<div class="z-100">
 				<ShareToast />
 			</div>
 		{/if}
+        -->
 	{/if}
 </main>
