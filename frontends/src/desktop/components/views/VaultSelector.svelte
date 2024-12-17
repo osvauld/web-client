@@ -27,6 +27,7 @@
 	onMount(async () => {
 		// const resp = await sendMessage("getFolder");
 		// console.log("resp ============>", resp);
+		console.log("Vault selector Mounted");
 	});
 </script>
 
