@@ -1,4 +1,4 @@
-import App from "../mobile/Mobile.svelte";
+import App from "./Dashboard.svelte";
 
 
 import "../tailwind.css";
