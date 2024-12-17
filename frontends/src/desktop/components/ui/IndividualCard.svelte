@@ -1,6 +1,6 @@
 <script>
 	import Menu from "../../../icons/Menu.svelte";
-	// import Star from "../../../icons/starIcon.svelte";
+	// import Star from "../../../icons/star.svelte";
 </script>
 
 <div
