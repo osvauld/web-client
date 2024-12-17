@@ -24,12 +24,10 @@
 		categorySelection.set(false);
 		currentLayout.set("home");
 		bottomNavActive.set(true);
-		console.log("test");
 	};
 
 	let credentialFields = [];
 	const addCredentialHandlerFunc = async () => {
-		console.log("Add Credential....", JSON.stringify(credentialFields));
 		await addCredentialHandler(
 			{
 				name: "test",
@@ -50,7 +48,6 @@
 		const defaultVault = $vaults.find((vault) => vault.name === "Default");
 
 		defaultVaultId = defaultVault?.id;
-		console.log("Default Vault Id ==>", defaultVaultId);
 		credentialFields = credentialFieldsUpdater(selectedCategory.type);
 		bottomNavActive.set(false);
 	});

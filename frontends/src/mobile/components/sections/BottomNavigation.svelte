@@ -9,11 +9,12 @@
 		categorySelection,
 		currentVault,
 		currentLayout,
+		bottomNavActive,
+		vaultSwitchActive,
 	} from "../../store/mobile.ui.store";
 	import MultipleUsers from "../../../icons/multipleUsers.svelte";
 
 	const handleClick = (route) => {
-		console.log(route);
 		currentLayout.set(route);
 		if (route === "credential ") categorySelection.set(!$categorySelection);
 		else if (route === "home") {
@@ -21,18 +22,27 @@
 			categorySelection.set(false);
 		}
 	};
+
+	const handleVaultManger = () => {
+		if ($vaultSwitchActive) {
+			bottomNavActive.set(true);
+		}
+
+		vaultSwitchActive.set(!$vaultSwitchActive);
+	};
 </script>
 
 <nav
 	class="h-[68px] py-2 w-full fixed bottom-0 bg-mobile-navBlue flex text-base font-sans font-normal text-mobile-iconPrimary">
 	<button
 		class=" flex-1 flex justify-center items-center flex-col"
-		on:click="{() => {
-			handleClick('home');
-		}}">
+		on:click="{handleVaultManger}">
 		<span class="flex justify-center items-center"
 			><Home color="#5B5D6D" /></span>
-		<span>All Vaults</span>
+		<span
+			>{$currentVault.id === "all"
+				? "All Vaults"
+				: `${$currentVault.name}`}</span>
 	</button>
 	<button
 		class=" flex-1 flex justify-center items-center flex-col"
