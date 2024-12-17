@@ -3,14 +3,14 @@
 	import Home from "../../../icons/mobileHome.svelte";
 	import Star from "../../../icons/star.svelte";
 	import { createEventDispatcher } from "svelte";
-	import VaultSelector from "../views/VaultSelector.svelte";
+	import VaultManager from "../views/VaultManager.svelte";
 	const dispatch = createEventDispatcher();
-	import { currentView } from "../store/desktop.ui.store";
+	import { currentVault } from "../store/desktop.ui.store";
 	import { CATEGORIES } from "../../utils/credentialUtils";
 
 	let selectedSection = "home";
 	let selectedCategory = "";
-	let vaultSelectorActive = false;
+	let vaultSwitchActive = false;
 
 	const handleSectionChange = (section) => {
 		// currentView.set(section);
@@ -29,18 +29,18 @@
 	aria-label="Main Navigation">
 	<div class=" relative">
 		<button
-			class="w-full text-[26px] text-osvauld-fieldText font-medium leading-6 bg-osvauld-frameblack rounded-xl border border-osvauld-defaultBorder px-4 py-3 flex justify-between items-center"
+			class="w-full text-[26px] text-osvauld-fieldText font-medium leading-6 bg-osvauld-frameblack rounded-xl border border-osvauld-defaultBorder px-4 py-3 flex justify-between items-center capitalize"
 			aria-label="Switch Vault"
 			aria-controls="vaultSelector"
 			aria-expanded="false"
-			on:click="{() => (vaultSelectorActive = !vaultSelectorActive)}"
-			>All Vaults <span
-				class="transition-transform duration-300 {vaultSelectorActive
+			on:click="{() => (vaultSwitchActive = !vaultSwitchActive)}"
+			>{$currentVault.name}<span
+				class="transition-transform duration-300 {vaultSwitchActive
 					? '-rotate-90'
 					: 'rotate-90'}"><Arrow color="#F2F2F0" size="24" /></span
 			></button>
-		{#if vaultSelectorActive}
-			<VaultSelector />
+		{#if vaultSwitchActive}
+			<VaultManager bind:vaultSwitchActive />
 		{/if}
 	</div>
 	<div
