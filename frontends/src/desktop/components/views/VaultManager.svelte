@@ -57,7 +57,8 @@
 			class:text-mobile-textTertiary="{isActive}"
 			on:click="{() => handleVaultSwitch(vault)}">
 			<span><MobileHome color="{isActive ? '#F2F2F0' : '#85889C'}" /></span>
-			<span class="grow text-left pl-2 capitalize">{vault.name}</span>
+			<span class="grow text-left pl-2 capitalize max-w-full truncate"
+				>{vault.name}</span>
 		</button>
 	{/each}
 
