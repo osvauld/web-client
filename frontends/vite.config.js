@@ -5,10 +5,15 @@ import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import { fileURLToPath } from "url";
 import preprocess from "svelte-preprocess";
+import { server } from "typescript";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+const PORTS = {
+	MOBILE: 1420,
+	DESKTOP: 1421,
+	EXTENSION: 1424
+};
 const createConfig = ({ mode, platform }) => {
 	const isTauri = platform === "tauri";
 	const isExtension = platform === "extension";
@@ -17,8 +22,10 @@ const createConfig = ({ mode, platform }) => {
 
 	// Determine root directory based on platform and environment
 	let root = "src/extension";
+	let serverPort = PORTS.EXTENSION;
 	if (isTauri) {
 		root = isMobile ? "src/mobile" : "src/desktop";
+		serverPort = isMobile ? PORTS.MOBILE : PORTS.DESKTOP;
 	}
 
 	return {
@@ -39,6 +46,7 @@ const createConfig = ({ mode, platform }) => {
 				},
 				hot: isDev && {
 					preserveState: true,
+					injectCss: false,
 				},
 			}),
 		],
@@ -77,17 +85,23 @@ const createConfig = ({ mode, platform }) => {
 
 		server: {
 			strictPort: true,
-			port: isTauri ? (isMobile ? 1420 : 1421) : 1421,
+			port: serverPort,
 			host: process.env.TAURI_DEV_HOST || "0.0.0.0",
 			hmr: {
 				protocol: 'ws',
 				host: process.env.TAURI_DEV_HOST || '0.0.0.0',
-				port: 1420,
-				clientPort: 1420,
+				port: serverPort,
+				clientPort: serverPort,
+				timeout: 30000,
+				overlay: false,
+				reconnect: 2000
 			},
 			watch: {
 				usePolling: true,
 				interval: 1000,
+			},
+			shutdown: {
+				delay: 0
 			}
 		},
 	};
