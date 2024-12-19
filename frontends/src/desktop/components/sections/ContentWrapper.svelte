@@ -3,6 +3,7 @@
 		currentView,
 		currentVault,
 		credentialListWithType,
+		addCredentialModal,
 	} from "../store/desktop.ui.store";
 	import { CATEGORIES } from "../../utils/credentialUtils";
 	import HomeIcon from "../../../icons/mobileHome.svelte";
@@ -45,7 +46,8 @@
 			<button
 				class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue transition-colors"
 				on:mouseenter="{() => (addCredentialHovered = true)}"
-				on:mouseleave="{() => (addCredentialHovered = false)}">
+				on:mouseleave="{() => (addCredentialHovered = false)}"
+				on:click="{() => addCredentialModal.set(true)}">
 				<span class="mr-2">Add New Credential</span>
 				<Add color="{addCredentialHovered ? '#0D0E13' : '#A3A4B5'}" />
 			</button>
