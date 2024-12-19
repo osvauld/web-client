@@ -10,6 +10,7 @@
 		CATEGORIES,
 		credentialFieldsUpdater,
 	} from "../../utils/credentialUtils";
+	import { addCredentialHandler } from "../../../utils/addCredentialHelper";
 
 	import {
 		credentialEditorModal,
@@ -23,6 +24,20 @@
 
 	const closeEditorModal = () => {
 		credentialEditorModal.set(false);
+	};
+
+	const addCredentialHandlerFunc = async () => {
+		await addCredentialHandler(
+			{
+				name: "test",
+				description: "test",
+				credentialFields,
+				credentialType: credentialType,
+			},
+			// if current vault.id is "all", get id of Default Folder and replace it here, that way, if user tries to add a credential from Default/All Vaults view, It goes somewhere (Default folder)
+			$currentVault.id === "all" ? $selectedVaultForInput.id : $currentVault.id,
+		);
+		closeEditorModal();
 	};
 
 	onMount(() => {
@@ -81,10 +96,12 @@
 		</div>
 		<div
 			class="h-[68px] flex-shrink-0 p-3 flex justify-between items-center text-mobile-bgPrimary">
-			<button class="px-10 py-2.5 text-mobile-textSecondary">Cancel</button>
+			<button
+				class="px-10 py-2.5 text-mobile-textSecondary"
+				on:click="{closeEditorModal}">Cancel</button>
 			<button
 				class="px-10 py-2.5 bg-osvauld-carolinablue rounded-lg font-medium"
-				>Save</button>
+				on:click="{addCredentialHandlerFunc}">Save</button>
 		</div>
 	</div>
 </div>

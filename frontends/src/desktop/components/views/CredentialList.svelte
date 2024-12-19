@@ -42,7 +42,7 @@
 				(item) => item.type === credentialType,
 			)}
 			<div
-				class="bg-osvauld-frameblack h-[4rem] basis-[24rem] shrink-0 grow-0 rounded-xl p-3">
+				class="bg-osvauld-frameblack flex h-[4rem] basis-[24rem] shrink-0 grow-0 rounded-xl p-3">
 				<span class="flex justify-center items-center p-2">
 					<svelte:component this="{categoryInfo.icon}" color="{'#BFC0CC'}" />
 				</span>
