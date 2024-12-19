@@ -5,3 +5,6 @@ export let vaults = writable([]);
 export let currentVault = writable({ id: "all", name: "all vaults" });
 export let credentialListWithType = writable("");
 export let addCredentialModal = writable(false);
+export let credentialEditorModal = writable(false);
+export let selectedCategoryForInput = writable("");
+export let selectedVaultForInput = writable("");

@@ -22,8 +22,12 @@
 	import PasswordPromptModal from "../lib/components/dashboard/components/PasswordPromptModal.svelte";
 	import { LocalStorageService } from "../utils/storageHelper";
 	import DefaultLayout from "./components/layout/DefaultLayout.svelte";
-	import { addCredentialModal } from "./components/store/desktop.ui.store";
 	import AddCredentialModal from "./components/views/AddCredentialModal.svelte";
+	import {
+		addCredentialModal,
+		credentialEditorModal,
+	} from "./components/store/desktop.ui.store";
+	import CredentialEditorModal from "./components/views/CredentialEditorModal.svelte";
 
 	let showWelcome = false;
 	let signedUp = false;
@@ -82,6 +86,10 @@
 
 		{#if $addCredentialModal}
 			<AddCredentialModal />
+		{/if}
+
+		{#if $credentialEditorModal}
+			<CredentialEditorModal />
 		{/if}
 
 		<!-- {#if $showMoreOptions}
