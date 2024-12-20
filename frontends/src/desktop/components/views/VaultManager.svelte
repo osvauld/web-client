@@ -6,7 +6,7 @@
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 	import { vaults, currentVault } from "../store/desktop.ui.store";
 
-	export let vaultSwitchActive;
+	export let vaultManagerActive;
 	let newVaultInputActive = false;
 	let newVaultName = "";
 
@@ -37,12 +37,12 @@
 		await fetchAllVaults();
 		currentVault.set($vaults.find((vault) => vault.name === newVaultName));
 		newVaultName = "";
-		vaultSwitchActive = false;
+		vaultManagerActive = false;
 	};
 
 	const handleVaultSwitch = (vault) => {
 		currentVault.set(vault);
-		vaultSwitchActive = false;
+		vaultManagerActive = false;
 	};
 
 	onMount(() => {

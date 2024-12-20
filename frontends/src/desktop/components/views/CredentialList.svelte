@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {
-		credentialListWithType,
+		selectedCategory,
 		currentVault,
 		credentialEditorModal,
 	} from "../store/desktop.ui.store";
@@ -35,10 +35,9 @@
 		prevEditorModalState = $credentialEditorModal;
 	}
 
-	$: updatedCredentials = $credentialListWithType
+	$: updatedCredentials = $selectedCategory
 		? credentials.filter(
-				(credential) =>
-					credential.data.credentialType === $credentialListWithType,
+				(credential) => credential.data.credentialType === $selectedCategory,
 			)
 		: credentials;
 </script>

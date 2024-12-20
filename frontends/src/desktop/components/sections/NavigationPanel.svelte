@@ -2,29 +2,23 @@
 	import Arrow from "../../../icons/rightArrow.svelte";
 	import Home from "../../../icons/mobileHome.svelte";
 	import Star from "../../../icons/star.svelte";
-	import { createEventDispatcher } from "svelte";
 	import VaultManager from "../views/VaultManager.svelte";
-	const dispatch = createEventDispatcher();
-	import {
-		currentVault,
-		credentialListWithType,
-	} from "../store/desktop.ui.store";
+	import { currentVault, selectedCategory } from "../store/desktop.ui.store";
 	import { CATEGORIES } from "../../utils/credentialUtils";
 
 	let selectedSection = "home";
-	let selectedCategory = "";
-	let vaultSwitchActive = false;
+	let localSelectedCategory = "";
+	let vaultManagerActive = false;
 
 	const handleSectionChange = (section) => {
-		// currentView.set(section);
-		selectedCategory = "";
+		localSelectedCategory = "";
 		selectedSection = section;
 	};
 
 	const handleCategoryFilter = (type, id) => {
 		selectedSection = "";
-		selectedCategory = id;
-		credentialListWithType.set(type);
+		localSelectedCategory = id;
+		selectedCategory.set(type);
 	};
 </script>
 
@@ -37,14 +31,14 @@
 			aria-label="Switch Vault"
 			aria-controls="vaultSelector"
 			aria-expanded="false"
-			on:click="{() => (vaultSwitchActive = !vaultSwitchActive)}"
+			on:click="{() => (vaultManagerActive = !vaultManagerActive)}"
 			>{$currentVault.name}<span
-				class="transition-transform duration-300 {vaultSwitchActive
+				class="transition-transform duration-300 {vaultManagerActive
 					? '-rotate-90'
 					: 'rotate-90'}"><Arrow color="#F2F2F0" size="24" /></span
 			></button>
-		{#if vaultSwitchActive}
-			<VaultManager bind:vaultSwitchActive />
+		{#if vaultManagerActive}
+			<VaultManager bind:vaultManagerActive />
 		{/if}
 	</div>
 	<div
@@ -88,16 +82,16 @@
 				<button
 					class="w-full flex items-center gap-3 p-3 rounded-lg
                        transition-colors
-						  {selectedCategory === category.id
+						  {localSelectedCategory === category.id
 						? 'text-osvauld-sideListTextActive bg-osvauld-fieldActive'
 						: ''}"
 					on:click="{() => handleCategoryFilter(category.type, category.id)}"
-					aria-current="{selectedCategory === category.id
+					aria-current="{localSelectedCategory === category.id
 						? 'page'
 						: undefined}">
 					<svelte:component
 						this="{category.icon}"
-						color="{selectedCategory === category.id
+						color="{localSelectedCategory === category.id
 							? '#F2F2F0'
 							: '#85889C'}" />
 					<span>{category.type}</span>
