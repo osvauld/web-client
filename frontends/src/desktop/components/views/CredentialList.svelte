@@ -2,6 +2,7 @@
 	import {
 		credentialListWithType,
 		currentVault,
+		credentialEditorModal,
 	} from "../store/desktop.ui.store";
 	import {
 		CATEGORIES,
@@ -11,6 +12,7 @@
 	import Menu from "../../../icons/Menu.svelte";
 
 	let credentials = [];
+	let prevEditorModalState = false;
 
 	const fetchCredentials = async (vaultId: string) => {
 		try {
@@ -24,6 +26,13 @@
 
 	$: {
 		fetchCredentials($currentVault.id);
+	}
+
+	$: {
+		if (prevEditorModalState && !$credentialEditorModal) {
+			fetchCredentials($currentVault.id);
+		}
+		prevEditorModalState = $credentialEditorModal;
 	}
 
 	$: updatedCredentials = $credentialListWithType

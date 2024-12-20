@@ -24,6 +24,8 @@
 
 	const closeEditorModal = () => {
 		credentialEditorModal.set(false);
+		selectedVaultForInput.set("");
+		selectedCategoryForInput.set("");
 	};
 
 	const addCredentialHandlerFunc = async () => {

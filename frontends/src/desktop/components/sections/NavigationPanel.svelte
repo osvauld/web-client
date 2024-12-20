@@ -5,7 +5,10 @@
 	import { createEventDispatcher } from "svelte";
 	import VaultManager from "../views/VaultManager.svelte";
 	const dispatch = createEventDispatcher();
-	import { currentVault } from "../store/desktop.ui.store";
+	import {
+		currentVault,
+		credentialListWithType,
+	} from "../store/desktop.ui.store";
 	import { CATEGORIES } from "../../utils/credentialUtils";
 
 	let selectedSection = "home";
@@ -18,9 +21,10 @@
 		selectedSection = section;
 	};
 
-	const handleCategoryFilter = (category) => {
+	const handleCategoryFilter = (type, id) => {
 		selectedSection = "";
-		selectedCategory = category;
+		selectedCategory = id;
+		credentialListWithType.set(type);
 	};
 </script>
 
@@ -87,7 +91,7 @@
 						  {selectedCategory === category.id
 						? 'text-osvauld-sideListTextActive bg-osvauld-fieldActive'
 						: ''}"
-					on:click="{() => handleCategoryFilter(category.id)}"
+					on:click="{() => handleCategoryFilter(category.type, category.id)}"
 					aria-current="{selectedCategory === category.id
 						? 'page'
 						: undefined}">
