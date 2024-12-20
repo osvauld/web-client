@@ -14,6 +14,16 @@
 		node.focus();
 	};
 
+	const fetchAllVaults = async () => {
+		try {
+			const resp = await sendMessage("getFolder");
+			const updatedVaults = [{ id: "all", name: "All Vaults" }, ...resp];
+			vaults.set(updatedVaults);
+		} catch (e) {
+			console.log("Error received", e);
+		}
+	};
+
 	const handleVaultCreation = async (newVaultName) => {
 		try {
 			await sendMessage("addFolder", {
@@ -23,9 +33,11 @@
 		} catch (e) {
 			console.log("Vault creation failed");
 		}
-		currentVault.set(newVaultName);
-		vaultSwitchActive = false;
+
+		await fetchAllVaults();
+		currentVault.set($vaults.find((vault) => vault.name === newVaultName));
 		newVaultName = "";
+		vaultSwitchActive = false;
 	};
 
 	const handleVaultSwitch = (vault) => {
@@ -33,14 +45,8 @@
 		vaultSwitchActive = false;
 	};
 
-	onMount(async () => {
-		try {
-			const resp = await sendMessage("getFolder");
-			const updatedVaults = [{ id: "all", name: "All Vaults" }, ...resp];
-			vaults.set(updatedVaults);
-		} catch (e) {
-			console.log("Error received ===>", e);
-		}
+	onMount(() => {
+		fetchAllVaults();
 	});
 </script>
 
