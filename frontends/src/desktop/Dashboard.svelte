@@ -22,6 +22,12 @@
 	import PasswordPromptModal from "../lib/components/dashboard/components/PasswordPromptModal.svelte";
 	import { LocalStorageService } from "../utils/storageHelper";
 	import DefaultLayout from "./components/layout/DefaultLayout.svelte";
+	import AddCredentialModal from "./components/views/AddCredentialModal.svelte";
+	import {
+		addCredentialModal,
+		credentialEditorModal,
+	} from "./components/store/desktop.ui.store";
+	import CredentialEditorModal from "./components/views/CredentialEditorModal.svelte";
 
 	let showWelcome = false;
 	let signedUp = false;
@@ -77,18 +83,16 @@
 		</div>
 	{:else}
 		<DefaultLayout />
-		<!-- <div class="flex h-full">
-			<div
-				class="w-1/5 h-full scrollbar-thin overflow-y-hidden overflow-x-hidden relative z-10">
-				<LeftContainer />
-			</div>
-			<div
-				class="w-4/5 min-w-[330px] h-full overflow-hidden border-l border-osvauld-iconblack">
-				<RightContainer />
-			</div>
-		</div>
 
-		{#if $showMoreOptions}
+		{#if $addCredentialModal}
+			<AddCredentialModal />
+		{/if}
+
+		{#if $credentialEditorModal}
+			<CredentialEditorModal />
+		{/if}
+
+		<!-- {#if $showMoreOptions}
 			<MoreActions />
 		{/if}
 		{#if $promptPassword}
@@ -107,7 +111,6 @@
 			<div class="z-100">
 				<ShareToast />
 			</div>
-		{/if}
-        -->
+		{/if} -->
 	{/if}
 </main>
