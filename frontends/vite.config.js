@@ -6,7 +6,6 @@ import tailwindcss from "tailwindcss";
 import { fileURLToPath } from "url";
 import preprocess from "svelte-preprocess";
 import { server } from "typescript";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PORTS = {
@@ -14,12 +13,12 @@ const PORTS = {
 	DESKTOP: 1421,
 	EXTENSION: 1424
 };
+
 const createConfig = ({ mode, platform }) => {
 	const isTauri = platform === "tauri";
 	const isExtension = platform === "extension";
 	const isDev = mode === "development";
 	const isMobile = process.env.TAURI_ENV_PLATFORM === "mobile";
-
 	// Determine root directory based on platform and environment
 	let root = "src/extension";
 	let serverPort = PORTS.EXTENSION;
@@ -27,7 +26,7 @@ const createConfig = ({ mode, platform }) => {
 		root = isMobile ? "src/mobile" : "src/desktop";
 		serverPort = isMobile ? PORTS.MOBILE : PORTS.DESKTOP;
 	}
-
+	console.log("isMobile", isMobile);
 	return {
 		appType: "spa",
 		clearScreen: false,
@@ -46,7 +45,6 @@ const createConfig = ({ mode, platform }) => {
 				},
 				hot: isDev && {
 					preserveState: true,
-					injectCss: false,
 				},
 			}),
 		],
@@ -78,7 +76,7 @@ const createConfig = ({ mode, platform }) => {
 					: "safari13"
 				: "es2015",
 			minify: !process.env.TAURI_ENV_DEBUG ? "esbuild" : false,
-			sourcemap: !!process.env.TAURI_ENV_DEBUG,
+			sourcemap: process.env.TAURI_ENV_DEBUG,
 			outDir: isTauri ? (isMobile ? "mobile" : "desktop") : "public/build",
 			emptyOutDir: true,
 		},
@@ -86,22 +84,29 @@ const createConfig = ({ mode, platform }) => {
 		server: {
 			strictPort: true,
 			port: serverPort,
-			host: process.env.TAURI_DEV_HOST || "0.0.0.0",
+			host: isMobile ? '0.0.0.0' : "127.0.0.1",
 			hmr: {
 				protocol: 'ws',
-				host: process.env.TAURI_DEV_HOST || '0.0.0.0',
+				host: isMobile ? '0.0.0.0' : "127.0.0.1",
 				port: serverPort,
 				clientPort: serverPort,
-				timeout: 30000,
-				overlay: false,
-				reconnect: 2000
+				transport: {
+					kind: 'tcp',
+					options: {
+						host: '0.0.0.0'
+					}
+				}
+			},
+
+			cors: true,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+				'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
 			},
 			watch: {
 				usePolling: true,
 				interval: 1000,
-			},
-			shutdown: {
-				delay: 0
 			}
 		},
 	};

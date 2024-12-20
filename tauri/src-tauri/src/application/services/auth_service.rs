@@ -230,6 +230,4 @@ impl AuthService {
 
         Ok(new_certificate)
     }
-
-    // Add other methods for certificate operations...
 }

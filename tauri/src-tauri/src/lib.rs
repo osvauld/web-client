@@ -13,9 +13,9 @@ use crate::application::services::FolderService;
 use crate::application::services::P2PService;
 use crate::application::services::SyncService;
 use crate::handlers::auth_handler::{
-    check_private_key_loaded, check_signup_status, handle_change_passphrase,
-    handle_export_certificate, handle_get_public_key, handle_hash_and_sign,
-    handle_import_certificate, handle_sign_challenge, handle_sign_up,
+    check_private_key_loaded, check_signup_status, handle_add_device, handle_change_passphrase,
+    handle_export_certificate, handle_get_public_key, handle_hash_and_sign, handle_sign_challenge,
+    handle_sign_up,
 };
 use crate::handlers::credential_handler::{
     handle_add_credential, handle_get_credentials_for_folder,
@@ -45,6 +45,9 @@ pub fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(
             tauri_plugin_log::Builder::new()
+                .target(tauri_plugin_log::Target::new(
+                    tauri_plugin_log::TargetKind::Stderr,
+                ))
                 .filter(|metadata| {
                     !metadata.target().contains("tracing::span")
                         && !metadata.target().contains("iroh::magicsock")
@@ -144,7 +147,7 @@ pub fn run() {
             handle_sign_challenge,
             handle_add_credential,
             handle_hash_and_sign,
-            handle_import_certificate,
+            handle_add_device,
             handle_export_certificate,
             handle_change_passphrase,
             handle_add_folder,

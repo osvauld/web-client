@@ -19,14 +19,14 @@
 	};
 
 	const handleFolderCreation = () => {
-		// sendMessage("addFolder", { name: newVaultName });
+		sendMessage("addFolder", { name: newVaultName });
 		newVaultName = "";
 		newVaultInputActive = false;
 	};
 
 	onMount(async () => {
-		// const resp = await sendMessage("getFolder");
-		// console.log("resp ============>", resp);
+		const resp = await sendMessage("getFolder");
+		console.log("resp ============>", resp);
 	});
 </script>
 
@@ -66,6 +66,7 @@
 				<button
 					type="submit"
 					class="h-[48px] flex justify-center items-center gap-1 rounded-lg bg-mobile-highlightBlue text-mobile-bgPrimary font-medium text-lg mt-6"
+					on:click="{handleFolderCreation}"
 					>Create New Vault <Add color="#000" /></button>
 			</div>
 		</div>
@@ -73,6 +74,7 @@
 		<button
 			on:click="{() => (newVaultInputActive = true)}"
 			class="h-[48px] flex justify-center items-center gap-1 rounded-lg border-2 border-mobile-bgHighlight p-4 active:bg-mobile-bgLight text-mobile-textActive"
+			on:click="{handleFolderCreation}"
 			>Create New Vault <Add color="#85889C" /></button>
 	{/if}
 </div>

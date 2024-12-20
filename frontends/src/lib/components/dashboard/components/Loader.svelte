@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	export let size = 24;
 	export let color = "#000";
 	export let duration = 1;
@@ -34,7 +34,6 @@
 
 <div
 	class="loader"
-	style="--color: {color}; --duration: {duration}s; width: {size}px; height: {size}px;"
->
+	style="--color: {color}; --duration: {duration}s; width: {size}px; height: {size}px;">
 	<div class="spinner"></div>
 </div>

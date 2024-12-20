@@ -57,6 +57,7 @@ const tauriBrowser = {
 			try {
 				// Map actions to their specific handlers
 				const handlerMap = {
+					'getTicket': () => invoke('get_ticket'),
 					'isSignedUp': () => invoke('check_signup_status'),
 					'savePassphrase': (data) => invoke('handle_sign_up', { input: data }),
 					'checkPvtLoaded': () => invoke('check_private_key_loaded'),
@@ -64,7 +65,7 @@ const tauriBrowser = {
 					'signChallenge': (data) => invoke('handle_sign_challenge', { input: data }),
 					'addCredential': (data) => invoke('handle_add_credential', { input: data }),
 					'hashAndSign': (data) => invoke('handle_hash_and_sign', { input: data }),
-					'importPvtKey': (data) => invoke('handle_import_certificate', { input: data }),
+					'addDevice': (data) => invoke('handle_add_device', { input: data }),
 					'exportCertificate': (data) => invoke('handle_export_certificate', { input: data }),
 					'changePassphrase': (data) => invoke('handle_change_passphrase', { input: data }),
 					'addFolder': (data) => invoke('handle_add_folder', { input: data }),

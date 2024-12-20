@@ -63,10 +63,11 @@ pub struct HashAndSignInput {
     pub message: String,
 }
 
-#[derive(Deserialize)]
-pub struct ImportCertificateInput {
+#[derive(Deserialize, Debug)]
+pub struct AddDeviceInput {
     pub certificate: String,
     pub passphrase: String,
+    pub ticket: String,
 }
 
 #[derive(Deserialize)]

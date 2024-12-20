@@ -90,7 +90,7 @@
 			<span>
 				<RegretFace size="{64}" />
 			</span>
-			<span>Unable to find associated credentials</span>
+			<span>Unable to find associated credentialss</span>
 		</div>
 	</div>
 {:else if isRecents}

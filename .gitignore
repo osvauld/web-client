@@ -3,7 +3,7 @@ frontends/public/background.js
 frontends/node_modules
 frontends/public/content.js
 frontends/dist
-frontends/desktop
+frontends/src/desktop/desktop/*
 frontends/mobile
 frontends/mobile/index.css
 frontends/src/mobile/mobile
