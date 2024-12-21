@@ -8,3 +8,5 @@ export let addCredentialModal = writable(false);
 export let credentialEditorModal = writable(false);
 export let selectedCategoryForInput = writable("");
 export let selectedVaultForInput = writable("");
+export let viewCredentialModal = writable(false);
+export let currentCredential = writable({});

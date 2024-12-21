@@ -3,6 +3,8 @@
 		selectedCategory,
 		currentVault,
 		credentialEditorModal,
+		viewCredentialModal,
+		currentCredential,
 	} from "../store/desktop.ui.store";
 	import {
 		CATEGORIES,
@@ -40,6 +42,11 @@
 				(credential) => credential.data.credentialType === $selectedCategory,
 			)
 		: credentials;
+
+	const selectedCredential = (credential) => {
+		viewCredentialModal.set(true);
+		currentCredential.set(credential);
+	};
 </script>
 
 <div class="grow px-16 py-4">
@@ -49,8 +56,9 @@
 			{@const categoryInfo = CATEGORIES.find(
 				(item) => item.type === credentialType,
 			)}
-			<div
-				class="bg-osvauld-frameblack flex h-[4rem] basis-[24rem] shrink-0 grow-0 rounded-xl p-3">
+			<button
+				class="bg-osvauld-frameblack flex h-[4rem] basis-[24rem] shrink-0 grow-0 rounded-xl p-3"
+				on:click="{() => selectedCredential(credential)}">
 				<span class="flex justify-center items-center p-2">
 					<svelte:component this="{categoryInfo.icon}" color="{'#BFC0CC'}" />
 				</span>
@@ -73,7 +81,7 @@
 						console.log('Propagation is not allowed here')}">
 					<Menu />
 				</button>
-			</div>
+			</button>
 		{/each}
 	</div>
 </div>

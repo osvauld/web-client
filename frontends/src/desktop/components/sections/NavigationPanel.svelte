@@ -20,6 +20,11 @@
 		localSelectedCategory = id;
 		selectedCategory.set(type);
 	};
+
+	$: if ($currentVault) {
+		localSelectedCategory = "";
+		selectedSection = "home";
+	}
 </script>
 
 <nav
