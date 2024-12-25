@@ -4,11 +4,11 @@
 	import MobileLeftArrow from "../../../icons/mobileLeftArrow.svelte";
 	import Tick from "../../../icons/tick.svelte";
 	import CopyIcon from "../../../icons/copyIcon.svelte";
-	import More from "../../../icons/more.svelte";
 	import Share from "../../../icons/FolderShare.svelte";
+	import More from "../../../icons/more.svelte";
 	import Edit from "../../../icons/editIcon.svelte";
-	import Bin from "../../../icons/binIcon.svelte";
 	import MobileHome from "../../../icons/mobileHome.svelte";
+	import Bin from "../../../icons/binIcon.svelte";
 	import Star from "../../../icons/star.svelte";
 
 	import {
