@@ -68,7 +68,7 @@
 		</div>
 		<div
 			class="grow p-4 text-mobile-textPrimary overflow-y-auto scrollbar-thin flex flex-col gap-2 mt-2">
-			{#each $currentCredential.data.credentialFields as field, index (field.fieldName)}
+			{#each $currentCredential.data.credentialFields as field, index (field.field)}
 				{#if field.fieldValue.trim().length !== 0}
 					<span class="text-mobile-textlabel text-sm">{field.fieldName}</span>
 					<div class="flex gap-2">
