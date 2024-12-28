@@ -44,6 +44,7 @@ pub trait AuthRepository: Send + Sync {
         salt_key: String,
     ) -> Result<Certificate, RepositoryError>;
     async fn is_signed_up(&self) -> Result<bool, RepositoryError>;
+    async fn store_device_key(&self, device_key: &str) -> Result<(), RepositoryError>;
 }
 
 #[async_trait]

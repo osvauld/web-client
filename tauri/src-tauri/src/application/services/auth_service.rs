@@ -63,6 +63,10 @@ impl AuthService {
             )
             .await
             .map_err(|e| e.to_string())?;
+        self.auth_repository
+            .store_device_key(&device_id)
+            .await
+            .map_err(|e| e.to_string())?;
 
         Ok((device_certificate, device_id))
     }

@@ -2,6 +2,7 @@ use crate::domains::models::auth::Certificate;
 use crate::domains::repositories::{AuthRepository, RepositoryError};
 use async_trait::async_trait;
 use std::sync::Arc;
+use tauri::ipc::Response;
 use tauri::{AppHandle, Wry};
 use tauri_plugin_store::Store;
 use tauri_plugin_store::StoreExt;
@@ -57,6 +58,15 @@ impl AuthRepository for TauriStoreAuthRepository {
             public_key: String::new(), // This will be generated when needed
             salt,
         })
+    }
+
+    async fn store_device_key(&self, device_key: &str) -> Result<(), RepositoryError> {
+        let store = self.get_store().await;
+        store.set("device_id", device_key.to_string());
+        store
+            .save()
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+        Ok(())
     }
 
     async fn is_signed_up(&self) -> Result<bool, RepositoryError> {
