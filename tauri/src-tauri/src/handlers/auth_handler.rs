@@ -75,16 +75,10 @@ pub async fn handle_add_device(
     input: AddDeviceInput,
     auth_service: State<'_, Arc<AuthService>>,
 ) -> Result<CryptoResponse, String> {
-    let certificate = auth_service
-        .import_certificate(input.certificate, input.passphrase)
+    let device_id = auth_service
+        .add_device(input.certificate, input.passphrase)
         .await?;
-    log::info!("Certificate {:?}", input.ticket);
-
-    Ok(CryptoResponse::ImportedCertificate {
-        certificate: certificate.private_key,
-        publicKey: certificate.public_key,
-        salt: certificate.salt,
-    })
+    todo!()
 }
 
 #[tauri::command]

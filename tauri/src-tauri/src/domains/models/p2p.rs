@@ -9,6 +9,8 @@ pub enum Message {
     SyncResponse(SyncPayload),
     SyncAck(String),
     SyncComplete,
+    AddDevice(String),
+    AddDeviceAck(String),
     FileTransfer { name: String, data: Vec<u8> },
 }
 
