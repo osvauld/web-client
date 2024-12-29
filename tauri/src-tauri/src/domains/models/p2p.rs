@@ -9,9 +9,15 @@ pub enum Message {
     SyncResponse(SyncPayload),
     SyncAck(String),
     SyncComplete,
-    AddDevice(String),
+    AddDevice(AddDevicePayload),
     AddDeviceAck(String),
     FileTransfer { name: String, data: Vec<u8> },
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct AddDevicePayload {
+    pub public_key: String,
+    pub device_id: String,
 }
 
 #[derive(Serialize, Deserialize)]

@@ -28,10 +28,14 @@ pub trait SyncRepository: Send + Sync {
         target_device_id: &str,
     ) -> Result<Vec<SyncRecord>, RepositoryError>;
     async fn update_status(&self, sync_id: &str, status: &str) -> Result<(), RepositoryError>;
+    async fn get_sync_records_by_device_id(
+        &self,
+        target_device_id: &str,
+    ) -> Result<Vec<SyncRecord>, RepositoryError>;
 }
 
 #[async_trait]
-pub trait AuthRepository: Send + Sync {
+pub trait StoreRepository: Send + Sync {
     async fn store_certificate(
         &self,
         certificate: &Certificate,
@@ -45,6 +49,7 @@ pub trait AuthRepository: Send + Sync {
     ) -> Result<Certificate, RepositoryError>;
     async fn is_signed_up(&self) -> Result<bool, RepositoryError>;
     async fn store_device_key(&self, device_key: &str) -> Result<(), RepositoryError>;
+    async fn get_device_key(&self) -> Result<String, RepositoryError>;
 }
 
 #[async_trait]

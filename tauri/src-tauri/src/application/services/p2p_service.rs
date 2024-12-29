@@ -1,6 +1,6 @@
 use crate::application::services::sync_service::SyncService;
 use crate::application::services::SyncPayload;
-use crate::domains::models::p2p::{ConnectionTicket, Message};
+use crate::domains::models::p2p::{AddDevicePayload, ConnectionTicket, Message};
 use crate::types::CryptoResponse;
 use futures_lite::StreamExt;
 use iroh::endpoint::Connection;
@@ -76,7 +76,12 @@ impl P2PService {
         Ok(())
     }
 
-    pub async fn add_device(&self, device_id: String, ticket: String) -> Result<(), String> {
+    pub async fn add_device(
+        &self,
+        device_id: String,
+        device_public_key: String,
+        ticket: String,
+    ) -> Result<(), String> {
         // First establish connection with the target device using the ticket
         info!(
             "Initiating device addition process for device: {}",
@@ -86,17 +91,16 @@ impl P2PService {
 
         // Once connected, send the AddDevice message
         info!("Connection established, sending AddDevice message");
-        let add_device_message = Message::AddDevice(device_id.clone());
+        let add_device_message = Message::AddDevice(AddDevicePayload {
+            public_key: device_public_key,
+            device_id,
+        });
         let serialized = serde_json::to_string(&add_device_message)
             .map_err(|e| format!("Failed to serialize AddDevice message: {}", e))?;
 
         // Send the message and wait for acknowledgment
         self.send_message(serialized).await?;
 
-        info!(
-            "AddDevice message sent successfully for device: {}",
-            device_id
-        );
         Ok(())
     }
     pub async fn start_listening(&self) -> Result<CryptoResponse, String> {
@@ -345,7 +349,11 @@ impl P2PService {
         }
         Ok(())
     }
-    async fn handle_add_device_request(&self, device_id: String) -> Result<(), String> {
+    async fn handle_add_device_request(
+        &self,
+        device_id: String,
+        device_public_key: String,
+    ) -> Result<(), String> {
         info!("Processing device addition request for ID: {}", device_id);
 
         // Create and send acknowledgment message
@@ -472,11 +480,10 @@ impl P2PService {
                                                             self.handle_sync_ack(sync_id.clone())
                                                                 .await
                                                         }
-                                                        Message::AddDevice(device_id) => {
-                                                            info!("Received add device request for ID: {}", device_id);
-                                                            // Send acknowledgment
+                                                        Message::AddDevice(device_payload) => {
                                                             self.handle_add_device_request(
-                                                                device_id.to_string(),
+                                                                device_payload.device_id.clone(),
+                                                                device_payload.public_key.clone(),
                                                             )
                                                             .await
                                                         }

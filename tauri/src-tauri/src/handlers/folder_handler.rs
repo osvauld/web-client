@@ -1,4 +1,4 @@
-use crate::application::services::FolderService;
+use crate::application::services::{FolderService, SyncService};
 use crate::types::{AddFolderInput, CryptoResponse, FolderResponse};
 use std::sync::Arc;
 use tauri::State;
@@ -7,14 +7,16 @@ use tauri::State;
 pub async fn handle_add_folder(
     input: AddFolderInput,
     folder_service: State<'_, Arc<FolderService>>,
+    sync_service: State<'_, Arc<SyncService>>,
 ) -> Result<CryptoResponse, String> {
     log::info!("Adding folder: ");
     let folder = folder_service
         .create_folder(input.name, Some(input.description))
         .await
         .map_err(|e| e.to_string())?;
+    let _ = sync_service.add_folder_to_sync(folder.clone()).await;
 
-    Ok(CryptoResponse::Success)
+    Ok(CryptoResponse::FolderCreated(folder))
 }
 
 #[tauri::command]

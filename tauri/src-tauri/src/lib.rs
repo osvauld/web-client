@@ -26,7 +26,7 @@ use crate::handlers::p2p_handlers::{
 };
 use crate::persistence::repositories::{
     SqliteCredentialRepository, SqliteDeviceRepository, SqliteFolderRepository,
-    SqliteSyncRepository, TauriStoreAuthRepository,
+    SqliteSyncRepository, TauriStoreRepository,
 };
 use crypto_utils::CryptoUtils;
 use log::LevelFilter;
@@ -87,31 +87,27 @@ pub fn run() {
                         Arc::new(SqliteCredentialRepository::new(connection.clone()));
                     let device_repo = Arc::new(SqliteDeviceRepository::new(connection.clone()));
                     // Initialize folder service with cloned repositories
-                    let folder_service = Arc::new(FolderService::new(
-                        folder_repo.clone(),
-                        sync_repo.clone(),
-                        "1".to_string(), // TODO: Get from config
-                    ));
+                    let store_repository = Arc::new(TauriStoreRepository::new(handle.clone()));
+                    let folder_service = Arc::new(FolderService::new(folder_repo.clone()));
 
-                    let auth_repository = Arc::new(TauriStoreAuthRepository::new(handle.clone()));
                     let crypto_utils = Arc::new(Mutex::new(CryptoUtils::new()));
                     let auth_service = Arc::new(AuthService::new(
-                        auth_repository,
+                        store_repository.clone(),
                         crypto_utils.clone(),
-                        device_repo,
+                        device_repo.clone(),
                     ));
                     let sync_service = Arc::new(SyncService::new(
                         sync_repo.clone(),
                         folder_repo.clone(),
                         credential_repo.clone(),
+                        device_repo,
+                        store_repository,
                     ));
                     let p2p_service =
                         Arc::new(P2PService::new(handle.clone(), sync_service.clone()));
                     let credential_service = Arc::new(CredentialService::new(
                         credential_repo.clone(),
                         crypto_utils,
-                        sync_repo.clone(),
-                        p2p_service.clone(),
                     ));
 
                     // Manage all services

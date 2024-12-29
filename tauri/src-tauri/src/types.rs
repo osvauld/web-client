@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+
+use crate::domains::models::folder::Folder;
 #[derive(Serialize)]
 #[serde(untagged)]
 pub enum CryptoResponse {
@@ -29,6 +31,7 @@ pub enum CryptoResponse {
     ExportedCertificate(String),
     Folders(Vec<FolderResponse>),
     Credentials(Vec<CredentialResponse>),
+    FolderCreated(Folder),
     Success,
 }
 

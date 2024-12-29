@@ -75,7 +75,7 @@ pub async fn handle_add_device(
     input: AddDeviceInput,
     auth_service: State<'_, Arc<AuthService>>,
 ) -> Result<CryptoResponse, String> {
-    let device_id = auth_service
+    let (public_key, device_id) = auth_service
         .add_device(input.certificate, input.passphrase)
         .await?;
     todo!()
