@@ -1,49 +1,110 @@
 use crate::domains::models::auth::{Certificate, User};
-use crate::domains::repositories::{AuthRepository, RepositoryError};
+use crate::domains::models::device;
+use crate::domains::repositories::{DeviceRepository, RepositoryError, StoreRepository};
 use crypto_utils::CryptoUtils;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
 pub struct AuthService {
-    auth_repository: Arc<dyn AuthRepository>,
+    store_repository: Arc<dyn StoreRepository>,
     crypto_utils: Arc<Mutex<CryptoUtils>>,
+    device_repository: Arc<dyn DeviceRepository>,
 }
 
 impl AuthService {
     pub fn new(
-        auth_repository: Arc<dyn AuthRepository>,
+        store_repository: Arc<dyn StoreRepository>,
         crypto_utils: Arc<Mutex<CryptoUtils>>,
+        device_repository: Arc<dyn DeviceRepository>,
     ) -> Self {
         Self {
-            auth_repository,
+            store_repository,
             crypto_utils,
+            device_repository,
         }
     }
 
-    pub async fn save_passphrase(
+    async fn create_device(
+        &self,
+        passphrase: &str,
+        username: &str,
+    ) -> Result<(Certificate, String), String> {
+        // Generate device keys and get device ID
+        let (device_key, device_id) = {
+            let crypto = self.crypto_utils.lock().await;
+            let keys = crypto
+                .generate_keys(passphrase, username)
+                .map_err(|e| e.to_string())?;
+            let id = crypto
+                .get_key_id(&keys.public_key)
+                .map_err(|e| e.to_string())?;
+            (keys, id)
+        };
+
+        // Create device certificate from generated keys
+        let device_certificate = Certificate {
+            private_key: device_key.private_key.clone(),
+            public_key: device_key.public_key.clone(),
+            salt: device_key.salt.clone(),
+        };
+
+        // Save device information to repository
+        self.device_repository
+            .save(&device_id, &device_key.public_key)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        // Store device certificate
+        self.store_repository
+            .store_certificate(
+                &device_certificate,
+                "device_key".to_string(),
+                "device_key_salt".to_string(),
+            )
+            .await
+            .map_err(|e| e.to_string())?;
+        self.store_repository
+            .store_device_key(&device_id)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok((device_certificate, device_id))
+    }
+    pub async fn handle_sign_up(
         &self,
         username: &str,
         passphrase: &str,
         challenge: &str,
     ) -> Result<(User, String), String> {
-        let key_pair = {
+        // Generate primary keys for the user
+        let primary_key = {
             let crypto = self.crypto_utils.lock().await;
             crypto
                 .generate_keys(passphrase, username)
                 .map_err(|e| e.to_string())?
         };
 
+        // Create primary certificate
         let certificate = Certificate {
-            private_key: key_pair.private_key.clone(),
-            public_key: key_pair.public_key.clone(),
-            salt: key_pair.salt.clone(),
+            private_key: primary_key.private_key.clone(),
+            public_key: primary_key.public_key.clone(),
+            salt: primary_key.salt.clone(),
         };
 
-        self.auth_repository
-            .store_certificate(&certificate)
+        // Create device and get device certificate
+        let (_device_certificate, _device_id) = self.create_device(passphrase, username).await?;
+
+        // Store primary certificate
+        self.store_repository
+            .store_certificate(
+                &certificate,
+                "primary_key".to_string(),
+                "primary_key_salt".to_string(),
+            )
             .await
             .map_err(|e| e.to_string())?;
 
+        // Sign the challenge
         let signature = {
             let crypto = self.crypto_utils.lock().await;
             crypto.sign_message(challenge).map_err(|e| e.to_string())?
@@ -60,8 +121,8 @@ impl AuthService {
 
     pub async fn load_certificate(&self, passphrase: &str) -> Result<String, String> {
         let certificate = self
-            .auth_repository
-            .get_certificate()
+            .store_repository
+            .get_certificate("primary_key".to_string(), "primary_key_salt".to_string())
             .await
             .map_err(|e| e.to_string())?;
 
@@ -86,7 +147,7 @@ impl AuthService {
     }
 
     pub async fn is_signed_up(&self) -> Result<bool, String> {
-        self.auth_repository
+        self.store_repository
             .is_signed_up()
             .await
             .map_err(|e| e.to_string())
@@ -111,15 +172,15 @@ impl AuthService {
             .map_err(|e| format!("Hash and sign error: {}", e))
     }
 
-    pub async fn import_certificate(
+    pub async fn add_device(
         &self,
         certificate: String,
         passphrase: String,
-    ) -> Result<Certificate, String> {
+    ) -> Result<(String, String), String> {
         let result = {
             let crypto = self.crypto_utils.lock().await;
             crypto
-                .import_certificate(certificate, passphrase)
+                .import_certificate(certificate, passphrase.clone())
                 .map_err(|e| format!("Error importing certificate: {}", e))?
         };
 
@@ -128,19 +189,24 @@ impl AuthService {
             public_key: result.public_key,
             salt: result.salt,
         };
+        let (device_certificate, device_id) = self.create_device(&passphrase, "test").await?;
 
-        self.auth_repository
-            .store_certificate(&certificate)
+        self.store_repository
+            .store_certificate(
+                &certificate,
+                "primary_key".to_string(),
+                "primary_key_salt".to_string(),
+            )
             .await
             .map_err(|e| e.to_string())?;
 
-        Ok(certificate)
+        Ok((device_certificate.public_key, device_id))
     }
 
     pub async fn export_certificate(&self, passphrase: String) -> Result<String, String> {
         let certificate = self
-            .auth_repository
-            .get_certificate()
+            .store_repository
+            .get_certificate("primary_key".to_string(), "primary_key_salt".to_string())
             .await
             .map_err(|e| e.to_string())?;
 
@@ -156,8 +222,8 @@ impl AuthService {
         new_password: String,
     ) -> Result<Certificate, String> {
         let certificate = self
-            .auth_repository
-            .get_certificate()
+            .store_repository
+            .get_certificate("primary_key".to_string(), "primary_key_salt".to_string())
             .await
             .map_err(|e| e.to_string())?;
 
@@ -179,13 +245,15 @@ impl AuthService {
             salt: certificate.salt,
         };
 
-        self.auth_repository
-            .store_certificate(&new_certificate)
+        self.store_repository
+            .store_certificate(
+                &new_certificate,
+                "primary_key".to_string(),
+                "primary_key_salt".to_string(),
+            )
             .await
             .map_err(|e| e.to_string())?;
 
         Ok(new_certificate)
     }
-
-    // Add other methods for certificate operations...
 }

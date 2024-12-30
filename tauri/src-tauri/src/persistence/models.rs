@@ -1,7 +1,7 @@
-use crate::database::schema::{credentials, folders, sync_records};
+use crate::database::schema::{credentials, devices, folders, sync_records};
 use crate::domains::models::{
-    credential::Credential as DomainCredential, folder::Folder as DomainFolder,
-    sync_record::SyncRecord as DomainSyncRecord,
+    credential::Credential as DomainCredential, device::Device as DomainDevice,
+    folder::Folder as DomainFolder, sync_record::SyncRecord as DomainSyncRecord,
 };
 use diesel::prelude::*;
 
@@ -172,5 +172,52 @@ impl CredentialModel {
             .into_iter()
             .map(|c| CredentialModel::from(&c))
             .collect()
+    }
+}
+
+#[derive(Queryable, Insertable)]
+#[diesel(table_name = devices)]
+pub struct DeviceModel {
+    pub id: String,
+    pub device_key: String,
+    pub created_at: String,
+    pub updated_at: String,
+}
+
+impl From<&DomainDevice> for DeviceModel {
+    fn from(device: &DomainDevice) -> Self {
+        Self {
+            id: device.id.clone(),
+            device_key: device.device_key.clone(),
+            created_at: chrono::Utc::now()
+                .format("%Y-%m-%d %H:%M:%S%.3f")
+                .to_string(),
+            updated_at: chrono::Utc::now()
+                .format("%Y-%m-%d %H:%M:%S%.3f")
+                .to_string(),
+        }
+    }
+}
+
+impl From<DeviceModel> for DomainDevice {
+    fn from(model: DeviceModel) -> Self {
+        Self {
+            id: model.id,
+            device_key: model.device_key,
+            created_at: model.created_at,
+            updated_at: model.updated_at,
+        }
+    }
+}
+
+impl DeviceModel {
+    // Convert Vec<DeviceModel> to Vec<DomainDevice>
+    pub fn to_domain_devices(models: Vec<DeviceModel>) -> Vec<DomainDevice> {
+        models.into_iter().map(DomainDevice::from).collect()
+    }
+
+    // Convert Vec<DomainDevice> to Vec<DeviceModel>
+    pub fn from_domain_devices(devices: Vec<DomainDevice>) -> Vec<DeviceModel> {
+        devices.into_iter().map(|d| DeviceModel::from(&d)).collect()
     }
 }

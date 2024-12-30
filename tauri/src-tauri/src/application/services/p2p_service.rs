@@ -1,6 +1,6 @@
 use crate::application::services::sync_service::SyncService;
 use crate::application::services::SyncPayload;
-use crate::domains::models::p2p::{ConnectionTicket, Message};
+use crate::domains::models::p2p::{AddDevicePayload, ConnectionTicket, Message};
 use crate::types::CryptoResponse;
 use futures_lite::StreamExt;
 use iroh::endpoint::Connection;
@@ -76,6 +76,33 @@ impl P2PService {
         Ok(())
     }
 
+    pub async fn add_device(
+        &self,
+        device_id: String,
+        device_public_key: String,
+        ticket: String,
+    ) -> Result<(), String> {
+        // First establish connection with the target device using the ticket
+        info!(
+            "Initiating device addition process for device: {}",
+            device_id
+        );
+        self.connect_with_ticket(&ticket).await?;
+
+        // Once connected, send the AddDevice message
+        info!("Connection established, sending AddDevice message");
+        let add_device_message = Message::AddDevice(AddDevicePayload {
+            public_key: device_public_key,
+            device_id,
+        });
+        let serialized = serde_json::to_string(&add_device_message)
+            .map_err(|e| format!("Failed to serialize AddDevice message: {}", e))?;
+
+        // Send the message and wait for acknowledgment
+        self.send_message(serialized).await?;
+
+        Ok(())
+    }
     pub async fn start_listening(&self) -> Result<CryptoResponse, String> {
         // Ensure P2P is initialized
         self.ensure_initialized().await?;
@@ -322,6 +349,30 @@ impl P2PService {
         }
         Ok(())
     }
+    async fn handle_add_device_request(
+        &self,
+        device_id: String,
+        device_public_key: String,
+    ) -> Result<(), String> {
+        info!("Processing device addition request for ID: {}", device_id);
+
+        // Create and send acknowledgment message
+        let ack_message = Message::AddDeviceAck(device_id.clone());
+        let serialized = serde_json::to_string(&ack_message)
+            .map_err(|e| format!("Failed to serialize acknowledgment: {}", e))?;
+
+        // Send the acknowledgment
+        self.send_message(serialized).await?;
+        info!("Sent acknowledgment for device: {}", device_id);
+
+        // Notify UI of the new device
+        self.app_handle
+            .emit("device-added", device_id.clone())
+            .map_err(|e| format!("Failed to emit device-added event: {}", e))?;
+
+        info!("Successfully processed device addition request");
+        Ok(())
+    }
 
     async fn handle_sync_ack(&self, sync_id: String) -> Result<(), String> {
         info!("Received sync acknowledgment for ID: {}", sync_id);
@@ -428,6 +479,24 @@ impl P2PService {
                                                         Message::SyncAck(sync_id) => {
                                                             self.handle_sync_ack(sync_id.clone())
                                                                 .await
+                                                        }
+                                                        Message::AddDevice(device_payload) => {
+                                                            self.handle_add_device_request(
+                                                                device_payload.device_id.clone(),
+                                                                device_payload.public_key.clone(),
+                                                            )
+                                                            .await
+                                                        }
+                                                        Message::AddDeviceAck(device_id) => {
+                                                            info!("Received device addition acknowledgment for ID: {}", device_id);
+                                                            // Emit event for UI update
+                                                            if let Err(e) = self.app_handle.emit(
+                                                                "device-add-acknowledged",
+                                                                device_id.clone(),
+                                                            ) {
+                                                                error!("Failed to emit device-add-acknowledged event: {}", e);
+                                                            }
+                                                            Ok(())
                                                         }
                                                         Message::SyncResponse(payload) => {
                                                             info!(

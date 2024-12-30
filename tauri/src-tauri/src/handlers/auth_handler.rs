@@ -1,7 +1,7 @@
 // src/handlers/auth_handler.rs
 use crate::application::services::AuthService;
 use crate::types::{
-    CryptoResponse, ExportedCertificate, HashAndSignInput, ImportCertificateInput, LoadPvtKeyInput,
+    AddDeviceInput, CryptoResponse, ExportedCertificate, HashAndSignInput, LoadPvtKeyInput,
     PasswordChangeInput, SavePassphraseInput, SignChallengeInput,
 };
 use std::sync::Arc;
@@ -18,13 +18,13 @@ pub async fn check_signup_status(app_handle: AppHandle) -> Result<CryptoResponse
 }
 
 #[tauri::command]
-pub async fn handle_save_passphrase(
+pub async fn handle_sign_up(
     input: SavePassphraseInput,
     app_handle: AppHandle,
     auth_service: State<'_, Arc<AuthService>>,
 ) -> Result<CryptoResponse, String> {
     let (user, signature) = auth_service
-        .save_passphrase(&input.username, &input.passphrase, &input.challenge)
+        .handle_sign_up(&input.username, &input.passphrase, &input.challenge)
         .await?;
 
     Ok(CryptoResponse::SavePassphrase {
@@ -71,19 +71,14 @@ pub async fn handle_hash_and_sign(
 }
 
 #[tauri::command]
-pub async fn handle_import_certificate(
-    input: ImportCertificateInput,
+pub async fn handle_add_device(
+    input: AddDeviceInput,
     auth_service: State<'_, Arc<AuthService>>,
 ) -> Result<CryptoResponse, String> {
-    let certificate = auth_service
-        .import_certificate(input.certificate, input.passphrase)
+    let (public_key, device_id) = auth_service
+        .add_device(input.certificate, input.passphrase)
         .await?;
-
-    Ok(CryptoResponse::ImportedCertificate {
-        certificate: certificate.private_key,
-        publicKey: certificate.public_key,
-        salt: certificate.salt,
-    })
+    todo!()
 }
 
 #[tauri::command]

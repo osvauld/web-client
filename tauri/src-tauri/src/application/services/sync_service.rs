@@ -1,11 +1,12 @@
+use crate::domains::models::sync_record;
 use crate::domains::models::{credential::Credential, folder::Folder, sync_record::SyncRecord};
 use crate::domains::repositories::{
-    CredentialRepository, FolderRepository, RepositoryError, SyncRepository,
+    CredentialRepository, DeviceRepository, FolderRepository, RepositoryError, StoreRepository,
+    SyncRepository,
 };
 use log::{error, info};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use tokio::sync::Mutex;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SyncPayload {
@@ -24,6 +25,8 @@ pub struct SyncService {
     sync_repository: Arc<dyn SyncRepository>,
     folder_repository: Arc<dyn FolderRepository>,
     credential_repository: Arc<dyn CredentialRepository>,
+    device_repository: Arc<dyn DeviceRepository>,
+    store_repository: Arc<dyn StoreRepository>,
 }
 
 impl SyncService {
@@ -31,12 +34,34 @@ impl SyncService {
         sync_repository: Arc<dyn SyncRepository>,
         folder_repository: Arc<dyn FolderRepository>,
         credential_repository: Arc<dyn CredentialRepository>,
+        device_repository: Arc<dyn DeviceRepository>,
+        store_repository: Arc<dyn StoreRepository>,
     ) -> Self {
         Self {
             sync_repository,
             folder_repository,
             credential_repository,
+            device_repository,
+            store_repository,
         }
+    }
+
+    pub async fn add_new_device_sync(
+        &self,
+        device_key: String,
+        device_public_key: String,
+    ) -> Result<(), RepositoryError> {
+        let _ = self
+            .device_repository
+            .save(&device_key, &device_public_key)
+            .await;
+        let device_id = self.store_repository.get_device_key().await?;
+        let sync_records = self
+            .sync_repository
+            .get_sync_records_by_device_id(&device_id)
+            .await?;
+
+        todo!()
     }
 
     pub async fn get_next_pending_sync(&self) -> Result<Option<SyncPayload>, RepositoryError> {
@@ -151,6 +176,49 @@ impl SyncService {
         // ).await?;
 
         log::info!("Successfully processed sync payload");
+        Ok(())
+    }
+
+    pub async fn add_folder_to_sync(&self, folder: Folder) -> Result<(), RepositoryError> {
+        let device_id = self.store_repository.get_device_key().await?;
+        let devices = self.device_repository.get_all_devices().await?;
+        for device in devices {
+            let mut sync_record = SyncRecord::new_folder_sync(
+                folder.id.clone(),
+                "create".to_string(),
+                device_id.clone(),
+                device.id.clone(),
+            );
+            if device_id == device.id.clone() {
+                sync_record.status = "complete".to_string();
+            }
+            self.sync_repository
+                .save_sync_records(&[sync_record])
+                .await?;
+        }
+        Ok(())
+    }
+
+    pub async fn add_credential_to_sync(
+        &self,
+        credential: Credential,
+    ) -> Result<(), RepositoryError> {
+        let device_id = self.store_repository.get_device_key().await?;
+        let devices = self.device_repository.get_all_devices().await?;
+        for device in devices {
+            let mut sync_record = SyncRecord::new_credential_sync(
+                credential.id.clone(),
+                "create".to_string(),
+                device_id.clone(),
+                device.id.clone(),
+            );
+            if device_id == device.id.clone() {
+                sync_record.status = "complete".to_string()
+            }
+            self.sync_repository
+                .save_sync_records(&[sync_record])
+                .await?;
+        }
         Ok(())
     }
 }
