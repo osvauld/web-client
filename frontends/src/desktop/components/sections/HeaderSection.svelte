@@ -2,6 +2,7 @@
 	import OsvauldDesktopLogo from "../../../icons/osvauldDesktopLogo.svelte";
 	import Lens from "../../../icons/lens.svelte";
 	import Profile from "../../../icons/profile.svelte";
+	import { profileModal } from "../store/desktop.ui.store";
 </script>
 
 <div class="h-32 w-full border-b border-osvauld-borderColor flex">
@@ -21,7 +22,8 @@
 		</div>
 		<button
 			aria-label="Open Profile View"
-			class="p-3 rounded-lg bg-osvauld-frameblack">
+			class="p-3 rounded-lg bg-osvauld-frameblack"
+			on:click="{() => profileModal.set(true)}">
 			<Profile color="#4D4F60" />
 		</button>
 	</div>

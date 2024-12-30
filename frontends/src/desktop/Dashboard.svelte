@@ -26,8 +26,10 @@
 	import {
 		addCredentialModal,
 		credentialEditorModal,
+		profileModal,
 		viewCredentialModal,
 	} from "./components/store/desktop.ui.store";
+	import ProfileView from "./components/views/ProfileView.svelte";
 	import CredentialEditorModal from "./components/views/CredentialEditorModal.svelte";
 	import CredentialViewModal from "./components/views/CredentialViewModal.svelte";
 
@@ -96,6 +98,14 @@
 
 		{#if $viewCredentialModal}
 			<CredentialViewModal />
+		{/if}
+
+		{#if $viewCredentialModal}
+			<CredentialViewModal />
+		{/if}
+
+		{#if $profileModal}
+			<ProfileView />
 		{/if}
 
 		<!-- {#if $showMoreOptions}
