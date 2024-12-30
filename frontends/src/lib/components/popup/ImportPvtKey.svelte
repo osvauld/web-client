@@ -1,23 +1,45 @@
 <script lang="ts">
 	import { createEventDispatcher } from "svelte";
-	const dispatch = createEventDispatcher();
 	import { sendMessage } from "../dashboard/helper";
-	import { StorageService } from "../../../utils/storageHelper";
 	import NewPassword from "../basic/NewPassword.svelte";
+	import {
+		scan,
+		Format,
+		requestPermissions,
+	} from "@tauri-apps/plugin-barcode-scanner";
 
-	let recoveryData = "";
-
+	const dispatch = createEventDispatcher();
+	let recoveryData = {};
+	let scanning = false;
 	const handleInputChange = (event: any) => {
 		recoveryData = event.target.value;
+	};
+
+	const scanQRCode = async () => {
+		try {
+			await requestPermissions();
+			scanning = true;
+			console.log("got permission");
+			const result = await scan({
+				windowed: false,
+				formats: [Format.QRCode],
+			});
+			if (result && result.content) {
+				recoveryData = JSON.parse(result.content);
+			}
+		} catch (err) {
+			console.log(err);
+		} finally {
+			scanning = false;
+		}
 	};
 
 	const handleSubmit = async (e: any) => {
 		const passphrase = e.detail.passphrase;
 
-		const certificate = recoveryData;
-		await sendMessage("importPvtKey", {
+		await sendMessage("addDevice", {
 			passphrase,
-			certificate,
+			...recoveryData,
 		});
 		const pubkey = await sendMessage("getPubKey", { passphrase });
 		dispatch("login", true);
@@ -38,4 +60,10 @@
 		id="privateKey"
 		on:input="{handleInputChange}"></textarea>
 	<NewPassword on:submit="{handleSubmit}" />
+
+	<button
+		on:click="{scanQRCode}"
+		class="px-4 py-2.5 bg-mobile-bgHighlight text-mobile-textPrimary rounded-lg font-medium">
+		{scanning ? "Scanning..." : "Scan QR"}
+	</button>
 </div>
