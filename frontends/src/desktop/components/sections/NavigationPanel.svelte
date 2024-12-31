@@ -13,6 +13,7 @@
 	const handleSectionChange = (section) => {
 		localSelectedCategory = "";
 		selectedSection = section;
+		selectedCategory.set("");
 	};
 
 	const handleCategoryFilter = (type, id) => {
@@ -24,6 +25,7 @@
 	$: if ($currentVault) {
 		localSelectedCategory = "";
 		selectedSection = "home";
+		selectedCategory.set("");
 	}
 </script>
 
@@ -32,7 +34,7 @@
 	aria-label="Main Navigation">
 	<div class=" relative">
 		<button
-			class="w-full text-[26px] text-osvauld-fieldText font-medium leading-6 bg-osvauld-frameblack rounded-xl border border-osvauld-defaultBorder px-4 py-3 flex justify-between items-center capitalize"
+			class="w-full text-[26px] text-osvauld-fieldText font-medium leading-6 bg-osvauld-frameblack rounded-lg border border-osvauld-defaultBorder px-4 py-3 flex justify-between items-center capitalize"
 			aria-label="Switch Vault"
 			aria-controls="vaultSelector"
 			aria-expanded="false"

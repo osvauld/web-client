@@ -51,13 +51,13 @@
 
 <div class="grow px-16 py-4">
 	<div class="h-full flex flex-wrap content-start gap-3">
-		{#each updatedCredentials as credential}
+		{#each updatedCredentials as credential (credential.id)}
 			{@const credentialType = credential.data.credentialType}
 			{@const categoryInfo = CATEGORIES.find(
 				(item) => item.type === credentialType,
 			)}
 			<button
-				class="bg-osvauld-frameblack flex h-[4rem] basis-[24rem] shrink-0 grow-0 rounded-xl p-3"
+				class="bg-osvauld-frameblack flex h-[4rem] basis-[24rem] items-center shrink-0 grow-0 rounded-xl p-3"
 				on:click="{() => selectedCredential(credential)}">
 				<span class="flex justify-center items-center p-2">
 					<svelte:component this="{categoryInfo.icon}" color="{'#BFC0CC'}" />

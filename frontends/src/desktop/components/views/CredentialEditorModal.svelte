@@ -85,6 +85,8 @@
 					type="text"
 					bind:value="{field.fieldValue}"
 					placeholder="{field.fieldName}"
+					autocorrect="off"
+					autocomplete="off"
 					class="w-full bg-mobile-bgSeconary border rounded-lg border-mobile-bgHighlight focus:border-mobile-borderActive focus:ring-0 focus:outline-none" />
 			{/each}
 		</div>
