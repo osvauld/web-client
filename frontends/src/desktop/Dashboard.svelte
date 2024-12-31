@@ -100,10 +100,6 @@
 			<CredentialViewModal />
 		{/if}
 
-		{#if $viewCredentialModal}
-			<CredentialViewModal />
-		{/if}
-
 		{#if $profileModal}
 			<ProfileView />
 		{/if}
