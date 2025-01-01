@@ -4,7 +4,7 @@ use crate::domains::models::device::Device;
 use crate::domains::repositories::{DeviceRepository, RepositoryError};
 use crate::persistence::models::DeviceModel;
 use async_trait::async_trait;
-use chrono::Utc;
+use chrono::Local;
 use diesel::prelude::*;
 
 pub struct SqliteDeviceRepository {
@@ -19,15 +19,14 @@ impl SqliteDeviceRepository {
 
 #[async_trait]
 impl DeviceRepository for SqliteDeviceRepository {
-    async fn save(&self, id: &str, device_key: &str) -> Result<(), RepositoryError> {
+    async fn save(&self, device: Device) -> Result<(), RepositoryError> {
         let mut conn = self.connection.lock().await;
-        let now = Utc::now().format("%Y-%m-%d %H:%M:%S%.3f").to_string();
 
         let device_model = DeviceModel {
-            id: id.to_string(),
-            device_key: device_key.to_string(),
-            created_at: now.clone(),
-            updated_at: now,
+            id: device.id,
+            device_key: device.device_key,
+            created_at: device.created_at,
+            updated_at: device.updated_at,
         };
 
         diesel::insert_into(devices::table)

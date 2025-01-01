@@ -1,3 +1,4 @@
+use crate::domains::models::device::Device;
 use crate::domains::models::sync_record;
 use crate::domains::models::{credential::Credential, folder::Folder, sync_record::SyncRecord};
 use crate::domains::repositories::{
@@ -51,15 +52,15 @@ impl SyncService {
         device_key: String,
         device_public_key: String,
     ) -> Result<(), RepositoryError> {
-        let _ = self
-            .device_repository
-            .save(&device_key, &device_public_key)
-            .await;
+        let device = Device::new(device_key, device_public_key);
+        let _ = self.device_repository.save(device).await;
+
         let device_id = self.store_repository.get_device_key().await?;
         let sync_records = self
             .sync_repository
             .get_sync_records_by_device_id(&device_id)
             .await?;
+        for record in sync_records {}
 
         todo!()
     }
@@ -75,15 +76,15 @@ impl SyncService {
         };
 
         // Fetch associated data based on resource type
-        let data = match sync_record.resource_type.as_str() {
-            "folder" => {
+        let data = match sync_record.resource_type {
+            sync_record::ResourceType::Folder => {
                 let folder = self
                     .folder_repository
                     .find_by_id(&sync_record.resource_id)
                     .await?;
                 SyncData::Folder(folder)
             }
-            "credential" => {
+            sync_record::ResourceType::Credential => {
                 let credential = self
                     .credential_repository
                     .find_by_id(&sync_record.resource_id)
@@ -93,7 +94,7 @@ impl SyncService {
             }
             _ => {
                 return Err(RepositoryError::DatabaseError(format!(
-                    "Unknown resource type: {}",
+                    "Unknown resource type: {:?}",
                     sync_record.resource_type
                 )))
             }
@@ -112,31 +113,31 @@ impl SyncService {
 
     pub async fn process_sync_payload(&self, payload: &SyncPayload) -> Result<(), RepositoryError> {
         log::info!(
-            "Processing sync payload for resource: {}",
+            "Processing sync payload for resource: {:?}",
             payload.sync_record.resource_type
         );
 
         match &payload.data {
             SyncData::Folder(folder) => {
                 log::info!("Processing folder sync: {}", folder.id);
-                match payload.sync_record.operation_type.as_str() {
-                    "create" => {
+                match &payload.sync_record.operation_type {
+                    sync_record::OperationType::Create => {
                         log::info!("Creating folder: {}", folder.name);
                         self.folder_repository.save(folder).await?;
                     }
-                    "update" => {
+                    sync_record::OperationType::Update => {
                         log::info!("Updating folder: {}", folder.name);
                         self.folder_repository.save(folder).await?;
                     }
-                    "delete" => {
+                    sync_record::OperationType::Delete => {
                         log::info!("Delete operation for folder: {}", folder.id);
                         // TODO: Implement delete in folder repository
                         // self.folder_repository.delete(&folder.id).await?;
                     }
                     op => {
-                        log::error!("Unknown folder operation: {}", op);
+                        log::error!("Unknown folder operation: {:?}", op);
                         return Err(RepositoryError::DatabaseError(format!(
-                            "Unknown operation type: {}",
+                            "Unknown operation type: {:?}",
                             op
                         )));
                     }
@@ -144,24 +145,24 @@ impl SyncService {
             }
             SyncData::Credential(credential) => {
                 log::info!("Processing credential sync: {}", credential.id);
-                match payload.sync_record.operation_type.as_str() {
-                    "create" => {
+                match &payload.sync_record.operation_type {
+                    sync_record::OperationType::Create => {
                         log::info!("Creating credential in folder: {}", credential.folder_id);
                         self.credential_repository.save(credential).await?;
                     }
-                    "update" => {
+                    sync_record::OperationType::Update => {
                         log::info!("Updating credential: {}", credential.id);
                         self.credential_repository.save(credential).await?;
                     }
-                    "delete" => {
+                    sync_record::OperationType::Delete => {
                         log::info!("Delete operation for credential: {}", credential.id);
                         // TODO: Implement delete in credential repository
                         // self.credential_repository.delete(&credential.id).await?;
                     }
                     op => {
-                        log::error!("Unknown credential operation: {}", op);
+                        log::error!("Unknown credential operation: {:?}", op);
                         return Err(RepositoryError::DatabaseError(format!(
-                            "Unknown operation type: {}",
+                            "Unknown operation type: {:?}",
                             op
                         )));
                     }
@@ -185,12 +186,12 @@ impl SyncService {
         for device in devices {
             let mut sync_record = SyncRecord::new_folder_sync(
                 folder.id.clone(),
-                "create".to_string(),
+                sync_record::OperationType::Create,
                 device_id.clone(),
                 device.id.clone(),
             );
             if device_id == device.id.clone() {
-                sync_record.status = "complete".to_string();
+                sync_record.status = sync_record::SyncStatus::Completed;
             }
             self.sync_repository
                 .save_sync_records(&[sync_record])
@@ -208,12 +209,12 @@ impl SyncService {
         for device in devices {
             let mut sync_record = SyncRecord::new_credential_sync(
                 credential.id.clone(),
-                "create".to_string(),
+                sync_record::OperationType::Create,
                 device_id.clone(),
                 device.id.clone(),
             );
             if device_id == device.id.clone() {
-                sync_record.status = "complete".to_string()
+                sync_record.status = sync_record::SyncStatus::Completed
             }
             self.sync_repository
                 .save_sync_records(&[sync_record])

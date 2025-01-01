@@ -1,4 +1,4 @@
-use chrono::Utc;
+use chrono::Local;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -11,8 +11,8 @@ pub struct Credential {
     pub signature: String,
     pub permission: String,
     pub encrypted_key: String,
-    pub created_at: String,
-    pub updated_at: String,
+    pub created_at: i64,
+    pub updated_at: i64,
 }
 
 #[derive(Debug, Clone)]
@@ -31,7 +31,7 @@ impl Credential {
         encrypted_key: String,
         signature: String,
     ) -> Self {
-        let now = Utc::now().format("%Y-%m-%d %H:%M:%S%.3f").to_string();
+        let now = Local::now().timestamp_millis();
 
         Self {
             id: uuid::Uuid::new_v4().to_string(),

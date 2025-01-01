@@ -9,11 +9,13 @@ use tauri::{AppHandle, State};
 use tauri_plugin_store::StoreExt;
 
 #[tauri::command]
-pub async fn check_signup_status(app_handle: AppHandle) -> Result<CryptoResponse, String> {
-    let store = app_handle.store("my_app_store12.bin").unwrap();
-    let is_signed_up_result = store.get("certificate").is_some();
+pub async fn check_signup_status(
+    app_handle: AppHandle,
+    auth_service: State<'_, Arc<AuthService>>,
+) -> Result<CryptoResponse, String> {
+    let is_signed_up = auth_service.is_signed_up().await?;
     Ok(CryptoResponse::IsSignedUp {
-        isSignedUp: is_signed_up_result,
+        isSignedUp: is_signed_up,
     })
 }
 

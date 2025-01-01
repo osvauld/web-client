@@ -1,4 +1,4 @@
-use chrono::Utc;
+use chrono::Local;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -9,13 +9,14 @@ pub struct Folder {
     pub description: Option<String>,
     pub shared: bool,
     pub access_type: String,
-    pub created_at: String,
-    pub updated_at: String,
+    pub created_at: i64,
+    pub updated_at: i64,
 }
 
 impl Folder {
     pub fn new(name: String, description: Option<String>) -> Self {
-        let now = Utc::now().format("%Y-%m-%d %H:%M:%S%.3f").to_string();
+        let now = Local::now().timestamp_millis();
+
         Self {
             id: Uuid::new_v4().to_string(),
             name,

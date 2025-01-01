@@ -61,7 +61,7 @@ impl StoreRepository for TauriStoreRepository {
 
     async fn is_signed_up(&self) -> Result<bool, RepositoryError> {
         let store = self.get_store().await;
-        Ok(store.get("certificate").is_some())
+        Ok(store.get("primary_key").is_some())
     }
 
     async fn store_device_key(&self, device_key: &str) -> Result<(), RepositoryError> {

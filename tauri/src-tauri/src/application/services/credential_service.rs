@@ -42,7 +42,7 @@ impl CredentialService {
         credential_payload: String,
         credential_type: String,
         folder_id: String,
-    ) -> Result<(), CredentialServiceError> {
+    ) -> Result<Credential, CredentialServiceError> {
         // Encrypt the credential
         let encrypted = {
             let crypto = self.crypto_utils.lock().await;
@@ -65,7 +65,7 @@ impl CredentialService {
             .await
             .map_err(CredentialServiceError::RepositoryError)?;
 
-        Ok(())
+        Ok(credential)
     }
 
     pub async fn get_credentials_for_folder(

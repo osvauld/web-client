@@ -1,5 +1,5 @@
 use crate::domains::models::auth::{Certificate, User};
-use crate::domains::models::device;
+use crate::domains::models::device::Device;
 use crate::domains::repositories::{DeviceRepository, RepositoryError, StoreRepository};
 use crypto_utils::CryptoUtils;
 use std::sync::Arc;
@@ -48,9 +48,11 @@ impl AuthService {
             salt: device_key.salt.clone(),
         };
 
+        let device = Device::new(device_id.clone(), device_key.public_key);
+
         // Save device information to repository
         self.device_repository
-            .save(&device_id, &device_key.public_key)
+            .save(device)
             .await
             .map_err(|e| e.to_string())?;
 

@@ -1,7 +1,9 @@
 use crate::database::schema::{credentials, devices, folders, sync_records};
 use crate::domains::models::{
-    credential::Credential as DomainCredential, device::Device as DomainDevice,
-    folder::Folder as DomainFolder, sync_record::SyncRecord as DomainSyncRecord,
+    credential::Credential as DomainCredential,
+    device::Device as DomainDevice,
+    folder::Folder as DomainFolder,
+    sync_record::{OperationType, ResourceType, SyncRecord as DomainSyncRecord, SyncStatus},
 };
 use diesel::prelude::*;
 
@@ -13,8 +15,8 @@ pub struct FolderModel {
     pub description: Option<String>,
     pub shared: bool,
     pub access_type: String,
-    pub created_at: String,
-    pub updated_at: String,
+    pub created_at: i64,
+    pub updated_at: i64,
 }
 
 impl From<&DomainFolder> for FolderModel {
@@ -57,8 +59,8 @@ pub struct SyncRecordModel {
     pub status: String,
     pub folder_id: Option<String>,
     pub credential_id: Option<String>,
-    pub created_at: String,
-    pub updated_at: String,
+    pub created_at: i64,
+    pub updated_at: i64,
 }
 
 impl From<&DomainSyncRecord> for SyncRecordModel {
@@ -66,11 +68,11 @@ impl From<&DomainSyncRecord> for SyncRecordModel {
         Self {
             id: record.id.clone(),
             resource_id: record.resource_id.clone(),
-            resource_type: record.resource_type.clone(),
-            operation_type: record.operation_type.clone(),
+            resource_type: record.resource_type.to_string(),
+            operation_type: record.operation_type.to_string(),
             source_device_id: record.source_device_id.clone(),
             target_device_id: record.target_device_id.clone(),
-            status: record.status.clone(),
+            status: record.status.to_string(),
             folder_id: record.folder_id.clone(),
             credential_id: record.credential_id.clone(),
             created_at: record.created_at.clone(),
@@ -97,11 +99,11 @@ impl From<SyncRecordModel> for DomainSyncRecord {
         Self {
             id: model.id,
             resource_id: model.resource_id,
-            resource_type: model.resource_type,
-            operation_type: model.operation_type,
+            resource_type: model.resource_type.into(),
+            operation_type: model.operation_type.into(),
             source_device_id: model.source_device_id,
             target_device_id: model.target_device_id,
-            status: model.status,
+            status: model.status.into(),
             folder_id: model.folder_id,
             credential_id: model.credential_id,
             created_at: model.created_at,
@@ -120,8 +122,8 @@ pub struct CredentialModel {
     pub signature: String,
     pub permission: String,
     pub encrypted_key: String,
-    pub updated_at: String,
-    pub created_at: String,
+    pub updated_at: i64,
+    pub created_at: i64,
 }
 
 impl From<&DomainCredential> for CredentialModel {
@@ -134,12 +136,8 @@ impl From<&DomainCredential> for CredentialModel {
             signature: credential.signature.clone(),
             permission: credential.permission.clone(),
             encrypted_key: credential.encrypted_key.clone(),
-            created_at: chrono::Utc::now()
-                .format("%Y-%m-%d %H:%M:%S%.3f")
-                .to_string(),
-            updated_at: chrono::Utc::now()
-                .format("%Y-%m-%d %H:%M:%S%.3f")
-                .to_string(),
+            created_at: credential.created_at,
+            updated_at: credential.updated_at,
         }
     }
 }
@@ -180,8 +178,8 @@ impl CredentialModel {
 pub struct DeviceModel {
     pub id: String,
     pub device_key: String,
-    pub created_at: String,
-    pub updated_at: String,
+    pub created_at: i64,
+    pub updated_at: i64,
 }
 
 impl From<&DomainDevice> for DeviceModel {
@@ -189,12 +187,8 @@ impl From<&DomainDevice> for DeviceModel {
         Self {
             id: device.id.clone(),
             device_key: device.device_key.clone(),
-            created_at: chrono::Utc::now()
-                .format("%Y-%m-%d %H:%M:%S%.3f")
-                .to_string(),
-            updated_at: chrono::Utc::now()
-                .format("%Y-%m-%d %H:%M:%S%.3f")
-                .to_string(),
+            created_at: device.created_at,
+            updated_at: device.updated_at,
         }
     }
 }
