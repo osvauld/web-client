@@ -24,20 +24,14 @@ impl AuthService {
         }
     }
 
-    async fn create_device(
-        &self,
-        passphrase: &str,
-        username: &str,
-    ) -> Result<(Certificate, String), String> {
+    async fn create_device(&self, passphrase: &str, username: &str) -> Result<Device, String> {
         // Generate device keys and get device ID
         let (device_key, device_id) = {
             let crypto = self.crypto_utils.lock().await;
             let keys = crypto
                 .generate_keys(passphrase, username)
                 .map_err(|e| e.to_string())?;
-            let id = crypto
-                .get_key_id(&keys.public_key)
-                .map_err(|e| e.to_string())?;
+            let id = CryptoUtils::get_key_id(&keys.public_key).map_err(|e| e.to_string())?;
             (keys, id)
         };
 
@@ -52,7 +46,7 @@ impl AuthService {
 
         // Save device information to repository
         self.device_repository
-            .save(device)
+            .save(device.clone())
             .await
             .map_err(|e| e.to_string())?;
 
@@ -70,7 +64,7 @@ impl AuthService {
             .await
             .map_err(|e| e.to_string())?;
 
-        Ok((device_certificate, device_id))
+        Ok(device)
     }
     pub async fn handle_sign_up(
         &self,
@@ -94,7 +88,7 @@ impl AuthService {
         };
 
         // Create device and get device certificate
-        let (_device_certificate, _device_id) = self.create_device(passphrase, username).await?;
+        let _device_id = self.create_device(passphrase, username).await?;
 
         // Store primary certificate
         self.store_repository
@@ -178,7 +172,7 @@ impl AuthService {
         &self,
         certificate: String,
         passphrase: String,
-    ) -> Result<(String, String), String> {
+    ) -> Result<Device, String> {
         let result = {
             let crypto = self.crypto_utils.lock().await;
             crypto
@@ -191,7 +185,7 @@ impl AuthService {
             public_key: result.public_key,
             salt: result.salt,
         };
-        let (device_certificate, device_id) = self.create_device(&passphrase, "test").await?;
+        let device = self.create_device(&passphrase, "test").await?;
 
         self.store_repository
             .store_certificate(
@@ -202,7 +196,7 @@ impl AuthService {
             .await
             .map_err(|e| e.to_string())?;
 
-        Ok((device_certificate.public_key, device_id))
+        Ok(device)
     }
 
     pub async fn export_certificate(&self, passphrase: String) -> Result<String, String> {

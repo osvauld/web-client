@@ -1,5 +1,6 @@
 // src/handlers/auth_handler.rs
-use crate::application::services::AuthService;
+use crate::application::services::{AuthService, P2PService};
+use crate::domains::models::device::Device;
 use crate::types::{
     AddDeviceInput, CryptoResponse, ExportedCertificate, HashAndSignInput, LoadPvtKeyInput,
     PasswordChangeInput, SavePassphraseInput, SignChallengeInput,
@@ -10,7 +11,6 @@ use tauri_plugin_store::StoreExt;
 
 #[tauri::command]
 pub async fn check_signup_status(
-    app_handle: AppHandle,
     auth_service: State<'_, Arc<AuthService>>,
 ) -> Result<CryptoResponse, String> {
     let is_signed_up = auth_service.is_signed_up().await?;
@@ -22,7 +22,6 @@ pub async fn check_signup_status(
 #[tauri::command]
 pub async fn handle_sign_up(
     input: SavePassphraseInput,
-    app_handle: AppHandle,
     auth_service: State<'_, Arc<AuthService>>,
 ) -> Result<CryptoResponse, String> {
     let (user, signature) = auth_service
@@ -76,10 +75,12 @@ pub async fn handle_hash_and_sign(
 pub async fn handle_add_device(
     input: AddDeviceInput,
     auth_service: State<'_, Arc<AuthService>>,
+    p2p_service: State<'_, Arc<P2PService>>,
 ) -> Result<CryptoResponse, String> {
-    let (public_key, device_id) = auth_service
+    let device = auth_service
         .add_device(input.certificate, input.passphrase)
         .await?;
+    p2p_service.add_device(device, input.ticket).await?;
     todo!()
 }
 

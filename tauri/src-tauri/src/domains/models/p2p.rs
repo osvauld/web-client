@@ -1,5 +1,7 @@
 use crate::application::services::SyncPayload;
+use crate::domains::models::device::Device;
 use serde::{Deserialize, Serialize};
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Message {
     Chat(String),
@@ -9,15 +11,9 @@ pub enum Message {
     SyncResponse(SyncPayload),
     SyncAck(String),
     SyncComplete,
-    AddDevice(AddDevicePayload),
+    AddDevice(Device),
     AddDeviceAck(String),
     FileTransfer { name: String, data: Vec<u8> },
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct AddDevicePayload {
-    pub public_key: String,
-    pub device_id: String,
 }
 
 #[derive(Serialize, Deserialize)]

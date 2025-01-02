@@ -47,22 +47,24 @@ impl SyncService {
         }
     }
 
-    pub async fn add_new_device_sync(
-        &self,
-        device_key: String,
-        device_public_key: String,
-    ) -> Result<(), RepositoryError> {
-        let device = Device::new(device_key, device_public_key);
+    pub async fn add_new_device_sync(&self, device: Device) -> Result<(), RepositoryError> {
         let _ = self.device_repository.save(device).await;
-
         let device_id = self.store_repository.get_device_key().await?;
         let sync_records = self
             .sync_repository
             .get_sync_records_by_device_id(&device_id)
             .await?;
-        for record in sync_records {}
+        let records = sync_records
+            .into_iter()
+            .map(|record| {
+                sync_record::SyncRecord::create_new_sync_for_device(&record, device_id.clone())
+            })
+            .collect::<Vec<_>>();
+        self.sync_repository
+            .save_sync_records(records.as_slice())
+            .await?;
 
-        todo!()
+        Ok(())
     }
 
     pub async fn get_next_pending_sync(&self) -> Result<Option<SyncPayload>, RepositoryError> {
