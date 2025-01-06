@@ -7,7 +7,7 @@
 	import Signup from "../lib/components/popup/Signup.svelte";
 	import Loader from "../lib/components/dashboard/components/Loader.svelte";
 	import { sendMessage } from "../lib/components/dashboard/helper";
-
+	// call detach() if you do not want to print logs to the console anymore
 	let loggedIn = true;
 	let isLoaderActive = false;
 	let isSignedUp = false;

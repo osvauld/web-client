@@ -48,6 +48,7 @@
 			description: description,
 			sharedFolder: selectedTab === "shared",
 		};
+		console.log("adding folder...");
 		// const folderResponse = await createFolder(payload);
 		sendMessage("addFolder", { name, description });
 		await setFolderStore();

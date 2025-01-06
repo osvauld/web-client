@@ -9,7 +9,7 @@
 	} from "@tauri-apps/plugin-barcode-scanner";
 
 	const dispatch = createEventDispatcher();
-	let recoveryData = {};
+	let recoveryData = "";
 	let scanning = false;
 	const handleInputChange = (event: any) => {
 		recoveryData = event.target.value;
@@ -36,10 +36,10 @@
 
 	const handleSubmit = async (e: any) => {
 		const passphrase = e.detail.passphrase;
-
-		await sendMessage("addDevice", {
+		let recovery = JSON.parse(recoveryData);
+		const result = await sendMessage("addDevice", {
 			passphrase,
-			...recoveryData,
+			...recovery,
 		});
 		const pubkey = await sendMessage("getPubKey", { passphrase });
 		dispatch("login", true);

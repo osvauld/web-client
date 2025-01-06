@@ -45,9 +45,6 @@ pub fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(
             tauri_plugin_log::Builder::new()
-                .target(tauri_plugin_log::Target::new(
-                    tauri_plugin_log::TargetKind::Stderr,
-                ))
                 .filter(|metadata| {
                     !metadata.target().contains("tracing::span")
                         && !metadata.target().contains("iroh::magicsock")
@@ -58,6 +55,7 @@ pub fn run() {
                         && !metadata.target().contains("hickory_")
                         && !metadata.target().contains("iroh_relay")
                         && !metadata.target().contains("portmapper")
+                        && !metadata.target().contains("igd_next::aio::tokio")
                 })
                 .build(),
         )
@@ -65,7 +63,7 @@ pub fn run() {
         .setup(|app| {
             let handle = app.handle();
             let app_dir = app.path().app_data_dir().unwrap();
-            let db_path = app_dir.join("sqlite13.db").to_str().unwrap().to_string();
+            let db_path = app_dir.join("sqlite17.db").to_str().unwrap().to_string();
             // Create a new Tokio runtime
             let rt = Arc::new(Runtime::new().expect("Failed to create Tokio runtime"));
 

@@ -23,8 +23,8 @@ use tokio::sync::Mutex;
 use tokio::time::{timeout, Duration};
 
 const ALPN_PROTOCOL: &[u8] = b"n0/osvauld/0";
-const CONNECTION_TIMEOUT: Duration = Duration::from_secs(30);
-const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(30);
+const CONNECTION_TIMEOUT: Duration = Duration::from_secs(60);
+const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(60);
 struct P2PState {
     endpoint: Arc<Endpoint>,
     active_connection: Arc<Mutex<Option<Arc<Connection>>>>,
@@ -709,6 +709,10 @@ impl P2PService {
     pub async fn connect_with_ticket(&self, ticket_str: &str) -> Result<(), String> {
         self.ensure_initialized().await?;
 
+        info!(
+            "Start connecting ____________________________________{:?}",
+            ticket_str
+        );
         // Create connection info in a separate scope
         let (endpoint, node_addr) = {
             let state_guard = self.state.lock().await;
@@ -735,20 +739,15 @@ impl P2PService {
             (state.endpoint.clone(), node_addr)
         }; // state_guard is dropped here
 
-        // Establish connection
-        let conn = match timeout(
+        let conn = timeout(
             CONNECTION_TIMEOUT,
             endpoint.connect(node_addr, ALPN_PROTOCOL),
         )
         .await
-        .map_err(|e| format!("Connection timeout: {}", e))?
-        .map_err(|e| format!("Connection failed: {}", e))?
-        {
-            conn => {
-                info!("Connected to: {}", conn.remote_address());
-                conn
-            }
-        };
+        .map_err(|e| format!("Connection timeout: {e}"))?
+        .map_err(|e| format!("Connection failed: {e}"))?;
+
+        info!("Connected to: {}", conn.remote_address());
 
         // Perform handshake
         self.perform_handshake(&conn, true).await?;

@@ -15,7 +15,7 @@
 			ticket: connectionTicket,
 			certificate: certificate,
 		});
-		console.log(recoveryString);
+		console.log({ connectionTicket, certificate });
 	});
 </script>
 
@@ -30,7 +30,6 @@
 			})}" />
 	</div>
 {/if}
-<div
-	class="text-3xl text-white font-bold grow flex justify-center items-center">
-	Notess
-</div>
+<textarea class="font-bold bg-black">
+	{recoveryString}
+</textarea>
