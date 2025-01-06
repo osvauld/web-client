@@ -10,6 +10,7 @@
 	import { setFolderStore } from "../../../store/storeHelper";
 	import { fly } from "svelte/transition";
 	import { sendMessage } from "../helper";
+	import { onMount } from "svelte";
 
 	export let name = "";
 	export let description = "";
@@ -77,6 +78,9 @@
 	const toggleSelect = (e: any) => {
 		selectedTab = e.detail;
 	};
+	onMount(() => {
+		console.log("moundet");
+	});
 </script>
 
 <form

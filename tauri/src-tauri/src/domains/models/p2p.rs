@@ -20,4 +20,5 @@ pub enum Message {
 pub struct ConnectionTicket {
     pub node_id: String,
     pub addresses: Vec<String>,
+    pub relay_url: String,
 }

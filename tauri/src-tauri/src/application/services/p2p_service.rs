@@ -21,6 +21,7 @@ use tauri::Manager;
 use tokio::io::AsyncWriteExt;
 use tokio::sync::Mutex;
 use tokio::time::{timeout, Duration};
+use url::Url;
 
 const ALPN_PROTOCOL: &[u8] = b"n0/osvauld/0";
 const CONNECTION_TIMEOUT: Duration = Duration::from_secs(60);
@@ -52,19 +53,10 @@ impl P2PService {
 
         info!("Initializing P2P endpoint");
 
-        // Create IPv6 unspecified address with port 0
-        let bind_addr = SocketAddrV6::new(
-            Ipv6Addr::UNSPECIFIED,
-            0,
-            0, // flowinfo
-            0, // scope_id
-        );
-
         let endpoint = Endpoint::builder()
             .relay_mode(RelayMode::Default)
             .alpns(vec![ALPN_PROTOCOL.to_vec()])
             .discovery_n0()
-            .bind_addr_v6(bind_addr)
             .bind()
             .await
             .map_err(|e| format!("Failed to bind endpoint: {}", e))?;
@@ -686,21 +678,24 @@ impl P2PService {
         self.ensure_initialized().await?;
         let state_guard = self.state.lock().await;
         let state = state_guard.as_ref().ok_or("P2P not initialized")?;
-
-        let addrs = state
+        let node_addr = state
             .endpoint
-            .direct_addresses()
-            .next()
+            .node_addr()
             .await
-            .ok_or_else(|| "No direct addresses available".to_string())?
-            .into_iter()
-            .filter(|direct_addr| matches!(direct_addr.typ, DirectAddrType::Stun))
-            .map(|e| e.addr.to_string())
-            .collect::<Vec<_>>();
+            .map_err(|e| e.to_string())?;
+        let relay_url = node_addr
+            .relay_url
+            .expect("Should have a relay URL, assuming a default endpoint setup.");
 
+        let addrs = node_addr
+            .direct_addresses
+            .into_iter()
+            .map(|e| e.to_string())
+            .collect::<Vec<_>>();
         let ticket = ConnectionTicket {
             node_id: state.endpoint.node_id().to_string(),
             addresses: addrs,
+            relay_url: relay_url.to_string(),
         };
 
         serde_json::to_string(&ticket).map_err(|e| e.to_string())
@@ -720,6 +715,8 @@ impl P2PService {
 
             let ticket: ConnectionTicket = serde_json::from_str(ticket_str)
                 .map_err(|e| format!("Invalid ticket format: {}", e))?;
+            let url = Url::parse(&ticket.relay_url).map_err(|e| e.to_string())?;
+            let relay_url = Some(iroh::RelayUrl::from(url));
 
             info!("Connecting to node: {}", ticket.node_id);
 
@@ -728,7 +725,7 @@ impl P2PService {
                     .node_id
                     .parse()
                     .map_err(|e| format!("Invalid node ID: {}", e))?,
-                None,
+                relay_url,
                 ticket
                     .addresses
                     .iter()
