@@ -1,10 +1,9 @@
-
 import {
 	IntermediateCredential,
 	Credential,
 	ApprovedCredentialSubmitParams,
 	Platform,
-} from "../../dtos/import.dto";
+} from "../dtos/import.dto";
 
 import {
 	transformSafariCredentials,

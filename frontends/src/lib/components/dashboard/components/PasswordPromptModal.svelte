@@ -6,7 +6,7 @@
 	import { fly } from "svelte/transition";
 	import { promptPassword, changePassword } from "../store";
 	import { ClosedEye, ClosePanel, Eye } from "../icons";
-	import SuccessView from "../../basic/SuccessView.svelte";
+	import SuccessView from "../../../../desktop/components/ui/SuccessView.svelte";
 	import NewPassword from "../../basic/NewPassword.svelte";
 
 	let password: string = "";

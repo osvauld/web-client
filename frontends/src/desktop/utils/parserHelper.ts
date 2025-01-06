@@ -13,11 +13,11 @@ import {
 	Credential,
 	IntermediateCredential,
 	CredentialData,
-} from "../../dtos/import.dto";
+} from "../dtos/import.dto";
 
-import { UsersForDataSync } from "./dtos";
+import { UsersForDataSync } from "../../lib/components/dashboard/dtos";
 
-import { sendMessage } from "./helper";
+import { sendMessage } from "../../lib/components/dashboard/helper";
 
 const extractUsername = (username: string, email: string): string => {
 	return username || email;

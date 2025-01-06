@@ -1,20 +1,17 @@
 <script lang="ts">
 	import { fly } from "svelte/transition";
 	import { onMount, createEventDispatcher } from "svelte";
-	import Close from "../../../../icons/closePanel.svelte";
+	import Close from "../../../icons/closePanel.svelte";
 	import {
 		parseCsvLogins,
 		approvedCredentialSubmit,
-	} from "../../../../desktop/utils/credentialParser";
-	import {
-		IntermediateCredential,
-		Platform,
-	} from "../../../../desktop/dtos/import.dto";
-	import Import from "../../../../icons/import.svelte";
-	import ImportTable from "../../../../desktop/components/views/ImportTable.svelte";
-	import ImportLoader from "../../../../desktop/components/ui/ImportLoader.svelte";
-	import ImportMessage from "../../../../desktop/components/ui/ImportMessage.svelte";
-	import SuccessView from "../../../../desktop/components/ui/SuccessView.svelte";
+	} from "../../utils/credentialParser";
+	import { IntermediateCredential, Platform } from "../../dtos/import.dto";
+	import Import from "../../../icons/import.svelte";
+	import ImportTable from "../views/ImportTable.svelte";
+	import ImportLoader from "../ui/ImportLoader.svelte";
+	import ImportMessage from "../ui/ImportMessage.svelte";
+	import SuccessView from "../ui/SuccessView.svelte";
 	let selectedPlatform: Platform;
 	let isOptionSelected: boolean = false;
 	let loadingScreen: boolean = false;
