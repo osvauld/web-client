@@ -110,21 +110,6 @@ export const approvedCredentialSubmit = async ({
 	folderId,
 	...otherData
 }: ApprovedCredentialSubmitParams): Promise<boolean> => {
-	// await addCredentialHandler(
-	// 	{
-	// 		name: "test",
-	// 		description: "test",
-	// 		credentialFields,
-	// 		credentialType: "logins",
-	// 	},
-	// 	// if current vault.id is "all", get id of Default Folder and replace it here, that way, if user tries to add a credential from Default/All Vaults view, It goes somewhere (Default folder)
-	// 	folderId,
-	// );
-
-	// below code is from old component which is no longer active
-
-	// const response = await fetchFolderUsersForDataSync(folderId);
-	// const usersToShare = response.data;
 	try {
 		const operationCompletionStatus = await Promise.allSettled(
 			Object.values(otherData).map((data) => finalProcessing(folderId, data)),

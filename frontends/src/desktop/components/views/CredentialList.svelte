@@ -17,6 +17,7 @@
 
 	let credentials = [];
 	let prevEditorModalState = false;
+	let prevImportModalState = false;
 	let importHovered = false;
 	let importSelected = false;
 
@@ -30,6 +31,7 @@
 		}
 	};
 
+	// I need this to fetch again when the import modal is closed
 	$: {
 		fetchCredentials($currentVault.id);
 	}
@@ -39,6 +41,13 @@
 			fetchCredentials($currentVault.id);
 		}
 		prevEditorModalState = $credentialEditorModal;
+	}
+
+	$: {
+		if (prevImportModalState && !importSelected) {
+			fetchCredentials($currentVault.id);
+		}
+		prevImportModalState = importSelected;
 	}
 
 	$: updatedCredentials = $selectedCategory
@@ -54,18 +63,18 @@
 
 	const closeImportModal = async () => {
 		importSelected = false;
-		// await setCredentialStore(); refresh current credential store
 	};
 </script>
 
-<div class="grow px-16 py-4 relative">
+<div class="grow max-h-[85%] px-16 py-4 relative">
 	{#if importSelected}
 		<div
 			class="fixed inset-0 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[2px] flex items-center justify-center z-50">
 			<ImportModal on:close="{closeImportModal}" />
 		</div>
 	{/if}
-	<div class="h-full flex flex-wrap content-start gap-3">
+	<div
+		class="h-full overflow-y-scroll scrollbar-thin flex flex-wrap content-start gap-3">
 		{#each updatedCredentials as credential (credential.id)}
 			{@const credentialType = credential.data.credentialType}
 			{@const categoryInfo = CATEGORIES.find(

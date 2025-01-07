@@ -125,13 +125,6 @@ export const addCredentialHandler = async (
 		}
 	}
 
-	console.log("Final credentialPayload", {
-		name: name,
-		description,
-		credentialType,
-		credentialFields: addCredentialFields,
-	});
-
 	const credentialPayload = JSON.stringify({
 		name: name,
 		description,
@@ -145,12 +138,7 @@ export const addCredentialHandler = async (
 		credentialType: credentialType,
 	});
 
-	console.log("response addCredential ==>>>>>", response);
-
-	// const responseJson = await sendMessage("getCredentialsForFolder", {
-	// 	folderId,
-	// });
-
+	//  need to return response instead of hard coding
 	return {
 		success: true,
 		message: "Credential added successfully",

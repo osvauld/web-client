@@ -325,11 +325,7 @@ export const finalProcessing = async (
 				fieldType: "sensitive",
 			});
 		}
-		// addCredentialPayload.folderId = folderId;
-		// const userFields = await sendMessage("addCredential", {
-		// 	users: usersToShare,
-		// 	addCredentialFields: fieldPayload,
-		// });
+
 		addCredentialPayload.credentialFields = fieldPayload;
 
 		if (credentialData.name) {
@@ -340,16 +336,9 @@ export const finalProcessing = async (
 			addCredentialPayload.description = credentialData.description;
 		}
 
-		// const response = await addCredential(addCredentialPayload);
-		const response = await addCredentialHandler(
-			addCredentialPayload,
-			// if current vault.id is "all", get id of Default Folder and replace it here, that way, if user tries to add a credential from Default/All Vaults view, It goes somewhere (Default folder)
-			folderId,
-		);
+		const response = await addCredentialHandler(addCredentialPayload, folderId);
 
-		console.log("response", response.success, response.message);
-
-		return { success: true };
+		return { success: response.success };
 	} catch (error) {
 		console.error("Error posting credential:", error);
 		return { success: false, error };
