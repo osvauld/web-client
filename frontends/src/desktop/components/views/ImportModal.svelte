@@ -41,8 +41,6 @@
 		"1password",
 	];
 
-	const getImagePath = (option: string) => `/icons/import/${option}.png`;
-
 	const dispatchCancel = () => {
 		dispatch("close");
 	};
@@ -95,6 +93,7 @@
 				dispatch("close");
 			}, 1500);
 		}, 4000);
+
 		isImportSuccessful = await approvedCredentialSubmit(e.detail);
 	};
 
@@ -171,15 +170,8 @@
 					on:click="{() => handleSelectedOption(option)}"
 					on:mouseenter="{() => (hoveredIndex = index)}"
 					on:mouseleave="{() => (hoveredIndex = undefined)}">
-					{#if hoveredIndex === index}
-						<img
-							src="{getImagePath(option)}"
-							class="max-w-full max-h-full"
-							alt="{option}" />
-					{:else}
-						<span class="text-osvauld-highlightwhite font-semibold"
-							>{option}</span>
-					{/if}
+					<span class="text-osvauld-highlightwhite font-semibold"
+						>{option}</span>
 				</button>
 			{/each}
 		</div>

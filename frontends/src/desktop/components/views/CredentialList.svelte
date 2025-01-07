@@ -75,7 +75,10 @@
 				class="bg-osvauld-frameblack flex h-[4rem] basis-[24rem] items-center shrink-0 grow-0 rounded-xl p-3"
 				on:click="{() => selectedCredential(credential)}">
 				<span class="flex justify-center items-center p-2">
-					<svelte:component this="{categoryInfo.icon}" color="{'#BFC0CC'}" />
+					{#if categoryInfo && categoryInfo.icon}
+						<svelte:component this="{categoryInfo.icon}" color="{'#BFC0CC'}" />
+					{:else}<span>No icon</span>
+					{/if}
 				</span>
 				<div class="flex flex-col">
 					<h3
@@ -99,13 +102,15 @@
 			</button>
 		{/each}
 	</div>
-	<button
-		class="text-lg absolute bottom-10 right-14 bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack rounded-lg py-2 px-3.5 flex justify-center items-center"
-		type="button"
-		on:mouseenter="{() => (importHovered = true)}"
-		on:mouseleave="{() => (importHovered = false)}"
-		on:click="{() => (importSelected = true)}">
-		<Import color="{importHovered ? '#0D0E13' : '#6E7681'}" />
-		<span class="ml-2">Import</span>
-	</button>
+	{#if $currentVault.id !== "all"}
+		<button
+			class="text-lg absolute bottom-10 right-14 bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack rounded-lg py-2 px-3.5 flex justify-center items-center"
+			type="button"
+			on:mouseenter="{() => (importHovered = true)}"
+			on:mouseleave="{() => (importHovered = false)}"
+			on:click="{() => (importSelected = true)}">
+			<Import color="{importHovered ? '#0D0E13' : '#6E7681'}" />
+			<span class="ml-2">Import</span>
+		</button>
+	{/if}
 </div>

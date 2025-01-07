@@ -18,6 +18,7 @@ import {
 import { UsersForDataSync } from "../../lib/components/dashboard/dtos";
 
 import { sendMessage } from "../../lib/components/dashboard/helper";
+import { addCredentialHandler } from "../../utils/addCredentialHelper";
 
 const extractUsername = (username: string, email: string): string => {
 	return username || email;
@@ -254,7 +255,6 @@ export const transformOnepasswordCredentials = (parsedData: Credential[]) => {
 
 export const finalProcessing = async (
 	folderId: string,
-	usersToShare: UsersForDataSync[],
 	credentialData: CredentialData,
 ) => {
 	try {
@@ -264,13 +264,20 @@ export const finalProcessing = async (
 			fieldType: string;
 		}[] = [];
 
-		let addCredentialPayload = {
+		let addCredentialPayload: {
+			name: string;
+			description: string;
+			credentialType: string;
+			credentialFields: {
+				fieldName: string;
+				fieldValue: string;
+				fieldType: string;
+			}[];
+		} = {
 			name: "",
-			folderId: "",
 			description: "",
 			credentialType: "Login",
-			userFields: [],
-			domain: "",
+			credentialFields: [],
 		};
 
 		if (credentialData.username) {
@@ -318,11 +325,12 @@ export const finalProcessing = async (
 				fieldType: "sensitive",
 			});
 		}
-		addCredentialPayload.folderId = folderId;
-		const userFields = await sendMessage("addCredential", {
-			users: usersToShare,
-			addCredentialFields: fieldPayload,
-		});
+		// addCredentialPayload.folderId = folderId;
+		// const userFields = await sendMessage("addCredential", {
+		// 	users: usersToShare,
+		// 	addCredentialFields: fieldPayload,
+		// });
+		addCredentialPayload.credentialFields = fieldPayload;
 
 		if (credentialData.name) {
 			addCredentialPayload.name = credentialData.name;
@@ -332,8 +340,15 @@ export const finalProcessing = async (
 			addCredentialPayload.description = credentialData.description;
 		}
 
-		addCredentialPayload.userFields = userFields;
 		// const response = await addCredential(addCredentialPayload);
+		const response = await addCredentialHandler(
+			addCredentialPayload,
+			// if current vault.id is "all", get id of Default Folder and replace it here, that way, if user tries to add a credential from Default/All Vaults view, It goes somewhere (Default folder)
+			folderId,
+		);
+
+		console.log("response", response.success, response.message);
+
 		return { success: true };
 	} catch (error) {
 		console.error("Error posting credential:", error);

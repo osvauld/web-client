@@ -4,6 +4,8 @@ import {
 	ApprovedCredentialSubmitParams,
 	Platform,
 } from "../dtos/import.dto";
+import { addCredentialHandler } from "../../utils/addCredentialHelper";
+import { CATEGORIES } from "../utils/credentialUtils";
 
 import {
 	transformSafariCredentials,
@@ -108,23 +110,33 @@ export const approvedCredentialSubmit = async ({
 	folderId,
 	...otherData
 }: ApprovedCredentialSubmitParams): Promise<boolean> => {
+	// await addCredentialHandler(
+	// 	{
+	// 		name: "test",
+	// 		description: "test",
+	// 		credentialFields,
+	// 		credentialType: "logins",
+	// 	},
+	// 	// if current vault.id is "all", get id of Default Folder and replace it here, that way, if user tries to add a credential from Default/All Vaults view, It goes somewhere (Default folder)
+	// 	folderId,
+	// );
+
+	// below code is from old component which is no longer active
+
 	// const response = await fetchFolderUsersForDataSync(folderId);
 	// const usersToShare = response.data;
-	// try {
-	// 	const operationCompletionStatus = await Promise.allSettled(
-	// 		Object.values(otherData).map((data) =>
-	// 			finalProcessing(folderId, usersToShare, data),
-	// 		),
-	// 	);
+	try {
+		const operationCompletionStatus = await Promise.allSettled(
+			Object.values(otherData).map((data) => finalProcessing(folderId, data)),
+		);
 
-	// 	const operationsCompletion = operationCompletionStatus.every(
-	// 		(result) => result.status === "fulfilled" && result.value.success,
-	// 	);
+		const operationsCompletion = operationCompletionStatus.every(
+			(result) => result.status === "fulfilled" && result.value.success,
+		);
 
-	// 	return operationsCompletion;
-	return true;
-	// } catch (error) {
-	// 	console.error("Error in approvedCredentialSubmit:", error);
-	// 	return false;
-	// }
+		return operationsCompletion;
+	} catch (error) {
+		console.error("Error in approvedCredentialSubmit:", error);
+		return false;
+	}
 };

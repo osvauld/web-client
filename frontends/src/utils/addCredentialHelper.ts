@@ -125,6 +125,13 @@ export const addCredentialHandler = async (
 		}
 	}
 
+	console.log("Final credentialPayload", {
+		name: name,
+		description,
+		credentialType,
+		credentialFields: addCredentialFields,
+	});
+
 	const credentialPayload = JSON.stringify({
 		name: name,
 		description,
@@ -137,11 +144,13 @@ export const addCredentialHandler = async (
 		folderId: folderId,
 		credentialType: credentialType,
 	});
-	const responseJson = await sendMessage("getCredentialsForFolder", {
-		folderId,
-	});
 
-	console.log("getcredentialsForFolder==>>>>>", JSON.stringify(responseJson));
+	console.log("response addCredential ==>>>>>", response);
+
+	// const responseJson = await sendMessage("getCredentialsForFolder", {
+	// 	folderId,
+	// });
+
 	return {
 		success: true,
 		message: "Credential added successfully",
