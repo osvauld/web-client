@@ -6,6 +6,7 @@
 	let certificate = "";
 	let recoveryString = "";
 	onMount(async () => {
+		await sendMessage("startP2PListner");
 		connectionTicket = await sendMessage("getTicket");
 		// TODO: change the passphrase to the actual password
 		certificate = await sendMessage("exportCertificate", {

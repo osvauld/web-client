@@ -15,7 +15,7 @@ impl TauriStoreAuthRepository {
     }
 
     async fn get_store(&self) -> Arc<Store<Wry>> {
-        self.app_handle.store("sqlite1_store15.bin").unwrap()
+        self.app_handle.store("sqlite1_store18.bin").unwrap()
     }
 }
 

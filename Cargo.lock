@@ -4702,6 +4702,7 @@ dependencies = [
  "libsqlite3-sys",
  "log",
  "once_cell",
+ "rand 0.8.5",
  "rcgen 0.10.0",
  "serde",
  "serde_json",

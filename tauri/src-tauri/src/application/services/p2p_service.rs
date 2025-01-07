@@ -2,18 +2,14 @@ use crate::application::services::sync_service::SyncService;
 use crate::application::services::SyncPayload;
 use crate::domains::models::device::Device;
 use crate::domains::models::p2p::{ConnectionTicket, Message};
-use crate::domains::repositories::RepositoryError;
 use crate::types::CryptoResponse;
-use futures_lite::StreamExt;
 use iroh::endpoint::Connection;
 use iroh::{
     endpoint::{DirectAddrType, RecvStream, SendStream},
-    Endpoint, NodeAddr, RelayMode,
+    Endpoint, NodeAddr, RelayMode, SecretKey,
 };
 use iroh_blobs::store::mem::Store;
 use log::{debug, error, info, warn};
-use std::net::Ipv6Addr;
-use std::net::SocketAddrV6;
 use std::sync::Arc;
 use tauri::AppHandle;
 use tauri::Emitter;
@@ -23,7 +19,7 @@ use tokio::sync::Mutex;
 use tokio::time::{timeout, Duration};
 use url::Url;
 
-const ALPN_PROTOCOL: &[u8] = b"n0/osvauld/0";
+const ALPN_PROTOCOL: &[u8] = b"n0/iroh/examples/magic/0";
 const CONNECTION_TIMEOUT: Duration = Duration::from_secs(60);
 const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(60);
 struct P2PState {
@@ -52,11 +48,12 @@ impl P2PService {
         }
 
         info!("Initializing P2P endpoint");
-
+        let secret_key = SecretKey::generate(rand::rngs::OsRng);
         let endpoint = Endpoint::builder()
+            .secret_key(secret_key)
+            .discovery_n0()
             .relay_mode(RelayMode::Default)
             .alpns(vec![ALPN_PROTOCOL.to_vec()])
-            .discovery_n0()
             .bind()
             .await
             .map_err(|e| format!("Failed to bind endpoint: {}", e))?;
@@ -700,25 +697,28 @@ impl P2PService {
 
         serde_json::to_string(&ticket).map_err(|e| e.to_string())
     }
-
     pub async fn connect_with_ticket(&self, ticket_str: &str) -> Result<(), String> {
         self.ensure_initialized().await?;
 
-        info!(
-            "Start connecting ____________________________________{:?}",
-            ticket_str
-        );
-        // Create connection info in a separate scope
+        info!("Starting connection process with ticket: {}", ticket_str);
+
         let (endpoint, node_addr) = {
             let state_guard = self.state.lock().await;
             let state = state_guard.as_ref().ok_or("P2P not initialized")?;
 
             let ticket: ConnectionTicket = serde_json::from_str(ticket_str)
                 .map_err(|e| format!("Invalid ticket format: {}", e))?;
-            let url = Url::parse(&ticket.relay_url).map_err(|e| e.to_string())?;
+
+            info!(
+                "Parsed ticket - Node ID: {}, URL: {}",
+                ticket.node_id, ticket.relay_url
+            );
+            info!("Addresses from ticket: {:?}", ticket.addresses);
+            let clea_url = ticket.relay_url.trim_end_matches("/").to_string();
+            let url = Url::parse(&clea_url).map_err(|e| e.to_string())?;
             let relay_url = Some(iroh::RelayUrl::from(url));
 
-            info!("Connecting to node: {}", ticket.node_id);
+            info!("Constructed relay URL: {:?}", relay_url);
 
             let node_addr = NodeAddr::from_parts(
                 ticket
@@ -729,25 +729,60 @@ impl P2PService {
                 ticket
                     .addresses
                     .iter()
-                    .filter_map(|a| a.parse().ok())
+                    .filter_map(|a| {
+                        let addr = a.parse();
+                        addr.ok()
+                    })
                     .collect::<Vec<_>>(),
             );
 
+            info!("Created NodeAddr: {:?}", node_addr);
+            info!("Our endpoint ID: {}", state.endpoint.node_id());
+            info!(
+                "ALPN Protocol being used: {}",
+                String::from_utf8_lossy(ALPN_PROTOCOL)
+            );
+
             (state.endpoint.clone(), node_addr)
-        }; // state_guard is dropped here
+        };
 
-        let conn = timeout(
-            CONNECTION_TIMEOUT,
-            endpoint.connect(node_addr, ALPN_PROTOCOL),
-        )
-        .await
-        .map_err(|e| format!("Connection timeout: {e}"))?
-        .map_err(|e| format!("Connection failed: {e}"))?;
+        info!("Starting endpoint.connect() call...");
+        let connect_result = endpoint.connect(node_addr.clone(), ALPN_PROTOCOL).await;
 
-        info!("Connected to: {}", conn.remote_address());
+        match &connect_result {
+            Ok(conn) => {
+                info!("Connection successful!");
+                info!("Remote address: {}", conn.remote_address());
+                info!("Connection stats: {:?}", conn.stats());
 
-        // Perform handshake
-        self.perform_handshake(&conn, true).await?;
+                // Try to get additional connection info if possible
+                if let Ok(peer_id) = iroh::endpoint::get_remote_node_id(conn) {
+                    info!("Connected to peer ID: {}", peer_id);
+                }
+            }
+            Err(e) => {
+                error!("Connection failed. Error details:");
+                error!("Error: {}", e);
+                error!("Node addr used: {:?}", node_addr);
+                // Try to get any additional endpoint state that might be helpful
+                info!("Endpoint bound sockets: {:?}", endpoint.bound_sockets());
+                if let Ok(cur_addr) = endpoint.node_addr().await {
+                    info!("Current endpoint addr: {:?}", cur_addr);
+                }
+            }
+        }
+
+        let conn = connect_result.map_err(|e| format!("Connection failed: {e}"))?;
+
+        info!("Starting handshake process...");
+        let handshake_result = self.perform_handshake(&conn, true).await;
+
+        match &handshake_result {
+            Ok(_) => info!("Handshake completed successfully"),
+            Err(e) => error!("Handshake failed: {}", e),
+        }
+
+        handshake_result?;
 
         self.app_handle
             .emit("sync-complete", true)
