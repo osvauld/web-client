@@ -5,6 +5,7 @@
 		credentialEditorModal,
 		viewCredentialModal,
 		currentCredential,
+		deleteConfirmationModal,
 	} from "../store/desktop.ui.store";
 	import {
 		CATEGORIES,
@@ -14,6 +15,7 @@
 	import Menu from "../../../icons/Menu.svelte";
 
 	let credentials = [];
+	let prevDeleteModalState = false;
 	let prevEditorModalState = false;
 
 	const fetchCredentials = async (vaultId: string) => {
@@ -35,6 +37,13 @@
 			fetchCredentials($currentVault.id);
 		}
 		prevEditorModalState = $credentialEditorModal;
+	}
+
+	$: {
+		if (prevDeleteModalState && !$deleteConfirmationModal) {
+			fetchCredentials($currentVault.id);
+		}
+		prevDeleteModalState = $deleteConfirmationModal;
 	}
 
 	$: updatedCredentials = $selectedCategory

@@ -3,6 +3,7 @@
 		currentCredential,
 		viewCredentialModal,
 		currentVault,
+		deleteConfirmationModal,
 	} from "../store/desktop.ui.store";
 
 	import { scale } from "svelte/transition";
@@ -15,6 +16,7 @@
 	import ClosePanel from "../../../icons/closePanel.svelte";
 	import Share from "../../../icons/FolderShare.svelte";
 	import Star from "../../../icons/star.svelte";
+	import Bin from "../../../icons/binIcon.svelte";
 
 	import { writeToClipboard } from "../../../lib/components/dashboard/helper";
 
@@ -35,6 +37,11 @@
 			copied = false;
 			copiedItemIndex = null;
 		}, 1000);
+	};
+
+	const handleCredentialDelete = () => {
+		viewCredentialModal.set(false);
+		deleteConfirmationModal.set(true);
 	};
 </script>
 
@@ -94,12 +101,16 @@
 
 			<hr class="border border-mobile-bgSeconary my-3" />
 			<div
-				class="bg-mobile-bgSeconary rounded-lg h-[65px] p-3 text-mobile-textPrimary text-sm mt-auto">
-				Created at : <br />
-				<span class="text-xs"
-					>{new Date().toLocaleTimeString() +
-						"," +
-						new Date().toLocaleDateString()}</span>
+				class="bg-mobile-bgSeconary rounded-lg h-[65px] p-3 text-mobile-textPrimary text-sm mt-auto flex justify-between items-center">
+				<span>
+					Created at : <br />
+					<span class="text-xs"
+						>{new Date().toLocaleTimeString() +
+							"," +
+							new Date().toLocaleDateString()}</span>
+				</span>
+				<button class="p-2" on:click|stopPropagation="{handleCredentialDelete}"
+					><Bin color="#FF6A6A" /></button>
 			</div>
 		</div>
 	</div>

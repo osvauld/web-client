@@ -63,6 +63,7 @@
 		class="absolute top-56 left-4 w-[360px] h-[25rem] overflow-hidden scrollbar-thin border border-osvauld-iconblack bg-osvauld-ninjablack rounded-2xl px-2 pt-2 pb-3 flex flex-col gap-2 text-lg"
 		style="width: calc(360px - 2rem);"
 		id="vaultSelector"
+		on:click|stopPropagation
 		in:fly>
 		<div class="h-full flex flex-col">
 			<div class="flex-1 overflow-y-auto space-y-2 scrollbar-thin p-1">

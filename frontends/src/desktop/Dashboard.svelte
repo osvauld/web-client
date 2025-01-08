@@ -1,18 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import LeftContainer from "../lib/components/dashboard/LeftContainer.svelte";
-	import RightContainer from "../lib/components/dashboard/RightContainer.svelte";
-	import MoreActions from "../lib/components/dashboard/components/MoreActions.svelte";
-	import CredentialDeleteModal from "../lib/components/dashboard/credentials/CredentialDeleteModal.svelte";
-	import FolderDeleteModal from "../lib/components/dashboard/folders/FolderDeleteModal.svelte";
 	import Loader from "../lib/components/dashboard/components/Loader.svelte";
-	import {
-		showMoreOptions,
-		DeleteConfirmationModal,
-		modalManager,
-		toastStore,
-		promptPassword,
-	} from "../lib/store/ui.store";
+
 	import { invoke } from "@tauri-apps/api/core";
 	import { sendMessage } from "../lib/components/dashboard/helper";
 	import Welcome from "../lib/components/popup/Welcome.svelte";
@@ -28,10 +17,12 @@
 		credentialEditorModal,
 		profileModal,
 		viewCredentialModal,
+		deleteConfirmationModal,
 	} from "./components/store/desktop.ui.store";
 	import ProfileView from "./components/views/ProfileView.svelte";
 	import CredentialEditorModal from "./components/views/CredentialEditorModal.svelte";
 	import CredentialViewModal from "./components/views/CredentialViewModal.svelte";
+	import DeleteConfirmationModal from "./components/ui/DeleteConfirmationModal.svelte";
 
 	let showWelcome = false;
 	let signedUp = false;
@@ -98,6 +89,10 @@
 
 		{#if $viewCredentialModal}
 			<CredentialViewModal />
+		{/if}
+
+		{#if $deleteConfirmationModal}
+			<DeleteConfirmationModal />
 		{/if}
 
 		{#if $profileModal}
