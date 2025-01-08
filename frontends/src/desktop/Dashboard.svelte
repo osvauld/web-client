@@ -6,7 +6,7 @@
 	import { sendMessage } from "../lib/components/dashboard/helper";
 	import Welcome from "../lib/components/popup/Welcome.svelte";
 	import Signup from "../lib/components/popup/Signup.svelte";
-	import ShareToast from "../lib/components/dashboard/components/ShareToast.svelte";
+	import Toast from "./components/ui/Toast.svelte";
 	import { setFolderStore } from "../lib/store/storeHelper";
 	import PasswordPromptModal from "../lib/components/dashboard/components/PasswordPromptModal.svelte";
 	import { LocalStorageService } from "../utils/storageHelper";
@@ -18,6 +18,7 @@
 		profileModal,
 		viewCredentialModal,
 		deleteConfirmationModal,
+		toastStore,
 	} from "./components/store/desktop.ui.store";
 	import ProfileView from "./components/views/ProfileView.svelte";
 	import CredentialEditorModal from "./components/views/CredentialEditorModal.svelte";
@@ -113,11 +114,12 @@
 			{/if}
 		{/if}
 
+	
+		-->
 		{#if $toastStore.show}
-			 {#if true}
 			<div class="z-100">
-				<ShareToast />
+				<Toast />
 			</div>
-		{/if} -->
+		{/if}
 	{/if}
 </main>

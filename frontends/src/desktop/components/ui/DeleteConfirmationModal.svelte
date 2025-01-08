@@ -3,6 +3,7 @@
 	import {
 		currentCredential,
 		deleteConfirmationModal,
+		toastStore,
 	} from "../store/desktop.ui.store";
 	import { fly } from "svelte/transition";
 	import Warning from "../../../icons/warning.svelte";
@@ -12,7 +13,16 @@
 		// TODO: Call the API to delete the credential
 		// await sendMessage("deleteCredential", { id: currentCredential.id });
 		deleteConfirmationModal.set(false);
-		// we need to call toast here
+		toastStore.set({
+			show: true,
+			message: "Credential deleted successfully",
+			success: true,
+		});
+		// toastStore.set({
+		// 	show: true,
+		// 	message: "Credential deletion failed",
+		// 	success: false,
+		// });
 	};
 
 	const withdrawCredentialDeleteModal = () => {
