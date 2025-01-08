@@ -262,7 +262,19 @@ impl P2PService {
         recv: &mut RecvStream,
     ) -> Result<(), String> {
         info!("Initiator: Sending hello");
-        send.write_all(b"hello")
+        let device = self
+            .auth_service
+            .get_current_device()
+            .await
+            .map_err(|e| e.to_string())?;
+        let (challenge, signature) = self.auth_service.sign_random_challenge().await?;
+        let handshake_message = Message::Handshake {
+            challenge,
+            signature,
+            device,
+        };
+        let serialized = serde_json::to_string(&handshake_message).map_err(|e| e.to_string())?;
+        send.write_all(serialized.as_bytes())
             .await
             .map_err(|e| format!("Failed to send hello: {}", e))?;
         send.flush()

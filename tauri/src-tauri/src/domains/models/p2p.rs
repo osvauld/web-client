@@ -13,7 +13,15 @@ pub enum Message {
     SyncComplete,
     AddDevice(Device),
     AddDeviceAck(String),
-    FileTransfer { name: String, data: Vec<u8> },
+    FileTransfer {
+        name: String,
+        data: Vec<u8>,
+    },
+    Handshake {
+        challenge: String,
+        signature: String,
+        device: Device,
+    },
 }
 
 #[derive(Serialize, Deserialize)]

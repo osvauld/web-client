@@ -2,6 +2,7 @@ use crate::domains::models::auth::{Certificate, User};
 use crate::domains::models::device::Device;
 use crate::domains::repositories::{DeviceRepository, RepositoryError, StoreRepository};
 use crypto_utils::CryptoUtils;
+use rand::{rngs::OsRng, RngCore};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -258,5 +259,29 @@ impl AuthService {
             .map_err(|e| e.to_string())?;
 
         Ok(new_certificate)
+    }
+
+    pub async fn sign_random_challenge(&self) -> Result<(String, String), String> {
+        let challenge = self.generate_challenge();
+        let signature = self
+            .crypto_utils
+            .lock()
+            .await
+            .sign_message(&challenge)
+            .map_err(|e| e.to_string())?;
+
+        Ok((challenge, signature))
+    }
+
+    fn generate_challenge(&self) -> String {
+        let mut bytes = [0u8; 32];
+        OsRng.fill_bytes(&mut bytes);
+        bytes
+            .iter()
+            .fold(String::with_capacity(64), |mut acc, byte| {
+                use std::fmt::Write;
+                write!(acc, "{:02x}", byte).unwrap();
+                acc
+            })
     }
 }
