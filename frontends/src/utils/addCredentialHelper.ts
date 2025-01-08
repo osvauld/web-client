@@ -137,11 +137,8 @@ export const addCredentialHandler = async (
 		folderId: folderId,
 		credentialType: credentialType,
 	});
-	const responseJson = await sendMessage("getCredentialsForFolder", {
-		folderId,
-	});
 
-	console.log("getcredentialsForFolder==>>>>>", JSON.stringify(responseJson));
+	//  need to return response instead of hard coding
 	return {
 		success: true,
 		message: "Credential added successfully",

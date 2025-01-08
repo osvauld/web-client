@@ -1,10 +1,11 @@
-
 import {
 	IntermediateCredential,
 	Credential,
 	ApprovedCredentialSubmitParams,
 	Platform,
-} from "../../dtos/import.dto";
+} from "../dtos/import.dto";
+import { addCredentialHandler } from "../../utils/addCredentialHelper";
+import { CATEGORIES } from "../utils/credentialUtils";
 
 import {
 	transformSafariCredentials,
@@ -109,23 +110,18 @@ export const approvedCredentialSubmit = async ({
 	folderId,
 	...otherData
 }: ApprovedCredentialSubmitParams): Promise<boolean> => {
-	// const response = await fetchFolderUsersForDataSync(folderId);
-	// const usersToShare = response.data;
-	// try {
-	// 	const operationCompletionStatus = await Promise.allSettled(
-	// 		Object.values(otherData).map((data) =>
-	// 			finalProcessing(folderId, usersToShare, data),
-	// 		),
-	// 	);
+	try {
+		const operationCompletionStatus = await Promise.allSettled(
+			Object.values(otherData).map((data) => finalProcessing(folderId, data)),
+		);
 
-	// 	const operationsCompletion = operationCompletionStatus.every(
-	// 		(result) => result.status === "fulfilled" && result.value.success,
-	// 	);
+		const operationsCompletion = operationCompletionStatus.every(
+			(result) => result.status === "fulfilled" && result.value.success,
+		);
 
-	// 	return operationsCompletion;
-	return true;
-	// } catch (error) {
-	// 	console.error("Error in approvedCredentialSubmit:", error);
-	// 	return false;
-	// }
+		return operationsCompletion;
+	} catch (error) {
+		console.error("Error in approvedCredentialSubmit:", error);
+		return false;
+	}
 };
