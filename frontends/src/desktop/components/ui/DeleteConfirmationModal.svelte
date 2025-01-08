@@ -12,7 +12,6 @@
 	const DeleteConfirmation = () => {
 		// TODO: Call the API to delete the credential
 		// await sendMessage("deleteCredential", { id: currentCredential.id });
-		deleteConfirmationModal.set(false);
 		toastStore.set({
 			show: true,
 			message: "Credential deleted successfully",
@@ -23,11 +22,12 @@
 		// 	message: "Credential deletion failed",
 		// 	success: false,
 		// });
+		deleteConfirmationModal.set(false);
 	};
 
 	const withdrawCredentialDeleteModal = () => {
-		deleteConfirmationModal.set(false);
 		currentCredential.set({});
+		deleteConfirmationModal.set(false);
 	};
 </script>
 
