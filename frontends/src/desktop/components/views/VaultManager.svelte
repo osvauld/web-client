@@ -98,6 +98,7 @@
 								id="new-vault-name"
 								class="bg-mobile-bgSeconary border-0 outline-0 focus:ring-0 rounded-lg"
 								autocomplete="off"
+								autocorrect="off"
 								use:autofocus
 								bind:value="{newVaultName}" />
 							<button

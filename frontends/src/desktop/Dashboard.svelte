@@ -80,10 +80,12 @@
 	{:else}
 		<DefaultLayout />
 
+		<!-- AddCredentialModal opens up folder or/and category type selection modal -->
 		{#if $addCredentialModal}
 			<AddCredentialModal />
 		{/if}
 
+		<!-- Actual credential entering happens here in CredentialEditorModal-->
 		{#if $credentialEditorModal}
 			<CredentialEditorModal />
 		{/if}
