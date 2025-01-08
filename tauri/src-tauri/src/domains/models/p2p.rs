@@ -7,7 +7,7 @@ pub enum Message {
     Chat(String),
     Ping,
     Pong,
-    SyncRequest,
+    SyncRequest(Device),
     SyncResponse(SyncPayload),
     SyncAck(String),
     SyncComplete,

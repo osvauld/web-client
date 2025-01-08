@@ -1,3 +1,4 @@
+use crate::application::services::auth_service::AuthService;
 use crate::application::services::sync_service::SyncService;
 use crate::application::services::SyncPayload;
 use crate::domains::models::device::Device;
@@ -31,14 +32,20 @@ pub struct P2PService {
     state: Arc<Mutex<Option<P2PState>>>,
     app_handle: AppHandle,
     sync_service: Arc<SyncService>,
+    auth_service: Arc<AuthService>,
 }
 
 impl P2PService {
-    pub fn new(app_handle: AppHandle, sync_service: Arc<SyncService>) -> Self {
+    pub fn new(
+        app_handle: AppHandle,
+        sync_service: Arc<SyncService>,
+        auth_service: Arc<AuthService>,
+    ) -> Self {
         Self {
             state: Arc::new(Mutex::new(None)),
             app_handle,
             sync_service,
+            auth_service,
         }
     }
     async fn ensure_initialized(&self) -> Result<(), String> {
@@ -214,14 +221,18 @@ impl P2PService {
     pub async fn start_sync(&self) -> Result<(), String> {
         info!("Starting sync process");
         let connection = self.get_active_connection().await?;
-
+        let device = self
+            .auth_service
+            .get_current_device()
+            .await
+            .map_err(|e| e.to_string())?;
         // Send sync request
         let (mut send, mut recv) = connection
             .open_bi()
             .await
             .map_err(|e| format!("Failed to open bi-directional stream: {}", e))?;
 
-        let sync_request = Message::SyncRequest;
+        let sync_request = Message::SyncRequest(device);
         let serialized = serde_json::to_string(&sync_request)
             .map_err(|e| format!("Serialization error: {}", e))?;
 
@@ -307,9 +318,9 @@ impl P2PService {
         Ok(())
     }
 
-    pub async fn handle_sync_request(&self) -> Result<(), String> {
+    pub async fn handle_sync_request(&self, device: Device) -> Result<(), String> {
         info!("Handling incoming sync request");
-        match self.sync_service.get_next_pending_sync().await {
+        match self.sync_service.get_next_pending_sync(device).await {
             Ok(Some(payload)) => {
                 info!(
                     "Sending sync payload for resource: {}",
@@ -360,9 +371,30 @@ impl P2PService {
     async fn handle_sync_ack(&self, sync_id: String) -> Result<(), String> {
         info!("Received sync acknowledgment for ID: {}", sync_id);
 
-        let message = Message::SyncRequest;
-        self.send_message(serde_json::to_string(&message).map_err(|e| e.to_string())?)
-            .await?;
+        let device = self
+            .auth_service
+            .get_current_device()
+            .await
+            .map_err(|e| e.to_string())?;
+        match self.sync_service.get_next_pending_sync(device).await {
+            Ok(Some(payload)) => {
+                info!("Sending next sync payload");
+                let message = Message::SyncResponse(payload);
+                let serialized = serde_json::to_string(&message).map_err(|e| e.to_string())?;
+                self.send_message(serialized).await?;
+            }
+            Ok(None) => {
+                info!("No more pending syncs, sending complete");
+                let message = Message::SyncComplete;
+                let serialized = serde_json::to_string(&message).map_err(|e| e.to_string())?;
+                self.send_message(serialized).await?;
+            }
+            Err(e) => {
+                error!("Failed to get next pending sync: {}", e);
+                return Err(e.to_string());
+            }
+        }
+
         Ok(())
     }
 
@@ -426,8 +458,9 @@ impl P2PService {
                                                 Ok(message) => {
                                                     info!("Successfully deserialized message");
                                                     let result = match &message {
-                                                        Message::SyncRequest => {
-                                                            self.handle_sync_request().await
+                                                        Message::SyncRequest(device) => {
+                                                            self.handle_sync_request(device.clone())
+                                                                .await
                                                         }
                                                         Message::SyncAck(sync_id) => {
                                                             self.handle_sync_ack(sync_id.clone())
@@ -441,6 +474,7 @@ impl P2PService {
                                                         }
                                                         Message::AddDeviceAck(device_id) => {
                                                             info!("Received device addition acknowledgment for ID: {}", device_id);
+                                                            let _ = self.start_sync().await;
                                                             // Emit event for UI update
                                                             if let Err(e) = self.app_handle.emit(
                                                                 "device-add-acknowledged",

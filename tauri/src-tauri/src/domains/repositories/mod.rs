@@ -63,6 +63,6 @@ pub trait CredentialRepository: Send + Sync {
 
 pub trait DeviceRepository: Send + Sync {
     async fn save(&self, device: Device) -> Result<(), RepositoryError>;
-    async fn find_by_id(&self, device_id: &str) -> Result<String, RepositoryError>;
+    async fn find_by_id(&self, device_id: &str) -> Result<Device, RepositoryError>;
     async fn get_all_devices(&self) -> Result<Vec<Device>, RepositoryError>;
 }

@@ -66,6 +66,13 @@ impl AuthService {
 
         Ok(device)
     }
+
+    pub async fn get_current_device(&self) -> Result<Device, RepositoryError> {
+        let device_id = self.store_repository.get_device_key().await?;
+        let device = self.device_repository.find_by_id(&device_id).await?;
+        Ok(device)
+    }
+
     pub async fn handle_sign_up(
         &self,
         username: &str,

@@ -101,8 +101,11 @@ pub fn run() {
                         device_repo,
                         store_repository,
                     ));
-                    let p2p_service =
-                        Arc::new(P2PService::new(handle.clone(), sync_service.clone()));
+                    let p2p_service = Arc::new(P2PService::new(
+                        handle.clone(),
+                        sync_service.clone(),
+                        auth_service.clone(),
+                    ));
                     let credential_service = Arc::new(CredentialService::new(
                         credential_repo.clone(),
                         crypto_utils,

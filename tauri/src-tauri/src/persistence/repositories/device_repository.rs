@@ -37,7 +37,7 @@ impl DeviceRepository for SqliteDeviceRepository {
         Ok(())
     }
 
-    async fn find_by_id(&self, device_id: &str) -> Result<String, RepositoryError> {
+    async fn find_by_id(&self, device_id: &str) -> Result<Device, RepositoryError> {
         let mut conn = self.connection.lock().await;
 
         let device = devices::table
@@ -48,7 +48,7 @@ impl DeviceRepository for SqliteDeviceRepository {
                 _ => RepositoryError::DatabaseError(e.to_string()),
             })?;
 
-        Ok(device.device_key)
+        Ok(device.into())
     }
     async fn get_all_devices(&self) -> Result<Vec<Device>, RepositoryError> {
         let mut conn = self.connection.lock().await;

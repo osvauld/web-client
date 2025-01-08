@@ -48,7 +48,7 @@ impl SyncService {
     }
 
     pub async fn add_new_device_sync(&self, device: Device) -> Result<(), RepositoryError> {
-        let _ = self.device_repository.save(device).await;
+        let _ = self.device_repository.save(device.clone()).await;
         let device_id = self.store_repository.get_device_key().await?;
         let sync_records = self
             .sync_repository
@@ -57,7 +57,7 @@ impl SyncService {
         let records = sync_records
             .into_iter()
             .map(|record| {
-                sync_record::SyncRecord::create_new_sync_for_device(&record, device_id.clone())
+                sync_record::SyncRecord::create_new_sync_for_device(&record, device.id.clone())
             })
             .collect::<Vec<_>>();
         self.sync_repository
@@ -67,9 +67,12 @@ impl SyncService {
         Ok(())
     }
 
-    pub async fn get_next_pending_sync(&self) -> Result<Option<SyncPayload>, RepositoryError> {
+    pub async fn get_next_pending_sync(
+        &self,
+        device: Device,
+    ) -> Result<Option<SyncPayload>, RepositoryError> {
         // Get the next pending sync record for target device 2
-        let pending_records = self.sync_repository.get_pending_records("2").await?;
+        let pending_records = self.sync_repository.get_pending_records(&device.id).await?;
         info!("Found {} pending records", pending_records.len());
         // Get the oldest pending record
         let sync_record = match pending_records.first() {
