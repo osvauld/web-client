@@ -5,6 +5,7 @@
 		credentialEditorModal,
 		viewCredentialModal,
 		currentCredential,
+		deleteConfirmationModal,
 	} from "../store/desktop.ui.store";
 	import {
 		CATEGORIES,
@@ -16,6 +17,7 @@
 	import ImportModal from "./ImportModal.svelte";
 
 	let credentials = [];
+	let prevDeleteModalState = false;
 	let prevEditorModalState = false;
 	let prevImportModalState = false;
 	let importHovered = false;
@@ -43,6 +45,12 @@
 		prevEditorModalState = $credentialEditorModal;
 	}
 
+	$: {
+		if (prevDeleteModalState && !$deleteConfirmationModal) {
+			fetchCredentials($currentVault.id);
+		}
+		prevDeleteModalState = $deleteConfirmationModal;
+  }
 	$: {
 		if (prevImportModalState && !importSelected) {
 			fetchCredentials($currentVault.id);
