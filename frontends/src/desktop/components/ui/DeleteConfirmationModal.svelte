@@ -2,6 +2,7 @@
 	import ClosePanel from "../../../icons/closePanel.svelte";
 	import {
 		currentCredential,
+		currentVault,
 		deleteConfirmationModal,
 		toastStore,
 	} from "../store/desktop.ui.store";
@@ -12,16 +13,17 @@
 	import { onMount } from "svelte";
 
 	const DeleteConfirmation = () => {
-		// TODO: Call the API to delete the credential
+		// TODO: Call the API to delete the credential or folder
 		// await sendMessage("deleteCredential", { id: currentCredential.id });
+		// or await sendMessage("deleteFolder", { id: $currentVault.id.id });
 		toastStore.set({
 			show: true,
-			message: "Credential deleted successfully",
+			message: `${$currentCredential?.id ? "Credential" : "Folder"} deleted successfully`,
 			success: true,
 		});
 		// toastStore.set({
 		// 	show: true,
-		// 	message: "Credential deletion failed",
+		// 	message: `${$currentCredential?.id ? "Credential" : "Folder"} deletion failed`,
 		// 	success: false,
 		// });
 		deleteConfirmationModal.set(false);
@@ -31,10 +33,6 @@
 		currentCredential.set({});
 		deleteConfirmationModal.set(false);
 	};
-
-	onMount(() => {
-		console.log($currentCredential);
-	});
 </script>
 
 <button
@@ -46,11 +44,13 @@
 		on:submit|preventDefault|stopPropagation="{DeleteConfirmation}">
 		<div class="flex justify-between items-center w-full">
 			<span class="text-[21px] font-medium text-osvauld-quarzowhite"
-				>Delete {renderRelevantHeading(
-					$currentCredential.data.credentialFields,
-					$currentCredential.data.credentialType,
-					$currentCredential.id,
-				)} ?
+				>Delete {$currentCredential?.id
+					? renderRelevantHeading(
+							$currentCredential.data.credentialFields,
+							$currentCredential.data.credentialType,
+							$currentCredential.id,
+						)
+					: $currentVault.name} ?
 			</span>
 			<button
 				class="cursor-pointer p-2"
@@ -80,7 +80,8 @@
 			<button
 				class="border border-osvauld-dangerRed py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md hover:bg-osvauld-dangerRed hover:text-osvauld-frameblack transition-all"
 				type="submit"
-				on:click="{DeleteConfirmation}">Delete Credential</button>
+				on:click="{DeleteConfirmation}"
+				>Delete {$currentCredential?.id ? "Credential" : "Folder"}</button>
 		</div>
 	</form>
 </button>

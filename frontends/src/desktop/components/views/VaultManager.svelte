@@ -26,7 +26,6 @@
 
 	const handleVaultCreation = async (event) => {
 		event.preventDefault();
-		console.log("sending valult");
 		try {
 			await sendMessage("addFolder", {
 				name: newVaultName,
@@ -55,7 +54,6 @@
 
 	onMount(async () => {
 		await fetchAllVaults();
-		console.log("mounting vault manager");
 	});
 </script>
 
