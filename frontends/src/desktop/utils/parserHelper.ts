@@ -13,11 +13,12 @@ import {
 	Credential,
 	IntermediateCredential,
 	CredentialData,
-} from "../../dtos/import.dto";
+} from "../dtos/import.dto";
 
-import { UsersForDataSync } from "./dtos";
+import { UsersForDataSync } from "../../lib/components/dashboard/dtos";
 
-import { sendMessage } from "./helper";
+import { sendMessage } from "../../lib/components/dashboard/helper";
+import { addCredentialHandler } from "../../utils/addCredentialHelper";
 
 const extractUsername = (username: string, email: string): string => {
 	return username || email;
@@ -254,7 +255,6 @@ export const transformOnepasswordCredentials = (parsedData: Credential[]) => {
 
 export const finalProcessing = async (
 	folderId: string,
-	usersToShare: UsersForDataSync[],
 	credentialData: CredentialData,
 ) => {
 	try {
@@ -264,13 +264,20 @@ export const finalProcessing = async (
 			fieldType: string;
 		}[] = [];
 
-		let addCredentialPayload = {
+		let addCredentialPayload: {
+			name: string;
+			description: string;
+			credentialType: string;
+			credentialFields: {
+				fieldName: string;
+				fieldValue: string;
+				fieldType: string;
+			}[];
+		} = {
 			name: "",
-			folderId: "",
 			description: "",
 			credentialType: "Login",
-			userFields: [],
-			domain: "",
+			credentialFields: [],
 		};
 
 		if (credentialData.username) {
@@ -318,11 +325,8 @@ export const finalProcessing = async (
 				fieldType: "sensitive",
 			});
 		}
-		addCredentialPayload.folderId = folderId;
-		const userFields = await sendMessage("addCredential", {
-			users: usersToShare,
-			addCredentialFields: fieldPayload,
-		});
+
+		addCredentialPayload.credentialFields = fieldPayload;
 
 		if (credentialData.name) {
 			addCredentialPayload.name = credentialData.name;
@@ -332,9 +336,9 @@ export const finalProcessing = async (
 			addCredentialPayload.description = credentialData.description;
 		}
 
-		addCredentialPayload.userFields = userFields;
-		// const response = await addCredential(addCredentialPayload);
-		return { success: true };
+		const response = await addCredentialHandler(addCredentialPayload, folderId);
+
+		return { success: response.success };
 	} catch (error) {
 		console.error("Error posting credential:", error);
 		return { success: false, error };

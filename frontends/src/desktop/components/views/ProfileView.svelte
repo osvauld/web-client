@@ -4,6 +4,7 @@
 	import Acceptor from "../../../mobile/components/views/Acceptor.svelte";
 	import ClosePanel from "../../../icons/closePanel.svelte";
 	import Qr from "./Qr.svelte";
+
 	let isInitiator = false;
 
 	const toggleMode = () => {
@@ -19,6 +20,8 @@
 	class="fixed inset-0 z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[0.5px] flex justify-center items-center"
 	role="dialog"
 	on:click="{() => {}}">
+
+
 	<div
 		class="w-[40rem] h-[44rem] bg-mobile-bgPrimary flex flex-col relative p-4 overflow-hidden">
 		<!-- Tab Navigation -->
@@ -31,7 +34,5 @@
 			</button>
 		</nav>
 		<Qr />
-
-		<!-- Content Area -->
 	</div>
 </div>

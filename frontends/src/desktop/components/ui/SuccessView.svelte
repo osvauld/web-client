@@ -1,5 +1,5 @@
 <script>
-	import { changePassword } from "../dashboard/store";
+	import { changePassword } from "../../../lib/components/dashboard/store";
 
 	export let recovery = false;
 	export let status = true;
@@ -89,8 +89,7 @@
 	<svg
 		version="1.1"
 		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 130.2 130.2"
-	>
+		viewBox="0 0 130.2 130.2">
 		<circle
 			class="path circle"
 			fill="none"
@@ -99,8 +98,7 @@
 			stroke-miterlimit="10"
 			cx="65.1"
 			cy="65.1"
-			r="62.1"
-		></circle>
+			r="62.1"></circle>
 		<polyline
 			class="path check"
 			fill="none"
@@ -108,8 +106,7 @@
 			stroke-width="6"
 			stroke-linecap="round"
 			stroke-miterlimit="10"
-			points="100.2,40.2 51.5,88.8 29.8,67.5 "
-		></polyline>
+			points="100.2,40.2 51.5,88.8 29.8,67.5 "></polyline>
 	</svg>
 	<p class="success">
 		{$changePassword
@@ -122,8 +119,7 @@
 	<svg
 		version="1.1"
 		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 130.2 130.2"
-	>
+		viewBox="0 0 130.2 130.2">
 		<circle
 			class="path circle"
 			fill="none"
@@ -132,8 +128,7 @@
 			stroke-miterlimit="10"
 			cx="65.1"
 			cy="65.1"
-			r="62.1"
-		></circle>
+			r="62.1"></circle>
 		<line
 			class="path line"
 			fill="none"
@@ -144,8 +139,7 @@
 			x1="34.4"
 			y1="37.9"
 			x2="95.8"
-			y2="92.3"
-		></line>
+			y2="92.3"></line>
 		<line
 			class="path line"
 			fill="none"
@@ -156,8 +150,7 @@
 			x1="95.8"
 			y1="38"
 			x2="34.4"
-			y2="92.2"
-		></line>
+			y2="92.2"></line>
 	</svg>
 	<p class="error">
 		{$changePassword

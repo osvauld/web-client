@@ -1,23 +1,12 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import LeftContainer from "../lib/components/dashboard/LeftContainer.svelte";
-	import RightContainer from "../lib/components/dashboard/RightContainer.svelte";
-	import MoreActions from "../lib/components/dashboard/components/MoreActions.svelte";
-	import CredentialDeleteModal from "../lib/components/dashboard/credentials/CredentialDeleteModal.svelte";
-	import FolderDeleteModal from "../lib/components/dashboard/folders/FolderDeleteModal.svelte";
 	import Loader from "../lib/components/dashboard/components/Loader.svelte";
-	import {
-		showMoreOptions,
-		DeleteConfirmationModal,
-		modalManager,
-		toastStore,
-		promptPassword,
-	} from "../lib/store/ui.store";
+
 	import { invoke } from "@tauri-apps/api/core";
 	import { sendMessage } from "../lib/components/dashboard/helper";
 	import Welcome from "../lib/components/popup/Welcome.svelte";
 	import Signup from "../lib/components/popup/Signup.svelte";
-	import ShareToast from "../lib/components/dashboard/components/ShareToast.svelte";
+	import Toast from "./components/ui/Toast.svelte";
 	import { setFolderStore } from "../lib/store/storeHelper";
 	import PasswordPromptModal from "../lib/components/dashboard/components/PasswordPromptModal.svelte";
 	import { LocalStorageService } from "../utils/storageHelper";
@@ -28,10 +17,13 @@
 		credentialEditorModal,
 		profileModal,
 		viewCredentialModal,
+		deleteConfirmationModal,
+		toastStore,
 	} from "./components/store/desktop.ui.store";
 	import ProfileView from "./components/views/ProfileView.svelte";
 	import CredentialEditorModal from "./components/views/CredentialEditorModal.svelte";
 	import CredentialViewModal from "./components/views/CredentialViewModal.svelte";
+	import DeleteConfirmationModal from "./components/ui/DeleteConfirmationModal.svelte";
 
 	let showWelcome = false;
 	let signedUp = false;
@@ -89,10 +81,12 @@
 	{:else}
 		<DefaultLayout />
 
+		<!-- AddCredentialModal opens up folder or/and category type selection modal -->
 		{#if $addCredentialModal}
 			<AddCredentialModal />
 		{/if}
 
+		<!-- Actual credential entering happens here in CredentialEditorModal-->
 		{#if $credentialEditorModal}
 			<CredentialEditorModal />
 		{/if}
@@ -103,6 +97,9 @@
 
 		{#if $viewCredentialModal}
 			<CredentialViewModal />
+		{#if $deleteConfirmationModal}
+			<DeleteConfirmationModal />
+
 		{/if}
 
 		{#if $profileModal}
@@ -123,11 +120,12 @@
 			{/if}
 		{/if}
 
+	
+		-->
 		{#if $toastStore.show}
-			 {#if true}
 			<div class="z-100">
-				<ShareToast />
+				<Toast />
 			</div>
-		{/if} -->
+		{/if}
 	{/if}
 </main>

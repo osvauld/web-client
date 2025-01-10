@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from "svelte";
-	import type { IntermediateCredential } from "../../../dtos/import.dto";
-	import { selectedFolder } from "../store";
+	import type { IntermediateCredential } from "../../dtos/import.dto";
+	import { currentVault } from "../store/desktop.ui.store";
 
 	export let dataFromParser: IntermediateCredential[];
 
@@ -25,8 +25,8 @@
 		const filteredData = dataFromParser.filter(
 			(_, index) => selectedCredentials[index],
 		);
-		if ($selectedFolder) {
-			dispatch("approved", { ...filteredData, folderId: $selectedFolder.id });
+		if ($currentVault.id) {
+			dispatch("approved", { ...filteredData, folderId: $currentVault.id });
 		}
 	};
 
@@ -40,8 +40,7 @@
 		<thead class="text-xs uppercase sticky top-0 bg-osvauld-frameblack">
 			<tr>
 				<th class="px-6 py-3 flex flex-col justify-center items-center"
-					>Select <span>({selectionLength})</span></th
-				>
+					>Select <span>({selectionLength})</span></th>
 				<th class="px-6 py-3">Name</th>
 				<th class="px-6 py-3">Username</th>
 				<th class="px-6 py-3">Domain</th>
@@ -52,13 +51,11 @@
 				<tr class="border-b border-osvauld-iconblack">
 					<td
 						class="px-6 py-4 text-center cursor-pointer"
-						on:click="{() => changeSelection(index)}"
-					>
+						on:click="{() => changeSelection(index)}">
 						<input
 							type="checkbox"
 							bind:checked="{selectedCredentials[index]}"
-							class="w-5 h-5 text-osvauld-carolinablue bg-osvauld-iconblack border border-osvauld-sheffieldgrey rounded active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer"
-						/>
+							class="w-5 h-5 text-osvauld-carolinablue bg-osvauld-iconblack border border-osvauld-sheffieldgrey rounded active:outline-none focus:ring-offset-0 focus:ring-0 cursor-pointer" />
 					</td>
 					<td class="px-6 py-4">{cred.name}</td>
 					<td class="px-6 py-4">{cred.username}</td>
@@ -75,8 +72,7 @@
 		class="px-6 py-2 bg-osvauld-carolinablue text-osvauld-frameblack rounded-lg
            hover:bg-osvauld-frameblack
 					hover:text-osvauld-carolinablue
-           border border-osvauld-carolinablue transition-all duration-300 ease-in-out"
-	>
+           border border-osvauld-carolinablue transition-all duration-300 ease-in-out">
 		Proceed
 	</button>
 </div>

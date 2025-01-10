@@ -122,7 +122,7 @@ export const renderRelevantHeading = (
 	switch (credentialType) {
 		case "Login":
 			relevantCredentialName =
-				credentialFields.find((item) => item.fieldName === "Username")
+				credentialFields.find((item) => item.fieldName === "Domain")
 					?.fieldValue || credentialId;
 			return relevantCredentialName;
 		case "Note":

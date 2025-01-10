@@ -3,9 +3,9 @@
 		currentCredential,
 		viewCredentialModal,
 		currentVault,
+		deleteConfirmationModal,
 	} from "../store/desktop.ui.store";
 
-	import { onMount } from "svelte";
 	import { scale } from "svelte/transition";
 
 	import Tick from "../../../icons/tick.svelte";
@@ -16,6 +16,7 @@
 	import ClosePanel from "../../../icons/closePanel.svelte";
 	import Share from "../../../icons/FolderShare.svelte";
 	import Star from "../../../icons/star.svelte";
+	import Bin from "../../../icons/binIcon.svelte";
 
 	import { writeToClipboard } from "../../../lib/components/dashboard/helper";
 
@@ -36,6 +37,11 @@
 			copied = false;
 			copiedItemIndex = null;
 		}, 1000);
+	};
+
+	const handleCredentialDelete = () => {
+		viewCredentialModal.set(false);
+		deleteConfirmationModal.set(true);
 	};
 </script>
 
@@ -68,7 +74,7 @@
 		</div>
 		<div
 			class="grow p-4 text-mobile-textPrimary overflow-y-auto scrollbar-thin flex flex-col gap-2 mt-2">
-			{#each $currentCredential.data.credentialFields as field, index (field.field)}
+			{#each $currentCredential.data.credentialFields as field, index (field.fieldName)}
 				{#if field.fieldValue.trim().length !== 0}
 					<span class="text-mobile-textlabel text-sm">{field.fieldName}</span>
 					<div class="flex gap-2">
@@ -95,12 +101,16 @@
 
 			<hr class="border border-mobile-bgSeconary my-3" />
 			<div
-				class="bg-mobile-bgSeconary rounded-lg h-[65px] p-3 text-mobile-textPrimary text-sm mt-auto">
-				Created at : <br />
-				<span class="text-xs"
-					>{new Date().toLocaleTimeString() +
-						"," +
-						new Date().toLocaleDateString()}</span>
+				class="bg-mobile-bgSeconary rounded-lg h-[65px] p-3 text-mobile-textPrimary text-sm mt-auto flex justify-between items-center">
+				<span>
+					Created at : <br />
+					<span class="text-xs"
+						>{new Date().toLocaleTimeString() +
+							"," +
+							new Date().toLocaleDateString()}</span>
+				</span>
+				<button class="p-2" on:click|stopPropagation="{handleCredentialDelete}"
+					><Bin color="#FF6A6A" /></button>
 			</div>
 		</div>
 	</div>
