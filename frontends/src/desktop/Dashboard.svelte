@@ -32,6 +32,7 @@
 	onMount(async () => {
 		try {
 			const response = await sendMessage("isSignedUp");
+			console.log(response);
 			const checkPvtLoad = await sendMessage("checkPvtLoaded");
 			signedUp = response.isSignedUp;
 			if (checkPvtLoad === false) {
@@ -94,8 +95,11 @@
 			<CredentialViewModal />
 		{/if}
 
+		{#if $viewCredentialModal}
+			<CredentialViewModal />
 		{#if $deleteConfirmationModal}
 			<DeleteConfirmationModal />
+
 		{/if}
 
 		{#if $profileModal}

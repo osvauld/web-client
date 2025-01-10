@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+
+use crate::domains::models::folder::Folder;
 #[derive(Serialize)]
 #[serde(untagged)]
 pub enum CryptoResponse {
@@ -29,6 +31,7 @@ pub enum CryptoResponse {
     ExportedCertificate(String),
     Folders(Vec<FolderResponse>),
     Credentials(Vec<CredentialResponse>),
+    FolderCreated(Folder),
     Success,
 }
 
@@ -63,10 +66,11 @@ pub struct HashAndSignInput {
     pub message: String,
 }
 
-#[derive(Deserialize)]
-pub struct ImportCertificateInput {
+#[derive(Deserialize, Debug)]
+pub struct AddDeviceInput {
     pub certificate: String,
     pub passphrase: String,
+    pub ticket: String,
 }
 
 #[derive(Deserialize)]

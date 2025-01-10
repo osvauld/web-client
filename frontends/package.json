@@ -49,6 +49,7 @@
 		"@tauri-apps/api": "^2.0.0-rc.5",
 		"@tauri-apps/plugin-barcode-scanner": "^2.0.0",
 		"@tauri-apps/plugin-clipboard-manager": "^2.0.0-rc.2",
+		"@tauri-apps/plugin-log": "^2.2.0",
 		"@tauri-apps/plugin-store": "^2.0.0",
 		"papaparse": "^5.4.1",
 		"totp-generator": "^1.0.0",

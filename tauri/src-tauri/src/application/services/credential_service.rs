@@ -24,22 +24,16 @@ pub enum CredentialServiceError {
 pub struct CredentialService {
     credential_repository: Arc<dyn CredentialRepository>,
     crypto_utils: Arc<Mutex<CryptoUtils>>,
-    sync_repository: Arc<dyn SyncRepository>,
-    p2p_service: Arc<P2PService>,
 }
 
 impl CredentialService {
     pub fn new(
         credential_repository: Arc<dyn CredentialRepository>,
         crypto_utils: Arc<Mutex<CryptoUtils>>,
-        sync_repository: Arc<dyn SyncRepository>,
-        p2p_service: Arc<P2PService>,
     ) -> Self {
         Self {
             credential_repository,
             crypto_utils,
-            sync_repository,
-            p2p_service,
         }
     }
 
@@ -48,7 +42,7 @@ impl CredentialService {
         credential_payload: String,
         credential_type: String,
         folder_id: String,
-    ) -> Result<(), CredentialServiceError> {
+    ) -> Result<Credential, CredentialServiceError> {
         // Encrypt the credential
         let encrypted = {
             let crypto = self.crypto_utils.lock().await;
@@ -70,18 +64,8 @@ impl CredentialService {
             .save(&credential)
             .await
             .map_err(CredentialServiceError::RepositoryError)?;
-        let sync_record = SyncRecord::new_credential_sync(
-            credential.id.clone(),
-            "create".to_string(),
-            "1".to_string(),
-            "2".to_string(),
-        );
-        self.sync_repository
-            .save_sync_records(&[sync_record])
-            .await?;
-        self.p2p_service.handle_sync_request().await;
 
-        Ok(())
+        Ok(credential)
     }
 
     pub async fn get_credentials_for_folder(

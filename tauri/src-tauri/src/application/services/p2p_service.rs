@@ -1,17 +1,17 @@
+use crate::application::services::auth_service::AuthService;
 use crate::application::services::sync_service::SyncService;
 use crate::application::services::SyncPayload;
-use crate::domains::models::p2p::{ConnectionTicket, Message};
+use crate::domains::models::device::Device;
+use crate::domains::models::p2p::{ConnectionTicket, HandshakeError, HandshakeMessage, Message};
 use crate::types::CryptoResponse;
-use futures_lite::StreamExt;
 use iroh::endpoint::Connection;
+const MAX_HANDSHAKE_SIZE: usize = 8192; // 8KB max size for handshake messages
 use iroh::{
     endpoint::{DirectAddrType, RecvStream, SendStream},
-    Endpoint, NodeAddr, RelayMode,
+    Endpoint, NodeAddr, RelayMode, SecretKey,
 };
 use iroh_blobs::store::mem::Store;
 use log::{debug, error, info, warn};
-use std::net::Ipv6Addr;
-use std::net::SocketAddrV6;
 use std::sync::Arc;
 use tauri::AppHandle;
 use tauri::Emitter;
@@ -19,27 +19,40 @@ use tauri::Manager;
 use tokio::io::AsyncWriteExt;
 use tokio::sync::Mutex;
 use tokio::time::{timeout, Duration};
+use url::Url;
 
-const ALPN_PROTOCOL: &[u8] = b"n0/osvauld/0";
-const CONNECTION_TIMEOUT: Duration = Duration::from_secs(30);
-const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(30);
+const ALPN_PROTOCOL: &[u8] = b"n0/iroh/examples/magic/0";
+const CONNECTION_TIMEOUT: Duration = Duration::from_secs(60);
+const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(60);
+
 struct P2PState {
     endpoint: Arc<Endpoint>,
     active_connection: Arc<Mutex<Option<Arc<Connection>>>>,
 }
+
 #[derive(Clone)]
 pub struct P2PService {
     state: Arc<Mutex<Option<P2PState>>>,
+    is_initiator: Arc<Mutex<Option<bool>>>,
+    device: Arc<Mutex<Option<Device>>>,
     app_handle: AppHandle,
     sync_service: Arc<SyncService>,
+    auth_service: Arc<AuthService>,
 }
 
 impl P2PService {
-    pub fn new(app_handle: AppHandle, sync_service: Arc<SyncService>) -> Self {
+    pub fn new(
+        app_handle: AppHandle,
+        sync_service: Arc<SyncService>,
+        auth_service: Arc<AuthService>,
+    ) -> Self {
         Self {
             state: Arc::new(Mutex::new(None)),
+            is_initiator: Arc::new(Mutex::new(None)),
+            device: Arc::new(Mutex::new(None)),
             app_handle,
             sync_service,
+            auth_service,
         }
     }
     async fn ensure_initialized(&self) -> Result<(), String> {
@@ -49,20 +62,12 @@ impl P2PService {
         }
 
         info!("Initializing P2P endpoint");
-
-        // Create IPv6 unspecified address with port 0
-        let bind_addr = SocketAddrV6::new(
-            Ipv6Addr::UNSPECIFIED,
-            0,
-            0, // flowinfo
-            0, // scope_id
-        );
-
+        let secret_key = SecretKey::generate(rand::rngs::OsRng);
         let endpoint = Endpoint::builder()
+            .secret_key(secret_key)
+            .discovery_n0()
             .relay_mode(RelayMode::Default)
             .alpns(vec![ALPN_PROTOCOL.to_vec()])
-            .discovery_n0()
-            .bind_addr_v6(bind_addr)
             .bind()
             .await
             .map_err(|e| format!("Failed to bind endpoint: {}", e))?;
@@ -73,6 +78,26 @@ impl P2PService {
         });
 
         info!("P2P initialization successful");
+        Ok(())
+    }
+
+    pub async fn add_device(&self, device: Device, ticket: String) -> Result<(), String> {
+        // First establish connection with the target device using the ticket
+        info!(
+            "Initiating device addition process for device: {:?}",
+            device
+        );
+        self.connect_with_ticket(&ticket).await?;
+
+        // Once connected, send the AddDevice message
+        info!("Connection established, sending AddDevice message");
+        let add_device_message = Message::AddDevice(device);
+        let serialized = serde_json::to_string(&add_device_message)
+            .map_err(|e| format!("Failed to serialize AddDevice message: {}", e))?;
+
+        // Send the message and wait for acknowledgment
+        self.send_message(serialized).await?;
+
         Ok(())
     }
 
@@ -138,6 +163,10 @@ impl P2PService {
 
     async fn perform_handshake(&self, conn: &Connection, is_initiator: bool) -> Result<(), String> {
         let (mut send, mut recv) = match timeout(CONNECTION_TIMEOUT, async {
+            {
+                let mut initiator = self.is_initiator.lock().await;
+                *initiator = Some(is_initiator);
+            }
             if is_initiator {
                 info!("Initiator: Opening bi-directional stream");
                 conn.open_bi().await
@@ -154,9 +183,13 @@ impl P2PService {
         };
 
         if is_initiator {
-            self.initiate_handshake(&mut send, &mut recv).await?;
+            self.initiate_handshake(&mut send, &mut recv)
+                .await
+                .map_err(|e| e.to_string())?;
         } else {
-            self.accept_handshake(&mut send, &mut recv).await?;
+            self.accept_handshake(&mut send, &mut recv)
+                .await
+                .map_err(|e| e.to_string())?;
         }
 
         {
@@ -204,7 +237,6 @@ impl P2PService {
     pub async fn start_sync(&self) -> Result<(), String> {
         info!("Starting sync process");
         let connection = self.get_active_connection().await?;
-
         // Send sync request
         let (mut send, mut recv) = connection
             .open_bi()
@@ -239,67 +271,149 @@ impl P2PService {
         &self,
         send: &mut SendStream,
         recv: &mut RecvStream,
-    ) -> Result<(), String> {
+    ) -> Result<(), HandshakeError> {
         info!("Initiator: Sending hello");
-        send.write_all(b"hello")
+        let device = self
+            .auth_service
+            .get_current_device()
             .await
-            .map_err(|e| format!("Failed to send hello: {}", e))?;
+            .map_err(|e| HandshakeError::AuthService(e.to_string()))?;
+        let (challenge, signature) = self
+            .auth_service
+            .sign_random_challenge()
+            .await
+            .map_err(|e| HandshakeError::AuthService(e.to_string()))?;
+        let handshake_message = HandshakeMessage {
+            challenge,
+            signature,
+            device,
+        };
+        let serialized = serde_json::to_string(&handshake_message)
+            .map_err(|e| HandshakeError::Serialization(e.to_string()))?;
+        send.write_all(serialized.as_bytes())
+            .await
+            .map_err(|e| HandshakeError::Connection(e.to_string()))?;
         send.flush()
             .await
-            .map_err(|e| format!("Failed to flush hello: {}", e))?;
+            .map_err(|e| HandshakeError::Connection(e.to_string()))?;
 
-        info!("Initiator: Waiting for welcome response");
-        let mut buffer = [0u8; 1024];
-        match timeout(HANDSHAKE_TIMEOUT, recv.read(&mut buffer)).await {
-            Ok(Ok(Some(n))) => {
-                let response = String::from_utf8_lossy(&buffer[..n]);
-                info!("Initiator: Received response: {}", response);
-                if response != "welcome" {
-                    return Err(format!("Invalid handshake response: {}", response));
+        info!("Initiator: Waiting for handshake response");
+        let mut buffer = [0u8; MAX_HANDSHAKE_SIZE];
+        match timeout(HANDSHAKE_TIMEOUT, recv.read(&mut buffer)).await? {
+            Ok(Some(n)) => {
+                if n >= MAX_HANDSHAKE_SIZE {
+                    return Err(HandshakeError::Connection(
+                        "Handshake message too large".into(),
+                    ));
                 }
+
+                let message_str = String::from_utf8(buffer[..n].to_vec())
+                    .map_err(|_| HandshakeError::Connection("Invalid UTF-8 in response".into()))?;
+
+                let response: HandshakeMessage = serde_json::from_str(&message_str)?;
+                {
+                    let mut device = self.device.lock().await;
+                    *device = Some(response.device.clone());
+                }
+
+                // Verify the challenge matches
+                // if challenge != response.challenge {
+                //     return Err(HandshakeError::InvalidChallenge(
+                //         "Challenge mismatch".into(),
+                //     ));
+                // }
+
+                //TODO: Verify signature
+                // self.auth_service
+                //     .verify_signature(&response.device, &response.challenge, &response.signature)
+                //     .await
+                //     .map_err(|e| HandshakeError::InvalidSignature(e.to_string()))?;
+
+                info!("Initiator: Handshake completed successfully");
                 let _ = self.app_handle.emit("sync-complete", true);
+                Ok(())
             }
-            Ok(Ok(None)) => return Err("Connection closed during handshake".to_string()),
-            Ok(Err(e)) => return Err(format!("Read error during handshake: {}", e)),
-            Err(e) => return Err(format!("Handshake timeout while reading: {}", e)),
+            Ok(None) => Err(HandshakeError::Connection("Connection closed".into())),
+            Err(e) => Err(HandshakeError::Connection(e.to_string())),
         }
-        Ok(())
     }
 
     async fn accept_handshake(
         &self,
         send: &mut SendStream,
         recv: &mut RecvStream,
-    ) -> Result<(), String> {
-        info!("Receiver: Waiting for hello");
-        let mut buffer = [0u8; 1024];
-        match timeout(HANDSHAKE_TIMEOUT, recv.read(&mut buffer)).await {
-            Ok(Ok(Some(n))) => {
-                let message = String::from_utf8_lossy(&buffer[..n]);
-                info!("Receiver: Received message: {}", message);
-                if message != "hello" {
-                    return Err(format!("Invalid handshake message: {}", message));
-                }
-            }
-            Ok(Ok(None)) => return Err("Connection closed during handshake".to_string()),
-            Ok(Err(e)) => return Err(format!("Read error during handshake: {}", e)),
-            Err(e) => return Err(format!("Handshake timeout while reading: {}", e)),
-        }
+    ) -> Result<(), HandshakeError> {
+        info!("Receiver: Waiting for handshake message");
+        let mut buffer = [0u8; MAX_HANDSHAKE_SIZE];
 
-        info!("Receiver: Sending welcome");
-        send.write_all(b"welcome")
+        // First receive and validate the incoming handshake
+        let handshake_message: HandshakeMessage =
+            match timeout(HANDSHAKE_TIMEOUT, recv.read(&mut buffer)).await? {
+                Ok(Some(n)) => {
+                    if n >= MAX_HANDSHAKE_SIZE {
+                        return Err(HandshakeError::Connection(
+                            "Handshake message too large".into(),
+                        ));
+                    }
+                    let message_str = String::from_utf8(buffer[..n].to_vec()).map_err(|_| {
+                        HandshakeError::Connection("Invalid UTF-8 in response".into())
+                    })?;
+                    serde_json::from_str(&message_str)?
+                }
+                Ok(None) => return Err(HandshakeError::Connection("Connection closed".into())),
+                Err(e) => return Err(HandshakeError::Connection(e.to_string())),
+            };
+        //TODO: verify signature
+
+        {
+            let mut device = self.device.lock().await;
+            *device = Some(handshake_message.device.clone());
+        }
+        // Get our device and create response
+        let device = self
+            .auth_service
+            .get_current_device()
             .await
-            .map_err(|e| format!("Failed to send welcome: {}", e))?;
+            .map_err(|e| HandshakeError::AuthService(e.to_string()))?;
+
+        let (challenge, signature) = self
+            .auth_service
+            .sign_random_challenge()
+            .await
+            .map_err(|e| HandshakeError::AuthService(e.to_string()))?;
+
+        let handshake_message = HandshakeMessage {
+            challenge,
+            signature,
+            device,
+        };
+        info!("handshake_message {:?}", handshake_message);
+
+        // Send our response
+        let serialized = serde_json::to_string(&handshake_message)?;
+
+        send.write_all(serialized.as_bytes())
+            .await
+            .map_err(|e| HandshakeError::Connection(e.to_string()))?;
+
         send.flush()
             .await
-            .map_err(|e| format!("Failed to flush welcome: {}", e))?;
+            .map_err(|e| HandshakeError::Connection(e.to_string()))?;
 
+        info!("Receiver: Handshake completed successfully");
         Ok(())
     }
 
     pub async fn handle_sync_request(&self) -> Result<(), String> {
         info!("Handling incoming sync request");
-        match self.sync_service.get_next_pending_sync().await {
+        let device = {
+            let device_guard = self.device.lock().await;
+            (*device_guard
+                .as_ref()
+                .ok_or_else(|| "Device not set".to_string())?)
+            .clone()
+        };
+        match self.sync_service.get_next_pending_sync(&device).await {
             Ok(Some(payload)) => {
                 info!(
                     "Sending sync payload for resource: {}",
@@ -322,43 +436,64 @@ impl P2PService {
         }
         Ok(())
     }
+    async fn handle_add_device_request(&self, device: Device) -> Result<(), String> {
+        info!("Processing device addition request for ID: {:?}", device.id);
+
+        self.sync_service
+            .add_new_device_sync(device.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+        // Create and send acknowledgment message
+        let ack_message = Message::AddDeviceAck(device.id.clone());
+        let serialized = serde_json::to_string(&ack_message)
+            .map_err(|e| format!("Failed to serialize acknowledgment: {}", e))?;
+
+        // Send the acknowledgment
+        self.send_message(serialized).await?;
+        info!("Sent acknowledgment for device: {:?}", device.id);
+
+        // Notify UI of the new device
+        self.app_handle
+            .emit("device-added", device.id.clone())
+            .map_err(|e| format!("Failed to emit device-added event: {}", e))?;
+
+        info!("Successfully processed device addition request");
+        Ok(())
+    }
 
     async fn handle_sync_ack(&self, sync_id: String) -> Result<(), String> {
         info!("Received sync acknowledgment for ID: {}", sync_id);
-
-        // Update the sync status
-        if let Err(e) = self
-            .sync_service
+        self.sync_service
             .update_sync_status(&sync_id, "completed")
             .await
-        {
-            error!("Failed to update sync status: {}", e);
-            return Err(e.to_string());
-        }
-        info!("Updated sync status to completed for ID: {}", sync_id);
+            .map_err(|e| e.to_string())?;
+        let device = {
+            let device_guard = self.device.lock().await;
+            (*device_guard
+                .as_ref()
+                .ok_or_else(|| "Device not set".to_string())?)
+            .clone()
+        };
 
-        // Send next pending sync
-        match self.sync_service.get_next_pending_sync().await {
+        match self.sync_service.get_next_pending_sync(&device).await {
             Ok(Some(payload)) => {
-                info!(
-                    "Sending next sync payload for resource: {}",
-                    payload.sync_record.resource_id
-                );
+                info!("Sending next sync payload");
                 let message = Message::SyncResponse(payload);
-                self.send_message(serde_json::to_string(&message).map_err(|e| e.to_string())?)
-                    .await?;
+                let serialized = serde_json::to_string(&message).map_err(|e| e.to_string())?;
+                self.send_message(serialized).await?;
             }
             Ok(None) => {
-                info!("No more pending syncs, sending sync complete");
+                info!("No more pending syncs, sending complete");
                 let message = Message::SyncComplete;
-                self.send_message(serde_json::to_string(&message).map_err(|e| e.to_string())?)
-                    .await?;
+                let serialized = serde_json::to_string(&message).map_err(|e| e.to_string())?;
+                self.send_message(serialized).await?;
             }
             Err(e) => {
                 error!("Failed to get next pending sync: {}", e);
                 return Err(e.to_string());
             }
         }
+
         Ok(())
     }
 
@@ -369,6 +504,7 @@ impl P2PService {
         );
 
         // Process the sync payload
+        // TODO: handle error case
         if let Err(e) = self.sync_service.process_sync_payload(&payload).await {
             error!("Failed to process sync payload: {}", e);
             return Err(e.to_string());
@@ -390,12 +526,26 @@ impl P2PService {
 
         Ok(())
     }
-
     async fn handle_sync_complete(&self) -> Result<(), String> {
         info!("Sync process completed");
+
+        // Get is_initiator from state
+        let is_initiator = {
+            let initiator_guard = self.is_initiator.lock().await;
+            *initiator_guard
+                .as_ref()
+                .ok_or_else(|| "is_initiator not set".to_string())?
+        };
+
         self.app_handle
             .emit("sync-complete", true)
             .map_err(|e| e.to_string())?;
+
+        // If not initiator, start sync
+        if !is_initiator {
+            self.start_sync().await?;
+        }
+
         Ok(())
     }
 
@@ -428,6 +578,24 @@ impl P2PService {
                                                         Message::SyncAck(sync_id) => {
                                                             self.handle_sync_ack(sync_id.clone())
                                                                 .await
+                                                        }
+                                                        Message::AddDevice(device_payload) => {
+                                                            self.handle_add_device_request(
+                                                                device_payload.clone(),
+                                                            )
+                                                            .await
+                                                        }
+                                                        Message::AddDeviceAck(device_id) => {
+                                                            info!("Received device addition acknowledgment for ID: {}", device_id);
+                                                            let _ = self.start_sync().await;
+                                                            // Emit event for UI update
+                                                            if let Err(e) = self.app_handle.emit(
+                                                                "device-add-acknowledged",
+                                                                device_id.clone(),
+                                                            ) {
+                                                                error!("Failed to emit device-add-acknowledged event: {}", e);
+                                                            }
+                                                            Ok(())
                                                         }
                                                         Message::SyncResponse(payload) => {
                                                             info!(
@@ -654,30 +822,33 @@ impl P2PService {
         self.ensure_initialized().await?;
         let state_guard = self.state.lock().await;
         let state = state_guard.as_ref().ok_or("P2P not initialized")?;
-
-        let addrs = state
+        let node_addr = state
             .endpoint
-            .direct_addresses()
-            .next()
+            .node_addr()
             .await
-            .ok_or_else(|| "No direct addresses available".to_string())?
-            .into_iter()
-            .filter(|direct_addr| matches!(direct_addr.typ, DirectAddrType::Stun))
-            .map(|e| e.addr.to_string())
-            .collect::<Vec<_>>();
+            .map_err(|e| e.to_string())?;
+        let relay_url = node_addr
+            .relay_url
+            .expect("Should have a relay URL, assuming a default endpoint setup.");
 
+        let addrs = node_addr
+            .direct_addresses
+            .into_iter()
+            .map(|e| e.to_string())
+            .collect::<Vec<_>>();
         let ticket = ConnectionTicket {
             node_id: state.endpoint.node_id().to_string(),
             addresses: addrs,
+            relay_url: relay_url.to_string(),
         };
 
         serde_json::to_string(&ticket).map_err(|e| e.to_string())
     }
-
     pub async fn connect_with_ticket(&self, ticket_str: &str) -> Result<(), String> {
         self.ensure_initialized().await?;
 
-        // Create connection info in a separate scope
+        info!("Starting connection process with ticket: {}", ticket_str);
+
         let (endpoint, node_addr) = {
             let state_guard = self.state.lock().await;
             let state = state_guard.as_ref().ok_or("P2P not initialized")?;
@@ -685,41 +856,80 @@ impl P2PService {
             let ticket: ConnectionTicket = serde_json::from_str(ticket_str)
                 .map_err(|e| format!("Invalid ticket format: {}", e))?;
 
-            info!("Connecting to node: {}", ticket.node_id);
+            info!(
+                "Parsed ticket - Node ID: {}, URL: {}",
+                ticket.node_id, ticket.relay_url
+            );
+            info!("Addresses from ticket: {:?}", ticket.addresses);
+            let clea_url = ticket.relay_url.trim_end_matches("/").to_string();
+            let url = Url::parse(&clea_url).map_err(|e| e.to_string())?;
+            let relay_url = Some(iroh::RelayUrl::from(url));
+
+            info!("Constructed relay URL: {:?}", relay_url);
 
             let node_addr = NodeAddr::from_parts(
                 ticket
                     .node_id
                     .parse()
                     .map_err(|e| format!("Invalid node ID: {}", e))?,
-                None,
+                relay_url,
                 ticket
                     .addresses
                     .iter()
-                    .filter_map(|a| a.parse().ok())
+                    .filter_map(|a| {
+                        let addr = a.parse();
+                        addr.ok()
+                    })
                     .collect::<Vec<_>>(),
             );
 
-            (state.endpoint.clone(), node_addr)
-        }; // state_guard is dropped here
+            info!("Created NodeAddr: {:?}", node_addr);
+            info!("Our endpoint ID: {}", state.endpoint.node_id());
+            info!(
+                "ALPN Protocol being used: {}",
+                String::from_utf8_lossy(ALPN_PROTOCOL)
+            );
 
-        // Establish connection
-        let conn = match timeout(
-            CONNECTION_TIMEOUT,
-            endpoint.connect(node_addr, ALPN_PROTOCOL),
-        )
-        .await
-        .map_err(|e| format!("Connection timeout: {}", e))?
-        .map_err(|e| format!("Connection failed: {}", e))?
-        {
-            conn => {
-                info!("Connected to: {}", conn.remote_address());
-                conn
-            }
+            (state.endpoint.clone(), node_addr)
         };
 
-        // Perform handshake
-        self.perform_handshake(&conn, true).await?;
+        info!("Starting endpoint.connect() call...");
+        let connect_result = endpoint.connect(node_addr.clone(), ALPN_PROTOCOL).await;
+
+        match &connect_result {
+            Ok(conn) => {
+                info!("Connection successful!");
+                info!("Remote address: {}", conn.remote_address());
+                info!("Connection stats: {:?}", conn.stats());
+
+                // Try to get additional connection info if possible
+                if let Ok(peer_id) = iroh::endpoint::get_remote_node_id(conn) {
+                    info!("Connected to peer ID: {}", peer_id);
+                }
+            }
+            Err(e) => {
+                error!("Connection failed. Error details:");
+                error!("Error: {}", e);
+                error!("Node addr used: {:?}", node_addr);
+                // Try to get any additional endpoint state that might be helpful
+                info!("Endpoint bound sockets: {:?}", endpoint.bound_sockets());
+                if let Ok(cur_addr) = endpoint.node_addr().await {
+                    info!("Current endpoint addr: {:?}", cur_addr);
+                }
+            }
+        }
+
+        let conn = connect_result.map_err(|e| format!("Connection failed: {e}"))?;
+
+        info!("Starting handshake process...");
+        let handshake_result = self.perform_handshake(&conn, true).await;
+
+        match &handshake_result {
+            Ok(_) => info!("Handshake completed successfully"),
+            Err(e) => error!("Handshake failed: {}", e),
+        }
+
+        handshake_result?;
 
         self.app_handle
             .emit("sync-complete", true)

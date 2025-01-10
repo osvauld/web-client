@@ -10,6 +10,7 @@
 	import { setFolderStore } from "../../../store/storeHelper";
 	import { fly } from "svelte/transition";
 	import { sendMessage } from "../helper";
+	import { onMount } from "svelte";
 
 	export let name = "";
 	export let description = "";
@@ -48,6 +49,7 @@
 			description: description,
 			sharedFolder: selectedTab === "shared",
 		};
+		console.log("adding folder...");
 		// const folderResponse = await createFolder(payload);
 		sendMessage("addFolder", { name, description });
 		await setFolderStore();
@@ -76,6 +78,9 @@
 	const toggleSelect = (e: any) => {
 		selectedTab = e.detail;
 	};
+	onMount(() => {
+		console.log("moundet");
+	});
 </script>
 
 <form

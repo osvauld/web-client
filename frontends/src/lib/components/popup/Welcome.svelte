@@ -19,7 +19,7 @@
 	$: type = showPassword ? "text" : "password";
 	async function handleSubmit() {
 		isLoaderActive = true;
-		const pubkey = await sendMessage("getPubKey", { passphrase });
+		const pubkey = await sendMessage("login", { passphrase });
 		dispatch("authenticated", true);
 		isLoaderActive = false;
 	}

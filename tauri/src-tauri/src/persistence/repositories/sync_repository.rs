@@ -58,4 +58,17 @@ impl SyncRepository for SqliteSyncRepository {
 
         Ok(())
     }
+
+    async fn get_sync_records_by_device_id(
+        &self,
+        target_device_id: &str,
+    ) -> Result<Vec<SyncRecord>, RepositoryError> {
+        let mut conn = self.connection.lock().await;
+        let sync_models = sync_records::table
+            .filter(sync_records::target_device_id.eq(target_device_id))
+            .select(SyncRecordModel::as_select())
+            .load::<SyncRecordModel>(&mut *conn)
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+        Ok(SyncRecordModel::to_domain_records(sync_models))
+    }
 }

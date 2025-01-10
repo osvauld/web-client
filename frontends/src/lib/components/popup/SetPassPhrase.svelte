@@ -50,7 +50,7 @@
 					description: "",
 				});
 				isLoaderActive = false;
-				const pubkey = await sendMessage("getPubKey", { passphrase });
+				const pubkey = await sendMessage("login", { passphrase });
 
 				await StorageService.setIsLoggedIn("true");
 

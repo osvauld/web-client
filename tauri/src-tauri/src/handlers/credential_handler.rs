@@ -1,4 +1,4 @@
-use crate::application::services::CredentialService;
+use crate::application::services::{CredentialService, SyncService};
 use crate::types::{
     AddCredentialInput, CredentialResponse, CryptoResponse, GetCredentialForFolderInput,
 };
@@ -9,8 +9,9 @@ use tauri::State;
 pub async fn handle_add_credential(
     input: AddCredentialInput,
     credential_service: State<'_, Arc<CredentialService>>,
+    sync_service: State<'_, Arc<SyncService>>,
 ) -> Result<CryptoResponse, String> {
-    credential_service
+    let credential = credential_service
         .add_credential(
             input.credential_payload,
             input.credential_type,
@@ -18,7 +19,10 @@ pub async fn handle_add_credential(
         )
         .await
         .map_err(|e| e.to_string())?;
-
+    sync_service
+        .add_credential_to_sync(credential)
+        .await
+        .map_err(|e| e.to_string())?;
     Ok(CryptoResponse::Success)
 }
 
