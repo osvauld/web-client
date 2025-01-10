@@ -44,7 +44,7 @@
 				<span><DownArrow type="common" /></span>
 			</button>
 			<button
-				class="rounded-md py-1.5 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue transition-colors"
+				class="rounded-md py-3 px-4 mx-2 flex justify-center items-center whitespace-nowrap text-sm border text-osvauld-textActive border-osvauld-iconblack hover:text-osvauld-frameblack hover:bg-osvauld-carolinablue transition-colors"
 				on:mouseenter="{() => (addCredentialHovered = true)}"
 				on:mouseleave="{() => (addCredentialHovered = false)}"
 				on:click="{() => addCredentialModal.set(true)}">
