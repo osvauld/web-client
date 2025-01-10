@@ -43,7 +43,7 @@
 		in:fly
 		on:submit|preventDefault|stopPropagation="{DeleteConfirmation}">
 		<div class="flex justify-between items-center w-full">
-			<span class="text-[21px] font-medium text-osvauld-quarzowhite"
+			<span class="text-[21px] font-medium text-osvauld-quarzowhite capitalize"
 				>Delete {$currentCredential?.id
 					? renderRelevantHeading(
 							$currentCredential.data.credentialFields,
