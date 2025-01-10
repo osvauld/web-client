@@ -25,7 +25,7 @@
 	let prevImportModalState = false;
 	let importHovered = false;
 	let importSelected = false;
-	let expand = { id: null, show: true };
+	let expand = []; // { id: null, show: false };
 
 	const fetchCredentials = async (vaultId: string) => {
 		try {
@@ -40,6 +40,7 @@
 	// I need this to fetch again when the import modal is closed
 	$: {
 		fetchCredentials($currentVault.id);
+		expand = [];
 	}
 
 	$: {
@@ -74,11 +75,13 @@
 	};
 
 	const handleExpand = (id) => {
-		if (expand.id === id) {
-			expand.show = !expand.show;
+		const index = expand.findIndex((item) => item.id === id);
+		if (index !== -1) {
+			expand = expand.map((item) =>
+				item.id === id ? { ...item, show: !item.show } : item,
+			);
 		} else {
-			expand.id = id;
-			expand.show = true;
+			expand = [...expand, { id, show: true }];
 		}
 	};
 
@@ -93,17 +96,10 @@
 		return 1;
 	};
 
-	// Get items for a specific column
 	const getColumnItems = (items, colIndex) => {
 		const colCount = getColumnCount();
 		return items.filter((_, index) => index % colCount === colIndex);
 	};
-
-	onMount(() => {
-		return () => {
-			expand = { id: null, show: false };
-		};
-	});
 </script>
 
 <div class="grow max-h-[85%] px-16 py-4 relative">
@@ -115,7 +111,6 @@
 	{/if}
 	<div class="h-full overflow-y-auto scrollbar-thin overflow-x-hidden pr-1">
 		<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
-			<!-- Create column containers -->
 			{#each Array(getColumnCount()) as _, colIndex}
 				<div class="flex flex-col gap-3">
 					{#each getColumnItems(updatedCredentials, colIndex) as credential (credential.id)}
@@ -165,7 +160,7 @@
 										{credentialType}
 									</span>
 								</div>
-								{#if expand.show && expand.id === credential.id}
+								{#if expand.find((item) => item.id === credential.id)?.show}
 									<div
 										class="mt-3 h-56 bg-osvauld-fieldActive rounded-lg transition-all duration-300">
 									</div>
