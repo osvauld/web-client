@@ -50,7 +50,7 @@
 			fetchCredentials($currentVault.id);
 		}
 		prevDeleteModalState = $deleteConfirmationModal;
-  }
+	}
 	$: {
 		if (prevImportModalState && !importSelected) {
 			fetchCredentials($currentVault.id);
@@ -74,7 +74,6 @@
 	};
 </script>
 
-
 <div class="grow max-h-[85%] px-16 py-4 relative">
 	{#if importSelected}
 		<div
@@ -83,7 +82,7 @@
 		</div>
 	{/if}
 	<div
-		class="h-full overflow-y-scroll scrollbar-thin flex flex-wrap content-start gap-3">
+		class="h-full overflow-y-scroll overflow-x-hidden scrollbar-thin flex flex-wrap content-start gap-3">
 		{#each updatedCredentials as credential (credential.id)}
 			{@const credentialType = credential.data.credentialType}
 			{@const categoryInfo = CATEGORIES.find(

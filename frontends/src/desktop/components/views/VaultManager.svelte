@@ -56,12 +56,11 @@
 	onMount(async () => {
 		await fetchAllVaults();
 		console.log("mounting vault manager");
-
 	});
 </script>
 
 <div
-	class="fixed inset-0 bg-transparent"
+	class="fixed inset-0 bg-transparent z-[999]"
 	on:click="{() => (vaultManagerActive = false)}">
 	<div
 		class="absolute top-56 left-4 w-[360px] h-[25rem] overflow-hidden scrollbar-thin border border-osvauld-iconblack bg-osvauld-ninjablack rounded-2xl px-2 pt-2 pb-3 flex flex-col gap-2 text-lg"
@@ -69,7 +68,6 @@
 		id="vaultSelector"
 		in:fly
 		on:click|stopPropagation>
-
 		<div class="h-full flex flex-col">
 			<div class="flex-1 overflow-y-auto space-y-2 scrollbar-thin p-1">
 				{#each $vaults as vault (vault.id)}
@@ -79,7 +77,6 @@
 						class:bg-mobile-bgLight="{isActive}"
 						class:text-mobile-textTertiary="{isActive}"
 						on:click|stopPropagation="{() => handleVaultSwitch(vault)}">
-
 						<span
 							><MobileHome color="{isActive ? '#F2F2F0' : '#85889C'}" /></span>
 						<span class="grow text-left pl-2 capitalize max-w-full truncate"
@@ -94,7 +91,6 @@
 						in:slide
 						out:slide
 						on:submit|preventDefault|stopPropagation="{handleVaultCreation}">
-
 						<span class="text-lg text-center">New Vault</span>
 						<hr class="h-px border-0 bg-mobile-bgLight" />
 						<div class="flex flex-col grow gap-1">

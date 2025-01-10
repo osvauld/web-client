@@ -5,9 +5,11 @@
 		deleteConfirmationModal,
 		toastStore,
 	} from "../store/desktop.ui.store";
+	import { renderRelevantHeading } from "../../utils/credentialUtils";
 	import { fly } from "svelte/transition";
 	import Warning from "../../../icons/warning.svelte";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
+	import { onMount } from "svelte";
 
 	const DeleteConfirmation = () => {
 		// TODO: Call the API to delete the credential
@@ -29,6 +31,10 @@
 		currentCredential.set({});
 		deleteConfirmationModal.set(false);
 	};
+
+	onMount(() => {
+		console.log($currentCredential);
+	});
 </script>
 
 <button
@@ -40,7 +46,12 @@
 		on:submit|preventDefault|stopPropagation="{DeleteConfirmation}">
 		<div class="flex justify-between items-center w-full">
 			<span class="text-[21px] font-medium text-osvauld-quarzowhite"
-				>Delete Credential Name</span>
+				>Delete {renderRelevantHeading(
+					$currentCredential.data.credentialFields,
+					$currentCredential.data.credentialType,
+					$currentCredential.id,
+				)} ?
+			</span>
 			<button
 				class="cursor-pointer p-2"
 				on:click|stopPropagation="{withdrawCredentialDeleteModal}">
