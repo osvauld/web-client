@@ -25,7 +25,7 @@
 	let prevImportModalState = false;
 	let importHovered = false;
 	let importSelected = false;
-	let expand = []; // { id: null, show: false };
+	let expand = []; // { id: null, show: false }[];
 
 	const fetchCredentials = async (vaultId: string) => {
 		try {
