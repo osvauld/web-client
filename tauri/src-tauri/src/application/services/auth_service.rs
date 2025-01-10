@@ -203,6 +203,7 @@ impl AuthService {
             )
             .await
             .map_err(|e| e.to_string())?;
+        self.load_certificate(&passphrase).await?;
 
         Ok(device)
     }

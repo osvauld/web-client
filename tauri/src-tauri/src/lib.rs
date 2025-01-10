@@ -14,8 +14,7 @@ use crate::application::services::P2PService;
 use crate::application::services::SyncService;
 use crate::handlers::auth_handler::{
     check_private_key_loaded, check_signup_status, handle_add_device, handle_change_passphrase,
-    handle_export_certificate, handle_get_public_key, handle_hash_and_sign, handle_sign_challenge,
-    handle_sign_up,
+    handle_export_certificate, handle_hash_and_sign, handle_sign_challenge, handle_sign_up, login,
 };
 use crate::handlers::credential_handler::{
     handle_add_credential, handle_get_credentials_for_folder,
@@ -141,7 +140,7 @@ pub fn run() {
             check_signup_status,
             handle_sign_up,
             check_private_key_loaded,
-            handle_get_public_key,
+            login,
             handle_sign_challenge,
             handle_add_credential,
             handle_hash_and_sign,

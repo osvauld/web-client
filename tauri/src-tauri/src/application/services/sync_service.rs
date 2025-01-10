@@ -69,7 +69,7 @@ impl SyncService {
 
     pub async fn get_next_pending_sync(
         &self,
-        device: Device,
+        device: &Device,
     ) -> Result<Option<SyncPayload>, RepositoryError> {
         // Get the next pending sync record for target device 2
         let pending_records = self.sync_repository.get_pending_records(&device.id).await?;

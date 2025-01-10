@@ -41,7 +41,7 @@
 			passphrase,
 			...recovery,
 		});
-		const pubkey = await sendMessage("getPubKey", { passphrase });
+		const pubkey = await sendMessage("login", { passphrase });
 		dispatch("login", true);
 	};
 </script>

@@ -45,7 +45,7 @@ pub async fn check_private_key_loaded(
 }
 
 #[tauri::command]
-pub async fn handle_get_public_key(
+pub async fn login(
     input: LoadPvtKeyInput,
     auth_service: State<'_, Arc<AuthService>>,
 ) -> Result<CryptoResponse, String> {
@@ -81,7 +81,7 @@ pub async fn handle_add_device(
         .add_device(input.certificate, input.passphrase)
         .await?;
     p2p_service.add_device(device, input.ticket).await?;
-    todo!()
+    Ok(CryptoResponse::Success)
 }
 
 #[tauri::command]
