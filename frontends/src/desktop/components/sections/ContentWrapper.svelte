@@ -12,6 +12,7 @@
 	import CredentialList from "../views/CredentialList.svelte";
 
 	let addCredentialHovered = false;
+	let deleteBtnHoved = false;
 
 	const handleDeleteBtn = () => {
 		deleteConfirmationModal.set({ item: "folder", show: true });
@@ -27,8 +28,13 @@
 
 		<div class="gap-4 flex justify-between items-center ml-3">
 			{#if $currentVault.id !== "all"}
-				<button class="p-2" on:click|stopPropagation="{handleDeleteBtn}"
-					><Bin color="#FF6A6A" /></button>
+				<button
+					class="p-2"
+					on:click|stopPropagation="{handleDeleteBtn}"
+					on:mouseenter="{() => (deleteBtnHoved = true)}"
+					on:mouseleave="{() => (deleteBtnHoved = false)}"
+					aria-label="Delete Folder"
+					><Bin color="{deleteBtnHoved ? '#FF6A6A' : '#85889C'}" /></button>
 			{/if}
 			<span><Menu /></span>
 			<button
