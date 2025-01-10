@@ -2,32 +2,35 @@
 	import ClosePanel from "../../../icons/closePanel.svelte";
 	import {
 		currentCredential,
+		currentVault,
 		deleteConfirmationModal,
 		toastStore,
 	} from "../store/desktop.ui.store";
+	import { renderRelevantHeading } from "../../utils/credentialUtils";
 	import { fly } from "svelte/transition";
 	import Warning from "../../../icons/warning.svelte";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 
 	const DeleteConfirmation = () => {
-		// TODO: Call the API to delete the credential
+		// TODO: Call the API to delete the credential or folder
 		// await sendMessage("deleteCredential", { id: currentCredential.id });
+		// or await sendMessage("deleteFolder", { id: $currentVault.id.id });
 		toastStore.set({
 			show: true,
-			message: "Credential deleted successfully",
+			message: `${$deleteConfirmationModal.item} deleted successfully`,
 			success: true,
 		});
 		// toastStore.set({
 		// 	show: true,
-		// 	message: "Credential deletion failed",
+		// 	message: `${$currentCredential?.id ? "Credential" : "Folder"} deletion failed`,
 		// 	success: false,
 		// });
-		deleteConfirmationModal.set(false);
+		deleteConfirmationModal.set({ item: "", show: false });
 	};
 
 	const withdrawCredentialDeleteModal = () => {
 		currentCredential.set({});
-		deleteConfirmationModal.set(false);
+		deleteConfirmationModal.set({ item: "", show: false });
 	};
 </script>
 
@@ -39,8 +42,15 @@
 		in:fly
 		on:submit|preventDefault|stopPropagation="{DeleteConfirmation}">
 		<div class="flex justify-between items-center w-full">
-			<span class="text-[21px] font-medium text-osvauld-quarzowhite"
-				>Delete Credential Name</span>
+			<span class="text-[21px] font-medium text-osvauld-quarzowhite capitalize"
+				>Delete {$deleteConfirmationModal.item === "credential"
+					? renderRelevantHeading(
+							$currentCredential.data.credentialFields,
+							$currentCredential.data.credentialType,
+							$currentCredential.id,
+						)
+					: $currentVault.name} ?
+			</span>
 			<button
 				class="cursor-pointer p-2"
 				on:click|stopPropagation="{withdrawCredentialDeleteModal}">
@@ -69,7 +79,8 @@
 			<button
 				class="border border-osvauld-dangerRed py-[5px] px-[15px] text-base font-medium text-osvauld-dangerRed rounded-md hover:bg-osvauld-dangerRed hover:text-osvauld-frameblack transition-all"
 				type="submit"
-				on:click="{DeleteConfirmation}">Delete Credential</button>
+				on:click="{DeleteConfirmation}"
+				>Delete {$deleteConfirmationModal.item}</button>
 		</div>
 	</form>
 </button>
