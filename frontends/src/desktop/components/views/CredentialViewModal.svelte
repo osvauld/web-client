@@ -41,7 +41,7 @@
 
 	const handleCredentialDelete = () => {
 		viewCredentialModal.set(false);
-		deleteConfirmationModal.set(true);
+		deleteConfirmationModal.set({ item: "credential", show: true });
 	};
 </script>
 

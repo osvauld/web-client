@@ -46,10 +46,10 @@
 	}
 
 	$: {
-		if (prevDeleteModalState && !$deleteConfirmationModal) {
+		if (prevDeleteModalState && !$deleteConfirmationModal.show) {
 			fetchCredentials($currentVault.id);
 		}
-		prevDeleteModalState = $deleteConfirmationModal;
+		prevDeleteModalState = $deleteConfirmationModal.show;
 	}
 	$: {
 		if (prevImportModalState && !importSelected) {

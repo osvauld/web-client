@@ -12,5 +12,5 @@ export let viewCredentialModal = writable(false);
 export let currentCredential = writable({});
 export let profileModal = writable(false);
 
-export let deleteConfirmationModal = writable(false);
+export let deleteConfirmationModal = writable({ item: "", show: false });
 export let toastStore = writable({ show: false, message: "", success: true });

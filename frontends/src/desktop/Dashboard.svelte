@@ -94,7 +94,7 @@
 			<CredentialViewModal />
 		{/if}
 
-		{#if $deleteConfirmationModal}
+		{#if $deleteConfirmationModal.show}
 			<DeleteConfirmationModal />
 		{/if}
 
