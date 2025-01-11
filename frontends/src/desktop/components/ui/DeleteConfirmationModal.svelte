@@ -11,10 +11,11 @@
 	import Warning from "../../../icons/warning.svelte";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 
-	const DeleteConfirmation = () => {
-		// TODO: Call the API to delete the credential or folder
-		// await sendMessage("deleteCredential", { id: currentCredential.id });
-		// or await sendMessage("deleteFolder", { id: $currentVault.id.id });
+	const DeleteConfirmation = async () => {
+		// TODO: Call the API to delete the credential
+		await sendMessage("deleteCredential", {
+			credentialId: $currentCredential.id,
+		});
 		toastStore.set({
 			show: true,
 			message: `${$deleteConfirmationModal.item} deleted successfully`,

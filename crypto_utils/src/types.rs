@@ -42,8 +42,8 @@ pub struct CredentialWithEncryptedKey {
     pub credential_type: String,
     pub data: String,
     pub signature: String,
-    pub permission: String,
     pub encrypted_key: String,
+    pub last_accessed: i64,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

@@ -64,8 +64,7 @@
 
 <main
 	class="
-    bg-osvauld-frameblack
-   w-screen h-screen text-macchiato-text text-lg !font-sans">
+    bg-osvauld-frameblack w-screen h-screen text-macchiato-text text-lg !font-sans">
 	{#if isLoading}
 		<div class="flex justify-center items-center w-full h-full">
 			<Loader size="{24}" color="#1F242A" duration="{1}" />

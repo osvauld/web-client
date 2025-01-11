@@ -36,6 +36,7 @@ pub enum OperationType {
     Create,
     Update,
     Delete,
+    SoftDelete,
     StatusChange,
 }
 
@@ -46,6 +47,7 @@ impl ToString for OperationType {
             OperationType::Update => "update".to_string(),
             OperationType::Delete => "delete".to_string(),
             OperationType::StatusChange => "status_change".to_string(),
+            OperationType::SoftDelete => "soft_delete".to_string(),
         }
     }
 }
@@ -57,6 +59,7 @@ impl From<String> for OperationType {
             "update" => OperationType::Update,
             "delete" => OperationType::Delete,
             "status_change" => OperationType::StatusChange,
+            "soft_delete" => OperationType::SoftDelete,
             _ => panic!("Invalid OperationType string: {}", s), // You might want to handle this differently
         }
     }

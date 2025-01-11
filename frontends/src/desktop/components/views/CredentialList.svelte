@@ -13,7 +13,7 @@
 	} from "../../utils/credentialUtils";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 	import Menu from "../../../icons/Menu.svelte";
-	import Import from "../../../icons/Import.svelte";
+	import Import from "../../../icons/import.svelte";
 	import ImportModal from "./ImportModal.svelte";
 	import Star from "../../../icons/star.svelte";
 	import MenuVertical from "../../../icons/menuVertical.svelte";

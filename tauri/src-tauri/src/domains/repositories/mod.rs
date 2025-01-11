@@ -18,6 +18,7 @@ pub trait FolderRepository: Send + Sync {
     async fn save(&self, folder: &Folder) -> Result<(), RepositoryError>;
     async fn find_all(&self) -> Result<Vec<Folder>, RepositoryError>;
     async fn find_by_id(&self, id: &str) -> Result<Folder, RepositoryError>;
+    async fn soft_delete(&self, id: &str) -> Result<(), RepositoryError>;
 }
 
 #[async_trait]
@@ -57,6 +58,8 @@ pub trait CredentialRepository: Send + Sync {
     async fn save(&self, credential: &Credential) -> Result<(), RepositoryError>;
     async fn find_by_folder(&self, folder_id: &str) -> Result<Vec<Credential>, RepositoryError>;
     async fn find_by_id(&self, id: &str) -> Result<Credential, RepositoryError>;
+    async fn delete_credential(&self, id: &str) -> Result<(), RepositoryError>;
+    async fn soft_delete_credential(&self, id: &str) -> Result<(), RepositoryError>;
 }
 
 #[async_trait]

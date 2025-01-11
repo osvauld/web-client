@@ -50,4 +50,8 @@ impl FolderService {
             .await
             .map_err(FolderServiceError::RepositoryError)
     }
+
+    pub async fn soft_delete_folder(&self, folder_id: &str) -> Result<(), RepositoryError> {
+        self.folder_repository.soft_delete(folder_id).await
+    }
 }
