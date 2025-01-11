@@ -60,6 +60,8 @@ pub trait CredentialRepository: Send + Sync {
     async fn find_by_id(&self, id: &str) -> Result<Credential, RepositoryError>;
     async fn delete_credential(&self, id: &str) -> Result<(), RepositoryError>;
     async fn soft_delete_credential(&self, id: &str) -> Result<(), RepositoryError>;
+    async fn toggle_fav(&self, id: &str) -> Result<(), RepositoryError>;
+    async fn update_last_accessed(&self, id: &str) -> Result<(), RepositoryError>;
 }
 
 #[async_trait]

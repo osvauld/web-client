@@ -80,4 +80,47 @@ impl CredentialRepository for SqliteCredentialRepository {
 
         Ok(())
     }
+
+    async fn toggle_fav(&self, credential_id: &str) -> Result<(), RepositoryError> {
+        let mut conn = self.connection.lock().await;
+        let now = Local::now().timestamp_millis();
+
+        // First get current favorite status
+        let current_favorite: bool = credentials::table
+            .select(credentials::favorite)
+            .filter(credentials::id.eq(credential_id))
+            .first(&mut *conn)
+            .map_err(|e| match e {
+                diesel::NotFound => RepositoryError::NotFound,
+                _ => RepositoryError::DatabaseError(e.to_string()),
+            })?;
+
+        // Toggle favorite status
+        diesel::update(credentials::table)
+            .filter(credentials::id.eq(credential_id))
+            .set((
+                credentials::favorite.eq(!current_favorite),
+                credentials::updated_at.eq(now),
+            ))
+            .execute(&mut *conn)
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+
+        Ok(())
+    }
+
+    async fn update_last_accessed(&self, credential_id: &str) -> Result<(), RepositoryError> {
+        let mut conn = self.connection.lock().await;
+        let now = Local::now().timestamp_millis();
+
+        diesel::update(credentials::table)
+            .filter(credentials::id.eq(credential_id))
+            .set(credentials::last_accessed.eq(now))
+            .execute(&mut *conn)
+            .map_err(|e| match e {
+                diesel::NotFound => RepositoryError::NotFound,
+                _ => RepositoryError::DatabaseError(e.to_string()),
+            })?;
+
+        Ok(())
+    }
 }

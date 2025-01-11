@@ -1,7 +1,6 @@
 use crate::application::services::P2PService;
-use crate::database::schema::sync_records::target_device_id;
 
-use crate::domains::models::credential::{Credential, DecryptedCredential};
+use crate::domains::models::credential::{self, Credential, DecryptedCredential};
 use crate::domains::models::sync_record::SyncRecord;
 use crate::domains::repositories::{CredentialRepository, RepositoryError, SyncRepository};
 use crypto_utils::CryptoUtils;
@@ -123,6 +122,16 @@ impl CredentialService {
     pub async fn delete_credential(&self, credential_id: String) -> Result<(), RepositoryError> {
         self.credential_repository
             .soft_delete_credential(&credential_id)
+            .await
+    }
+
+    pub async fn toggle_fav(&self, credential_id: String) -> Result<(), RepositoryError> {
+        self.credential_repository.toggle_fav(&credential_id).await
+    }
+
+    pub async fn update_last_accessed(&self, credential_id: String) -> Result<(), RepositoryError> {
+        self.credential_repository
+            .update_last_accessed(&credential_id)
             .await
     }
 }
