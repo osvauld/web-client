@@ -1,7 +1,10 @@
 use crate::application::services::{CredentialService, SyncService};
+use crate::domains::models::sync_record::ResourceType;
 use crate::types::{
-    AddCredentialInput, CredentialResponse, CryptoResponse, GetCredentialForFolderInput,
+    AddCredentialInput, CredentialResponse, CryptoResponse, DeleteCredentialInput,
+    GetCredentialForFolderInput,
 };
+use log::info;
 use std::sync::Arc;
 use tauri::State;
 
@@ -41,9 +44,27 @@ pub async fn handle_get_credentials_for_folder(
         .map(|cred| CredentialResponse {
             id: cred.id,
             data: cred.data,
-            permission: cred.permission,
         })
         .collect();
 
     Ok(CryptoResponse::Credentials(credential_responses))
+}
+
+#[tauri::command]
+pub async fn delete_credential(
+    input: DeleteCredentialInput,
+    credential_service: State<'_, Arc<CredentialService>>,
+    sync_service: State<'_, Arc<SyncService>>,
+) -> Result<String, String> {
+    info!("deleting credential {}", input.credential_id);
+    credential_service
+        .delete_credential(input.credential_id.clone())
+        .await
+        .map_err(|e| e.to_string())?;
+    sync_service
+        .add_soft_deletion_sync_record(input.credential_id, ResourceType::Credential)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    todo!()
 }

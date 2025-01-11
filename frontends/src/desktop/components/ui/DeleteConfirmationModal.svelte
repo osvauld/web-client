@@ -15,6 +15,7 @@
 		// TODO: Call the API to delete the credential or folder
 		// await sendMessage("deleteCredential", { id: currentCredential.id });
 		// or await sendMessage("deleteFolder", { id: $currentVault.id.id });
+
 		toastStore.set({
 			show: true,
 			message: `${$deleteConfirmationModal.item} deleted successfully`,

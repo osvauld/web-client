@@ -7,10 +7,10 @@ pub struct Folder {
     pub id: String,
     pub name: String,
     pub description: Option<String>,
-    pub shared: bool,
-    pub access_type: String,
     pub created_at: i64,
     pub updated_at: i64,
+    pub deleted: bool,
+    pub deleted_at: Option<i64>,
 }
 
 impl Folder {
@@ -21,10 +21,10 @@ impl Folder {
             id: Uuid::new_v4().to_string(),
             name,
             description,
-            shared: true,
-            access_type: "manager".to_string(),
             created_at: now.clone(),
             updated_at: now,
+            deleted: false,
+            deleted_at: None,
         }
     }
 }

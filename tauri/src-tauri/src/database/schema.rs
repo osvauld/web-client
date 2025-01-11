@@ -7,8 +7,11 @@ diesel::table! {
         data -> Text,
         folder_id -> Text,
         signature -> Text,
-        permission -> Text,
         encrypted_key -> Text,
+        favorite -> Bool,
+        last_accessed -> BigInt,
+        deleted -> Bool,
+        deleted_at -> Nullable<BigInt>,
         updated_at -> BigInt,
         created_at -> BigInt,
     }
@@ -28,8 +31,8 @@ diesel::table! {
         id -> Text,
         name -> Text,
         description -> Nullable<Text>,
-        shared -> Bool,
-        access_type -> Text,
+        deleted -> Bool,
+        deleted_at -> Nullable<BigInt>,
         updated_at -> BigInt,
         created_at -> BigInt,
     }
@@ -62,8 +65,6 @@ diesel::table! {
 }
 
 diesel::joinable!(credentials -> folders (folder_id));
-diesel::joinable!(sync_records -> credentials (credential_id));
-diesel::joinable!(sync_records -> folders (folder_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     credentials,

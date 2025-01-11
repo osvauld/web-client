@@ -13,7 +13,7 @@
 	} from "../../utils/credentialUtils";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 	import Menu from "../../../icons/Menu.svelte";
-	import Import from "../../../icons/Import.svelte";
+	import Import from "../../../icons/import.svelte";
 	import ImportModal from "./ImportModal.svelte";
 
 	let credentials = [];
@@ -50,6 +50,7 @@
 			fetchCredentials($currentVault.id);
 		}
 		prevDeleteModalState = $deleteConfirmationModal.show;
+
 	}
 	$: {
 		if (prevImportModalState && !importSelected) {

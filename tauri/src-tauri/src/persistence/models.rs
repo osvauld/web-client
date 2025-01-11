@@ -3,7 +3,7 @@ use crate::domains::models::{
     credential::Credential as DomainCredential,
     device::Device as DomainDevice,
     folder::Folder as DomainFolder,
-    sync_record::{OperationType, ResourceType, SyncRecord as DomainSyncRecord, SyncStatus},
+    sync_record::{SyncRecord as DomainSyncRecord, SyncStatus},
 };
 use diesel::prelude::*;
 
@@ -13,8 +13,8 @@ pub struct FolderModel {
     pub id: String,
     pub name: String,
     pub description: Option<String>,
-    pub shared: bool,
-    pub access_type: String,
+    pub deleted: bool,
+    pub deleted_at: Option<i64>,
     pub created_at: i64,
     pub updated_at: i64,
 }
@@ -25,10 +25,10 @@ impl From<&DomainFolder> for FolderModel {
             id: folder.id.clone(),
             name: folder.name.clone(),
             description: folder.description.clone(),
-            shared: folder.shared,
-            access_type: folder.access_type.clone(),
-            created_at: folder.created_at.clone(),
-            updated_at: folder.updated_at.clone(),
+            deleted: folder.deleted,
+            deleted_at: folder.deleted_at,
+            created_at: folder.created_at,
+            updated_at: folder.updated_at,
         }
     }
 }
@@ -39,10 +39,10 @@ impl From<FolderModel> for DomainFolder {
             id: model.id,
             name: model.name,
             description: model.description,
-            shared: model.shared,
-            access_type: model.access_type,
             created_at: model.created_at,
             updated_at: model.updated_at,
+            deleted_at: model.deleted_at,
+            deleted: model.deleted,
         }
     }
 }
@@ -120,8 +120,11 @@ pub struct CredentialModel {
     pub data: String,
     pub folder_id: String,
     pub signature: String,
-    pub permission: String,
     pub encrypted_key: String,
+    pub favorite: bool,
+    pub last_accessed: i64,
+    pub deleted: bool,
+    pub deleted_at: Option<i64>,
     pub updated_at: i64,
     pub created_at: i64,
 }
@@ -134,8 +137,11 @@ impl From<&DomainCredential> for CredentialModel {
             data: credential.data.clone(),
             folder_id: credential.folder_id.clone(),
             signature: credential.signature.clone(),
-            permission: credential.permission.clone(),
             encrypted_key: credential.encrypted_key.clone(),
+            favorite: credential.favorite,
+            last_accessed: credential.last_accessed,
+            deleted: credential.deleted,
+            deleted_at: credential.deleted_at,
             created_at: credential.created_at,
             updated_at: credential.updated_at,
         }
@@ -150,10 +156,13 @@ impl From<CredentialModel> for DomainCredential {
             data: model.data,
             folder_id: model.folder_id,
             signature: model.signature,
-            permission: model.permission,
             encrypted_key: model.encrypted_key,
             created_at: model.created_at,
             updated_at: model.updated_at,
+            last_accessed: model.last_accessed,
+            favorite: model.favorite,
+            deleted: model.deleted,
+            deleted_at: model.deleted_at,
         }
     }
 }

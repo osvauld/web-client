@@ -54,7 +54,6 @@ pub struct SignChallengeInput {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-
 pub struct AddCredentialInput {
     pub credential_payload: String,
     pub folder_id: String,
@@ -64,6 +63,12 @@ pub struct AddCredentialInput {
 #[derive(Deserialize)]
 pub struct HashAndSignInput {
     pub message: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DeleteCredentialInput {
+    pub credential_id: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -86,7 +91,6 @@ pub struct PasswordChangeInput {
     pub new_password: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
 pub struct CredentialType {
     pub credential_id: String,
     pub credential_type: String,
@@ -100,6 +104,12 @@ pub struct CredentialType {
 pub struct AddFolderInput {
     pub name: String,
     pub description: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SoftDeleteFolder {
+    pub folder_id: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -116,9 +126,6 @@ pub struct FolderResponse {
     pub id: String,
     pub name: String,
     pub description: String,
-    pub shared: bool,
-    #[serde(rename = "accessType")]
-    pub access_type: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -131,5 +138,4 @@ pub struct GetCredentialForFolderInput {
 pub struct CredentialResponse {
     pub id: String,
     pub data: serde_json::Value,
-    pub permission: String,
 }

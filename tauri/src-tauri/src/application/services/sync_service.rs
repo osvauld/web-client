@@ -164,6 +164,12 @@ impl SyncService {
                         // TODO: Implement delete in credential repository
                         // self.credential_repository.delete(&credential.id).await?;
                     }
+                    sync_record::OperationType::SoftDelete => {
+                        info!("soft delete");
+                        self.credential_repository
+                            .soft_delete_credential(&credential.id)
+                            .await?;
+                    }
                     op => {
                         log::error!("Unknown credential operation: {:?}", op);
                         return Err(RepositoryError::DatabaseError(format!(
@@ -225,6 +231,53 @@ impl SyncService {
                 .save_sync_records(&[sync_record])
                 .await?;
         }
+        Ok(())
+    }
+
+    pub async fn add_soft_deletion_sync_record(
+        &self,
+        resource_id: String,
+        resource_type: sync_record::ResourceType,
+    ) -> Result<(), RepositoryError> {
+        // Get current device ID
+        let device_id = self.store_repository.get_device_key().await?;
+
+        // Get all devices to sync with
+        let devices = self.device_repository.get_all_devices().await?;
+
+        let sync_records: Vec<SyncRecord> = devices
+            .into_iter()
+            .map(|device| {
+                let mut sync_record = match resource_type {
+                    sync_record::ResourceType::Credential => SyncRecord::new_credential_sync(
+                        resource_id.clone(),
+                        sync_record::OperationType::SoftDelete,
+                        device_id.clone(),
+                        device.id.clone(),
+                    ),
+                    sync_record::ResourceType::Folder => SyncRecord::new_folder_sync(
+                        resource_id.clone(),
+                        sync_record::OperationType::SoftDelete,
+                        device_id.clone(),
+                        device.id.clone(),
+                    ),
+                    _ => panic!("Unsupported resource type for deletion sync"),
+                };
+
+                // Mark as completed for current device
+                if device_id == device.id {
+                    sync_record.status = sync_record::SyncStatus::Completed;
+                }
+
+                sync_record
+            })
+            .collect();
+
+        // Save all sync records
+        self.sync_repository
+            .save_sync_records(&sync_records)
+            .await?;
+
         Ok(())
     }
 }

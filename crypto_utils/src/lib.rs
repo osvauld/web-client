@@ -232,8 +232,8 @@ impl CryptoUtils {
                 credential_type: credential.credential_type,
                 data: decrypted_data,
                 signature: credential.signature,
-                permission: credential.permission,
                 encrypted_key: credential.encrypted_key, // Keep the original encrypted key
+                last_accessed: credential.last_accessed,
             };
 
             decrypted_credentials.push(decrypted_credential);

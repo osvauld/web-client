@@ -17,7 +17,7 @@ use crate::handlers::auth_handler::{
     handle_export_certificate, handle_hash_and_sign, handle_sign_challenge, handle_sign_up, login,
 };
 use crate::handlers::credential_handler::{
-    handle_add_credential, handle_get_credentials_for_folder,
+    delete_credential, handle_add_credential, handle_get_credentials_for_folder,
 };
 use crate::handlers::folder_handler::{handle_add_folder, handle_get_folders};
 use crate::handlers::p2p_handlers::{
@@ -62,7 +62,7 @@ pub fn run() {
         .setup(|app| {
             let handle = app.handle();
             let app_dir = app.path().app_data_dir().unwrap();
-            let db_path = app_dir.join("sqlite20.db").to_str().unwrap().to_string();
+            let db_path = app_dir.join("sqlite.db").to_str().unwrap().to_string();
 
             // Create a new Tokio runtime
             let rt = Arc::new(Runtime::new().expect("Failed to create Tokio runtime"));
@@ -153,7 +153,8 @@ pub fn run() {
             send_message,
             get_ticket,
             connect_with_ticket,
-            start_p2p_listener
+            start_p2p_listener,
+            delete_credential
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

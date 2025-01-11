@@ -1,5 +1,6 @@
 use crate::application::services::{FolderService, SyncService};
-use crate::types::{AddFolderInput, CryptoResponse, FolderResponse};
+use crate::domains::models::sync_record::ResourceType;
+use crate::types::{AddFolderInput, CryptoResponse, FolderResponse, SoftDeleteFolder};
 use std::sync::Arc;
 use tauri::State;
 
@@ -34,10 +35,25 @@ pub async fn handle_get_folders(
             id: folder.id,
             name: folder.name,
             description: folder.description.unwrap_or_default(),
-            shared: folder.shared,
-            access_type: folder.access_type,
         })
         .collect();
 
     Ok(CryptoResponse::Folders(folder_responses))
+}
+
+#[tauri::command]
+pub async fn soft_delete_folder(
+    input: SoftDeleteFolder,
+    folder_service: State<'_, Arc<FolderService>>,
+    sync_service: State<'_, Arc<SyncService>>,
+) -> Result<CryptoResponse, String> {
+    folder_service
+        .soft_delete_folder(&input.folder_id)
+        .await
+        .map_err(|e| e.to_string())?;
+    sync_service
+        .add_soft_deletion_sync_record(input.folder_id, ResourceType::Folder)
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(CryptoResponse::Success)
 }
