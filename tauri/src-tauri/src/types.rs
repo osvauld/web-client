@@ -71,6 +71,16 @@ pub struct DeleteCredentialInput {
     pub credential_id: String,
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ToggleFavInput {
+    pub credential_id: String,
+}
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UpdateLastAccessedInput {
+    pub credential_id: String,
+}
 #[derive(Deserialize, Debug)]
 pub struct AddDeviceInput {
     pub certificate: String,

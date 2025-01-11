@@ -17,9 +17,10 @@ use crate::handlers::auth_handler::{
     handle_export_certificate, handle_hash_and_sign, handle_sign_challenge, handle_sign_up, login,
 };
 use crate::handlers::credential_handler::{
-    delete_credential, handle_add_credential, handle_get_credentials_for_folder,
+    handle_add_credential, handle_get_credentials_for_folder, soft_delete_credential, toggle_fav,
+    update_last_accessed,
 };
-use crate::handlers::folder_handler::{handle_add_folder, handle_get_folders};
+use crate::handlers::folder_handler::{handle_add_folder, handle_get_folders, soft_delete_folder};
 use crate::handlers::p2p_handlers::{
     connect_with_ticket, get_system_locale, get_ticket, send_message, start_p2p_listener,
 };
@@ -154,7 +155,10 @@ pub fn run() {
             get_ticket,
             connect_with_ticket,
             start_p2p_listener,
-            delete_credential
+            soft_delete_credential,
+            soft_delete_folder,
+            toggle_fav,
+            update_last_accessed
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
