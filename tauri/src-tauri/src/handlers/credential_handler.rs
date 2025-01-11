@@ -1,4 +1,5 @@
 use crate::application::services::{CredentialService, SyncService};
+use crate::database::schema::sync_records::credential_id;
 use crate::domains::models::sync_record::ResourceType;
 use crate::types::{
     AddCredentialInput, CredentialResponse, CryptoResponse, DeleteCredentialInput,
@@ -89,4 +90,23 @@ pub async fn update_last_accessed(
         .await
         .map_err(|e| e.to_string())?;
     Ok(CryptoResponse::Success)
+}
+
+#[tauri::command]
+pub async fn get_all_credentials(
+    credential_service: State<'_, Arc<CredentialService>>,
+) -> Result<CryptoResponse, String> {
+    let credentials = credential_service
+        .get_all_credentials()
+        .await
+        .map_err(|e| e.to_string())?;
+    let credential_responses = credentials
+        .into_iter()
+        .map(|cred| CredentialResponse {
+            id: cred.id,
+            data: cred.data,
+        })
+        .collect();
+
+    Ok(CryptoResponse::Credentials(credential_responses))
 }
