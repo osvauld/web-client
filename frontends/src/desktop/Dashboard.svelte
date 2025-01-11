@@ -97,9 +97,9 @@
 
 		{#if $viewCredentialModal}
 			<CredentialViewModal />
+		{/if}
 		{#if $deleteConfirmationModal}
 			<DeleteConfirmationModal />
-
 		{/if}
 
 		{#if $profileModal}

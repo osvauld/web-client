@@ -13,7 +13,7 @@
 	} from "../../utils/credentialUtils";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 	import Menu from "../../../icons/Menu.svelte";
-	import Import from "../../../icons/Import.svelte";
+	import Import from "../../../icons/import.svelte";
 	import ImportModal from "./ImportModal.svelte";
 
 	let credentials = [];
@@ -50,7 +50,7 @@
 			fetchCredentials($currentVault.id);
 		}
 		prevDeleteModalState = $deleteConfirmationModal;
-  }
+	}
 	$: {
 		if (prevImportModalState && !importSelected) {
 			fetchCredentials($currentVault.id);
@@ -73,7 +73,6 @@
 		importSelected = false;
 	};
 </script>
-
 
 <div class="grow max-h-[85%] px-16 py-4 relative">
 	{#if importSelected}

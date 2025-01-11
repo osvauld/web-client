@@ -9,10 +9,13 @@ pub struct Credential {
     pub data: String,
     pub folder_id: String,
     pub signature: String,
-    pub permission: String,
     pub encrypted_key: String,
     pub created_at: i64,
     pub updated_at: i64,
+    pub favorite: bool,
+    pub last_accessed: i64,
+    pub deleted: bool,
+    pub deleted_at: Option<i64>,
 }
 
 #[derive(Debug, Clone)]
@@ -20,7 +23,7 @@ pub struct DecryptedCredential {
     pub id: String,
     pub credential_type: String,
     pub data: Value,
-    pub permission: String,
+    pub last_accessed: i64,
 }
 
 impl Credential {
@@ -39,10 +42,13 @@ impl Credential {
             data,
             folder_id,
             signature,
-            permission: "read".to_string(), // Default permission
             encrypted_key,
             created_at: now.clone(),
             updated_at: now,
+            favorite: false,
+            last_accessed: now,
+            deleted: false,
+            deleted_at: None,
         }
     }
 }

@@ -2,6 +2,7 @@ use crate::database::schema::credentials;
 use crate::domains::models::credential::Credential;
 use crate::domains::repositories::{CredentialRepository, RepositoryError};
 use crate::persistence::models::{CredentialModel, FolderModel};
+use chrono::Local;
 
 use crate::DbConnection;
 use async_trait::async_trait;
@@ -33,6 +34,7 @@ impl CredentialRepository for SqliteCredentialRepository {
         let mut conn = self.connection.lock().await;
         let credential_models = credentials::table
             .filter(credentials::folder_id.eq(folder_id))
+            .filter(credentials::deleted.eq(false))
             .load::<CredentialModel>(&mut *conn)
             .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
 
@@ -49,5 +51,33 @@ impl CredentialRepository for SqliteCredentialRepository {
                 _ => RepositoryError::DatabaseError(e.to_string()),
             });
         Ok(credential_model?.into())
+    }
+
+    async fn delete_credential(&self, id: &str) -> Result<(), RepositoryError> {
+        let mut conn = self.connection.lock().await;
+        diesel::delete(credentials::table)
+            .filter(credentials::id.eq(id))
+            .execute(&mut *conn)
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+        Ok(())
+    }
+
+    async fn soft_delete_credential(&self, id: &str) -> Result<(), RepositoryError> {
+        let mut conn = self.connection.lock().await;
+        let now = Local::now().timestamp_millis();
+        diesel::update(credentials::table)
+            .filter(credentials::id.eq(id))
+            .set((
+                // Set the deleted flag to true
+                credentials::deleted.eq(true),
+                // Record when the deletion happened
+                credentials::deleted_at.eq(Some(now)),
+                // Update the updated_at timestamp to track the change
+                credentials::updated_at.eq(now),
+            ))
+            .execute(&mut *conn)
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+
+        Ok(())
     }
 }

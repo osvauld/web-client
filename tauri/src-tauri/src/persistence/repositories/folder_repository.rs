@@ -1,11 +1,12 @@
-use crate::database::schema::folders;
+use crate::database::schema::{credentials, folders};
 use crate::domains::models::folder::Folder;
 use crate::domains::repositories::{FolderRepository, RepositoryError};
 use crate::persistence::models::FolderModel;
 use crate::DbConnection;
 use async_trait::async_trait;
+use chrono::Local;
 use diesel::prelude::*;
-
+use diesel::result::Error as DieselError;
 pub struct SqliteFolderRepository {
     connection: DbConnection,
 }
@@ -34,6 +35,7 @@ impl FolderRepository for SqliteFolderRepository {
         let mut conn = self.connection.lock().await;
 
         let folder_models = folders::table
+            .filter(folders::deleted.eq(false))
             .load::<FolderModel>(&mut *conn)
             .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
 
@@ -52,5 +54,38 @@ impl FolderRepository for SqliteFolderRepository {
             })?;
 
         Ok(folder_model.into())
+    }
+
+    async fn soft_delete(&self, folder_id: &str) -> Result<(), RepositoryError> {
+        let mut conn = self.connection.lock().await;
+        let now = Local::now().timestamp_millis();
+
+        // Start a transaction
+        conn.transaction(|conn| -> Result<(), DieselError> {
+            // First soft delete all credentials in the folder
+            diesel::update(credentials::table)
+                .filter(credentials::folder_id.eq(folder_id))
+                .set((
+                    credentials::deleted.eq(true),
+                    credentials::deleted_at.eq(Some(now)),
+                    credentials::updated_at.eq(now),
+                ))
+                .execute(conn)?;
+
+            // Then soft delete the folder
+            diesel::update(folders::table)
+                .filter(folders::id.eq(folder_id))
+                .set((
+                    folders::deleted.eq(true),
+                    folders::deleted_at.eq(Some(now)),
+                    folders::updated_at.eq(now),
+                ))
+                .execute(conn)?;
+
+            Ok(())
+        })
+        .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+
+        Ok(())
     }
 }
