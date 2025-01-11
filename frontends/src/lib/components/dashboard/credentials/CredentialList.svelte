@@ -141,7 +141,7 @@
 			{/each}
 		</div>
 	{/if}
-	{#if $selectedFolder && $selectedFolder.accessType === "manager"}
+	{#if $selectedFolder}
 		<button
 			class="text-lg absolute bottom-10 right-14 bg-osvauld-frameblack border border-osvauld-iconblack text-osvauld-sheffieldgrey hover:bg-osvauld-carolinablue hover:text-osvauld-ninjablack rounded-lg py-2 px-3.5 flex justify-center items-center"
 			type="button"
