@@ -1,7 +1,7 @@
 <!-- <script lang="ts">
 	import { fly } from "svelte/transition";
 	import EncryptedField from "./EncryptedField.svelte";
-	import PlainField from "./PlainField.svelte";
+ PlainField from "./PlainField.svelte";
 	import Toggle from "../Toggle.svelte";
 	import {
 		fetchCredentialUsers,
