@@ -12,10 +12,20 @@
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 
 	const DeleteConfirmation = async () => {
-		// TODO: Call the API to delete the credential
-		await sendMessage("deleteCredential", {
-			credentialId: $currentCredential.id,
-		});
+		// TODO: Call the API to delete the credential or folder
+		// await sendMessage("deleteCredential", { id: currentCredential.id });
+		// or await sendMessage("deleteFolder", { id: $currentVault.id.id });
+		console.log($deleteConfirmationModal);
+		if ($deleteConfirmationModal.item == "folder") {
+			await sendMessage("deleteFolder", {
+				folderId: $currentVault.id,
+			});
+		} else if ($deleteConfirmationModal.item == "credential") {
+			await sendMessage("deleteCredential", {
+				credentialId: $currentCredential.id,
+			});
+		}
+
 		toastStore.set({
 			show: true,
 			message: `${$deleteConfirmationModal.item} deleted successfully`,

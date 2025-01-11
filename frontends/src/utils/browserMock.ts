@@ -72,7 +72,10 @@ const tauriBrowser = {
           'getFolder': () => invoke('handle_get_folders'),
           'getCredentialsForFolder': (data) => invoke('handle_get_credentials_for_folder', { input: data }),
           'startP2PListner': () => invoke('start_p2p_listener'),
-          'deleteCredential': (data: any) => invoke('delete_credential', { input: data })
+          'deleteCredential': (data: any) => invoke('soft_delete_credential', { input: data }),
+          'deleteFolder': (data: any) => invoke('soft_delete_folder', { input: data }),
+          'toggleFav': (data: any) => invoke('toggle_fav', { input: data }),
+          'updateLastAccessed': (data: any) => invoke('update_last_accessed', { input: data }),
         };
 
         const handler = handlerMap[action];
