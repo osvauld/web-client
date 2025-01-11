@@ -2,7 +2,7 @@ use crate::application::services::{CredentialService, SyncService};
 use crate::domains::models::sync_record::ResourceType;
 use crate::types::{
     AddCredentialInput, CredentialResponse, CryptoResponse, DeleteCredentialInput,
-    GetCredentialForFolderInput,
+    GetCredentialForFolderInput, ToggleFavInput, UpdateLastAccessedInput,
 };
 use log::info;
 use std::sync::Arc;
@@ -51,11 +51,11 @@ pub async fn handle_get_credentials_for_folder(
 }
 
 #[tauri::command]
-pub async fn delete_credential(
+pub async fn soft_delete_credential(
     input: DeleteCredentialInput,
     credential_service: State<'_, Arc<CredentialService>>,
     sync_service: State<'_, Arc<SyncService>>,
-) -> Result<String, String> {
+) -> Result<(), String> {
     info!("deleting credential {}", input.credential_id);
     credential_service
         .delete_credential(input.credential_id.clone())
@@ -65,6 +65,28 @@ pub async fn delete_credential(
         .add_soft_deletion_sync_record(input.credential_id, ResourceType::Credential)
         .await
         .map_err(|e| e.to_string())?;
+    Ok(())
+}
 
-    todo!()
+#[tauri::command]
+pub async fn toggle_fav(
+    input: ToggleFavInput,
+    credential_service: State<'_, Arc<CredentialService>>,
+) -> Result<CryptoResponse, String> {
+    credential_service
+        .toggle_fav(input.credential_id)
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(CryptoResponse::Success)
+}
+#[tauri::command]
+pub async fn update_last_accessed(
+    input: UpdateLastAccessedInput,
+    credential_service: State<'_, Arc<CredentialService>>,
+) -> Result<CryptoResponse, String> {
+    credential_service
+        .update_last_accessed(input.credential_id)
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(CryptoResponse::Success)
 }
