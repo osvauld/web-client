@@ -46,10 +46,11 @@
 	}
 
 	$: {
-		if (prevDeleteModalState && !$deleteConfirmationModal) {
+		if (prevDeleteModalState && !$deleteConfirmationModal.show) {
 			fetchCredentials($currentVault.id);
 		}
-		prevDeleteModalState = $deleteConfirmationModal;
+		prevDeleteModalState = $deleteConfirmationModal.show;
+
 	}
 	$: {
 		if (prevImportModalState && !importSelected) {
@@ -82,7 +83,7 @@
 		</div>
 	{/if}
 	<div
-		class="h-full overflow-y-scroll scrollbar-thin flex flex-wrap content-start gap-3">
+		class="h-full overflow-y-scroll overflow-x-hidden scrollbar-thin flex flex-wrap content-start gap-3">
 		{#each updatedCredentials as credential (credential.id)}
 			{@const credentialType = credential.data.credentialType}
 			{@const categoryInfo = CATEGORIES.find(

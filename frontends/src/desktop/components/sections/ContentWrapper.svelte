@@ -3,13 +3,20 @@
 		currentVault,
 		selectedCategory,
 		addCredentialModal,
+		deleteConfirmationModal,
 	} from "../store/desktop.ui.store";
 	import Add from "../../../icons/add.svelte";
 	import Menu from "../../../icons/Menu.svelte";
+	import Bin from "../../../icons/binIcon.svelte";
 	import DownArrow from "../../../icons/downArrow.svelte";
 	import CredentialList from "../views/CredentialList.svelte";
 
 	let addCredentialHovered = false;
+	let deleteBtnHoved = false;
+
+	const handleDeleteBtn = () => {
+		deleteConfirmationModal.set({ item: "folder", show: true });
+	};
 </script>
 
 <div class="flex-1 flex flex-col overflow-hidden">
@@ -18,7 +25,17 @@
 			class="text-4xl font-light text-osvauld-sideListTextActive flex justify-between items-center gap-3 capitalize max-w-1/2 truncate">
 			{$selectedCategory ? $selectedCategory : $currentVault.name}
 		</h1>
+
 		<div class="gap-4 flex justify-between items-center ml-3">
+			{#if $currentVault.id !== "all"}
+				<button
+					class="p-2"
+					on:click|stopPropagation="{handleDeleteBtn}"
+					on:mouseenter="{() => (deleteBtnHoved = true)}"
+					on:mouseleave="{() => (deleteBtnHoved = false)}"
+					aria-label="Delete Folder"
+					><Bin color="{deleteBtnHoved ? '#FF6A6A' : '#85889C'}" /></button>
+			{/if}
 			<span><Menu /></span>
 			<button
 				class="bg-osvauld-frameblack text-osvauld-textPassive flex justify-center items-center py-2 px-3 text-sm rounded-md ml-4"
