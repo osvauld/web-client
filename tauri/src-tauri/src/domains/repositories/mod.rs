@@ -62,6 +62,7 @@ pub trait CredentialRepository: Send + Sync {
     async fn soft_delete_credential(&self, id: &str) -> Result<(), RepositoryError>;
     async fn toggle_fav(&self, id: &str) -> Result<(), RepositoryError>;
     async fn update_last_accessed(&self, id: &str) -> Result<(), RepositoryError>;
+    async fn get_all_credentails(&self) -> Result<Vec<Credential>, RepositoryError>;
 }
 
 #[async_trait]

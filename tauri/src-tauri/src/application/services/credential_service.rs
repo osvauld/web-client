@@ -134,4 +134,54 @@ impl CredentialService {
             .update_last_accessed(&credential_id)
             .await
     }
+
+    pub async fn get_all_credentials(
+        &self,
+    ) -> Result<Vec<DecryptedCredential>, CredentialServiceError> {
+        let encrypted_credentials = self
+            .credential_repository
+            .get_all_credentails()
+            .await
+            .map_err(CredentialServiceError::RepositoryError)?;
+
+        // Convert to crypto utils format
+        let crypto_credentials = encrypted_credentials
+            .into_iter()
+            .map(|cred| crypto_utils::types::CredentialWithEncryptedKey {
+                id: cred.id,
+                credential_type: cred.credential_type,
+                data: cred.data,
+                signature: cred.signature,
+                encrypted_key: cred.encrypted_key,
+                last_accessed: cred.last_accessed,
+            })
+            .collect();
+
+        // Decrypt credentials
+        let decrypted_credentials = {
+            let crypto = self.crypto_utils.lock().await;
+            crypto
+                .decrypt_credentials(crypto_credentials)
+                .map_err(|e| CredentialServiceError::CryptoError(e.to_string()))?
+        };
+
+        // Parse and convert to domain model
+        let credentials = decrypted_credentials
+            .into_iter()
+            .map(|cred| {
+                let parsed_data: Value = serde_json::from_str(&cred.data).unwrap_or_else(
+                    |_| serde_json::json!({"error": "Failed to parse credential data"}),
+                );
+
+                DecryptedCredential {
+                    id: cred.id,
+                    credential_type: cred.credential_type,
+                    data: parsed_data,
+                    last_accessed: cred.last_accessed,
+                }
+            })
+            .collect();
+
+        Ok(credentials)
+    }
 }
