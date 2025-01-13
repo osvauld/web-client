@@ -234,6 +234,7 @@ impl CryptoUtils {
                 signature: credential.signature,
                 encrypted_key: credential.encrypted_key, // Keep the original encrypted key
                 last_accessed: credential.last_accessed,
+                favourite: credential.favourite,
             };
 
             decrypted_credentials.push(decrypted_credential);
