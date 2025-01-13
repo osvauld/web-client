@@ -18,7 +18,10 @@
 	import Star from "../../../icons/star.svelte";
 	import MenuVertical from "../../../icons/menuVertical.svelte";
 	import { onMount } from "svelte";
+	import CredentialOverview from "../ui/CredentialOverview.svelte";
 
+	let clickTimer = null;
+	let clickDelay = 200;
 	let credentials = [];
 	let prevDeleteModalState = false;
 	let prevEditorModalState = false;
@@ -100,6 +103,23 @@
 		const colCount = getColumnCount();
 		return items.filter((_, index) => index % colCount === colIndex);
 	};
+
+	const handleClick = (id) => {
+		if (clickTimer === null) {
+			clickTimer = setTimeout(() => {
+				handleExpand(id);
+				clickTimer = null;
+			}, clickDelay);
+		}
+	};
+
+	const handleDoubleClick = (credential) => {
+		if (clickTimer) {
+			clearTimeout(clickTimer);
+			clickTimer = null;
+		}
+		selectedCredential(credential);
+	};
 </script>
 
 <div class="grow max-h-[85%] px-16 py-4 relative">
@@ -109,7 +129,7 @@
 			<ImportModal on:close="{closeImportModal}" />
 		</div>
 	{/if}
-	<div class="h-full overflow-y-auto scrollbar-thin overflow-x-hidden pr-1">
+	<div class="h-full overflow-y-auto overflow-x-hidden pr-4">
 		<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
 			{#each Array(getColumnCount()) as _, colIndex}
 				<div class="flex flex-col gap-3">
@@ -118,11 +138,12 @@
 						{@const categoryInfo = CATEGORIES.find(
 							(item) => item.type === credentialType,
 						)}
-
 						<div class="min-w-0">
 							<button
 								class="bg-osvauld-frameblack w-full border border-osvauld-cardBorder rounded-xl p-4"
-								on:click="{() => selectedCredential(credential)}">
+								on:dblclick|stopPropagation="{() =>
+									handleDoubleClick(credential)}"
+								on:click|stopPropagation="{() => handleClick(credential.id)}">
 								<div class="flex items-center mb-4">
 									<span
 										class="flex justify-center items-center p-2.5 bg-osvauld-fieldActive rounded-md mr-3">
@@ -135,9 +156,7 @@
 										{/if}
 									</span>
 									<button
-										class="ml-auto p-2.5 bg-osvauld-fieldActive rounded-md flex justify-center items-center"
-										on:click|stopPropagation="{() =>
-											handleExpand(credential.id)}">
+										class="ml-auto p-2.5 bg-osvauld-fieldActive rounded-md flex justify-center items-center">
 										<Star />
 									</button>
 									<button
@@ -161,9 +180,9 @@
 									</span>
 								</div>
 								{#if expand.find((item) => item.id === credential.id)?.show}
-									<div
-										class="mt-3 h-56 bg-osvauld-fieldActive rounded-lg transition-all duration-300">
-									</div>
+									<CredentialOverview
+										type="{credentialType}"
+										fields="{credential.data.credentialFields}" />
 								{/if}
 							</button>
 						</div>
