@@ -133,4 +133,15 @@ impl CredentialRepository for SqliteCredentialRepository {
 
         Ok(CredentialModel::to_domain_credentials(credential_models))
     }
+
+    async fn get_favourites(&self) -> Result<Vec<Credential>, RepositoryError> {
+        let mut conn = self.connection.lock().await;
+        let credential_models = credentials::table
+            .filter(credentials::deleted.eq(false))
+            .filter(credentials::favorite.eq(true))
+            .load::<CredentialModel>(&mut *conn)
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+
+        Ok(CredentialModel::to_domain_credentials(credential_models))
+    }
 }
