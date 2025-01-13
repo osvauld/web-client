@@ -12,30 +12,24 @@
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 
 	const DeleteConfirmation = async () => {
-		// TODO: Call the API to delete the credential or folder
-		// await sendMessage("deleteCredential", { id: currentCredential.id });
-		// or await sendMessage("deleteFolder", { id: $currentVault.id.id });
-		console.log($deleteConfirmationModal);
 		if ($deleteConfirmationModal.item == "folder") {
 			await sendMessage("deleteFolder", {
 				folderId: $currentVault.id,
 			});
+			currentVault.set({ id: "all", name: "all vaults" });
 		} else if ($deleteConfirmationModal.item == "credential") {
 			await sendMessage("deleteCredential", {
 				credentialId: $currentCredential.id,
 			});
 		}
 
+		// We need to collect response above and show toggle accordingly
+		//
 		toastStore.set({
 			show: true,
 			message: `${$deleteConfirmationModal.item} deleted successfully`,
 			success: true,
 		});
-		// toastStore.set({
-		// 	show: true,
-		// 	message: `${$currentCredential?.id ? "Credential" : "Folder"} deletion failed`,
-		// 	success: false,
-		// });
 		deleteConfirmationModal.set({ item: "", show: false });
 	};
 
