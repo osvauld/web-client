@@ -75,8 +75,8 @@ impl From<&DomainSyncRecord> for SyncRecordModel {
             status: record.status.to_string(),
             folder_id: record.folder_id.clone(),
             credential_id: record.credential_id.clone(),
-            created_at: record.created_at.clone(),
-            updated_at: record.updated_at.clone(),
+            created_at: record.created_at,
+            updated_at: record.updated_at,
         }
     }
 }

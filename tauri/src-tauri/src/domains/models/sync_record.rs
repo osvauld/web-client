@@ -8,6 +8,7 @@ pub enum ResourceType {
     Folder,
     Credential,
     SyncStatus,
+    Device,
 }
 
 impl ToString for ResourceType {
@@ -16,6 +17,7 @@ impl ToString for ResourceType {
             ResourceType::Folder => "folder".to_string(),
             ResourceType::Credential => "credential".to_string(),
             ResourceType::SyncStatus => "sync_status".to_string(),
+            ResourceType::Device => "device".to_string(),
         }
     }
 }
@@ -25,6 +27,7 @@ impl From<String> for ResourceType {
             "folder" => ResourceType::Folder,
             "credential" => ResourceType::Credential,
             "sync_status" => ResourceType::SyncStatus,
+            "device" => ResourceType::Device,
             _ => ResourceType::Folder, // Default case - or you could use Option/Result instead
         }
     }
@@ -181,5 +184,27 @@ impl SyncRecord {
             .iter()
             .map(|record| record.create_new_sync_for_device(new_device_id.clone()))
             .collect()
+    }
+
+    pub fn new_device_sync(
+        device_id: String,
+        operation_type: OperationType,
+        source_device_id: String,
+        target_device_id: String,
+    ) -> Self {
+        let now = Local::now().timestamp_millis();
+        Self {
+            id: Uuid::new_v4().to_string(),
+            resource_id: device_id.clone(),
+            resource_type: ResourceType::Device,
+            operation_type,
+            source_device_id,
+            target_device_id,
+            status: SyncStatus::Pending,
+            folder_id: None,
+            credential_id: None,
+            created_at: now,
+            updated_at: now,
+        }
     }
 }

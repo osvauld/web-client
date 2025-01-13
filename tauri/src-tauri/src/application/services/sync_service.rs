@@ -1,5 +1,5 @@
 use crate::domains::models::device::Device;
-use crate::domains::models::sync_record;
+use crate::domains::models::sync_record::{self, SyncStatus};
 use crate::domains::models::{credential::Credential, folder::Folder, sync_record::SyncRecord};
 use crate::domains::repositories::{
     CredentialRepository, DeviceRepository, FolderRepository, RepositoryError, StoreRepository,
@@ -7,6 +7,7 @@ use crate::domains::repositories::{
 };
 use log::{error, info};
 use serde::{Deserialize, Serialize};
+use std::ffi::c_uint;
 use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -20,6 +21,7 @@ pub struct SyncPayload {
 pub enum SyncData {
     Folder(Folder),
     Credential(Credential),
+    Device(Device),
 }
 
 pub struct SyncService {
@@ -49,20 +51,42 @@ impl SyncService {
 
     pub async fn add_new_device_sync(&self, device: Device) -> Result<(), RepositoryError> {
         let _ = self.device_repository.save(device.clone()).await;
-        let device_id = self.store_repository.get_device_key().await?;
-        let sync_records = self
+        let current_device_id = self.store_repository.get_device_key().await?;
+        let mut all_sync_records: Vec<SyncRecord> = Vec::new();
+        //create sync records for existing devices
+        let devices = self.device_repository.get_all_devices().await?;
+        for target_device in devices {
+            if target_device.id != current_device_id {
+                let mut sync_record = SyncRecord::new_device_sync(
+                    device.id.clone(),
+                    sync_record::OperationType::Create,
+                    current_device_id.clone(),
+                    target_device.id.clone(),
+                );
+                //if current device status should be completed
+                if target_device.id == current_device_id {
+                    sync_record.status = SyncStatus::Completed;
+                }
+                all_sync_records.push(sync_record);
+            }
+        }
+
+        let existing_sync_records = self
             .sync_repository
-            .get_sync_records_by_device_id(&device_id)
+            .get_sync_records_by_device_id(&current_device_id)
             .await?;
-        let records = sync_records
+        let content_records = existing_sync_records
             .into_iter()
             .map(|record| {
                 sync_record::SyncRecord::create_new_sync_for_device(&record, device.id.clone())
             })
             .collect::<Vec<_>>();
-        self.sync_repository
-            .save_sync_records(records.as_slice())
-            .await?;
+        all_sync_records.extend(content_records);
+        if !all_sync_records.is_empty() {
+            self.sync_repository
+                .save_sync_records(&all_sync_records)
+                .await?;
+        }
 
         Ok(())
     }
@@ -71,7 +95,7 @@ impl SyncService {
         &self,
         device: &Device,
     ) -> Result<Option<SyncPayload>, RepositoryError> {
-        // Get the next pending sync record for target device 2
+        // Get the next pending sync record for target device
         let pending_records = self.sync_repository.get_pending_records(&device.id).await?;
         info!("Found {} pending records", pending_records.len());
         // Get the oldest pending record
@@ -96,6 +120,13 @@ impl SyncService {
                     .await?;
                 log::info!("found credential {:?}", credential);
                 SyncData::Credential(credential)
+            }
+            sync_record::ResourceType::Device => {
+                let device = self
+                    .device_repository
+                    .find_by_id(&sync_record.resource_id)
+                    .await?;
+                SyncData::Device(device)
             }
             _ => {
                 return Err(RepositoryError::DatabaseError(format!(
@@ -179,6 +210,20 @@ impl SyncService {
                     }
                 }
             }
+            SyncData::Device(device) => {
+                let current_device_id = self.store_repository.get_device_key().await?;
+                info!("processing device sync record");
+                match &payload.sync_record.operation_type {
+                    sync_record::OperationType::Create => {
+                        if current_device_id != device.id {
+                            self.device_repository.save(device.clone()).await?;
+                        };
+                    }
+                    op => {
+                        todo!("other operation types not implemented {:?}", op)
+                    }
+                };
+            }
         }
 
         // Update the sync record status if needed
@@ -192,16 +237,16 @@ impl SyncService {
     }
 
     pub async fn add_folder_to_sync(&self, folder: Folder) -> Result<(), RepositoryError> {
-        let device_id = self.store_repository.get_device_key().await?;
+        let current_device_id = self.store_repository.get_device_key().await?;
         let devices = self.device_repository.get_all_devices().await?;
         for device in devices {
             let mut sync_record = SyncRecord::new_folder_sync(
                 folder.id.clone(),
                 sync_record::OperationType::Create,
-                device_id.clone(),
+                current_device_id.clone(),
                 device.id.clone(),
             );
-            if device_id == device.id.clone() {
+            if current_device_id == device.id.clone() {
                 sync_record.status = sync_record::SyncStatus::Completed;
             }
             self.sync_repository
@@ -215,16 +260,16 @@ impl SyncService {
         &self,
         credential: Credential,
     ) -> Result<(), RepositoryError> {
-        let device_id = self.store_repository.get_device_key().await?;
+        let current_device_id = self.store_repository.get_device_key().await?;
         let devices = self.device_repository.get_all_devices().await?;
         for device in devices {
             let mut sync_record = SyncRecord::new_credential_sync(
                 credential.id.clone(),
                 sync_record::OperationType::Create,
-                device_id.clone(),
+                current_device_id.clone(),
                 device.id.clone(),
             );
-            if device_id == device.id.clone() {
+            if current_device_id == device.id.clone() {
                 sync_record.status = sync_record::SyncStatus::Completed
             }
             self.sync_repository
@@ -240,7 +285,7 @@ impl SyncService {
         resource_type: sync_record::ResourceType,
     ) -> Result<(), RepositoryError> {
         // Get current device ID
-        let device_id = self.store_repository.get_device_key().await?;
+        let current_device_id = self.store_repository.get_device_key().await?;
 
         // Get all devices to sync with
         let devices = self.device_repository.get_all_devices().await?;
@@ -252,20 +297,20 @@ impl SyncService {
                     sync_record::ResourceType::Credential => SyncRecord::new_credential_sync(
                         resource_id.clone(),
                         sync_record::OperationType::SoftDelete,
-                        device_id.clone(),
+                        current_device_id.clone(),
                         device.id.clone(),
                     ),
                     sync_record::ResourceType::Folder => SyncRecord::new_folder_sync(
                         resource_id.clone(),
                         sync_record::OperationType::SoftDelete,
-                        device_id.clone(),
+                        current_device_id.clone(),
                         device.id.clone(),
                     ),
                     _ => panic!("Unsupported resource type for deletion sync"),
                 };
 
                 // Mark as completed for current device
-                if device_id == device.id {
+                if current_device_id == device.id {
                     sync_record.status = sync_record::SyncStatus::Completed;
                 }
 
