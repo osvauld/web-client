@@ -88,6 +88,7 @@ impl CredentialService {
                 signature: cred.signature,
                 encrypted_key: cred.encrypted_key,
                 last_accessed: cred.last_accessed,
+                favourite: cred.favorite,
             })
             .collect();
 
@@ -112,6 +113,7 @@ impl CredentialService {
                     credential_type: cred.credential_type,
                     data: parsed_data,
                     last_accessed: cred.last_accessed,
+                    favourite: cred.favourite,
                 }
             })
             .collect();
@@ -137,13 +139,19 @@ impl CredentialService {
 
     pub async fn get_all_credentials(
         &self,
+        favourite: bool,
     ) -> Result<Vec<DecryptedCredential>, CredentialServiceError> {
-        let encrypted_credentials = self
-            .credential_repository
-            .get_all_credentails()
-            .await
-            .map_err(CredentialServiceError::RepositoryError)?;
-
+        let encrypted_credentials = if favourite {
+            self.credential_repository
+                .get_favourites()
+                .await
+                .map_err(CredentialServiceError::RepositoryError)?
+        } else {
+            self.credential_repository
+                .get_all_credentails()
+                .await
+                .map_err(CredentialServiceError::RepositoryError)?
+        };
         // Convert to crypto utils format
         let crypto_credentials = encrypted_credentials
             .into_iter()
@@ -154,6 +162,7 @@ impl CredentialService {
                 signature: cred.signature,
                 encrypted_key: cred.encrypted_key,
                 last_accessed: cred.last_accessed,
+                favourite: cred.favorite,
             })
             .collect();
 
@@ -178,6 +187,7 @@ impl CredentialService {
                     credential_type: cred.credential_type,
                     data: parsed_data,
                     last_accessed: cred.last_accessed,
+                    favourite: cred.favourite,
                 }
             })
             .collect();

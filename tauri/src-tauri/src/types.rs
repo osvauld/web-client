@@ -92,6 +92,10 @@ pub struct AddDeviceInput {
 pub struct ExportedCertificate {
     pub passphrase: String,
 }
+#[derive(Deserialize)]
+pub struct GetAllCredentials {
+    pub favourite: bool,
+}
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
