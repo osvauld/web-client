@@ -19,8 +19,6 @@
 			copiedItemIndex = null;
 		}, 1000);
 	};
-
-	console.log(type, fields);
 </script>
 
 <div

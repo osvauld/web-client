@@ -7,18 +7,10 @@
 		currentCredential,
 		deleteConfirmationModal,
 	} from "../store/desktop.ui.store";
-	import {
-		CATEGORIES,
-		renderRelevantHeading,
-	} from "../../utils/credentialUtils";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
-	import Menu from "../../../icons/Menu.svelte";
 	import Import from "../../../icons/import.svelte";
 	import ImportModal from "./ImportModal.svelte";
-	import Star from "../../../icons/star.svelte";
-	import MenuVertical from "../../../icons/menuVertical.svelte";
-	import { onMount } from "svelte";
-	import CredentialOverview from "../ui/CredentialOverview.svelte";
+	import CredentialCard from "../ui/CredentialCard.svelte";
 
 	let clickTimer = null;
 	let clickDelay = 200;
@@ -28,7 +20,7 @@
 	let prevImportModalState = false;
 	let importHovered = false;
 	let importSelected = false;
-	let expand = []; // { id: null, show: false }[];
+	let credentialcardstates = []; // { id: null, show: false }[];
 
 	const fetchCredentials = async (vaultId: string) => {
 		try {
@@ -43,7 +35,7 @@
 	// I need this to fetch again when the import modal is closed
 	$: {
 		fetchCredentials($currentVault.id);
-		expand = [];
+		credentialcardstates = [];
 	}
 
 	$: {
@@ -58,7 +50,6 @@
 			fetchCredentials($currentVault.id);
 		}
 		prevDeleteModalState = $deleteConfirmationModal.show;
-
 	}
 	$: {
 		if (prevImportModalState && !importSelected) {
@@ -79,13 +70,13 @@
 	};
 
 	const handleExpand = (id) => {
-		const index = expand.findIndex((item) => item.id === id);
+		const index = credentialcardstates.findIndex((item) => item.id === id);
 		if (index !== -1) {
-			expand = expand.map((item) =>
+			credentialcardstates = credentialcardstates.map((item) =>
 				item.id === id ? { ...item, show: !item.show } : item,
 			);
 		} else {
-			expand = [...expand, { id, show: true }];
+			credentialcardstates = [...credentialcardstates, { id, show: true }];
 		}
 	};
 
@@ -105,21 +96,21 @@
 		return items.filter((_, index) => index % colCount === colIndex);
 	};
 
-	const handleClick = (id) => {
+	const handleClick = (e) => {
 		if (clickTimer === null) {
 			clickTimer = setTimeout(() => {
-				handleExpand(id);
+				handleExpand(e.detail);
 				clickTimer = null;
 			}, clickDelay);
 		}
 	};
 
-	const handleDoubleClick = (credential) => {
+	const handleDoubleClick = (e) => {
 		if (clickTimer) {
 			clearTimeout(clickTimer);
 			clickTimer = null;
 		}
-		selectedCredential(credential);
+		selectedCredential(e.detail);
 	};
 </script>
 
@@ -135,58 +126,11 @@
 			{#each Array(getColumnCount()) as _, colIndex}
 				<div class="flex flex-col gap-3">
 					{#each getColumnItems(updatedCredentials, colIndex) as credential (credential.id)}
-						{@const credentialType = credential.data.credentialType}
-						{@const categoryInfo = CATEGORIES.find(
-							(item) => item.type === credentialType,
-						)}
-						<div class="min-w-0">
-							<button
-								class="bg-osvauld-frameblack w-full border border-osvauld-cardBorder rounded-xl p-4"
-								on:dblclick|stopPropagation="{() =>
-									handleDoubleClick(credential)}"
-								on:click|stopPropagation="{() => handleClick(credential.id)}">
-								<div class="flex items-center mb-4">
-									<span
-										class="flex justify-center items-center p-2.5 bg-osvauld-fieldActive rounded-md mr-3">
-										{#if categoryInfo && categoryInfo.icon}
-											<svelte:component
-												this="{categoryInfo.icon}"
-												color="{'#BFC0CC'}" />
-										{:else}
-											<span>!</span>
-										{/if}
-									</span>
-									<button
-										class="ml-auto p-2.5 bg-osvauld-fieldActive rounded-md flex justify-center items-center">
-										<Star />
-									</button>
-									<button
-										class="ml-3 p-2.5 bg-osvauld-fieldActive rounded-md flex justify-center items-center"
-										on:click|stopPropagation="{() =>
-											console.log('Menu clicked')}">
-										<MenuVertical />
-									</button>
-								</div>
-								<div class="flex flex-col">
-									<h3
-										class="font-Jakarta text-xl font-medium text-left text-mobile-textbright truncate max-w-[16rem]">
-										{renderRelevantHeading(
-											credential.data.credentialFields,
-											credentialType,
-											credential.id,
-										)}
-									</h3>
-									<span class="text-xs text-left text-mobile-textPrimary">
-										{credentialType}
-									</span>
-								</div>
-								{#if expand.find((item) => item.id === credential.id)?.show}
-									<CredentialOverview
-										type="{credentialType}"
-										fields="{credential.data.credentialFields}" />
-								{/if}
-							</button>
-						</div>
+						<CredentialCard
+							{credential}
+							{credentialcardstates}
+							on:dbl="{handleDoubleClick}"
+							on:clk="{handleClick}" />
 					{/each}
 				</div>
 			{/each}
