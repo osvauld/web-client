@@ -11,6 +11,7 @@
 	import Import from "../../../icons/import.svelte";
 	import ImportModal from "./ImportModal.svelte";
 	import CredentialCard from "../ui/CredentialCard.svelte";
+	import { onMount } from "svelte";
 
 	let clickTimer = null;
 	let clickDelay = 200;
@@ -32,9 +33,24 @@
 		}
 	};
 
+	const fetchAllCredentials = async () => {
+		try {
+			credentials = await sendMessage("getAllCredentials", {
+				folderId: "all",
+			});
+		} catch (error) {
+			credentials = [];
+		}
+	};
+
 	// I need this to fetch again when the import modal is closed
 	$: {
 		fetchCredentials($currentVault.id);
+		credentialcardstates = [];
+	}
+
+	$: if ($currentVault.id === "all") {
+		fetchAllCredentials();
 		credentialcardstates = [];
 	}
 
