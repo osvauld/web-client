@@ -3,7 +3,7 @@ use crate::database::schema::sync_records::credential_id;
 use crate::domains::models::sync_record::ResourceType;
 use crate::types::{
     AddCredentialInput, CredentialResponse, CryptoResponse, DeleteCredentialInput,
-    GetCredentialForFolderInput, ToggleFavInput, UpdateLastAccessedInput,
+    GetAllCredentials, GetCredentialForFolderInput, ToggleFavInput, UpdateLastAccessedInput,
 };
 use log::info;
 use std::sync::Arc;
@@ -95,9 +95,10 @@ pub async fn update_last_accessed(
 #[tauri::command]
 pub async fn get_all_credentials(
     credential_service: State<'_, Arc<CredentialService>>,
+    input: GetAllCredentials,
 ) -> Result<CryptoResponse, String> {
     let credentials = credential_service
-        .get_all_credentials()
+        .get_all_credentials(input.favourite)
         .await
         .map_err(|e| e.to_string())?;
     let credential_responses = credentials

@@ -7,21 +7,21 @@
 		currentCredential,
 		deleteConfirmationModal,
 	} from "../store/desktop.ui.store";
-	import {
-		CATEGORIES,
-		renderRelevantHeading,
-	} from "../../utils/credentialUtils";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
-	import Menu from "../../../icons/Menu.svelte";
 	import Import from "../../../icons/import.svelte";
 	import ImportModal from "./ImportModal.svelte";
+	import CredentialCard from "../ui/CredentialCard.svelte";
+	import { onMount } from "svelte";
 
+	let clickTimer = null;
+	let clickDelay = 200;
 	let credentials = [];
 	let prevDeleteModalState = false;
 	let prevEditorModalState = false;
 	let prevImportModalState = false;
 	let importHovered = false;
 	let importSelected = false;
+	let credentialcardstates = []; // { id: null, show: false }[];
 
 	const fetchCredentials = async (vaultId: string) => {
 		try {
@@ -33,9 +33,25 @@
 		}
 	};
 
+	const fetchAllCredentials = async () => {
+		try {
+			credentials = await sendMessage("getAllCredentials", {
+				folderId: "all",
+			});
+		} catch (error) {
+			credentials = [];
+		}
+	};
+
 	// I need this to fetch again when the import modal is closed
 	$: {
 		fetchCredentials($currentVault.id);
+		credentialcardstates = [];
+	}
+
+	$: if ($currentVault.id === "all") {
+		fetchAllCredentials();
+		credentialcardstates = [];
 	}
 
 	$: {
@@ -50,7 +66,6 @@
 			fetchCredentials($currentVault.id);
 		}
 		prevDeleteModalState = $deleteConfirmationModal.show;
-
 	}
 	$: {
 		if (prevImportModalState && !importSelected) {
@@ -70,8 +85,48 @@
 		currentCredential.set(credential);
 	};
 
+	const handleExpand = (id) => {
+		const index = credentialcardstates.findIndex((item) => item.id === id);
+		if (index !== -1) {
+			credentialcardstates = credentialcardstates.map((item) =>
+				item.id === id ? { ...item, show: !item.show } : item,
+			);
+		} else {
+			credentialcardstates = [...credentialcardstates, { id, show: true }];
+		}
+	};
+
 	const closeImportModal = async () => {
 		importSelected = false;
+	};
+
+	const getColumnCount = () => {
+		if (typeof window === "undefined") return 1;
+		if (window.innerWidth >= 1024) return 3;
+		if (window.innerWidth >= 640) return 2;
+		return 1;
+	};
+
+	const getColumnItems = (items, colIndex) => {
+		const colCount = getColumnCount();
+		return items.filter((_, index) => index % colCount === colIndex);
+	};
+
+	const handleClick = (e) => {
+		if (clickTimer === null) {
+			clickTimer = setTimeout(() => {
+				handleExpand(e.detail);
+				clickTimer = null;
+			}, clickDelay);
+		}
+	};
+
+	const handleDoubleClick = (e) => {
+		if (clickTimer) {
+			clearTimeout(clickTimer);
+			clickTimer = null;
+		}
+		selectedCredential(e.detail);
 	};
 </script>
 
@@ -82,43 +137,20 @@
 			<ImportModal on:close="{closeImportModal}" />
 		</div>
 	{/if}
-	<div
-		class="h-full overflow-y-scroll overflow-x-hidden scrollbar-thin flex flex-wrap content-start gap-3">
-		{#each updatedCredentials as credential (credential.id)}
-			{@const credentialType = credential.data.credentialType}
-			{@const categoryInfo = CATEGORIES.find(
-				(item) => item.type === credentialType,
-			)}
-			<button
-				class="bg-osvauld-frameblack flex h-[4rem] basis-[24rem] items-center shrink-0 grow-0 rounded-xl p-3"
-				on:click="{() => selectedCredential(credential)}">
-				<span class="flex justify-center items-center p-2">
-					{#if categoryInfo && categoryInfo.icon}
-						<svelte:component this="{categoryInfo.icon}" color="{'#BFC0CC'}" />
-					{:else}<span>No icon</span>
-					{/if}
-				</span>
-				<div class="flex flex-col">
-					<h3
-						class="text-base text-left text-mobile-textbright truncate max-w-[16rem]">
-						{renderRelevantHeading(
-							credential.data.credentialFields,
-							credentialType,
-							credential.id,
-						)}
-					</h3>
-					<span class="text-xs text-left text-mobile-textPrimary"
-						>{credentialType}
-					</span>
+	<div class="h-full overflow-y-auto overflow-x-hidden pr-1 scrollbar-none">
+		<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+			{#each Array(getColumnCount()) as _, colIndex}
+				<div class="flex flex-col gap-3">
+					{#each getColumnItems(updatedCredentials, colIndex) as credential (credential.id)}
+						<CredentialCard
+							{credential}
+							{credentialcardstates}
+							on:dbl="{handleDoubleClick}"
+							on:clk="{handleClick}" />
+					{/each}
 				</div>
-				<button
-					class="ml-auto p-3 flex justify-center items-center"
-					on:click|stopPropagation="{() =>
-						console.log('Propagation is not allowed here')}">
-					<Menu />
-				</button>
-			</button>
-		{/each}
+			{/each}
+		</div>
 	</div>
 	{#if $currentVault.id !== "all"}
 		<button
