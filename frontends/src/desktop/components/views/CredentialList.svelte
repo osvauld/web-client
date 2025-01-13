@@ -58,6 +58,7 @@
 			fetchCredentials($currentVault.id);
 		}
 		prevDeleteModalState = $deleteConfirmationModal.show;
+
 	}
 	$: {
 		if (prevImportModalState && !importSelected) {
