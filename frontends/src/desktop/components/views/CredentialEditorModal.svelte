@@ -24,7 +24,7 @@
 
 	const closeEditorModal = () => {
 		credentialEditorModal.set(false);
-		selectedVaultForInput.set("");
+		selectedVaultForInput.set({});
 		selectedCategoryForInput.set("");
 	};
 
@@ -37,7 +37,9 @@
 				credentialType: credentialType,
 			},
 			// if current vault.id is "all", get id of Default Folder and replace it here, that way, if user tries to add a credential from Default/All Vaults view, It goes somewhere (Default folder)
-			$currentVault.id === "all" ? $selectedVaultForInput.id : $currentVault.id,
+			$currentVault.id === "all"
+				? $selectedVaultForInput?.id
+				: $currentVault.id,
 		);
 		closeEditorModal();
 	};
@@ -74,7 +76,7 @@
 				class="flex text-sm font-light gap-1 items-center tracking-wider capitalize">
 				<span><MobileHome size="{14}" color="{'#85889C'}" /></span>
 				{$selectedVaultForInput?.id
-					? $selectedVaultForInput.name
+					? $selectedVaultForInput?.name
 					: $currentVault.name}
 			</div>
 		</div>

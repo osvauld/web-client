@@ -6,6 +6,7 @@
 		viewCredentialModal,
 		currentCredential,
 		deleteConfirmationModal,
+		refreshCredentialList,
 	} from "../store/desktop.ui.store";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 	import Import from "../../../icons/import.svelte";
@@ -16,6 +17,7 @@
 	let clickTimer = null;
 	let clickDelay = 200;
 	let credentials = [];
+	let favouriteCredentials = [];
 	let prevDeleteModalState = false;
 	let prevEditorModalState = false;
 	let prevImportModalState = false;
@@ -36,7 +38,7 @@
 	const fetchAllCredentials = async () => {
 		try {
 			credentials = await sendMessage("getAllCredentials", {
-				folderId: "all",
+				favourite: false,
 			});
 		} catch (error) {
 			credentials = [];
@@ -47,6 +49,15 @@
 	$: {
 		fetchCredentials($currentVault.id);
 		credentialcardstates = [];
+	}
+
+	$: if ($refreshCredentialList) {
+		if ($currentVault.id === "all") {
+			fetchAllCredentials();
+		} else {
+			fetchCredentials($currentVault.id);
+		}
+		refreshCredentialList.set(false);
 	}
 
 	$: if ($currentVault.id === "all") {
@@ -75,9 +86,11 @@
 	}
 
 	$: updatedCredentials = $selectedCategory
-		? credentials.filter(
-				(credential) => credential.data.credentialType === $selectedCategory,
-			)
+		? $selectedCategory === "favourites"
+			? credentials.filter((credential) => credential.favourite)
+			: credentials.filter(
+					(credential) => credential.data.credentialType === $selectedCategory,
+				)
 		: credentials;
 
 	const selectedCredential = (credential) => {

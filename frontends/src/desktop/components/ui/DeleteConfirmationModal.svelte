@@ -5,6 +5,7 @@
 		currentVault,
 		deleteConfirmationModal,
 		toastStore,
+		refreshCredentialList,
 	} from "../store/desktop.ui.store";
 	import { renderRelevantHeading } from "../../utils/credentialUtils";
 	import { fly } from "svelte/transition";
@@ -21,6 +22,7 @@
 			await sendMessage("deleteCredential", {
 				credentialId: $currentCredential.id,
 			});
+			refreshCredentialList.set(true);
 		}
 
 		// We need to collect response above and show toggle accordingly
