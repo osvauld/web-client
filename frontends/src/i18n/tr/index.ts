@@ -10,6 +10,7 @@ const tr = {
 	},
 	all: "Tüm kasalar",
 	addNew: "Yeni Kimlik Bilgisi Ekle",
+	newVault: "Yeni kasa oluştur",
 	search: "Ara",
 	latest: "Son",
 	recents: "Son",

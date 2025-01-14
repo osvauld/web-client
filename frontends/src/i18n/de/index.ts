@@ -14,6 +14,7 @@ const de = {
 	latest: "Neueste",
 	recents: "Kürzlich",
 	categories: "Kategorien",
+	newVault: "Neuen Tresor erstellen",
 	tabs: {
 		home: "Accueil",
 		add: "Ajouter",

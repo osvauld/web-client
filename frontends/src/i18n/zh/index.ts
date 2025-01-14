@@ -10,6 +10,7 @@ const zh = {
 	},
 	latest: "最新",
 	addNew: "添加新凭据",
+	newVault: "创建新保险库",
 	search: "搜索",
 	all: "全部保险库",
 	recents: "最近",

@@ -14,6 +14,7 @@ const ja = {
 	latest: "最新",
 	recents: "最近",
 	categories: "カテゴリ",
+	newVault: "新しい保管庫を作成",
 	tabs: {
 		home: "ホーム",
 		add: "追加",

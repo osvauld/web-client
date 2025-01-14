@@ -14,6 +14,7 @@ const pl = {
 	latest: "Najnowsze",
 	recents: "Ostatnie",
 	categories: "Kategorie",
+	newVault: "Utwórz nowy sejf",
 	tabs: {
 		home: "Strona główna",
 		add: "Dodaj",

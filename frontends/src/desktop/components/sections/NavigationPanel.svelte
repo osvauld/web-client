@@ -46,7 +46,7 @@
 			aria-controls="vaultSelector"
 			aria-expanded="false"
 			on:click="{() => (vaultManagerActive = !vaultManagerActive)}"
-			>{$currentVault.name}<span
+			>{$currentVault.id === "all" ? $LL.all() : $currentVault.name}<span
 				class="transition-transform duration-300 {vaultManagerActive
 					? '-rotate-90'
 					: 'rotate-90'}"><Arrow color="#F2F2F0" size="24" /></span

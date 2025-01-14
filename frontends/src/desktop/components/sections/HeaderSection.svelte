@@ -13,13 +13,13 @@
 	<div class="grow py-10 px-16 flex items-center justify-end gap-6">
 		<div
 			class="flex h-12 w-full min-w-[400px] max-w-2xl items-center bg-osvauld-frameblack py-2.5 px-3 rounded-lg">
-			<span class="sr-only">{$LL.search()}</span>
+			<span class="sr-only">Search</span>
 			<Lens color="#4D4F60" />
 			<input
 				type="text"
 				name="search"
 				class="grow border-0 focus:ring-0 outline-0 bg-osvauld-frameblack text-osvauld-activeBorder placeholder:text-osvauld-activeBorder font-light text-base leading-6"
-				placeholder="Search" />
+				placeholder="{$LL.search()}" />
 		</div>
 		<button
 			aria-label="Open Profile View"

@@ -14,6 +14,7 @@ const fr = {
 	latest: "Derniers",
 	recents: "Récents",
 	categories: "Catégories",
+	newVault: "Créer un nouveau coffre",
 	tabs: {
 		home: "Accueil",
 		add: "Ajouter",

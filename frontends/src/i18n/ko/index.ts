@@ -14,6 +14,7 @@ const ko = {
 	latest: "최신",
 	recents: "최근",
 	categories: "카테고리",
+	newVault: "새 금고 만들기",
 	tabs: {
 		home: "홈",
 		add: "추가",

@@ -13,6 +13,7 @@ const en = {
 	latest: "Latest",
 	recents: "Recents",
 	categories: "Categories",
+	newVault: "Create New Vault",
 	tabs: {
 		home: "Home",
 		add: "Add",

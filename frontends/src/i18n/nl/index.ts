@@ -14,6 +14,7 @@ const nl = {
 	latest: "Laatste",
 	recents: "Recente",
 	categories: "Categorieën",
+	newVault: "Nieuwe kluis maken",
 	tabs: {
 		home: "Home",
 		add: "Toevoegen",

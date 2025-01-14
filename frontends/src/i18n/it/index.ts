@@ -14,6 +14,7 @@ const it = {
 	latest: "Ultimi",
 	recents: "Recenti",
 	categories: "Categorie",
+	newVault: "Crea nuovo vault",
 	tabs: {
 		home: "Home",
 		add: "Aggiungi",

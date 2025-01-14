@@ -14,6 +14,7 @@ const ar = {
 	recents: "الأخيرة",
 	categories: "الفئات",
 	search: "بحث",
+	newVault: "إنشاء خزنة جديدة",
 	tabs: {
 		home: "الصفحة الرئيسية",
 		add: "إضافة",

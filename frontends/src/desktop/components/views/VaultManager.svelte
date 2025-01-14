@@ -5,6 +5,7 @@
 	import { onMount, onDestroy } from "svelte";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 	import { vaults, currentVault } from "../store/desktop.ui.store";
+	import { LL } from "../../../i18n/i18n-svelte";
 
 	export let vaultManagerActive;
 	let newVaultInputActive = false;
@@ -78,7 +79,7 @@
 						<span
 							><MobileHome color="{isActive ? '#F2F2F0' : '#85889C'}" /></span>
 						<span class="grow text-left pl-2 capitalize max-w-full truncate"
-							>{vault.name}</span>
+							>{vault.id === "all" ? $LL.all() : vault.name}</span>
 					</button>
 				{/each}
 			</div>
@@ -104,14 +105,14 @@
 							<button
 								type="submit"
 								class="h-[48px] flex justify-center items-center gap-1 rounded-lg bg-mobile-highlightBlue text-mobile-bgPrimary font-medium text-lg mt-6"
-								>Create New Vault <Add color="#000" /></button>
+								>{$LL.newVault()} <Add color="#000" /></button>
 						</div>
 					</form>
 				{:else}
 					<button
 						on:click="{handleNewVaultInput}"
 						class="h-[48px] w-full flex justify-center items-center gap-1 rounded-lg border-2 border-mobile-bgHighlight p-4 active:bg-mobile-bgLight text-mobile-textActive"
-						>Create New Vault <Add color="#85889C" /></button>
+						>{$LL.newVault()} <Add color="#85889C" /></button>
 				{/if}
 			</div>
 		</div>

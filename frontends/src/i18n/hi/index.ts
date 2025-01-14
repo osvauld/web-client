@@ -14,6 +14,7 @@ const hi = {
 	latest: "नवीनतम",
 	recents: "हाल का",
 	categories: "श्रेणियाँ",
+	newVault: "नया खजाना बनाएं",
 	tabs: {
 		home: "मुख्य पृष्ठ",
 		add: "जोड़ें",

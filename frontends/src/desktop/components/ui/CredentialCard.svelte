@@ -12,6 +12,8 @@
 	import CredentialOverview from "./CredentialOverview.svelte";
 	import { refreshCredentialList } from "../store/desktop.ui.store";
 
+	import { LL } from "../../../i18n/i18n-svelte";
+
 	export let credential;
 	export let credentialcardstates = [];
 	let favourite = credential?.favourite || false;
@@ -20,6 +22,7 @@
 
 	let type = credential.data.credentialType;
 	let categoryInfo = CATEGORIES.find((item) => item.type === type);
+	let typeIdForTranslation = CATEGORIES.find((item) => item.type === type)?.id;
 
 	const dispatchDoubleClick = (credential) => {
 		dispatch("dbl", credential);
@@ -75,7 +78,7 @@
 				)}
 			</h3>
 			<span class="text-sm text-left text-osvauld-fieldTextActive">
-				{type}
+				{$LL.types[typeIdForTranslation]()}
 			</span>
 		</div>
 		{#if credentialcardstates.find((item) => item.id === credential.id)?.show}
