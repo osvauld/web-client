@@ -36,15 +36,9 @@
 
 	const fetchAllCredentials = async () => {
 		try {
-			// console.log("favorite ==>", fav);
 			credentials = await sendMessage("getAllCredentials", {
 				favourite: false,
 			});
-			favouriteCredentials = await sendMessage("getAllCredentials", {
-				favourite: true,
-			});
-			console.log(favouriteCredentials);
-			//
 		} catch (error) {
 			credentials = [];
 		}
@@ -82,9 +76,11 @@
 	}
 
 	$: updatedCredentials = $selectedCategory
-		? credentials.filter(
-				(credential) => credential.data.credentialType === $selectedCategory,
-			)
+		? $selectedCategory === "favourites"
+			? credentials.filter((credential) => credential.favourite)
+			: credentials.filter(
+					(credential) => credential.data.credentialType === $selectedCategory,
+				)
 		: credentials;
 
 	const selectedCredential = (credential) => {
@@ -152,7 +148,6 @@
 						<CredentialCard
 							{credential}
 							{credentialcardstates}
-							favourite="{true}"
 							on:dbl="{handleDoubleClick}"
 							on:clk="{handleClick}" />
 					{/each}

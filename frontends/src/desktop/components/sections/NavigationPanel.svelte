@@ -16,6 +16,12 @@
 		selectedCategory.set("");
 	};
 
+	const handleFavourite = (section) => {
+		localSelectedCategory = "";
+		selectedSection = section;
+		selectedCategory.set("favourites");
+	};
+
 	const handleCategoryFilter = (type, id) => {
 		selectedSection = "";
 		localSelectedCategory = id;
@@ -70,7 +76,7 @@
                        {selectedSection === 'favourites'
 						? 'text-osvauld-sideListTextActive bg-osvauld-fieldActive'
 						: ''}"
-					on:click="{() => handleSectionChange('favourites')}"
+					on:click="{() => handleFavourite('favourites')}"
 					aria-current="{selectedSection === 'favourites'
 						? 'page'
 						: undefined}">

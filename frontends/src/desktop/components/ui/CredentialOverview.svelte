@@ -56,7 +56,7 @@
 	{:else}
 		{#each fields as field, index (field.fieldName)}
 			{#if field.fieldValue.trim().length !== 0}
-				<span class="text-mobile-textlabel text-sm">{field.fieldName}</span>
+				<span class="text-osvauld-fadedCancel text-sm">{field.fieldName}</span>
 				<div class="flex gap-2 w-full">
 					<div
 						class="bg-osvauld-fieldActive rounded-lg py-2.5 px-4 flex-1 max-w-full truncate">

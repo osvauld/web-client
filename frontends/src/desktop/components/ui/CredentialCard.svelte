@@ -13,7 +13,7 @@
 
 	export let credential;
 	export let credentialcardstates = [];
-	export let favourite = false;
+	let favourite = credential?.favourite || false;
 
 	const dispatch = createEventDispatcher();
 
@@ -31,7 +31,6 @@
 	const toggleFavorite = async (id) => {
 		favourite = !favourite;
 		await sendMessage("toggleFav", { credentialId: id });
-		// Call the API to toggle the favourite status
 		// Refresh credential list
 	};
 </script>
@@ -67,14 +66,14 @@
 		</div>
 		<div class="flex flex-col">
 			<h3
-				class="font-Jakarta text-xl font-medium text-left text-mobile-textbright truncate max-w-[16rem]">
+				class="font-Jakarta text-xl font-medium text-left text-mobile-sideListTextActive truncate max-w-[16rem]">
 				{renderRelevantHeading(
 					credential.data.credentialFields,
 					type,
 					credential.id,
 				)}
 			</h3>
-			<span class="text-xs text-left text-mobile-textPrimary">
+			<span class="text-sm text-left text-mobile-fieldTextActive">
 				{type}
 			</span>
 		</div>
