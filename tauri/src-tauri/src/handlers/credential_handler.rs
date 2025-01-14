@@ -45,6 +45,8 @@ pub async fn handle_get_credentials_for_folder(
         .map(|cred| CredentialResponse {
             id: cred.id,
             data: cred.data,
+            favourite: cred.favourite,
+            last_accessed: cred.last_accessed,
         })
         .collect();
 
@@ -106,6 +108,8 @@ pub async fn get_all_credentials(
         .map(|cred| CredentialResponse {
             id: cred.id,
             data: cred.data,
+            favourite: cred.favourite,
+            last_accessed: cred.last_accessed,
         })
         .collect();
 
