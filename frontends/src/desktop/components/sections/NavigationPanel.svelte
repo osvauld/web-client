@@ -5,6 +5,7 @@
 	import VaultManager from "../views/VaultManager.svelte";
 	import { currentVault, selectedCategory } from "../store/desktop.ui.store";
 	import { CATEGORIES } from "../../utils/credentialUtils";
+	import { LL } from "../../../i18n/i18n-svelte";
 
 	let selectedSection = "home";
 	let localSelectedCategory = "";
@@ -67,7 +68,7 @@
 					on:click="{() => handleSectionChange('home')}"
 					aria-current="{selectedSection === 'home' ? 'page' : undefined}">
 					<Home color="{selectedSection === 'home' ? '#F2F2F0' : '#85889C'}" />
-					<span>Home</span>
+					<span>{$LL.nav.home()}</span>
 				</button>
 			</li>
 			<li>
