@@ -154,4 +154,5 @@ pub struct CredentialResponse {
     pub data: serde_json::Value,
     pub favourite: bool,
     pub last_accessed: i64,
+    pub folder_id: String,
 }

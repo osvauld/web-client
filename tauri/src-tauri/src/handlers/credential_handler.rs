@@ -47,6 +47,7 @@ pub async fn handle_get_credentials_for_folder(
             data: cred.data,
             favourite: cred.favourite,
             last_accessed: cred.last_accessed,
+            folder_id: cred.folder_id,
         })
         .collect();
 
@@ -110,6 +111,7 @@ pub async fn get_all_credentials(
             data: cred.data,
             favourite: cred.favourite,
             last_accessed: cred.last_accessed,
+            folder_id: cred.folder_id,
         })
         .collect();
 
