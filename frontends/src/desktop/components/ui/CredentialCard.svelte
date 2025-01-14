@@ -13,7 +13,7 @@
 
 	export let credential;
 	export let credentialcardstates = [];
-	let starred = false;
+	export let favourite = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -29,9 +29,9 @@
 	};
 
 	const toggleFavorite = async (id) => {
-		starred = !starred;
-		// const toggleResp = await sendMessage("toggleFav", { credentialId: id });
-		// Call the API to toggle the favorite status
+		favourite = !favourite;
+		await sendMessage("toggleFav", { credentialId: id });
+		// Call the API to toggle the favourite status
 		// Refresh credential list
 	};
 </script>
@@ -53,7 +53,7 @@
 			<button
 				class="ml-auto p-2.5 bg-osvauld-fieldActive rounded-md flex justify-center items-center active:scale-95"
 				on:click|stopPropagation="{() => toggleFavorite(credential.id)}">
-				{#if starred}
+				{#if favourite}
 					<FavStar />
 				{:else}
 					<Star />

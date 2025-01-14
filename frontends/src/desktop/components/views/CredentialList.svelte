@@ -16,6 +16,7 @@
 	let clickTimer = null;
 	let clickDelay = 200;
 	let credentials = [];
+	let favouriteCredentials = [];
 	let prevDeleteModalState = false;
 	let prevEditorModalState = false;
 	let prevImportModalState = false;
@@ -35,9 +36,15 @@
 
 	const fetchAllCredentials = async () => {
 		try {
+			// console.log("favorite ==>", fav);
 			credentials = await sendMessage("getAllCredentials", {
-				folderId: "all",
+				favourite: false,
 			});
+			favouriteCredentials = await sendMessage("getAllCredentials", {
+				favourite: true,
+			});
+			console.log(favouriteCredentials);
+			//
 		} catch (error) {
 			credentials = [];
 		}
@@ -145,6 +152,7 @@
 						<CredentialCard
 							{credential}
 							{credentialcardstates}
+							favourite="{true}"
 							on:dbl="{handleDoubleClick}"
 							on:clk="{handleClick}" />
 					{/each}
