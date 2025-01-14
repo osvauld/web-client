@@ -5,7 +5,12 @@ const en = {
 		all: "All Vaults",
 		personal: "Personal",
 		work: "Work",
+		favourites: "Favourites",
 	},
+	addNew: "Add New Credential",
+	search: "Search",
+	all: "All Vaults",
+	latest: "Latest",
 	recents: "Recents",
 	categories: "Categories",
 	tabs: {

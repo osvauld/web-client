@@ -6,7 +6,12 @@ const de = {
 		all: "Alle",
 		personal: "Persönlich",
 		work: "Arbeit",
+		favourites: "Favoriten",
 	},
+	addNew: "Neue Anmeldeinformationen hinzufügen",
+	search: "Suche",
+	all: "Alle Tresore",
+	latest: "Neueste",
 	recents: "Kürzlich",
 	categories: "Kategorien",
 	tabs: {

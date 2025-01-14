@@ -6,7 +6,12 @@ const ja = {
 		all: "すべて",
 		personal: "個人",
 		work: "仕事",
+		favourites: "お気に入り",
 	},
+	addNew: "新しい資格情報を追加",
+	search: "検索",
+	all: "すべての保管庫",
+	latest: "最新",
 	recents: "最近",
 	categories: "カテゴリ",
 	tabs: {

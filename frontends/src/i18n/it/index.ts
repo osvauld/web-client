@@ -6,7 +6,12 @@ const it = {
 		all: "Tutto",
 		personal: "Personale",
 		work: "Lavoro",
+		favourites: "Preferiti",
 	},
+	addNew: "Aggiungi nuova credenziale",
+	search: "Cerca",
+	all: "Tutti i vault",
+	latest: "Ultimi",
 	recents: "Recenti",
 	categories: "Categorie",
 	tabs: {

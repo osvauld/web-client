@@ -6,7 +6,12 @@ const hi = {
 		all: "सभी",
 		personal: "व्यक्तिगत",
 		work: "कार्य",
+		favourites: "पसंदीदा",
 	},
+	addNew: "नया क्रेडेंशियल जोड़ें",
+	search: "खोज",
+	all: "सभी खजाने",
+	latest: "नवीनतम",
 	recents: "हाल का",
 	categories: "श्रेणियाँ",
 	tabs: {

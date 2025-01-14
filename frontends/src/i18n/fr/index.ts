@@ -6,7 +6,12 @@ const fr = {
 		all: "Tout",
 		personal: "Personnel",
 		work: "Travail",
+		favourites: "Favoris",
 	},
+	addNew: "Ajouter une nouvelle référence",
+	search: "Rechercher",
+	all: "Tous les coffres",
+	latest: "Derniers",
 	recents: "Récents",
 	categories: "Catégories",
 	tabs: {

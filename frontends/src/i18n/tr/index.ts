@@ -6,7 +6,12 @@ const tr = {
 		all: "Tümü",
 		personal: "Kişisel",
 		work: "İş",
+		favourites: "Favoriler",
 	},
+	all: "Tüm kasalar",
+	addNew: "Yeni Kimlik Bilgisi Ekle",
+	search: "Ara",
+	latest: "Son",
 	recents: "Son",
 	categories: "Kategoriler",
 	tabs: {

@@ -6,7 +6,12 @@ const pl = {
 		all: "Wszystko",
 		personal: "Osobiste",
 		work: "Praca",
+		favourites: "Ulubione",
 	},
+	addNew: "Dodaj nowe poświadczenie",
+	search: "Szukaj",
+	all: "Wszystkie sejfy",
+	latest: "Najnowsze",
 	recents: "Ostatnie",
 	categories: "Kategorie",
 	tabs: {

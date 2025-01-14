@@ -6,7 +6,12 @@ const zh = {
 		all: "全部",
 		personal: "个人",
 		work: "工作",
+		favourites: "收藏",
 	},
+	latest: "最新",
+	addNew: "添加新凭据",
+	search: "搜索",
+	all: "全部保险库",
 	recents: "最近",
 	categories: "类别",
 	tabs: {

@@ -85,7 +85,7 @@
 						color="{selectedSection === 'favourites'
 							? '#F2F2F0'
 							: '#85889C'}" />
-					<span>Favourites</span>
+					<span>{$LL.nav.favourites()}</span>
 				</button>
 			</li>
 		</ul>
@@ -108,7 +108,7 @@
 						color="{localSelectedCategory === category.id
 							? '#F2F2F0'
 							: '#85889C'}" />
-					<span>{category.type}</span>
+					<span>{$LL.types[category.id]()}</span>
 				</button>
 			</li>
 		{/each}

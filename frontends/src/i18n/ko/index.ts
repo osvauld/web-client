@@ -6,7 +6,12 @@ const ko = {
 		all: "전체",
 		personal: "개인",
 		work: "업무",
+		favourites: "즐겨찾기",
 	},
+	addNew: "새 자격 증명 추가",
+	search: "검색",
+	all: "모든 금고",
+	latest: "최신",
 	recents: "최근",
 	categories: "카테고리",
 	tabs: {

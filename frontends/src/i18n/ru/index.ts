@@ -6,7 +6,13 @@ const ru = {
 		all: "Все",
 		personal: "Личное",
 		work: "Работа",
+		favourites: "Избранное",
 	},
+
+	all: "Все хранилища",
+	latest: "Последние",
+	addNew: "Добавить новые учетные данные",
+	search: "Поиск",
 	recents: "Недавние",
 	categories: "Категории",
 	tabs: {

@@ -6,7 +6,12 @@ const nl = {
 		all: "Alles",
 		personal: "Persoonlijk",
 		work: "Werk",
+		favourites: "Favorieten",
 	},
+	addNew: "Nieuwe referentie toevoegen",
+	search: "Zoeken",
+	all: "Alle kluizen",
+	latest: "Laatste",
 	recents: "Recente",
 	categories: "Categorieën",
 	tabs: {
