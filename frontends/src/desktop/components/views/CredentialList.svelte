@@ -6,6 +6,7 @@
 		viewCredentialModal,
 		currentCredential,
 		deleteConfirmationModal,
+		refreshCredentialList,
 	} from "../store/desktop.ui.store";
 	import { sendMessage } from "../../../lib/components/dashboard/helper";
 	import Import from "../../../icons/import.svelte";
@@ -48,6 +49,15 @@
 	$: {
 		fetchCredentials($currentVault.id);
 		credentialcardstates = [];
+	}
+
+	$: if ($refreshCredentialList) {
+		if ($currentVault.id === "all") {
+			fetchAllCredentials();
+		} else {
+			fetchCredentials($currentVault.id);
+		}
+		refreshCredentialList.set(false);
 	}
 
 	$: if ($currentVault.id === "all") {

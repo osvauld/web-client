@@ -10,6 +10,7 @@
 	import Star from "../../../icons/star.svelte";
 	import FavStar from "../../../icons/favStar.svelte";
 	import CredentialOverview from "./CredentialOverview.svelte";
+	import { refreshCredentialList } from "../store/desktop.ui.store";
 
 	export let credential;
 	export let credentialcardstates = [];
@@ -31,7 +32,7 @@
 	const toggleFavorite = async (id) => {
 		favourite = !favourite;
 		await sendMessage("toggleFav", { credentialId: id });
-		// Refresh credential list
+		refreshCredentialList.set(true);
 	};
 </script>
 
@@ -66,14 +67,14 @@
 		</div>
 		<div class="flex flex-col">
 			<h3
-				class="font-Jakarta text-xl font-medium text-left text-mobile-sideListTextActive truncate max-w-[16rem]">
+				class="font-Jakarta text-xl font-medium text-left text-osvauld-sideListTextActive truncate max-w-[16rem]">
 				{renderRelevantHeading(
 					credential.data.credentialFields,
 					type,
 					credential.id,
 				)}
 			</h3>
-			<span class="text-sm text-left text-mobile-fieldTextActive">
+			<span class="text-sm text-left text-osvauld-fieldTextActive">
 				{type}
 			</span>
 		</div>
