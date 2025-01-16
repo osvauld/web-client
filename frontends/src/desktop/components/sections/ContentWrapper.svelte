@@ -53,7 +53,7 @@
 				on:mouseenter="{() => (addCredentialHovered = true)}"
 				on:mouseleave="{() => (addCredentialHovered = false)}"
 				on:click="{() => addCredentialModal.set(true)}">
-				<span class="mr-2">{$LL.addNew()}</span>
+				<span class="mr-2">{$LL.addNewCredential()}</span>
 				<Add color="{addCredentialHovered ? '#000' : '#A3A4B5'}" />
 			</button>
 		</div>

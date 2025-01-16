@@ -105,14 +105,14 @@
 							<button
 								type="submit"
 								class="h-[48px] flex justify-center items-center gap-1 rounded-lg bg-mobile-highlightBlue text-mobile-bgPrimary font-medium text-lg mt-6"
-								>{$LL.newVault()} <Add color="#000" /></button>
+								>{$LL.createNewVault()} <Add color="#000" /></button>
 						</div>
 					</form>
 				{:else}
 					<button
 						on:click="{handleNewVaultInput}"
 						class="h-[48px] w-full flex justify-center items-center gap-1 rounded-lg border-2 border-mobile-bgHighlight p-4 active:bg-mobile-bgLight text-mobile-textActive"
-						>{$LL.newVault()} <Add color="#85889C" /></button>
+						>{$LL.createNewVault()} <Add color="#85889C" /></button>
 				{/if}
 			</div>
 		</div>
