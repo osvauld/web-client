@@ -90,10 +90,11 @@
 						in:slide
 						out:slide
 						on:submit|preventDefault|stopPropagation="{handleVaultCreation}">
-						<span class="text-lg text-center">New Vault</span>
+						<span class="text-lg text-center">{$LL.newVault()} </span>
 						<hr class="h-px border-0 bg-mobile-bgLight" />
 						<div class="flex flex-col grow gap-1">
-							<label for="new-vault-name" class="text-sm">Add a title</label>
+							<label for="new-vault-name" class="text-sm"
+								>{$LL.addATitle()}</label>
 							<input
 								type="text"
 								id="new-vault-name"

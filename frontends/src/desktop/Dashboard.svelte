@@ -42,7 +42,7 @@
 			// const languageToUse = SUPPORTED_LANGUAGES.includes(deviceLanguage)
 			// 	? deviceLanguage
 			// 	: "en";
-			const languageToUse = "fr";
+			const languageToUse = "ko";
 			await loadLocaleAsync(languageToUse);
 			setLocale(languageToUse);
 		} catch (error) {
