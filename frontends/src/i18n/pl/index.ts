@@ -21,6 +21,9 @@ const pl = {
 	selectImportTarget: "Wybierz miejsce docelowe importu",
 	cancel: "Anuluj",
 	copyNote: "Kopiuj notatkę",
+	delete: "Usuń",
+	thisActionCannotBeUndone: "Czy na pewno? Tej akcji nie można cofnąć.",
+	deletedSuccessfully: "Pomyślnie usunięto",
 	fieldNames: {
 		Username: "Nazwa użytkownika",
 		Domain: "Domena",

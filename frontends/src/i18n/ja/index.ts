@@ -21,6 +21,9 @@ const ja = {
 	selectImportTarget: "インポート先を選択",
 	cancel: "キャンセル",
 	copyNote: "メモをコピー",
+	delete: "削除",
+	thisActionCannotBeUndone: "本当によろしいですか？この操作は取り消せません。",
+	deletedSuccessfully: "正常に削除されました",
 	fieldNames: {
 		Username: "ユーザー名",
 		Domain: "ドメイン",

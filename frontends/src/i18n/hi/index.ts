@@ -21,6 +21,10 @@ const hi = {
 	selectImportTarget: "आयात लक्ष्य चुनें",
 	cancel: "रद्द करें",
 	copyNote: "नोट कॉपी करें",
+	delete: "हटाएं",
+	thisActionCannotBeUndone:
+		"क्या आप सुनिश्चित हैं? यह क्रिया वापस नहीं की जा सकती।",
+	deletedSuccessfully: "सफलतापूर्वक हटा दिया गया",
 	fieldNames: {
 		Username: "उपयोगकर्ता नाम",
 		Domain: "डोमेन",

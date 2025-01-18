@@ -22,6 +22,9 @@ const ru = {
 	selectImportTarget: "Выберите цель импорта",
 	cancel: "Отмена",
 	copyNote: "Копировать заметку",
+	delete: "Удалить",
+	thisActionCannotBeUndone: "Вы уверены? Это действие нельзя отменить.",
+	deletedSuccessfully: "Успешно удалено",
 	fieldNames: {
 		Username: "Имя пользователя",
 		Domain: "Домен",

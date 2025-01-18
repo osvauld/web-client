@@ -21,6 +21,9 @@ const ko = {
 	selectImportTarget: "가져오기 대상 선택",
 	cancel: "취소",
 	copyNote: "메모 복사",
+	delete: "삭제",
+	thisActionCannotBeUndone: "확실합니까? 이 작업은 취소할 수 없습니다.",
+	deletedSuccessfully: "성공적으로 삭제되었습니다",
 	fieldNames: {
 		Username: "사용자 이름",
 		Domain: "도메인",

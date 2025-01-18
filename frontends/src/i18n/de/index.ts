@@ -21,6 +21,10 @@ const de = {
 	selectImportTarget: "Importziel auswählen",
 	cancel: "Abbrechen",
 	copyNote: "Notiz kopieren",
+	delete: "Löschen",
+	thisActionCannotBeUndone:
+		"Sind Sie sicher? Diese Aktion kann nicht rückgängig gemacht werden.",
+	deletedSuccessfully: "Erfolgreich gelöscht",
 	fieldNames: {
 		Username: "Benutzername",
 		Domain: "Domäne",

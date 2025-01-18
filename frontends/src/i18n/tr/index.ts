@@ -21,6 +21,9 @@ const tr = {
 	selectImportTarget: "İçe aktarma hedefini seçin",
 	cancel: "İptal",
 	copyNote: "Notu kopyala",
+	delete: "Sil",
+	thisActionCannotBeUndone: "Emin misiniz? Bu işlem geri alınamaz.",
+	deletedSuccessfully: "Başarıyla silindi",
 	fieldNames: {
 		Username: "Kullanıcı Adı",
 		Domain: "Alan Adı",

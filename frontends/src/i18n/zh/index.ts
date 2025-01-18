@@ -21,6 +21,9 @@ const zh = {
 	selectImportTarget: "选择导入目标",
 	cancel: "取消",
 	copyNote: "复制笔记",
+	delete: "删除",
+	thisActionCannotBeUndone: "确定吗？此操作无法撤销。",
+	deletedSuccessfully: "删除成功",
 	fieldNames: {
 		Username: "用户名",
 		Domain: "域名",

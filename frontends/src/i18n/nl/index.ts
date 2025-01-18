@@ -21,6 +21,10 @@ const nl = {
 	selectImportTarget: "Selecteer importbestemming",
 	cancel: "Annuleren",
 	copyNote: "Notitie kopiëren",
+	delete: "Verwijderen",
+	thisActionCannotBeUndone:
+		"Weet u het zeker? Deze actie kan niet ongedaan worden gemaakt.",
+	deletedSuccessfully: "Succesvol verwijderd",
 	fieldNames: {
 		Username: "Gebruikersnaam",
 		Domain: "Domein",

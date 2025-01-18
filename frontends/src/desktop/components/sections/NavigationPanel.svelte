@@ -68,7 +68,7 @@
 					on:click="{() => handleSectionChange('home')}"
 					aria-current="{selectedSection === 'home' ? 'page' : undefined}">
 					<Home color="{selectedSection === 'home' ? '#F2F2F0' : '#85889C'}" />
-					<span>{$LL.nav.home()}</span>
+					<span>{$LL.tabs.home()}</span>
 				</button>
 			</li>
 			<li>

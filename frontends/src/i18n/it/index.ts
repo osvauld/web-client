@@ -21,6 +21,10 @@ const it = {
 	selectImportTarget: "Seleziona destinazione importazione",
 	cancel: "Annulla",
 	copyNote: "Copia nota",
+	delete: "Elimina",
+	thisActionCannotBeUndone:
+		"Sei sicuro? Questa azione non può essere annullata.",
+	deletedSuccessfully: "Eliminato con successo",
 	fieldNames: {
 		Username: "Nome utente",
 		Domain: "Dominio",

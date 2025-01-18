@@ -21,6 +21,9 @@ const ar = {
 	selectImportTarget: "حدد وجهة الاستيراد",
 	cancel: "إلغاء",
 	copyNote: "نسخ الملاحظة",
+	delete: "حذف",
+	thisActionCannotBeUndone: "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.",
+	deletedSuccessfully: "تم الحذف بنجاح",
 	fieldNames: {
 		Username: "اسم المستخدم",
 		Domain: "نطاق",
