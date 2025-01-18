@@ -94,9 +94,6 @@
 			<CredentialViewModal />
 		{/if}
 
-
-		
-
 		{#if $viewCredentialModal}
 			<CredentialViewModal />
 		{/if}
@@ -104,9 +101,9 @@
 			<DeleteConfirmationModal />
 		{/if}
 
-		{#if $profileModal}
+		<!-- {#if $profileModal}
 			<ProfileView />
-		{/if}
+		{/if} -->
 
 		<!-- {#if $showMoreOptions}
 			<MoreActions />
