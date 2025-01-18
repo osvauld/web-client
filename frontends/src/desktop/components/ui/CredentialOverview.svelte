@@ -5,7 +5,6 @@
 	import CopyIcon from "../../../icons/copyIcon.svelte";
 	import ClosedEye from "../../../icons/closedEye.svelte";
 	import Eye from "../../../icons/eye.svelte";
-	import { truncate } from "fs";
 
 	export let type;
 	export let fields;
