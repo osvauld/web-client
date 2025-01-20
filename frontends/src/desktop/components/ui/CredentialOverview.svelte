@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { slide, scale } from "svelte/transition";
 	import { writeToClipboard } from "../../../lib/components/dashboard/helper";
+	import LL from "../../../i18n/i18n-svelte";
 	import Tick from "../../../icons/tick.svelte";
 	import CopyIcon from "../../../icons/copyIcon.svelte";
 	import ClosedEye from "../../../icons/closedEye.svelte";
@@ -50,7 +51,7 @@
 				on:click|preventDefault|stopPropagation="{() =>
 					copyToClipboard(value, 0)}">
 				<span class="text-osvauld-fieldText font-Jakarta font-medium text-lg"
-					>Copy note</span>
+					>{$LL.copyNote()}</span>
 				{#if copied && copiedItemIndex === 0}
 					<span in:scale>
 						<Tick />
@@ -63,7 +64,8 @@
 	{:else}
 		{#each fields as field, index (field.fieldName)}
 			{#if field.fieldValue.trim().length !== 0}
-				<span class="text-osvauld-fadedCancel text-sm">{field.fieldName}</span>
+				<span class="text-osvauld-fadedCancel text-sm"
+					>{$LL.fieldNames[field?.fieldName]() || field.fieldName}</span>
 				<div class="flex gap-2 w-full">
 					{#if field.fieldName === "Password"}
 						<div
