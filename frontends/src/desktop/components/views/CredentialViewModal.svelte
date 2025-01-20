@@ -4,6 +4,7 @@
 		viewCredentialModal,
 		currentVault,
 		deleteConfirmationModal,
+		vaults,
 	} from "../store/desktop.ui.store";
 
 	import { scale } from "svelte/transition";
@@ -18,10 +19,20 @@
 	import Star from "../../../icons/star.svelte";
 	import Bin from "../../../icons/binIcon.svelte";
 
+	import { CATEGORIES } from "../../utils/credentialUtils";
+
 	import { writeToClipboard } from "../../../lib/components/dashboard/helper";
+	import { onMount } from "svelte";
 
 	let copied = false;
 	let copiedItemIndex;
+	let deleteHovered = false;
+
+	let type = $currentCredential.data.credentialType;
+	let categoryInfo = CATEGORIES.find((item) => item.type === type);
+	let folderName = $vaults.find(
+		(vault) => vault.id === $currentCredential?.folder_id,
+	)?.name;
 
 	const CloseViewModal = () => {
 		viewCredentialModal.set(false);
@@ -46,21 +57,32 @@
 </script>
 
 <div
-	class="fixed inset-0 z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[0.5px] flex justify-end">
+	class="fixed inset-0 z-50 bg-osvauld-backgroundBlur backdrop-filter backdrop-blur-[0.5px] flex justify-center items-center">
 	<div
-		class="w-[23.5rem] h-full flex flex-col bg-osvauld-ninjablack border-l border-l-osvauld-sideListHighlight p-3">
-		<div class="w-full h-[48px] px-3 flex items-center gap-2 flex-shrink-0">
-			<button
-				on:click="{CloseViewModal}"
-				class="p-2.5 rounded-lg bg-mobile-bgSeconary">
-				<ClosePanel size="{24}" />
-			</button>
+		class="w-[40rem] h-[50rem] flex flex-col bg-osvauld-ninjablack border border-osvauld-activeBorder rounded-3xl p-10">
+		<div
+			class="w-full h-[48px] px-3 flex justify-start items-center gap-2 flex-shrink-0">
+			<span class=" p-2.5 rounded-lg bg-mobile-bgSeconary"
+				>{#if categoryInfo && categoryInfo.icon}
+					<svelte:component this="{categoryInfo.icon}" color="{'#BFC0CC'}" />
+				{:else}
+					<span>!</span>
+				{/if}</span>
 			<span class="ml-auto p-2.5 rounded-lg bg-mobile-bgSeconary"
+				><Star /></span>
+			<button
+				class="p-2.5 rounded-lg bg-mobile-bgSeconary"
+				on:mouseenter="{() => (deleteHovered = true)}"
+				on:mouseleave="{() => (deleteHovered = false)}"
+				on:click|stopPropagation="{handleCredentialDelete}"
+				><Bin
+					color="{deleteHovered ? '#FF6A6A' : '#85889C'}"
+					size="{24}" /></button>
+			<span class=" p-2.5 rounded-lg bg-mobile-bgSeconary"
 				><Edit size="{24}" /></span>
-			<span class="p-2.5 rounded-lg bg-mobile-bgSeconary"><Share /></span>
-			<span class="p-2.5 rounded-lg bg-mobile-bgSeconary"><Star /></span>
-			<span class="p-2.5 rounded-lg bg-mobile-bgSeconary"
-				><More color="#85889C" /></span>
+			<button
+				class="p-2.5 rounded-lg bg-mobile-bgSeconary"
+				on:click="{CloseViewModal}"><ClosePanel size="{24}" /></button>
 		</div>
 		<div
 			class="text-mobile-textPrimary text-2xl font-medium flex flex-col pl-4 py-3">
@@ -69,7 +91,7 @@
 			<div
 				class="flex text-sm font-light gap-1 items-center tracking-wider capitalize">
 				<span><MobileHome size="{14}" color="{'#85889C'}" /></span>
-				<span>{$currentVault.name}</span>
+				<span>{folderName}</span>
 			</div>
 		</div>
 		<div
@@ -101,7 +123,7 @@
 
 			<hr class="border border-mobile-bgSeconary my-3" />
 			<div
-				class="bg-mobile-bgSeconary rounded-lg h-[65px] p-3 text-mobile-textPrimary text-sm mt-auto flex justify-between items-center">
+				class="bg-mobile-bgSeconary rounded-lg h-[65px] p-3 text-mobile-textPrimary text-sm mt-auto flex justify-start items-center">
 				<span>
 					Created at : <br />
 					<span class="text-xs"
@@ -109,8 +131,6 @@
 							"," +
 							new Date().toLocaleDateString()}</span>
 				</span>
-				<button class="p-2" on:click|stopPropagation="{handleCredentialDelete}"
-					><Bin color="#FF6A6A" /></button>
 			</div>
 		</div>
 	</div>
