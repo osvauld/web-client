@@ -3,6 +3,7 @@
 	import Lens from "../../../icons/lens.svelte";
 	import Profile from "../../../icons/profile.svelte";
 	import { profileModal } from "../store/desktop.ui.store";
+	import { LL } from "../../../i18n/i18n-svelte";
 </script>
 
 <div class="h-32 w-full border-b border-osvauld-borderColor flex">
@@ -18,7 +19,7 @@
 				type="text"
 				name="search"
 				class="grow border-0 focus:ring-0 outline-0 bg-osvauld-frameblack text-osvauld-activeBorder placeholder:text-osvauld-activeBorder font-light text-base leading-6"
-				placeholder="Search" />
+				placeholder="{$LL.search()}" />
 		</div>
 		<button
 			aria-label="Open Profile View"
