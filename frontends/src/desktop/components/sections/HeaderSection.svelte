@@ -6,7 +6,7 @@
 	import Key from "../../../icons/key.svelte";
 
 	import RightArrow from "../../../icons/rightArrow.svelte";
-	import { profileModal } from "../store/desktop.ui.store";
+	import { addDeviceModal } from "../store/desktop.ui.store";
 	import Sync from "../../../icons/sync.svelte";
 	import Devices from "../../../icons/devices.svelte";
 	import Discord from "../../../icons/discord.svelte";
@@ -24,6 +24,13 @@
 		{ id: "change", label: "Change Password", icon: Key },
 		{ id: "logout", label: "Logout", icon: Logout },
 	];
+
+	const handleDropDownClick = (id) => {
+		if (id === "add") {
+			addDeviceModal.set(true);
+		}
+		showDropdown = false;
+	};
 </script>
 
 <div class="h-32 w-full border-b border-osvauld-borderColor flex">
@@ -69,7 +76,8 @@
 						<button
 							class="profileBtn"
 							on:mouseenter="{() => (hoveredItem = id)}"
-							on:mouseleave="{() => (hoveredItem = '')}">
+							on:mouseleave="{() => (hoveredItem = '')}"
+							on:click|stopPropagation="{() => handleDropDownClick(id)}">
 							<Icon
 								color="{hoveredItem === id ? '#F2F2F0' : '#85889C'}"
 								size="{24}" />

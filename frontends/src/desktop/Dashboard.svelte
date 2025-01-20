@@ -15,12 +15,12 @@
 	import {
 		addCredentialModal,
 		credentialEditorModal,
-		profileModal,
+		addDeviceModal,
 		viewCredentialModal,
 		deleteConfirmationModal,
 		toastStore,
 	} from "./components/store/desktop.ui.store";
-	import ProfileView from "./components/views/ProfileView.svelte";
+	import AddDeviceView from "./components/views/AddDeviceView.svelte";
 	import CredentialEditorModal from "./components/views/CredentialEditorModal.svelte";
 	import CredentialViewModal from "./components/views/CredentialViewModal.svelte";
 	import DeleteConfirmationModal from "./components/ui/DeleteConfirmationModal.svelte";
@@ -101,9 +101,9 @@
 			<DeleteConfirmationModal />
 		{/if}
 
-		<!-- {#if $profileModal}
-			<ProfileView />
-		{/if} -->
+		{#if $addDeviceModal}
+			<AddDeviceView />
+		{/if}
 
 		<!-- {#if $showMoreOptions}
 			<MoreActions />
