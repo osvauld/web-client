@@ -3,11 +3,14 @@
 	import { writeToClipboard } from "../../../lib/components/dashboard/helper";
 	import Tick from "../../../icons/tick.svelte";
 	import CopyIcon from "../../../icons/copyIcon.svelte";
+	import ClosedEye from "../../../icons/closedEye.svelte";
+	import Eye from "../../../icons/eye.svelte";
 
 	export let type;
 	export let fields;
 	let copied = false;
 	let copiedItemIndex = null;
+	let showPassword = false;
 
 	const copyToClipboard = async (fieldValue, index) => {
 		copiedItemIndex = index;
@@ -18,6 +21,10 @@
 			copied = false;
 			copiedItemIndex = null;
 		}, 1000);
+	};
+
+	const togglePassword = () => {
+		showPassword = !showPassword;
 	};
 </script>
 
@@ -58,23 +65,56 @@
 			{#if field.fieldValue.trim().length !== 0}
 				<span class="text-osvauld-fadedCancel text-sm">{field.fieldName}</span>
 				<div class="flex gap-2 w-full">
-					<div
-						class="bg-osvauld-fieldActive rounded-lg py-2.5 px-4 flex-1 max-w-full truncate">
-						<span class="text-left text-mobile-textField text-base"
-							>{field.fieldValue}</span>
-					</div>
-					<button
-						class="bg-osvauld-fieldActive rounded-lg p-3"
-						on:click|preventDefault|stopPropagation="{() =>
-							copyToClipboard(field.fieldValue, index)}">
-						{#if copied && copiedItemIndex === index}
-							<span in:scale>
-								<Tick />
-							</span>
-						{:else}
-							<CopyIcon color="{'#85889C'}" />
-						{/if}
-					</button>
+					{#if field.fieldName === "Password"}
+						<div
+							class="bg-osvauld-fieldActive rounded-lg py-1 px-4 w-full flex"
+							on:click|stopPropagation>
+							<input
+								type="{showPassword ? 'text' : 'password'}"
+								class="w-5/6 text-left p-0 leading-3 bg-osvauld-fieldActive text-mobile-textField text-base border-0 outline-0 focus:ring-0 truncate"
+								value="{showPassword ? field.fieldValue : '••••••••'}" />
+							<button
+								type="button"
+								class="ml-auto flex-none flex justify-center items-center"
+								on:click="{() => togglePassword()}">
+								{#if showPassword}
+									<ClosedEye />
+								{:else}
+									<Eye />
+								{/if}
+							</button>
+						</div>
+						<button
+							class="bg-osvauld-fieldActive rounded-lg p-3"
+							on:click|preventDefault|stopPropagation="{() =>
+								copyToClipboard(field.fieldValue, index)}">
+							{#if copied && copiedItemIndex === index}
+								<span in:scale>
+									<Tick />
+								</span>
+							{:else}
+								<CopyIcon color="{'#85889C'}" />
+							{/if}
+						</button>
+					{:else}
+						<div
+							class="bg-osvauld-fieldActive rounded-lg py-2.5 px-4 flex-1 max-w-full truncate">
+							<span class="text-left text-mobile-textField text-base"
+								>{field.fieldValue}</span>
+						</div>
+						<button
+							class="bg-osvauld-fieldActive rounded-lg p-3"
+							on:click|preventDefault|stopPropagation="{() =>
+								copyToClipboard(field.fieldValue, index)}">
+							{#if copied && copiedItemIndex === index}
+								<span in:scale>
+									<Tick />
+								</span>
+							{:else}
+								<CopyIcon color="{'#85889C'}" />
+							{/if}
+						</button>
+					{/if}
 				</div>
 			{/if}
 		{/each}
