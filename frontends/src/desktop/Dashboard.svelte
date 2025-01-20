@@ -24,11 +24,12 @@
 	import {
 		addCredentialModal,
 		credentialEditorModal,
-		profileModal,
+		addDeviceModal,
 		viewCredentialModal,
 		deleteConfirmationModal,
 		toastStore,
 	} from "./components/store/desktop.ui.store";
+	import AddDeviceView from "./components/views/AddDeviceView.svelte";
 	import { setFolderStore } from "../lib/store/storeHelper";
 
 	let showWelcome = false;
@@ -126,8 +127,8 @@
 			<DeleteConfirmationModal />
 		{/if}
 
-		{#if $profileModal}
-			<ProfileView />
+		{#if $addDeviceModal}
+			<AddDeviceView />
 		{/if}
 
 		<!-- {#if $showMoreOptions}
