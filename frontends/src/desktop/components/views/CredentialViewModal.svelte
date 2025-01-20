@@ -94,42 +94,74 @@
 				<span>{folderName}</span>
 			</div>
 		</div>
+		<hr class="border border-mobile-bgSeconary my-3" />
 		<div
 			class="grow p-4 text-mobile-textPrimary overflow-y-auto scrollbar-thin flex flex-col gap-2 mt-2">
-			{#each $currentCredential.data.credentialFields as field, index (field.fieldName)}
-				{#if field.fieldValue.trim().length !== 0}
-					<span class="text-mobile-textlabel text-sm">{field.fieldName}</span>
-					<div class="flex gap-2">
-						<div
-							class="bg-mobile-bgSeconary rounded-lg py-2.5 px-4 flex-1 max-w-full truncate">
-							<span class=" text-mobile-textField text-base"
-								>{field.fieldValue}</span>
-						</div>
-						<button
-							class="bg-mobile-bgSeconary rounded-lg p-3"
-							on:click|preventDefault|stopPropagation="{() =>
-								copyToClipboard(field.fieldValue, index)}">
-							{#if copied && copiedItemIndex === index}
-								<span in:scale>
-									<Tick />
-								</span>
-							{:else}
-								<CopyIcon color="{'#85889C'}" />
-							{/if}
-						</button>
+			{#if type === "Note"}
+				{@const value = $currentCredential.data.credentialFields.find(
+					(item) => item.fieldName === "Note",
+				)?.fieldValue}
+				<div class="w-full h-full flex flex-col gap-4">
+					<div
+						class="bg-osvauld-fieldActive rounded-lg py-2.5 px-4 w-full h-full max-h-full overflow-y-scroll">
+						<p
+							class="text-left text-mobile-textField text-base text-wrap break-all">
+							{value || "Regret"}
+						</p>
 					</div>
-				{/if}
-			{/each}
+					<button
+						class="bg-osvauld-fieldActive rounded-lg p-3 w-full flex gap-2 justify-center items-center"
+						on:click|preventDefault|stopPropagation="{() =>
+							copyToClipboard(value, 0)}">
+						<span
+							class="text-osvauld-fieldText font-Jakarta font-medium text-lg"
+							>Copy note</span>
+						{#if copied && copiedItemIndex === 0}
+							<span in:scale>
+								<Tick />
+							</span>
+						{:else}
+							<CopyIcon color="{'#85889C'}" />
+						{/if}
+					</button>
+				</div>
+			{:else}
+				{#each $currentCredential.data.credentialFields as field, index (field.fieldName)}
+					{#if field.fieldValue.trim().length !== 0}
+						<span class="text-mobile-textlabel text-sm">{field.fieldName}</span>
+						<div class="flex gap-2">
+							<div
+								class="bg-mobile-bgSeconary rounded-lg py-2.5 px-4 flex-1 max-w-full truncate">
+								<span class=" text-mobile-textField text-base"
+									>{field.fieldValue}</span>
+							</div>
+							<button
+								class="bg-mobile-bgSeconary rounded-lg p-3"
+								on:click|preventDefault|stopPropagation="{() =>
+									copyToClipboard(field.fieldValue, index)}">
+								{#if copied && copiedItemIndex === index}
+									<span in:scale>
+										<Tick />
+									</span>
+								{:else}
+									<CopyIcon color="{'#85889C'}" />
+								{/if}
+							</button>
+						</div>
+					{/if}
+				{/each}
+			{/if}
 
-			<hr class="border border-mobile-bgSeconary my-3" />
 			<div
-				class="bg-mobile-bgSeconary rounded-lg h-[65px] p-3 text-mobile-textPrimary text-sm mt-auto flex justify-start items-center">
+				class="bg-mobile-bgSeconary rounded-lg h-[65px] p-3 text-mobile-textPrimary text-sm mt-9 flex justify-start items-center">
 				<span>
-					Created at : <br />
+					Last accessed at : <br />
 					<span class="text-xs"
-						>{new Date().toLocaleTimeString() +
+						>{new Date($currentCredential.last_accessed).toLocaleTimeString() +
 							"," +
-							new Date().toLocaleDateString()}</span>
+							new Date(
+								$currentCredential.last_accessed,
+							).toLocaleDateString()}</span>
 				</span>
 			</div>
 		</div>
