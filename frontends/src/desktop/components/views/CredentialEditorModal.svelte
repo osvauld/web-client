@@ -17,6 +17,7 @@
 		currentVault,
 		selectedCategoryForInput,
 		selectedVaultForInput,
+		refreshCredentialList,
 	} from "../store/desktop.ui.store";
 
 	let credentialFields = [];
@@ -26,6 +27,7 @@
 		credentialEditorModal.set(false);
 		selectedVaultForInput.set({});
 		selectedCategoryForInput.set("");
+		refreshCredentialList.set(true);
 	};
 
 	const addCredentialHandlerFunc = async () => {

@@ -31,6 +31,7 @@
 		}
 		showDropdown = false;
 	};
+	import { LL } from "../../../i18n/i18n-svelte";
 </script>
 
 <div class="h-32 w-full border-b border-osvauld-borderColor flex">
@@ -46,7 +47,7 @@
 				type="text"
 				name="search"
 				class="grow border-0 focus:ring-0 outline-0 bg-osvauld-frameblack text-osvauld-activeBorder placeholder:text-osvauld-activeBorder font-light text-base leading-6"
-				placeholder="Search" />
+				placeholder="{$LL.search()}" />
 		</div>
 		<div class="relative ml-3 text-osvauld-fieldText font-normal text-sm z-40">
 			<button

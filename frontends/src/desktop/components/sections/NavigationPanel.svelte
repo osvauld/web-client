@@ -5,6 +5,7 @@
 	import VaultManager from "../views/VaultManager.svelte";
 	import { currentVault, selectedCategory } from "../store/desktop.ui.store";
 	import { CATEGORIES } from "../../utils/credentialUtils";
+	import { LL } from "../../../i18n/i18n-svelte";
 
 	let selectedSection = "home";
 	let localSelectedCategory = "";
@@ -45,7 +46,7 @@
 			aria-controls="vaultSelector"
 			aria-expanded="false"
 			on:click="{() => (vaultManagerActive = !vaultManagerActive)}"
-			>{$currentVault.name}<span
+			>{$currentVault.id === "all" ? $LL.all() : $currentVault.name}<span
 				class="transition-transform duration-300 {vaultManagerActive
 					? '-rotate-90'
 					: 'rotate-90'}"><Arrow color="#F2F2F0" size="24" /></span
@@ -67,7 +68,7 @@
 					on:click="{() => handleSectionChange('home')}"
 					aria-current="{selectedSection === 'home' ? 'page' : undefined}">
 					<Home color="{selectedSection === 'home' ? '#F2F2F0' : '#85889C'}" />
-					<span>Home</span>
+					<span>{$LL.tabs.home()}</span>
 				</button>
 			</li>
 			<li>
@@ -84,7 +85,7 @@
 						color="{selectedSection === 'favourites'
 							? '#F2F2F0'
 							: '#85889C'}" />
-					<span>Favourites</span>
+					<span>{$LL.nav.favourites()}</span>
 				</button>
 			</li>
 		</ul>
@@ -107,7 +108,7 @@
 						color="{localSelectedCategory === category.id
 							? '#F2F2F0'
 							: '#85889C'}" />
-					<span>{category.type}</span>
+					<span>{$LL.types[category.id]()}</span>
 				</button>
 			</li>
 		{/each}

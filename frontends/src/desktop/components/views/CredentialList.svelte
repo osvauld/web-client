@@ -13,6 +13,7 @@
 	import ImportModal from "./ImportModal.svelte";
 	import CredentialCard from "../ui/CredentialCard.svelte";
 	import { onMount } from "svelte";
+	import LL from "../../../i18n/i18n-svelte";
 
 	let clickTimer = null;
 	let clickDelay = 200;
@@ -173,7 +174,7 @@
 			on:mouseleave="{() => (importHovered = false)}"
 			on:click="{() => (importSelected = true)}">
 			<Import color="{importHovered ? '#0D0E13' : '#6E7681'}" />
-			<span class="ml-2">Import</span>
+			<span class="ml-2">{$LL.import()}</span>
 		</button>
 	{/if}
 </div>
